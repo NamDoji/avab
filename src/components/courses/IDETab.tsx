@@ -220,41 +220,37 @@ function SandboxIDE({ html, title }: { html: string; title: string }) {
   return <iframe src={url} className="w-full h-full rounded-2xl border-0" title={title} sandbox="allow-scripts allow-same-origin" />
 }
 
-// ─── Scratch — link + hướng dẫn ──────────────────────────────────────────
-function ScratchPanel({ problem }: { problem?: CodingProblem }) {
+// ─── Scratch — hướng dẫn rõ ràng ─────────────────────────────────────────
+function ScratchPanel() {
   return (
-    <div className="h-full flex flex-col gap-3 bg-orange-50 rounded-2xl p-4 border-2 border-orange-200">
-      <div className="flex items-center gap-2">
-        <span className="text-3xl">🐱</span>
-        <div>
-          <p className="font-black text-orange-900">Scratch — Lập trình kéo thả</p>
-          <p className="text-sm text-orange-700">Mở Scratch trong tab mới, làm bài, nộp link</p>
+    <div className="space-y-4">
+      <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-4xl">🐱</span>
+          <div>
+            <p className="font-black text-orange-900 text-lg">Scratch — Lập trình kéo thả</p>
+            <p className="text-sm text-orange-700">Scratch không hỗ trợ nhúng trực tiếp — mở tab mới để code!</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <a href="https://scratch.mit.edu/projects/editor/" target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-3 bg-orange-500 hover:bg-orange-600 text-white font-black rounded-2xl transition">
+            <ExternalLink className="w-4 h-4" /> Mở Scratch.mit.edu
+          </a>
+          <a href="https://turbowarp.org/" target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-3 bg-purple-500 hover:bg-purple-600 text-white font-black rounded-2xl transition">
+            <ExternalLink className="w-4 h-4" /> Mở TurboWarp
+          </a>
         </div>
       </div>
-
-      {problem && (
-        <div className="bg-white rounded-xl border border-orange-200 p-3 flex-1 overflow-y-auto">
-          <p className="font-bold text-orange-800 mb-2">📋 {problem.title}</p>
-          <p className="text-sm text-gray-700 whitespace-pre-wrap mb-3">{problem.description}</p>
-          {problem.sampleOutput && (
-            <div className="bg-gray-50 rounded-lg p-2">
-              <p className="text-xs font-bold text-gray-500 mb-1">✅ Kết quả mong đợi:</p>
-              <code className="text-xs text-green-700">{problem.sampleOutput}</code>
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="space-y-2">
-        <a href="https://scratch.mit.edu/projects/editor/" target="_blank" rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-black rounded-2xl transition text-sm">
-          <ExternalLink className="w-4 h-4" /> Mở Scratch Editor
-        </a>
-        <a href="https://scratch.mit.edu" target="_blank" rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-2 bg-white border-2 border-orange-300 text-orange-700 font-bold rounded-2xl transition text-sm hover:bg-orange-50">
-          🌐 Scratch.mit.edu
-        </a>
-        <p className="text-xs text-orange-600 text-center">💡 Làm xong → Share → Copy link → Gửi cho giáo viên</p>
+      <div className="bg-white rounded-2xl border border-gray-200 p-4">
+        <p className="font-bold text-gray-700 mb-3">📋 Hướng dẫn làm bài:</p>
+        <ol className="space-y-2 text-sm text-gray-600">
+          <li className="flex items-start gap-2"><span className="bg-orange-100 text-orange-700 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0 text-xs">1</span>Đọc đề bài ở tab <strong>Bài tập</strong> bên trái</li>
+          <li className="flex items-start gap-2"><span className="bg-orange-100 text-orange-700 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0 text-xs">2</span>Nhấn nút trên để mở <strong>Scratch</strong> trong tab mới</li>
+          <li className="flex items-start gap-2"><span className="bg-orange-100 text-orange-700 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0 text-xs">3</span>Kéo thả block để tạo project theo yêu cầu</li>
+          <li className="flex items-start gap-2"><span className="bg-orange-100 text-orange-700 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0 text-xs">4</span>Lưu → <strong>Share</strong> → Copy link → Gửi giáo viên</li>
+        </ol>
       </div>
     </div>
   )
@@ -421,37 +417,38 @@ export function IDETab({ courseType, subjectName, questions = [], theoryContent,
         </button>
       </div>
 
-      {/* Split layout */}
-      <div className={
-        isFullscreen
-          ? 'flex-1 grid grid-cols-2 gap-3 min-h-0'
-          : isScratch
-            ? 'grid md:grid-cols-2 gap-3'
-            : isRobot
-              ? 'block'
-              : 'grid md:grid-cols-2 gap-3'
-      }>
+      {/* Layout: bài tập + lý thuyết trên, IDE dưới */}
+      <div className={isFullscreen ? 'flex-1 flex flex-col gap-3 min-h-0' : 'flex flex-col gap-3'}>
 
-        {/* LEFT: Problem/Theory (Python & C++ only) */}
-        {(isPython || isCpp) && (
-          <div className={isFullscreen ? 'min-h-0' : 'h-[540px]'}>
-            <ProblemPanel
-              problems={problems}
-              theoryContent={theoryContent}
-              subjectName={subjectName}
-              onSelectProblem={setCurrentProblem}
-            />
+        {/* Scratch & Robot: không có IDE nhúng */}
+        {isScratch && <ScratchPanel />}
+        {isRobot && (
+          <div className={isFullscreen ? 'flex-1 min-h-0' : 'h-[460px]'}>
+            <SandboxIDE html={ROBOT_HTML} title="Robot" />
           </div>
         )}
 
-        {/* RIGHT / MAIN: IDE */}
-        <div className={isFullscreen ? 'min-h-0' : (isPython || isCpp) ? 'h-[540px]' : ''}>
-          {isScratch && <ScratchPanel problem={undefined} />}
-          {isRobot   && <div className="h-[440px]"><SandboxIDE html={ROBOT_HTML} title="Robot" /></div>}
-          {(isPython || isCpp) && ideHTML && (
-            <SandboxIDE key={currentProblem?.id ?? 0} html={ideHTML} title={isPython ? 'Python' : 'C++'} />
-          )}
-        </div>
+        {/* Python & C++: ProblemPanel + IDE xếp dọc */}
+        {(isPython || isCpp) && (
+          <>
+            {/* Problem panel */}
+            <div className={isFullscreen ? 'h-[45%] min-h-0' : 'h-[300px]'}>
+              <ProblemPanel
+                problems={problems}
+                theoryContent={theoryContent}
+                subjectName={subjectName}
+                onSelectProblem={setCurrentProblem}
+              />
+            </div>
+
+            {/* IDE */}
+            <div className={isFullscreen ? 'flex-1 min-h-0' : 'h-[400px]'}>
+              {ideHTML && (
+                <SandboxIDE key={currentProblem?.id ?? 0} html={ideHTML} title={isPython ? 'Python' : 'C++'} />
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
