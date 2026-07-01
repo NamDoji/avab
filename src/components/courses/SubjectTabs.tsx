@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, VideoOff, Star } from 'lucide-react'
+import { Loader2, VideoOff, Star, Maximize2, Minimize2 } from 'lucide-react'
 import { IDETab } from './IDETab'
 
 // ── Smart answer matching (giống server-side) ───────────────────────────────
@@ -310,6 +310,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
     ? [...BASE_TABS.slice(0,2), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, ...BASE_TABS.slice(2)]
     : [...BASE_TABS.slice(0,2), NOTEBOOK_TAB, ...BASE_TABS.slice(2)]
   const [activeTab, setActiveTab] = useState('homework')
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const [expandedQ, setExpandedQ] = useState<string | null>(null)
 
   // Answer state
@@ -677,28 +678,40 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
         onRetryWrong={() => { setShowCongrat(false); handleRetry(true) }}
       />
     )}
-    <div className="flex flex-col lg:flex-row gap-5 items-start">
+    <div className={isFullscreen ? 'fixed inset-0 z-50 bg-gray-50 overflow-auto p-4 md:p-6 flex flex-col' : 'flex flex-col lg:flex-row gap-5 items-start'}>
 
       {/* ══ LEFT: Tabs + Content ══ */}
-      <div className="w-full lg:flex-1 min-w-0">
+      <div className={isFullscreen ? 'flex-1 flex flex-col max-w-4xl mx-auto w-full' : 'w-full lg:flex-1 min-w-0'}>
 
         {/* Video trên mobile */}
         <div className="lg:hidden mb-4">
           <VideoPanel videoMaterial={videoMaterial} />
         </div>
 
-        {/* Tab bar */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1 mb-4 scrollbar-hide">
-          {TABS.map((tab) => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all min-h-[44px] ${
-                activeTab === tab.id
-                  ? 'bg-purple-600 text-white shadow-md shadow-purple-200'
-                  : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-purple-200 hover:text-purple-600'
-              }`}>
-              <span>{tab.emoji}</span>{tab.label}
-            </button>
-          ))}
+        {/* Tab bar + Fullscreen button */}
+        <div className="flex items-center gap-1.5 mb-4">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide flex-1">
+            {TABS.map((tab) => (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all min-h-[44px] ${
+                  activeTab === tab.id
+                    ? 'bg-purple-600 text-white shadow-md shadow-purple-200'
+                    : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-purple-200 hover:text-purple-600'
+                }`}>
+                <span>{tab.emoji}</span>{tab.label}
+              </button>
+            ))}
+          </div>
+          {/* Nút phóng to toàn màn hình — cho tất cả tab, tất cả khoá học */}
+          <button
+            onClick={() => setIsFullscreen(f => !f)}
+            title={isFullscreen ? 'Thu nhỏ' : 'Phóng to toàn màn hình'}
+            className="shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-white border-2 border-gray-100 hover:border-purple-300 hover:text-purple-600 text-gray-500 font-bold text-sm transition-all min-h-[44px] shadow-sm"
+          >
+            {isFullscreen
+              ? <><Minimize2 className="w-4 h-4" /><span className="hidden sm:inline">Thu nhỏ</span></>
+              : <><Maximize2 className="w-4 h-4" /><span className="hidden sm:inline">Phóng to</span></>}
+          </button>
         </div>
 
         {/* Tab content */}
