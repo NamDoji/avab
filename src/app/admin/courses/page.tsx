@@ -4,12 +4,33 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BookOpen, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 
+type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
+
+const COURSE_TYPE_OPTIONS: { value: CourseType; label: string; emoji: string; color: string }[] = [
+  { value: 'TOAN',                 label: 'Toán',                    emoji: '📐', color: 'bg-blue-50 text-blue-700' },
+  { value: 'TIENG_ANH',            label: 'Tiếng Anh',               emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
+  { value: 'LAP_TRINH_THUAT_TOAN', label: 'Lập trình thuật toán',    emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
+  { value: 'LAP_TRINH_SCRATCH',    label: 'Lập trình Scratch',       emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
+  { value: 'LAP_TRINH_PYTHON',     label: 'Lập trình Python',        emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
+  { value: 'LAP_TRINH_CPP',        label: 'Lập trình C++',           emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+]
+
+function CourseTypeBadge({ type }: { type: CourseType }) {
+  const opt = COURSE_TYPE_OPTIONS.find(o => o.value === type) ?? COURSE_TYPE_OPTIONS[0]
+  return (
+    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${opt.color}`}>
+      {opt.emoji} {opt.label}
+    </span>
+  )
+}
+
 interface Course {
   id: string
   code: string
   name: string
   description: string | null
   price: number | null
+  courseType: CourseType
   isActive: boolean
   createdAt: string
   _count: { subjects: number; enrollments: number }
@@ -19,7 +40,7 @@ export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ code: '', name: '', description: '', price: '0' })
+  const [form, setForm] = useState({ code: '', name: '', description: '', price: '0', courseType: 'TOAN' as CourseType })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -45,7 +66,7 @@ export default function AdminCoursesPage() {
     const data = await res.json()
     if (data.success) {
       setShowForm(false)
-      setForm({ code: '', name: '', description: '', price: '0' })
+      setForm({ code: '', name: '', description: '', price: '0', courseType: 'TOAN' })
       load()
     } else {
       setError(data.error)
@@ -98,20 +119,41 @@ export default function AdminCoursesPage() {
                 placeholder="Mã khoá (VD: TOAN-10)"
                 value={form.code}
                 onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
-                className="input-field border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
               <input
                 required
                 placeholder="Tên khoá học"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="input-field border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
+              {/* Course Type Combo Box */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Loại khoá học</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {COURSE_TYPE_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setForm(f => ({ ...f, courseType: opt.value }))}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border-2 text-sm font-semibold transition ${
+                        form.courseType === opt.value
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 text-gray-600 hover:border-purple-300'
+                      }`}
+                    >
+                      <span className="text-lg">{opt.emoji}</span>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <textarea
                 placeholder="Mô tả (tuỳ chọn)"
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                className="input-field border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 col-span-2"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 md:col-span-2"
                 rows={2}
               />
               <input
@@ -119,20 +161,20 @@ export default function AdminCoursesPage() {
                 placeholder="Học phí (VNĐ)"
                 value={form.price}
                 onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                className="input-field border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
-              <div className="flex gap-2">
+              <div className="flex gap-3 items-center">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg py-2.5 font-semibold transition"
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition"
                 >
-                  {saving ? 'Đang lưu...' : 'Lưu'}
+                  {saving ? 'Đang tạo...' : 'Tạo khoá học'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowForm(false)}
-                  className="px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                  onClick={() => { setShowForm(false); setError(null) }}
+                  className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 transition"
                 >
                   Huỷ
                 </button>
@@ -141,15 +183,12 @@ export default function AdminCoursesPage() {
           </div>
         )}
 
-        {/* Courses Table */}
+        {/* Courses list */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-10 text-center text-gray-400">Đang tải...</div>
+            <div className="p-12 text-center text-gray-400">Đang tải...</div>
           ) : courses.length === 0 ? (
-            <div className="p-10 text-center text-gray-400">
-              <BookOpen className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p>Chưa có khoá học nào</p>
-            </div>
+            <div className="p-12 text-center text-gray-400">Chưa có khoá học nào</div>
           ) : (
             <>
               {/* Mobile card layout */}
@@ -160,6 +199,9 @@ export default function AdminCoursesPage() {
                       <div className="flex-1 min-w-0">
                         <p className="font-mono text-xs text-gray-400">{course.code}</p>
                         <p className="font-semibold text-gray-800 leading-snug">{course.name}</p>
+                        <div className="mt-1">
+                          <CourseTypeBadge type={course.courseType ?? 'TOAN'} />
+                        </div>
                       </div>
                       <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${
                         course.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
@@ -195,6 +237,7 @@ export default function AdminCoursesPage() {
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
                       <th className="text-left p-4 text-sm font-semibold text-gray-600">Khoá học</th>
+                      <th className="text-left p-4 text-sm font-semibold text-gray-600">Loại</th>
                       <th className="text-left p-4 text-sm font-semibold text-gray-600">Chuyên đề</th>
                       <th className="text-left p-4 text-sm font-semibold text-gray-600">Học viên</th>
                       <th className="text-left p-4 text-sm font-semibold text-gray-600">Học phí</th>
@@ -208,6 +251,9 @@ export default function AdminCoursesPage() {
                         <td className="p-4">
                           <p className="font-mono text-xs text-gray-400">{course.code}</p>
                           <p className="font-semibold text-gray-800">{course.name}</p>
+                        </td>
+                        <td className="p-4">
+                          <CourseTypeBadge type={course.courseType ?? 'TOAN'} />
                         </td>
                         <td className="p-4 text-gray-600">{course._count.subjects}</td>
                         <td className="p-4 text-gray-600">{course._count.enrollments}</td>

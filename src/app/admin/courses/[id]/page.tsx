@@ -4,6 +4,26 @@ import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X } from 'lucide-react'
 
+type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
+
+const COURSE_TYPE_OPTIONS: { value: CourseType; label: string; emoji: string; color: string }[] = [
+  { value: 'TOAN',                 label: 'Toán',                 emoji: '📐', color: 'bg-blue-50 text-blue-700' },
+  { value: 'TIENG_ANH',            label: 'Tiếng Anh',            emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
+  { value: 'LAP_TRINH_THUAT_TOAN', label: 'Lập trình thuật toán', emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
+  { value: 'LAP_TRINH_SCRATCH',    label: 'Lập trình Scratch',    emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
+  { value: 'LAP_TRINH_PYTHON',     label: 'Lập trình Python',     emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
+  { value: 'LAP_TRINH_CPP',        label: 'Lập trình C++',        emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+]
+
+function CourseTypeBadge({ type }: { type: CourseType }) {
+  const opt = COURSE_TYPE_OPTIONS.find(o => o.value === type) ?? COURSE_TYPE_OPTIONS[0]
+  return (
+    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${opt.color}`}>
+      {opt.emoji} {opt.label}
+    </span>
+  )
+}
+
 interface Subject {
   id: string
   order: number
@@ -27,6 +47,7 @@ interface CourseDetail {
   name: string
   description: string | null
   price: number | null
+  courseType: CourseType
   isActive: boolean
   subjects: Subject[]
   enrollments: Enrollment[]
@@ -40,12 +61,12 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
   const [subjectForm, setSubjectForm] = useState({ name: '', icon: '', description: '', order: '0' })
   const [saving, setSaving] = useState(false)
 
-  // Feature 1: Edit course
+  // Edit course
   const [editingCourse, setEditingCourse] = useState(false)
-  const [editCourseForm, setEditCourseForm] = useState({ name: '', description: '' })
+  const [editCourseForm, setEditCourseForm] = useState({ name: '', description: '', courseType: 'TOAN' as CourseType })
   const [savingCourse, setSavingCourse] = useState(false)
 
-  // Feature 2: Add student by phone
+  // Add student by phone
   const [addStudentPhone, setAddStudentPhone] = useState('')
   const [addStudentMsg, setAddStudentMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [addingStudent, setAddingStudent] = useState(false)
@@ -80,21 +101,27 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
     load()
   }
 
-  // Feature 1: Start editing course
   const handleStartEditCourse = () => {
     if (!course) return
-    setEditCourseForm({ name: course.name, description: course.description ?? '' })
+    setEditCourseForm({
+      name: course.name,
+      description: course.description ?? '',
+      courseType: course.courseType ?? 'TOAN',
+    })
     setEditingCourse(true)
   }
 
-  // Feature 1: Save course edits
   const handleSaveCourse = async () => {
     if (!course) return
     setSavingCourse(true)
     const res = await fetch(`/api/admin/courses/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: editCourseForm.name, description: editCourseForm.description }),
+      body: JSON.stringify({
+        name: editCourseForm.name,
+        description: editCourseForm.description,
+        courseType: editCourseForm.courseType,
+      }),
     })
     const data = await res.json()
     if (data.success) {
@@ -104,7 +131,6 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
     setSavingCourse(false)
   }
 
-  // Feature 2: Add student by phone
   const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault()
     setAddingStudent(true)
@@ -144,13 +170,33 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
         {/* Course Header */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
           {editingCourse ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <input
                 value={editCourseForm.name}
                 onChange={(e) => setEditCourseForm((f) => ({ ...f, name: e.target.value }))}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-purple-400"
                 placeholder="Tên khoá học"
               />
+              {/* Course Type Selector in Edit Mode */}
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Loại khoá học</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {COURSE_TYPE_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setEditCourseForm(f => ({ ...f, courseType: opt.value }))}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm font-semibold transition ${
+                        editCourseForm.courseType === opt.value
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 text-gray-600 hover:border-purple-300'
+                      }`}
+                    >
+                      <span>{opt.emoji}</span> {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <textarea
                 value={editCourseForm.description}
                 onChange={(e) => setEditCourseForm((f) => ({ ...f, description: e.target.value }))}
@@ -175,13 +221,16 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
               </div>
             </div>
           ) : (
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <p className="font-mono text-sm text-gray-400">{course.code}</p>
                 <h1 className="text-2xl font-bold text-gray-800 mt-1">{course.name}</h1>
-                {course.description && <p className="text-gray-500 mt-2">{course.description}</p>}
+                <div className="mt-2">
+                  <CourseTypeBadge type={course.courseType ?? 'TOAN'} />
+                </div>
+                {course.description && <p className="text-gray-500 mt-2 text-sm">{course.description}</p>}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={handleStartEditCourse}
                   className="flex items-center gap-1.5 border border-gray-200 hover:border-purple-300 text-gray-500 hover:text-purple-600 text-sm px-3 py-1.5 rounded-lg transition"
@@ -301,7 +350,6 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
             <Users className="w-5 h-5 text-teal-600" /> Học viên đã đăng ký
           </h2>
 
-          {/* Feature 2: Add student by phone */}
           <form onSubmit={handleAddStudent} className="flex gap-2 mb-5 flex-wrap">
             <input
               type="tel"
