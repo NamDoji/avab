@@ -133,6 +133,7 @@ export default async function SubjectDetailPage({
             name: subject.name,
             courseId,
           }}
+          courseType={cType}
           materials={subject.materials}
           questions={subject.questions.map((q) => ({
             id: q.id,

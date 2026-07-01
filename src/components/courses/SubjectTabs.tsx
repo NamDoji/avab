@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Loader2, VideoOff, Star } from 'lucide-react'
+import { IDETab } from './IDETab'
 
 // ── Smart answer matching (giống server-side) ───────────────────────────────
 function smartMatch(student: string, correct: string): boolean {
@@ -242,6 +243,17 @@ interface Material {
   content: string | null; fileUrl: string | null; fileName: string | null
 }
 interface Top5Entry { rank: number; userId: string; name: string; score: number; isMe: boolean }
+type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
+
+const IDE_COURSE_TYPES: CourseType[] = ['LAP_TRINH_SCRATCH', 'LAP_TRINH_PYTHON', 'LAP_TRINH_CPP', 'LAP_TRINH_THUAT_TOAN']
+
+const IDE_TAB_LABEL: Partial<Record<CourseType, { label: string; emoji: string }>> = {
+  LAP_TRINH_SCRATCH:    { label: 'Scratch IDE', emoji: '🐱' },
+  LAP_TRINH_PYTHON:     { label: 'Python IDE',  emoji: '🐍' },
+  LAP_TRINH_CPP:        { label: 'C++ Editor',  emoji: '⚡' },
+  LAP_TRINH_THUAT_TOAN: { label: 'Robot',       emoji: '🤖' },
+}
+
 interface Props {
   subject: { id: string; name: string; courseId: string }
   materials: Material[]
@@ -250,16 +262,17 @@ interface Props {
   top5: Top5Entry[]
   userId: string
   userName: string
+  courseType?: CourseType
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
-const TABS = [
+const BASE_TABS = [
   { id: 'homework', label: 'BTVN',      emoji: '✏️' },
   { id: 'theory',   label: 'Bài giảng', emoji: '📖' },
-  { id: 'notebook', label: 'Vở viết',   emoji: '📓' },
   { id: 'answer',   label: 'Đáp án',    emoji: '✅' },
   { id: 'top5',     label: 'Top 5',     emoji: '🏆' },
 ]
+const NOTEBOOK_TAB = { id: 'notebook', label: 'Vở viết', emoji: '📓' }
 
 // ── Child-friendly option palettes for MULTIPLE_CHOICE ────────────────────
 // A = blue, B = green, C = yellow, D = red/orange
@@ -291,7 +304,11 @@ const MC_COLORS = [
 ]
 
 // ── Main Component ──────────────────────────────────────────────────────────
-export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName }: Props) {
+export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType }: Props) {
+  const hasIDE = courseType && IDE_COURSE_TYPES.includes(courseType)
+  const TABS = hasIDE
+    ? [...BASE_TABS.slice(0,2), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, ...BASE_TABS.slice(2)]
+    : [...BASE_TABS.slice(0,2), NOTEBOOK_TAB, ...BASE_TABS.slice(2)]
   const [activeTab, setActiveTab] = useState('homework')
   const [expandedQ, setExpandedQ] = useState<string | null>(null)
 
@@ -1001,7 +1018,10 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           )}
 
           {/* ── VỞ VIẾT ── */}
-          {activeTab === 'notebook' && (
+          {activeTab === 'ide' && courseType && hasIDE && (
+            <div className="py-2"><IDETab courseType={courseType} subjectName={subject.name} /></div>
+          )}
+          {activeTab === 'notebook' && !hasIDE && (
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-black text-gray-900">📓 Vở viết</h2>
