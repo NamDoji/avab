@@ -53,20 +53,25 @@ function checkAnswerByType(answer: string, q: Question): boolean {
 
   if (qType === 'MATCHING') {
     try {
-      const parsePairs = (s: string) =>
-        s.split(',').map(p => {
-          const eqIdx = p.indexOf('=')
-          return {
-            left:  p.slice(0, eqIdx).trim().toLowerCase(),
-            right: p.slice(eqIdx + 1).trim().toLowerCase(),
-          }
-        })
-      const correctPairs = parsePairs(q.correctAnswer)
-      const studentPairs = parsePairs(answer)
-      return correctPairs.every(cp => {
-        const sp = studentPairs.find(x => x.left === cp.left)
-        return sp ? smartMatch(sp.right, cp.right) : false
-      })
+      // Parse bất kể format: JSON array hoặc "left=right,left=right"
+      const parseMatchPairs = (s: string): Record<string, string> => {
+        const map: Record<string, string> = {}
+        if (s.trim().startsWith('[')) {
+          JSON.parse(s).forEach((p: any) => {
+            if (p.left && p.right) map[p.left.trim().toLowerCase()] = p.right.trim().toLowerCase()
+          })
+        } else {
+          s.split(',').forEach(pair => {
+            const idx = pair.indexOf('=')
+            if (idx > 0) map[pair.slice(0, idx).trim().toLowerCase()] = pair.slice(idx + 1).trim().toLowerCase()
+          })
+        }
+        return map
+      }
+      const correctMap = parseMatchPairs(q.correctAnswer)
+      const studentMap = parseMatchPairs(answer)
+      const filled = Object.entries(studentMap).filter(([, v]) => v)
+      return filled.length > 0 && filled.every(([k, v]) => correctMap[k] ? smartMatch(v, correctMap[k]) : false)
     } catch { return false }
   }
 
@@ -650,12 +655,33 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               ✅ Xác nhận →
             </button>
           )}
-          {isDone && !isCorrect && (
-            <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
-              <p className="font-bold text-orange-700 mb-1">💡 Xem gợi ý để biết đáp án đúng nhé!</p>
-              <p className="font-mono text-xs text-orange-600">{q.correctAnswer}</p>
-            </div>
-          )}
+          {isDone && !isCorrect && (() => {
+            // Hiển thị đáp án đúng dạng readable
+            let correctPairs: Array<{left:string;right:string}> = []
+            try {
+              if (q.correctAnswer.trim().startsWith('[')) {
+                correctPairs = JSON.parse(q.correctAnswer)
+              } else {
+                correctPairs = q.correctAnswer.split(',').map(p => {
+                  const i = p.indexOf('='); return {left:p.slice(0,i).trim(), right:p.slice(i+1).trim()}
+                })
+              }
+            } catch(_){}
+            return (
+              <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
+                <p className="font-bold text-orange-700 mb-2">💡 Đáp án đúng:</p>
+                <div className="space-y-1">
+                  {correctPairs.map((p, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm">
+                      <span className="text-blue-700 font-bold">{p.left}</span>
+                      <span className="text-gray-400">→</span>
+                      <span className="text-green-700 font-bold">{p.right}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
         </div>
       )
     }
