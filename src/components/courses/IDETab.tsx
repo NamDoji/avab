@@ -389,10 +389,16 @@ export function IDETab({ courseType, subjectName, questions = [], theoryContent,
       : 'flex flex-col gap-3'}>
 
       {/* Toolbar */}
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <Code2 className="w-4 h-4 text-purple-600" />
-        <span className="font-black text-gray-800 text-sm">{label[courseType] ?? '💻 IDE'}</span>
-        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full hidden sm:inline">{subjectName}</span>
+      <div className="flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <Code2 className="w-4 h-4 text-purple-600" />
+          <span className="font-black text-gray-800 text-sm">{label[courseType] ?? '💻 IDE'}</span>
+          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full hidden sm:inline">{subjectName}</span>
+        </div>
+        <button onClick={() => setIsFullscreen(f => !f)}
+          className="flex items-center gap-1 text-xs border border-gray-200 px-3 py-1.5 rounded-xl hover:bg-gray-50 text-gray-600 transition">
+          {isFullscreen ? <><Minimize2 className="w-3.5 h-3.5"/>Thu nhỏ</> : <><Maximize2 className="w-3.5 h-3.5"/>Phóng to</>}
+        </button>
       </div>
 
       {/* Layout: bài tập + lý thuyết trên, IDE dưới */}
