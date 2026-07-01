@@ -88,9 +88,9 @@ export function HeroSection() {
           {/* Social proof */}
           <div className="flex flex-wrap justify-center gap-6">
             {[
-              { icon: '👨‍👩‍👧', value: '500+', label: 'Phụ huynh tin tưởng' },
-              { icon: '📚', value: '100+', label: 'Học viên thành công' },
-              { icon: '⭐', value: '3 năm', label: 'Kinh nghiệm' },
+              { icon: '👨‍👩‍👧', value: '1.500+', label: 'Phụ huynh tin tưởng' },
+              { icon: '🎓', value: '715+', label: 'Học viên đã mua' },
+              { icon: '⭐', value: '3 năm', label: 'Hoạt động liên tục' },
               { icon: '🏆', value: 'Top 10', label: 'Điểm số tư duy' },
             ].map((item) => (
               <div key={item.label} className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 border border-white/20">

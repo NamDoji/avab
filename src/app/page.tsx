@@ -1,4 +1,5 @@
 import { HeroSection } from '@/components/home/HeroSection'
+import { YearlyStats } from '@/components/home/YearlyStats'
 import { StatsSection } from '@/components/home/StatsSection'
 import { WhyAvab } from '@/components/home/WhyAvab'
 import { FeaturedCourses } from '@/components/home/FeaturedCourses'
@@ -11,6 +12,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <YearlyStats />
       <StatsSection />
       <WhyAvab />
       <FeaturedCourses />
