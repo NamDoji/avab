@@ -36,10 +36,10 @@ export function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="container-custom py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="container-custom py-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
 
         {/* Brand */}
-        <div className="lg:col-span-1">
+        <div className="col-span-2 md:col-span-2 lg:col-span-1">
           <div className="mb-4">
             <div className="relative w-12 h-12">
               <Image src="/logo.png" alt="AvaB" fill className="object-contain" />

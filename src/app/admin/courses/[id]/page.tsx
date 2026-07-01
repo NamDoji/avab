@@ -63,7 +63,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
 
   // Edit course
   const [editingCourse, setEditingCourse] = useState(false)
-  const [editCourseForm, setEditCourseForm] = useState({ name: '', description: '', courseType: 'TOAN' as CourseType })
+  const [editCourseForm, setEditCourseForm] = useState({ name: '', description: '', courseType: 'TOAN' as CourseType, price: '1500000' })
   const [savingCourse, setSavingCourse] = useState(false)
 
   // Add student by phone
@@ -107,6 +107,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
       name: course.name,
       description: course.description ?? '',
       courseType: course.courseType ?? 'TOAN',
+      price: String(course.price ?? 1500000),
     })
     setEditingCourse(true)
   }
@@ -121,6 +122,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
         name: editCourseForm.name,
         description: editCourseForm.description,
         courseType: editCourseForm.courseType,
+        price: Number(editCourseForm.price) || 1500000,
       }),
     })
     const data = await res.json()
@@ -204,6 +206,17 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                 placeholder="Mô tả khoá học"
                 rows={3}
               />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">💰 Giá bán (VNĐ)</label>
+                <input
+                  type="number"
+                  value={editCourseForm.price}
+                  onChange={(e) => setEditCourseForm((f) => ({ ...f, price: e.target.value }))}
+                  placeholder="1500000"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+                <p className="text-xs text-gray-400 mt-1">Mặc định: 1.500.000đ — để trống = miễn phí</p>
+              </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleSaveCourse}

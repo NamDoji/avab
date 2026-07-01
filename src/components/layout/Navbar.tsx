@@ -41,11 +41,18 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close dropdown on outside click
+  // Close desktop dropdown + mobile menu on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
         setAboutOpen(false)
+      }
+      // Đóng mobile menu khi click ngoài
+      const nav = document.getElementById('mobile-menu-panel')
+      const toggle = document.getElementById('mobile-menu-toggle')
+      if (nav && toggle && !nav.contains(e.target as Node) && !toggle.contains(e.target as Node)) {
+        setIsOpen(false)
+        setAboutMobile(false)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -173,7 +180,7 @@ export function Navbar() {
             </Link>
 
             {/* Mobile toggle */}
-            <button onClick={() => setIsOpen(!isOpen)}
+            <button id="mobile-menu-toggle" onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden p-2 rounded-xl text-gray-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -183,7 +190,7 @@ export function Navbar() {
 
       {/* ── Mobile menu ── */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-t border-purple-100 shadow-xl">
+        <div id="mobile-menu-panel" className="lg:hidden bg-white border-t border-purple-100 shadow-xl">
           <div className="container-custom py-4 flex flex-col gap-1">
 
             {/* Về chúng tôi group */}

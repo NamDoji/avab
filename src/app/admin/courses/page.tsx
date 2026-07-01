@@ -40,7 +40,7 @@ export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ code: '', name: '', description: '', price: '0', courseType: 'TOAN' as CourseType })
+  const [form, setForm] = useState({ code: '', name: '', description: '', price: '1500000', courseType: 'TOAN' as CourseType })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -66,7 +66,7 @@ export default function AdminCoursesPage() {
     const data = await res.json()
     if (data.success) {
       setShowForm(false)
-      setForm({ code: '', name: '', description: '', price: '0', courseType: 'TOAN' })
+      setForm({ code: '', name: '', description: '', price: '1500000', courseType: 'TOAN' })
       load()
     } else {
       setError(data.error)
