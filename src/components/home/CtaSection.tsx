@@ -1,6 +1,14 @@
+'use client'
+
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { useLang } from '@/contexts/LanguageContext'
 
 export function CtaSection() {
+  const { data: session } = useSession()
+  const { lang } = useLang()
+  const vi = lang === 'vi'
+
   return (
     <section className="section-padding bg-white">
       <div className="container-custom">
@@ -11,26 +19,50 @@ export function CtaSection() {
 
           <div className="relative z-10">
             <div className="text-6xl mb-4">🚀</div>
-            <h2 className="text-3xl md:text-5xl font-black mb-4">
-              Bắt đầu hành trình của con hôm nay!
-            </h2>
-            <p className="text-white/80 max-w-xl mx-auto mb-8 text-lg">
-              Đăng ký miễn phí để nhận tư vấn chương trình học và demo thử một số chuyên đề.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/dang-ky"
-                className="inline-flex items-center justify-center gap-2 bg-white text-purple-700 font-extrabold text-lg py-4 px-10 rounded-3xl shadow-xl hover:scale-105 active:scale-95 transition-all"
-              >
-                Đăng ký miễn phí ngay ✨
-              </Link>
-              <Link
-                href="/khoa-hoc"
-                className="inline-flex items-center justify-center gap-2 border-2 border-white/50 text-white font-bold text-lg py-4 px-10 rounded-3xl hover:bg-white/10 transition-all"
-              >
-                Xem khoá học
-              </Link>
-            </div>
+
+            {session ? (
+              <>
+                <h2 className="text-3xl md:text-5xl font-black mb-4">
+                  {vi ? `Chào mừng trở lại, ${session.user?.name?.split(' ').pop()}! 👋` : `Welcome back, ${session.user?.name?.split(' ').pop()}! 👋`}
+                </h2>
+                <p className="text-white/80 max-w-xl mx-auto mb-8 text-lg">
+                  {vi
+                    ? 'Tiếp tục hành trình luyện thi của con. Các bài tập đang chờ!'
+                    : 'Continue your learning journey. Exercises are waiting!'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/khoa-hoc"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-purple-700 font-extrabold text-lg py-4 px-10 rounded-3xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    {vi ? '📚 Tiếp tục học' : '📚 Continue Learning'}
+                  </Link>
+                  <Link href="/hoc-vien"
+                    className="inline-flex items-center justify-center gap-2 border-2 border-white/50 text-white font-bold text-lg py-4 px-10 rounded-3xl hover:bg-white/10 transition-all">
+                    {vi ? 'Trang cá nhân' : 'My Dashboard'}
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-3xl md:text-5xl font-black mb-4">
+                  {vi ? 'Bắt đầu hành trình của con hôm nay!' : 'Start your child\'s journey today!'}
+                </h2>
+                <p className="text-white/80 max-w-xl mx-auto mb-8 text-lg">
+                  {vi
+                    ? 'Đăng ký miễn phí để nhận tư vấn chương trình học và demo thử một số chuyên đề.'
+                    : 'Sign up free to get a consultation and try demo lessons.'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/dang-ky"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-purple-700 font-extrabold text-lg py-4 px-10 rounded-3xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    {vi ? 'Đăng ký miễn phí ngay ✨' : 'Sign up free now ✨'}
+                  </Link>
+                  <Link href="/khoa-hoc"
+                    className="inline-flex items-center justify-center gap-2 border-2 border-white/50 text-white font-bold text-lg py-4 px-10 rounded-3xl hover:bg-white/10 transition-all">
+                    {vi ? 'Xem khoá học' : 'View courses'}
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
