@@ -591,23 +591,29 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             {pairs.map((pair, i) => {
               const leftKey = pair.left || String(i)
               const studentVal = inputs[leftKey] || ''
+              // Tất cả các giá trị bên phải làm dropdown
+              const rightOptions = pairs.map(p => p.right).filter(Boolean) as string[]
               return (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="flex-1 bg-blue-100 border-2 border-blue-300 rounded-2xl px-4 py-3 text-blue-900 font-bold text-base min-w-0 shadow-sm">
+                  <div className="flex-1 bg-blue-100 border-2 border-blue-300 rounded-2xl px-4 py-3 text-blue-900 font-black text-base min-w-0 shadow-sm">
                     {pair.left}
                   </div>
                   <span className="text-gray-400 font-black shrink-0 text-xl">→</span>
-                  <input type="text"
+                  <select
                     value={studentVal}
                     onChange={e => !isDone && handleMatchingInput(q.id, leftKey, e.target.value)}
                     disabled={isDone}
-                    placeholder="Điền đáp án..."
-                    className={`flex-1 px-4 py-3 rounded-2xl border-2 text-base font-semibold focus:outline-none transition-all min-w-0 shadow-sm ${
+                    className={`flex-1 px-4 py-3 rounded-2xl border-2 text-base font-semibold focus:outline-none transition-all min-w-0 shadow-sm bg-white ${
                       isDone
                         ? isCorrect ? 'border-teal-400 bg-teal-50 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
-                        : 'border-purple-300 bg-white focus:border-purple-500'
+                        : studentVal ? 'border-purple-400 bg-purple-50' : 'border-purple-200'
                     }`}
-                  />
+                  >
+                    <option value="">— Chọn —</option>
+                    {rightOptions.map((opt, j) => (
+                      <option key={j} value={opt}>{opt}</option>
+                    ))}
+                  </select>
                 </div>
               )
             })}
