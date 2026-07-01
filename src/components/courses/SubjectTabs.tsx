@@ -381,10 +381,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const computeAnswer = (q: Question): string => {
     const qType = (q.questionType || 'OPEN').toUpperCase()
     if (qType === 'MATCHING') {
-      const pairs = (q.options || []) as QuestionOption[]
+      let pairs: QuestionOption[] = (q.options || []) as QuestionOption[]
+      if (pairs.length === 0 && q.correctAnswer) {
+        try { pairs = JSON.parse(q.correctAnswer) } catch {}
+      }
       return pairs
-        .filter(p => p.left !== undefined)
-        .map(p => `${p.left}=${matchingInputs[q.id]?.[p.left!] || ''}`)
+        .filter((p: QuestionOption) => p.left !== undefined)
+        .map((p: QuestionOption) => `${p.left}=${matchingInputs[q.id]?.[p.left!] || ''}`)
         .join(',')
     }
     return userAnswers[q.id] || ''
@@ -582,14 +585,21 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
     // ── MATCHING ─────────────────────────────────────────────────────────────
     if (qType === 'MATCHING') {
-      // Parse options chắc chắn lấy được left/right dù JSON hay object
-      const rawOpts = q.options || []
-      const pairs: Array<{left: string; right: string}> = (Array.isArray(rawOpts) ? rawOpts : [])
-        .map((item: any) => ({
-          left:  String(item?.left  ?? item?.key  ?? ''),
-          right: String(item?.right ?? item?.text ?? ''),
-        }))
-        .filter(p => p.left && p.right)
+      // Parse pairs từ options hoặc correctAnswer (dự phòng JSON serialize mất)
+      function parsePairs(src: any): Array<{left:string;right:string}> {
+        const arr = Array.isArray(src) ? src : []
+        return arr
+          .map((item: any) => ({
+            left:  String(item?.left  ?? item?.key  ?? ''),
+            right: String(item?.right ?? item?.text ?? ''),
+          }))
+          .filter((p: {left:string;right:string}) => p.left && p.right)
+      }
+      // Ưu tiên options, fallback sang correctAnswer (JSON string)
+      let pairs = parsePairs(q.options)
+      if (pairs.length === 0 && q.correctAnswer) {
+        try { pairs = parsePairs(JSON.parse(q.correctAnswer)) } catch {}
+      }
       const inputs = matchingInputs[q.id] || {}
       const hasAnyInput = Object.values(inputs).some(v => v.trim())
       return (
