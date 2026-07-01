@@ -1081,7 +1081,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
           {/* ── VỞ VIẾT ── */}
           {activeTab === 'ide' && courseType && hasIDE && (
-            <div className="py-2"><IDETab courseType={courseType} subjectName={subject.name} /></div>
+            <div className="py-2"><IDETab courseType={courseType} subjectName={subject.name} questions={questions as any} /></div>
           )}
           {activeTab === 'notebook' && !hasIDE && (
             <div>
