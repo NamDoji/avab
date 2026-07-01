@@ -8,7 +8,21 @@ import ReactMarkdown from 'react-markdown'
 // ── Markdown renderer — renders bài giảng đẹp ───────────────────────────
 function MarkdownLesson({ content }: { content: string }) {
   return (
-    <div className="prose prose-sm max-w-none prose-headings:font-black prose-headings:text-gray-900 prose-h1:text-xl prose-h2:text-lg prose-h2:text-purple-700 prose-h3:text-base prose-h3:text-gray-800 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 prose-table:text-sm prose-th:bg-purple-50 prose-th:text-purple-800 prose-th:font-bold prose-td:border-gray-200 prose-pre:bg-gray-900 prose-pre:rounded-2xl prose-code:bg-gray-100 prose-code:text-purple-700 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
+    <div className="prose prose-sm max-w-none break-words
+      prose-headings:font-black prose-headings:text-gray-900
+      prose-h1:text-xl prose-h1:mt-0
+      prose-h2:text-base prose-h2:text-purple-700 prose-h2:border-b prose-h2:border-purple-100 prose-h2:pb-1
+      prose-h3:text-sm prose-h3:text-gray-800
+      prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-2
+      prose-li:text-gray-700 prose-li:my-0.5
+      prose-strong:text-gray-900
+      prose-table:text-sm prose-table:w-full
+      prose-th:bg-purple-50 prose-th:text-purple-800 prose-th:font-bold prose-th:text-xs prose-th:p-2
+      prose-td:p-2 prose-td:border-gray-200 prose-td:text-xs prose-td:align-top
+      prose-pre:bg-gray-900 prose-pre:rounded-xl prose-pre:text-xs prose-pre:overflow-x-auto
+      prose-code:bg-gray-100 prose-code:text-purple-700 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
+      prose-blockquote:border-purple-300 prose-blockquote:bg-purple-50 prose-blockquote:rounded-r-xl prose-blockquote:py-1
+      [&_table]:border-collapse [&_td]:border [&_th]:border">
       <ReactMarkdown>{content}</ReactMarkdown>
     </div>
   )

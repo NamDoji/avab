@@ -277,20 +277,14 @@ function ProblemPanel({
 
   return (
     <div className="flex flex-col h-full bg-white rounded-2xl border-2 border-purple-100 overflow-hidden shadow-sm">
-      {/* Tabs */}
-      <div className="flex border-b border-gray-100 flex-shrink-0">
-        <button onClick={() => setTab('problems')}
-          className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-1 transition ${tab === 'problems' ? 'text-purple-700 border-b-2 border-purple-600 bg-purple-50' : 'text-gray-500 hover:text-gray-700'}`}>
-          <Code2 className="w-3.5 h-3.5" /> Bài tập ({problems.length})
-        </button>
-        <button onClick={() => setTab('theory')}
-          className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-1 transition ${tab === 'theory' ? 'text-purple-700 border-b-2 border-purple-600 bg-purple-50' : 'text-gray-500 hover:text-gray-700'}`}>
-          📖 Lý thuyết
-        </button>
+      {/* Header */}
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100 flex-shrink-0 bg-purple-50">
+        <Code2 className="w-4 h-4 text-purple-600" />
+        <span className="text-sm font-black text-purple-700">Bài tập thực hành ({problems.length} bài)</span>
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0">
-        {tab === 'problems' ? (
+        {(
           <div className="p-3 space-y-3">
             {/* Problem navigator */}
             <div className="flex gap-1 flex-wrap">
@@ -349,16 +343,6 @@ function ProblemPanel({
                 Bài tiếp <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="p-4">
-            {theoryContent ? (
-              <div className="prose prose-xs max-w-none prose-headings:font-black prose-headings:text-gray-900 prose-h2:text-purple-700 prose-code:bg-gray-100 prose-code:text-purple-700 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900 prose-pre:rounded-xl prose-pre:text-xs">
-                <ReactMarkdown>{theoryContent}</ReactMarkdown>
-              </div>
-            ) : (
-              <p className="text-center text-gray-400 text-sm py-8">Bài giảng {subjectName}</p>
-            )}
           </div>
         )}
       </div>
