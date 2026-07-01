@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { BookOpen, FileText, CheckCircle2, Trophy, ChevronDown, ChevronUp, Loader2, VideoOff, Star } from 'lucide-react'
+import { useState } from 'react'
+import { Loader2, VideoOff, Star } from 'lucide-react'
 
 // ── Smart answer matching (giống server-side) ───────────────────────────────
 function smartMatch(student: string, correct: string): boolean {
@@ -17,7 +17,58 @@ function smartMatch(student: string, correct: string): boolean {
   return false
 }
 
-// ── Web Audio: âm thanh không cần file ────────────────────────────────────────
+// ── Check answer by question type ──────────────────────────────────────────
+function checkAnswerByType(answer: string, q: Question): boolean {
+  if (!answer.trim()) return false
+  const qType = (q.questionType || 'OPEN').toUpperCase()
+
+  if (qType === 'MULTIPLE_CHOICE' || qType === 'TRUE_FALSE') {
+    return answer.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase()
+  }
+
+  if (qType === 'MATCHING') {
+    try {
+      const parsePairs = (s: string) =>
+        s.split(',').map(p => {
+          const eqIdx = p.indexOf('=')
+          return {
+            left: p.slice(0, eqIdx).trim().toLowerCase(),
+            right: p.slice(eqIdx + 1).trim().toLowerCase(),
+          }
+        })
+      const correctPairs = parsePairs(q.correctAnswer)
+      const studentPairs = parsePairs(answer)
+      return correctPairs.every(cp => {
+        const sp = studentPairs.find(x => x.left === cp.left)
+        return sp ? smartMatch(sp.right, cp.right) : false
+      })
+    } catch {
+      return false
+    }
+  }
+
+  if (qType === 'ORDERING') {
+    const studentLines = answer.split('\n').map(l => l.trim()).filter(Boolean)
+    try {
+      const correctOrder = JSON.parse(q.correctAnswer) as string[]
+      return (
+        correctOrder.length === studentLines.length &&
+        correctOrder.every((item, i) => smartMatch(studentLines[i], item))
+      )
+    } catch {
+      const correctItems = q.correctAnswer.split(',').map(s => s.trim())
+      return (
+        correctItems.length === studentLines.length &&
+        correctItems.every((item, i) => smartMatch(studentLines[i], item))
+      )
+    }
+  }
+
+  // OPEN (default)
+  return smartMatch(answer, q.correctAnswer)
+}
+
+// ── Web Audio: âm thanh không cần file ────────────────────────────────────
 function playSound(type: 'correct' | 'wrong' | 'complete') {
   try {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -32,17 +83,14 @@ function playSound(type: 'correct' | 'wrong' | 'complete') {
     }
     const now = ctx.currentTime
     if (type === 'correct') {
-      // Ding-dong vui: C-E-G nhanh
       play(523, now,        0.18, 'sine', 0.35)
       play(659, now + 0.12, 0.18, 'sine', 0.35)
       play(784, now + 0.22, 0.28, 'sine', 0.35)
     } else if (type === 'wrong') {
-      // Tiếng hỏi nhẹ nhàng
       play(440, now,        0.15, 'sine', 0.2)
       play(330, now + 0.18, 0.25, 'sine', 0.15)
     } else if (type === 'complete') {
-      // Fanfare chiến thắng
-      [523,659,784,1047,1319].forEach((f, i) => play(f, now + i*0.13, 0.35, 'sine', 0.38))
+      ;[523,659,784,1047,1319].forEach((f, i) => play(f, now + i*0.13, 0.35, 'sine', 0.38))
       play(1047, now + 0.7, 0.6, 'sine', 0.3)
     }
   } catch {}
@@ -53,7 +101,7 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
   name: string; correct: number; total: number
   onClose: () => void; onRetryAll: () => void; onRetryWrong: () => void
 }) {
-  const pct = total > 0 ? Math.round(correct / total * 100) : 0
+  const pct  = total > 0 ? Math.round(correct / total * 100) : 0
   const star = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0
   const msg  = pct >= 90 ? 'Tuyệt vời! Con giỏi lắm! 🌟'
              : pct >= 70 ? 'Rất tốt! Cố gắng thêm nhé! 💪'
@@ -64,12 +112,9 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
       onClick={onClose}>
       <div className="bg-white rounded-4xl p-8 max-w-sm w-full text-center shadow-2xl"
         onClick={e => e.stopPropagation()}>
-        {/* Confetti emoji animation */}
         <div className="text-5xl mb-2 animate-bounce">🎉</div>
         <h2 className="text-2xl font-black text-purple-700 mb-1">Chúc mừng con!</h2>
         <p className="text-xl font-bold text-gray-800 mb-4">{name}</p>
-
-        {/* Stars */}
         <div className="flex justify-center gap-2 mb-4">
           {[1,2,3].map(s => (
             <Star key={s} size={36}
@@ -77,19 +122,13 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
             />
           ))}
         </div>
-
-        {/* Score */}
         <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl p-5 text-white mb-4">
           <div className="text-5xl font-black text-yellow-300 mb-1">{correct}<span className="text-2xl text-white/60">/{total}</span></div>
           <p className="text-white/80 text-sm">câu đúng · {pct}% chính xác</p>
         </div>
-
         <p className="text-gray-600 font-semibold mb-5">{msg}</p>
-
         <div className="flex flex-col gap-2">
-          <button onClick={onClose} className="btn-primary w-full !py-3 text-sm">
-            Tiếp tục học 📚
-          </button>
+          <button onClick={onClose} className="btn-primary w-full !py-3 text-sm">Tiếp tục học 📚</button>
           <div className="flex gap-2">
             <button onClick={onRetryAll} className="flex-1 py-2.5 bg-purple-100 text-purple-700 font-bold rounded-2xl hover:bg-purple-200 transition text-sm">
               🔄 Làm lại toàn bộ
@@ -150,16 +189,12 @@ function MaterialView({ url, title }: { url: string; title?: string | null }) {
 function VideoPanel({ videoMaterial }: { videoMaterial: { fileUrl: string | null; content: string | null; title: string | null } | null }) {
   const url = videoMaterial?.fileUrl || videoMaterial?.content || ''
   const r = url ? resolveEmbedUrl(url) : null
-
   return (
     <div className="bg-gray-900 rounded-3xl overflow-hidden shadow-xl">
-      {/* Header */}
       <div className="px-4 py-3 flex items-center gap-2 border-b border-white/10">
         <span className="text-red-400 text-lg">🎬</span>
         <span className="text-white font-bold text-sm">Video bài giảng</span>
       </div>
-
-      {/* Video content */}
       {r && (r.kind === 'iframe' || r.kind === 'video') ? (
         <div className="aspect-video w-full">
           {r.kind === 'iframe'
@@ -174,8 +209,6 @@ function VideoPanel({ videoMaterial }: { videoMaterial: { fileUrl: string | null
           <p className="text-xs text-gray-500">Giáo viên sẽ cập nhật sớm</p>
         </div>
       )}
-
-      {/* Link ngoài nếu có */}
       {url && (
         <div className="px-4 py-2 border-t border-white/10">
           <a href={url} target="_blank" rel="noopener noreferrer"
@@ -189,10 +222,24 @@ function VideoPanel({ videoMaterial }: { videoMaterial: { fileUrl: string | null
 }
 
 // ── Types ───────────────────────────────────────────────────────────────────
+interface QuestionOption {
+  key?: string
+  text?: string
+  left?: string
+  right?: string
+}
+
 interface Question {
   id: string; order: number; content: string
   correctAnswer: string; explanation?: string; points: number
+  /** "OPEN" | "MULTIPLE_CHOICE" | "TRUE_FALSE" | "MATCHING" | "ORDERING" */
+  questionType?: string
+  /** Varies by type: MC/TF → {key,text}[], MATCHING → {left,right}[], ORDERING → string[] */
+  options?: QuestionOption[] | string[]
+  /** Optional image shown above question text */
+  imageUrl?: string
 }
+
 interface Material {
   id: string; type: string; title: string | null
   content: string | null; fileUrl: string | null; fileName: string | null
@@ -208,7 +255,7 @@ interface Props {
   userName: string
 }
 
-// ── Tabs (Video đã tách ra sticky panel) ───────────────────────────────────
+// ── Tabs ───────────────────────────────────────────────────────────────────
 const TABS = [
   { id: 'homework', label: 'BTVN',      emoji: '✏️' },
   { id: 'theory',   label: 'Bài giảng', emoji: '📖' },
@@ -217,13 +264,46 @@ const TABS = [
   { id: 'top5',     label: 'Top 5',     emoji: '🏆' },
 ]
 
+// ── Option color palettes for MULTIPLE_CHOICE (child-friendly bright colors) ──
+const MC_COLORS = [
+  { // A — Blue
+    base:    'bg-blue-100 border-blue-400 text-blue-900 hover:bg-blue-200 hover:border-blue-500 hover:scale-[1.02]',
+    sel:     'bg-blue-200 border-blue-700 text-blue-900 border-4 scale-105 shadow-lg shadow-blue-200',
+    keyBase: 'bg-blue-400 text-white',
+    keySel:  'bg-blue-700 text-white',
+  },
+  { // B — Green
+    base:    'bg-green-100 border-green-400 text-green-900 hover:bg-green-200 hover:border-green-500 hover:scale-[1.02]',
+    sel:     'bg-green-200 border-green-700 text-green-900 border-4 scale-105 shadow-lg shadow-green-200',
+    keyBase: 'bg-green-400 text-white',
+    keySel:  'bg-green-700 text-white',
+  },
+  { // C — Yellow
+    base:    'bg-yellow-100 border-yellow-400 text-yellow-900 hover:bg-yellow-200 hover:border-yellow-500 hover:scale-[1.02]',
+    sel:     'bg-yellow-200 border-yellow-600 text-yellow-900 border-4 scale-105 shadow-lg shadow-yellow-200',
+    keyBase: 'bg-yellow-400 text-white',
+    keySel:  'bg-yellow-600 text-white',
+  },
+  { // D — Red/Orange
+    base:    'bg-red-100 border-red-400 text-red-900 hover:bg-red-200 hover:border-red-500 hover:scale-[1.02]',
+    sel:     'bg-red-200 border-red-700 text-red-900 border-4 scale-105 shadow-lg shadow-red-200',
+    keyBase: 'bg-red-400 text-white',
+    keySel:  'bg-red-700 text-white',
+  },
+]
+
 // ── Main Component ──────────────────────────────────────────────────────────
 export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName }: Props) {
   const [activeTab, setActiveTab] = useState('homework')
   const [expandedQ, setExpandedQ] = useState<string | null>(null)
+
+  // Answer state
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>(
     Object.fromEntries(Object.entries(answersMap).map(([k, v]) => [k, v.answer]))
   )
+  // Matching inputs: qId → { leftItem → studentAnswer }
+  const [matchingInputs, setMatchingInputs] = useState<Record<string, Record<string, string>>>({})
+
   const [submitted, setSubmitted] = useState<Record<string, boolean>>(
     Object.fromEntries(Object.entries(answersMap).map(([k]) => [k, true]))
   )
@@ -231,64 +311,84 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
     Object.fromEntries(Object.entries(answersMap).map(([k, v]) => [k, v.isCorrect]))
   )
   const [showHint, setShowHint] = useState<Record<string, boolean>>({})
-  const [hintPeeked, setHintPeeked] = useState<Record<string, boolean>>({}) // xem hint trước nộp
+  const [hintPeeked, setHintPeeked] = useState<Record<string, boolean>>({})
   const [aiLoading, setAiLoading] = useState(false)
   const [aiResult, setAiResult] = useState<any>(null)
   const [submittingAll, setSubmittingAll] = useState(false)
   const [notebookText, setNotebookText] = useState('')
   const [notebookSubmitting, setNotebookSubmitting] = useState(false)
   const [notebookResult, setNotebookResult] = useState<any>(null)
-  const [notebookDone, setNotebookDone] = useState<Record<string, boolean>>({}) // câu đã viết vào vở
-  const [notebookQ, setNotebookQ] = useState<string | null>(null) // câu đang xem
+  const [notebookDone, setNotebookDone] = useState<Record<string, boolean>>({})
+  const [notebookQ, setNotebookQ] = useState<string | null>(null)
   const [showCongrat, setShowCongrat] = useState(false)
 
   const getMaterial = (type: string) => materials.filter((m) => m.type === type)
   const videoMaterial = getMaterial('VIDEO')[0] ?? null
 
+  // ── Compute the final answer string for any question type ─────────────────
+  const computeAnswer = (q: Question): string => {
+    const qType = (q.questionType || 'OPEN').toUpperCase()
+    if (qType === 'MATCHING') {
+      const pairs = (q.options || []) as QuestionOption[]
+      return pairs
+        .filter(p => p.left !== undefined)
+        .map(p => `${p.left}=${matchingInputs[q.id]?.[p.left!] || ''}`)
+        .join(',')
+    }
+    return userAnswers[q.id] || ''
+  }
+
+  // ── Matching helper ───────────────────────────────────────────────────────
+  const handleMatchingInput = (qId: string, leftKey: string, value: string) => {
+    setMatchingInputs(prev => ({
+      ...prev,
+      [qId]: { ...(prev[qId] || {}), [leftKey]: value },
+    }))
+  }
+
+  // ── Submit one question ───────────────────────────────────────────────────
   const handleAnswerQ = async (q: Question) => {
-    const ans = userAnswers[q.id] || ''
+    const ans = computeAnswer(q)
     if (!ans.trim()) return
-    const isCorrect = smartMatch(ans, q.correctAnswer)
+    const isCorrect = checkAnswerByType(ans, q)
     setSubmitted((p) => ({ ...p, [q.id]: true }))
     setResults((p) => ({ ...p, [q.id]: isCorrect }))
-    // Âm thanh ngay khi nộp
     playSound(isCorrect ? 'correct' : 'wrong')
     await fetch('/api/answers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         subjectId: subject.id,
-        answers: [{ questionId: q.id, answer: ans, hintPenalty: hintPeeked[q.id] ? 0.5 : 0 }]
+        answers: [{ questionId: q.id, answer: ans, hintPenalty: hintPeeked[q.id] ? 0.5 : 0 }],
       }),
     }).catch(() => {})
   }
 
-  // Làm lại: toàn bộ hoặc chỉ câu sai
+  // ── Retry ─────────────────────────────────────────────────────────────────
   const handleRetry = (onlyWrong: boolean) => {
     setAiResult(null)
     setShowCongrat(false)
     setExpandedQ(null)
     if (onlyWrong) {
-      // Reset chỉ câu sai
       const wrongIds = questions.filter(q => submitted[q.id] && !results[q.id]).map(q => q.id)
       setSubmitted(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
       setResults(p  => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
       setUserAnswers(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
       setShowHint(p    => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
       setHintPeeked(p  => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setMatchingInputs(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
     } else {
-      // Reset toàn bộ
-      setSubmitted({}); setResults({}); setUserAnswers({}); setShowHint({}); setHintPeeked({})
+      setSubmitted({}); setResults({}); setUserAnswers({})
+      setShowHint({}); setHintPeeked({}); setMatchingInputs({})
     }
   }
 
+  // ── Submit all ────────────────────────────────────────────────────────────
   const handleSubmitAll = async () => {
     setSubmittingAll(true)
-    // Nộp hết các câu chưa nộp
-    for (const q of questions.filter((q) => !submitted[q.id] && userAnswers[q.id]?.trim())) {
+    for (const q of questions.filter((q) => !submitted[q.id] && computeAnswer(q).trim())) {
       await handleAnswerQ(q)
     }
-    // Âm thanh + màn hình chúc mừng
     playSound('complete')
     setShowCongrat(true)
     setAiLoading(true)
@@ -324,6 +424,240 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const totalCorrect  = questions.filter((q) => results[q.id] === true).length
   const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0
 
+  // ── Render question input by type ─────────────────────────────────────────
+  const renderQuestionInput = (q: Question, isDone: boolean, isCorrect: boolean) => {
+    const qType = (q.questionType || 'OPEN').toUpperCase()
+    const selectedAns = userAnswers[q.id] || ''
+
+    // ── MULTIPLE_CHOICE ──────────────────────────────────────────────────────
+    if (qType === 'MULTIPLE_CHOICE') {
+      const opts = (q.options || []) as QuestionOption[]
+      return (
+        <div className="mb-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+            {opts.map((opt, i) => {
+              const key = opt.key || String(i)
+              const text = opt.text || ''
+              const isSelected = selectedAns === key
+              const isThisCorrect = isDone && key.toLowerCase() === q.correctAnswer.trim().toLowerCase()
+              const isThisWrong = isDone && isSelected && !isCorrect
+              const palette = MC_COLORS[i] || MC_COLORS[0]
+
+              let cls = 'flex items-center gap-3 p-3 rounded-2xl border-2 cursor-pointer transition-all text-left font-bold text-sm w-full '
+              if (isDone) {
+                if (isThisCorrect) cls += 'bg-teal-100 border-teal-400 text-teal-800'
+                else if (isThisWrong) cls += 'bg-red-100 border-red-400 text-red-800'
+                else cls += 'bg-gray-50 border-gray-200 text-gray-400'
+              } else {
+                cls += isSelected ? palette.sel : palette.base
+              }
+
+              let keyBgCls = 'w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black shrink-0 text-white '
+              if (isDone) {
+                keyBgCls += isThisCorrect ? 'bg-teal-500' : isThisWrong ? 'bg-red-500' : 'bg-gray-300'
+              } else {
+                keyBgCls += isSelected ? 'bg-purple-600' : palette.keyBg
+              }
+
+              return (
+                <button key={key} disabled={isDone}
+                  onClick={() => setUserAnswers(p => ({ ...p, [q.id]: key }))}
+                  className={cls}>
+                  <span className={keyBgCls}>{key}</span>
+                  <span className="flex-1 leading-snug">{text}</span>
+                  {isDone && isThisCorrect && <span className="text-lg shrink-0">✅</span>}
+                  {isDone && isThisWrong   && <span className="text-lg shrink-0">❌</span>}
+                </button>
+              )
+            })}
+          </div>
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={!selectedAns}
+              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
+              Nộp →
+            </button>
+          )}
+        </div>
+      )
+    }
+
+    // ── TRUE_FALSE ───────────────────────────────────────────────────────────
+    if (qType === 'TRUE_FALSE') {
+      const tfOpts = [
+        { key: 'Đúng', emoji: '✅' },
+        { key: 'Sai',  emoji: '❌' },
+      ]
+      return (
+        <div className="mb-3">
+          <div className="flex gap-3 mb-3">
+            {tfOpts.map(opt => {
+              const isSelected = selectedAns === opt.key
+              const isThisCorrect = isDone && opt.key.toLowerCase() === q.correctAnswer.trim().toLowerCase()
+              const isThisWrong = isDone && isSelected && !isCorrect
+
+              let cls = 'flex-1 flex items-center justify-center gap-2 py-5 rounded-2xl border-2 cursor-pointer transition-all text-lg font-black '
+              if (isDone) {
+                if (isThisCorrect) cls += 'bg-teal-100 border-teal-400 text-teal-800'
+                else if (isThisWrong) cls += 'bg-red-100 border-red-400 text-red-800'
+                else cls += 'bg-gray-50 border-gray-200 text-gray-400'
+              } else {
+                if (opt.key === 'Đúng') {
+                  cls += isSelected
+                    ? 'bg-teal-500 border-teal-500 text-white shadow-lg scale-105'
+                    : 'bg-teal-50 border-teal-300 text-teal-700 hover:bg-teal-100'
+                } else {
+                  cls += isSelected
+                    ? 'bg-red-500 border-red-500 text-white shadow-lg scale-105'
+                    : 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100'
+                }
+              }
+
+              return (
+                <button key={opt.key} disabled={isDone}
+                  onClick={() => setUserAnswers(p => ({ ...p, [q.id]: opt.key }))}
+                  className={cls}>
+                  {opt.emoji} {opt.key}
+                </button>
+              )
+            })}
+          </div>
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={!selectedAns}
+              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
+              Nộp →
+            </button>
+          )}
+        </div>
+      )
+    }
+
+    // ── MATCHING ─────────────────────────────────────────────────────────────
+    if (qType === 'MATCHING') {
+      const pairs = (q.options || []) as QuestionOption[]
+      const inputs = matchingInputs[q.id] || {}
+      const hasAnyInput = Object.values(inputs).some(v => v.trim())
+      return (
+        <div className="mb-3">
+          <p className="text-xs text-purple-600 font-bold mb-3 flex items-center gap-1">
+            🔗 Nối các mục bên trái với đáp án tương ứng:
+          </p>
+          <div className="space-y-2.5 mb-3">
+            {pairs.map((pair, i) => {
+              const leftKey = pair.left || String(i)
+              const studentVal = inputs[leftKey] || ''
+              return (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="flex-1 bg-blue-50 border-2 border-blue-200 rounded-xl px-4 py-2.5 text-blue-800 font-bold text-sm min-w-0">
+                    {pair.left}
+                  </div>
+                  <span className="text-gray-400 font-black shrink-0 text-lg">→</span>
+                  <input type="text"
+                    value={studentVal}
+                    onChange={e => !isDone && handleMatchingInput(q.id, leftKey, e.target.value)}
+                    disabled={isDone}
+                    placeholder="Điền đáp án..."
+                    className={`flex-1 px-3 py-2.5 rounded-xl border-2 text-sm font-semibold focus:outline-none transition-all min-w-0 ${
+                      isDone
+                        ? isCorrect
+                          ? 'border-teal-400 bg-teal-50 text-teal-700'
+                          : 'border-red-300 bg-red-50 text-red-700'
+                        : 'border-purple-200 bg-white focus:border-purple-400'
+                    }`}
+                  />
+                </div>
+              )
+            })}
+          </div>
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={!hasAnyInput}
+              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
+              Nộp →
+            </button>
+          )}
+          {isDone && !isCorrect && (
+            <div className="mt-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-2xl px-4 py-3">
+              <p className="font-bold mb-1">❌ Chưa khớp. Đáp án đúng:</p>
+              <p className="font-mono text-xs text-red-600">{q.correctAnswer}</p>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ── ORDERING ─────────────────────────────────────────────────────────────
+    if (qType === 'ORDERING') {
+      const shuffledItems = (q.options || []) as (string | QuestionOption)[]
+      return (
+        <div className="mb-3">
+          {shuffledItems.length > 0 && (
+            <div className="mb-3 p-3 bg-amber-50 border-2 border-amber-200 rounded-2xl">
+              <p className="text-xs font-bold text-amber-700 mb-2">📋 Các mục cần sắp xếp (đang bị xáo trộn):</p>
+              <div className="flex flex-wrap gap-2">
+                {shuffledItems.map((item, i) => (
+                  <span key={i} className="px-3 py-1.5 bg-white border-2 border-amber-300 rounded-xl text-sm font-bold text-amber-800">
+                    {typeof item === 'string' ? item : (item as QuestionOption).text || String(i + 1)}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          <p className="text-xs text-purple-600 font-bold mb-2">
+            ✍️ Nhập thứ tự đúng (mỗi mục một dòng):
+          </p>
+          <textarea
+            value={selectedAns}
+            onChange={e => !isDone && setUserAnswers(p => ({ ...p, [q.id]: e.target.value }))}
+            disabled={isDone}
+            placeholder={'Mục 1\nMục 2\nMục 3\n...'}
+            rows={Math.max(4, shuffledItems.length + 1)}
+            className={`w-full px-4 py-3 rounded-2xl border-2 text-sm font-medium focus:outline-none transition-all resize-y mb-3 font-mono ${
+              isDone
+                ? isCorrect
+                  ? 'border-teal-400 bg-teal-50 text-teal-700'
+                  : 'border-red-300 bg-red-50 text-red-700'
+                : 'border-purple-200 bg-white focus:border-purple-400'
+            }`}
+          />
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={!selectedAns.trim()}
+              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
+              Nộp →
+            </button>
+          )}
+        </div>
+      )
+    }
+
+    // ── OPEN (default) ────────────────────────────────────────────────────────
+    return (
+      <div className="flex gap-2 mb-3">
+        <input type="text" value={selectedAns}
+          onChange={(e) => { if (!isDone) setUserAnswers(p => ({ ...p, [q.id]: e.target.value })) }}
+          onKeyDown={(e) => e.key === 'Enter' && !isDone && handleAnswerQ(q)}
+          disabled={isDone}
+          placeholder="Nhập đáp số..."
+          autoFocus
+          className={`flex-1 px-5 py-3 rounded-2xl border-2 font-black text-center text-xl focus:outline-none transition-all ${
+            isDone
+              ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-700' : 'border-red-400 bg-red-100 text-red-700'
+              : 'border-purple-300 bg-white focus:border-purple-500'
+          }`}
+        />
+        {!isDone && (
+          <button onClick={() => handleAnswerQ(q)}
+            disabled={!selectedAns.trim()}
+            className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50">
+            Nộp →
+          </button>
+        )}
+      </div>
+    )
+  }
+
   // ── RENDER ─────────────────────────────────────────────────────────────────
   return (
     <>
@@ -342,7 +676,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       {/* ══ LEFT: Tabs + Content ══ */}
       <div className="w-full lg:flex-1 min-w-0">
 
-        {/* Video trên mobile (hiện ở đầu) */}
+        {/* Video trên mobile */}
         <div className="lg:hidden mb-4">
           <VideoPanel videoMaterial={videoMaterial} />
         </div>
@@ -387,12 +721,12 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                 </div>
               ) : (
                 <>
-                  {/* ── GRID CÂU HỌi ── */}
+                  {/* ── GRID CÂU HỎI ── */}
                   <div className="flex flex-wrap justify-center gap-2 mb-5 p-3 bg-gray-50 rounded-2xl">
                     {questions.map((q) => {
                       const isDone    = submitted[q.id]
                       const isCorrect = results[q.id]
-                      const hasInput  = !!userAnswers[q.id]?.trim() && !isDone
+                      const hasInput  = !isDone && !!computeAnswer(q).trim()
                       const isActive  = expandedQ === q.id
                       return (
                         <button key={q.id}
@@ -435,36 +769,32 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           ? isCorrect ? 'border-teal-300 bg-teal-50' : 'border-red-300 bg-red-50'
                           : 'border-purple-300 bg-purple-50/30'
                       }`}>
-                        {/* Số câu + nội dung */}
+                        {/* Số câu + badge loại câu hỏi */}
                         <div className="flex items-start gap-3 mb-4">
                           <div className={`w-9 h-9 rounded-2xl flex items-center justify-center text-sm font-black shrink-0 ${
                             isDone ? (isCorrect ? 'bg-teal-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-600 text-white'
                           }`}>{q.order}</div>
-                          <p className="font-bold text-gray-900 text-base leading-relaxed flex-1">{q.content}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-gray-900 text-base leading-relaxed">{q.content}</p>
+                            {q.questionType && q.questionType !== 'OPEN' && (
+                              <span className={`inline-flex items-center gap-1 mt-1 text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                                q.questionType === 'MULTIPLE_CHOICE' ? 'bg-blue-100 text-blue-700'
+                                : q.questionType === 'TRUE_FALSE' ? 'bg-green-100 text-green-700'
+                                : q.questionType === 'MATCHING'   ? 'bg-purple-100 text-purple-700'
+                                : q.questionType === 'ORDERING'   ? 'bg-amber-100 text-amber-700'
+                                : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                {q.questionType === 'MULTIPLE_CHOICE' && '🔘 Trắc nghiệm'}
+                                {q.questionType === 'TRUE_FALSE'      && '⚖️ Đúng / Sai'}
+                                {q.questionType === 'MATCHING'        && '🔗 Nối đôi'}
+                                {q.questionType === 'ORDERING'        && '🔢 Sắp xếp'}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        {/* Ô điền đáp án */}
-                        <div className="flex gap-2 mb-3">
-                          <input type="text" value={userAnswers[q.id] || ''}
-                            onChange={(e) => { if (!isDone) setUserAnswers(p => ({ ...p, [q.id]: e.target.value })) }}
-                            onKeyDown={(e) => e.key === 'Enter' && !isDone && handleAnswerQ(q)}
-                            disabled={isDone}
-                            placeholder="Nhập đáp số..."
-                            autoFocus
-                            className={`flex-1 px-5 py-3 rounded-2xl border-2 font-black text-center text-xl focus:outline-none transition-all ${
-                              isDone
-                                ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-700' : 'border-red-400 bg-red-100 text-red-700'
-                                : 'border-purple-300 bg-white focus:border-purple-500'
-                            }`}
-                          />
-                          {!isDone && (
-                            <button onClick={() => handleAnswerQ(q)}
-                              disabled={!userAnswers[q.id]?.trim()}
-                              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50">
-                              Nộp →
-                            </button>
-                          )}
-                        </div>
+                        {/* ── Ô nhập đáp án theo loại câu hỏi ── */}
+                        {renderQuestionInput(q, isDone, isCorrect)}
 
                         {/* Kết quả */}
                         {isDone && (
@@ -472,14 +802,18 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             isCorrect ? 'text-teal-700' : 'text-red-700'
                           }`}>
                             <span className="text-xl">{isCorrect ? '🎉' : '💪'}</span>
-                            {isCorrect ? 'Chuẩn rồi! Con giỏi lắm!' : `Đáp án đúng là: ${q.correctAnswer}`}
+                            {isCorrect
+                              ? 'Chuẩn rồi! Con giỏi lắm!'
+                              : (q.questionType === 'MATCHING' || q.questionType === 'ORDERING')
+                                ? 'Chưa đúng — xem gợi ý bên dưới nhé!'
+                                : `Đáp án đúng là: ${q.correctAnswer}`
+                            }
                           </div>
                         )}
 
                         {/* Gợi ý + cảnh báo trừ điểm */}
                         <div className="flex items-center gap-2 flex-wrap">
                           <button onClick={() => {
-                            // Mark peeked nếu chưa nộp câu này
                             if (!isDone && !hint) {
                               setHintPeeked(p => ({ ...p, [q.id]: true }))
                             }
@@ -501,12 +835,10 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           <div className="mt-2 bg-yellow-50 border border-yellow-200 rounded-2xl px-4 py-3 space-y-1.5">
                             <p className="text-sm font-bold text-yellow-800">Đáp án: <span className="text-teal-700 text-base">{q.correctAnswer}</span></p>
                             {q.explanation && (
-                              <>
-                                <div className="border-t border-yellow-200 pt-2">
-                                  <p className="text-xs font-bold text-blue-700 mb-1">📝 Lời giải chi tiết:</p>
-                                  <p className="text-sm text-blue-900 leading-relaxed">{q.explanation}</p>
-                                </div>
-                              </>
+                              <div className="border-t border-yellow-200 pt-2">
+                                <p className="text-xs font-bold text-blue-700 mb-1">📝 Lời giải chi tiết:</p>
+                                <p className="text-sm text-blue-900 leading-relaxed">{q.explanation}</p>
+                              </div>
                             )}
                           </div>
                         )}
@@ -514,9 +846,9 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     )
                   })()}
 
-                  {/* Nút nộp tất cả — chỉ active khi đã điền hết */}
+                  {/* Nút nộp tất cả */}
                   {!aiResult && (() => {
-                    const allAnswered = questions.every(q => submitted[q.id] || userAnswers[q.id]?.trim())
+                    const allAnswered = questions.every(q => submitted[q.id] || computeAnswer(q).trim())
                     const allDone    = questions.every(q => submitted[q.id])
                     return (
                       <div className="mt-2">
@@ -528,9 +860,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                         <button onClick={handleSubmitAll}
                           disabled={submittingAll || !allAnswered}
                           className={`w-full !py-4 flex items-center justify-center gap-2 text-base font-black rounded-3xl transition-all ${
-                            allAnswered
-                              ? 'btn-primary'
-                              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            allAnswered ? 'btn-primary' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           }`}>
                           {submittingAll
                             ? <><Loader2 className="animate-spin" size={18} /> Đang chấm & phân tích AI...</>
@@ -549,6 +879,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       <p className="text-sm font-medium">AI đang phân tích...</p>
                     </div>
                   )}
+
                   {aiResult && (
                     <div className="mt-4 bg-gradient-to-br from-purple-50 to-teal-50 rounded-3xl p-5 border border-purple-100">
                       <div className="flex items-center gap-2 mb-3">
@@ -565,17 +896,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       {aiResult.encouragement && (
                         <p className="text-center text-purple-600 font-semibold text-sm mt-3">{aiResult.encouragement}</p>
                       )}
-
-                      {/* Nút làm lại */}
                       <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                        <button
-                          onClick={() => handleRetry(false)}
+                        <button onClick={() => handleRetry(false)}
                           className="flex-1 py-3 bg-purple-600 text-white font-bold rounded-2xl hover:bg-purple-700 transition text-sm">
                           🔄 Làm lại toàn bộ
                         </button>
                         {questions.some(q => submitted[q.id] && !results[q.id]) && (
-                          <button
-                            onClick={() => handleRetry(true)}
+                          <button onClick={() => handleRetry(true)}
                             className="flex-1 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition text-sm">
                             🟡 Làm lại câu sai
                           </button>
@@ -613,7 +940,6 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* ── VỞ VIẾT ── */}
           {activeTab === 'notebook' && (
             <div>
-              {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-black text-gray-900">📓 Vở viết</h2>
                 {questions.length > 0 && (
@@ -630,12 +956,10 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                 </div>
               ) : (
                 <>
-                  {/* Hướng dẫn */}
                   <div className="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 mb-4 text-sm text-blue-800">
                     📝 <strong>Cách dùng:</strong> Bấm vào số câu → đọc đề bài → giải vào vở → bấm <strong>"Đã viết ✓"</strong>
                   </div>
 
-                  {/* Grid số câu */}
                   <div className="flex flex-wrap justify-center gap-2 mb-4 p-3 bg-gray-50 rounded-2xl">
                     {questions.map((q) => {
                       const done   = notebookDone[q.id]
@@ -656,13 +980,11 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     })}
                   </div>
 
-                  {/* Chú thích màu */}
                   <div className="flex justify-center gap-4 mb-4 text-xs text-gray-500">
                     <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-gray-200 inline-block"/> Chưa chép</span>
                     <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500 inline-block"/> Đã viết vào vở</span>
                   </div>
 
-                  {/* Nội dung câu được chọn */}
                   {notebookQ && (() => {
                     const q = questions.find(x => x.id === notebookQ)!
                     const done = notebookDone[q.id]
@@ -670,26 +992,20 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       <div className={`mb-4 rounded-3xl border-2 p-5 transition-all ${
                         done ? 'border-blue-300 bg-blue-50' : 'border-purple-300 bg-purple-50/40'
                       }`}>
-                        {/* Số câu */}
                         <div className="flex items-center gap-3 mb-4">
                           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 ${
                             done ? 'bg-blue-500 text-white' : 'bg-purple-600 text-white'
                           }`}>{q.order}</div>
                           <p className="text-xs text-gray-500 font-medium">Câu {q.order} / {questions.length}</p>
                         </div>
-
-                        {/* Nội dung đề bài - chữ to, rõ */}
                         <div className="bg-white rounded-2xl p-4 mb-4 border border-gray-100">
                           <p className="text-base md:text-lg font-bold text-gray-900 leading-relaxed">{q.content}</p>
                         </div>
-
-                        {/* Các nút điều hướng */}
                         <div className="flex gap-2 flex-wrap">
                           {!done ? (
                             <button
                               onClick={() => {
                                 setNotebookDone(p => ({ ...p, [q.id]: true }))
-                                // Tự động chuyển sang câu tiếp
                                 const idx = questions.findIndex(x => x.id === q.id)
                                 const next = questions[idx + 1]
                                 setNotebookQ(next ? next.id : null)
@@ -704,7 +1020,6 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                               ← Chưa xong
                             </button>
                           )}
-                          {/* Câu trước / câu sau */}
                           <div className="flex gap-2">
                             {questions.findIndex(x => x.id === q.id) > 0 && (
                               <button
@@ -726,7 +1041,6 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     )
                   })()}
 
-                  {/* Divider AI chấm — mở khi đã viết hết */}
                   <div className={`transition-all ${
                     Object.keys(notebookDone).length === questions.length ? 'opacity-100' : 'opacity-40'
                   }`}>
@@ -851,7 +1165,6 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       <div className="hidden lg:block lg:w-[42%] shrink-0">
         <div className="sticky top-24">
           <VideoPanel videoMaterial={videoMaterial} />
-          {/* Mini info */}
           <div className="mt-3 bg-white rounded-2xl border border-purple-100 px-4 py-3 text-xs text-gray-500 space-y-1">
             <p>📖 <strong className="text-gray-700">Bài giảng:</strong> slide/PDF lý thuyết</p>
             <p>✏️ <strong className="text-gray-700">BTVN:</strong> làm bài trực tiếp, chấm tự động</p>

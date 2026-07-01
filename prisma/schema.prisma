@@ -107,11 +107,15 @@ model Question {
   id            String   @id @default(cuid())
   subjectId     String
   order         Int      @default(0)
+  questionType  String   @default("OPEN")
   content       String
   imageUrl      String?
+  audioUrl      String?
+  options       Json?    // [{key:"A",text:"..."}, ...] for MULTIPLE_CHOICE; [{left,right}] for MATCHING
   correctAnswer String
   explanation   String?
   points        Int      @default(1)
+  metadata      Json?    // extra data per question type
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

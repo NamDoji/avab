@@ -1,9 +1,20 @@
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { BookOpen, Trophy, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { BookOpen, Trophy, CheckCircle, XCircle, AlertCircle, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { AIDashboard } from '@/components/ai/AIDashboard'
+
+type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
+
+const COURSE_TYPE_META: Record<CourseType, { emoji: string; label: string; gradient: string }> = {
+  TOAN:                 { emoji: '📐', label: 'Toán',             gradient: 'from-purple-500 to-indigo-600' },
+  TIENG_ANH:            { emoji: '🇬🇧', label: 'Tiếng Anh',       gradient: 'from-green-400 to-teal-600' },
+  LAP_TRINH_THUAT_TOAN: { emoji: '🤖', label: 'Lập trình tư duy', gradient: 'from-yellow-400 to-orange-500' },
+  LAP_TRINH_SCRATCH:    { emoji: '🐱', label: 'Scratch',          gradient: 'from-orange-400 to-pink-500' },
+  LAP_TRINH_PYTHON:     { emoji: '🐍', label: 'Python',           gradient: 'from-teal-400 to-cyan-600' },
+  LAP_TRINH_CPP:        { emoji: '⚡', label: 'C++',              gradient: 'from-violet-500 to-purple-700' },
+}
 
 async function getStudentData(userId: string) {
   const [enrollments, answers] = await Promise.all([
@@ -15,6 +26,7 @@ async function getStudentData(userId: string) {
             id: true,
             name: true,
             code: true,
+            courseType: true,
             thumbnail: true,
             _count: { select: { subjects: true } },
           },
@@ -37,9 +49,9 @@ async function getStudentData(userId: string) {
 
 function StatusBadge({ status }: { status: string }) {
   const config = {
-    PENDING: { icon: AlertCircle, label: 'Chờ duyệt', classes: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    APPROVED: { icon: CheckCircle, label: 'Đã duyệt', classes: 'bg-green-50 text-green-700 border-green-200' },
-    REJECTED: { icon: XCircle, label: 'Từ chối', classes: 'bg-red-50 text-red-700 border-red-200' },
+    PENDING:  { icon: AlertCircle,   label: 'Chờ duyệt', classes: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+    APPROVED: { icon: CheckCircle,   label: 'Đã duyệt',  classes: 'bg-green-50 text-green-700 border-green-200' },
+    REJECTED: { icon: XCircle,       label: 'Từ chối',   classes: 'bg-red-50 text-red-700 border-red-200' },
   }
   const { icon: Icon, label, classes } = config[status as keyof typeof config] ?? config.PENDING
   return (
@@ -50,120 +62,144 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
+// Star rating based on score percentage
+function ScoreStars({ pct }: { pct: number }) {
+  const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0
+  return (
+    <div className="flex gap-0.5">
+      {[1,2,3].map(s => (
+        <span key={s} className={`text-sm ${s <= stars ? 'text-yellow-400' : 'text-gray-200'}`}>⭐</span>
+      ))}
+    </div>
+  )
+}
+
 export default async function HocVienPage() {
   const session = await auth()
-
-  if (!session?.user) {
-    redirect('/dang-nhap')
-  }
+  if (!session?.user) redirect('/dang-nhap')
 
   const userId = (session.user as any).id as string
-  const { enrollments, totalScore, correctAnswers, totalAnswers } =
-    await getStudentData(userId)
+  const { enrollments, totalScore, correctAnswers, totalAnswers } = await getStudentData(userId)
 
   const approvedEnrollments = enrollments.filter((e) => e.status === 'APPROVED')
   const accuracy = totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0
 
+  // Star rating for overall accuracy
+  const globalStars = accuracy >= 90 ? 3 : accuracy >= 70 ? 2 : accuracy >= 50 ? 1 : 0
+
   return (
-    <main className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-teal-600 rounded-2xl p-8 text-white mb-8">
-          <h1 className="text-3xl font-bold mb-1">
-            Xin chào, {session.user.name ?? 'Học viên'} 👋
-          </h1>
-          <p className="text-purple-100">Dashboard học viên AVAB</p>
-        </div>
+    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-gray-50 pt-20">
+      <div className="max-w-5xl mx-auto px-4 py-8">
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            {
-              icon: BookOpen,
-              label: 'Khoá đã đăng ký',
-              value: enrollments.length,
-              color: 'text-purple-600',
-              bg: 'bg-purple-50',
-            },
-            {
-              icon: CheckCircle,
-              label: 'Khoá đã duyệt',
-              value: approvedEnrollments.length,
-              color: 'text-green-600',
-              bg: 'bg-green-50',
-            },
-            {
-              icon: Trophy,
-              label: 'Tổng điểm',
-              value: totalScore,
-              color: 'text-yellow-600',
-              bg: 'bg-yellow-50',
-            },
-            {
-              icon: Clock,
-              label: 'Độ chính xác',
-              value: `${accuracy}%`,
-              color: 'text-teal-600',
-              bg: 'bg-teal-50',
-            },
-          ].map(({ icon: Icon, label, value, color, bg }) => (
-            <div key={label} className={`${bg} rounded-xl p-5`}>
-              <Icon className={`w-6 h-6 ${color} mb-2`} />
-              <p className={`text-2xl font-bold ${color}`}>{value}</p>
-              <p className="text-gray-500 text-sm">{label}</p>
+        {/* Hero welcome card */}
+        <div className="relative bg-gradient-to-br from-purple-600 via-indigo-600 to-teal-600 rounded-3xl p-7 text-white mb-8 overflow-hidden">
+          {/* Decorative background circles */}
+          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
+          <div className="absolute bottom-0 left-20 w-24 h-24 bg-white/10 rounded-full translate-y-8" />
+
+          <div className="relative flex items-start justify-between gap-4">
+            <div>
+              <p className="text-white/70 text-sm font-semibold mb-1">Bảng điều khiển học viên</p>
+              <h1 className="text-2xl md:text-3xl font-black mb-3">
+                Xin chào, {session.user.name ?? 'Học viên'}! 👋
+              </h1>
+              <p className="text-white/80">
+                {approvedEnrollments.length > 0
+                  ? `Bạn đang học ${approvedEnrollments.length} khoá học. Cố lên nào! 💪`
+                  : 'Đăng ký khoá học để bắt đầu hành trình học tập nhé!'}
+              </p>
             </div>
-          ))}
+            {/* Big emoji based on accuracy */}
+            <div className="text-5xl shrink-0 hidden md:block">
+              {accuracy >= 90 ? '🏆' : accuracy >= 70 ? '🌟' : accuracy >= 50 ? '📚' : '🎯'}
+            </div>
+          </div>
+
+          {/* Overall stats inline */}
+          {totalAnswers > 0 && (
+            <div className="relative mt-5 flex flex-wrap gap-4">
+              <div className="bg-white/20 backdrop-blur rounded-2xl px-4 py-2.5 text-center min-w-[80px]">
+                <div className="text-2xl font-black">{totalScore}</div>
+                <div className="text-white/70 text-xs">Tổng điểm</div>
+              </div>
+              <div className="bg-white/20 backdrop-blur rounded-2xl px-4 py-2.5 text-center min-w-[80px]">
+                <div className="text-2xl font-black">{accuracy}%</div>
+                <div className="text-white/70 text-xs">Chính xác</div>
+              </div>
+              <div className="bg-white/20 backdrop-blur rounded-2xl px-4 py-2.5 text-center min-w-[80px]">
+                <div className="text-2xl font-black">{correctAnswers}</div>
+                <div className="text-white/70 text-xs">Câu đúng</div>
+              </div>
+              <div className="bg-white/20 backdrop-blur rounded-2xl px-4 py-2.5 flex items-center gap-1.5">
+                {[1,2,3].map(s => (
+                  <span key={s} className={`text-xl ${s <= globalStars ? 'text-yellow-300' : 'text-white/20'}`}>⭐</span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Enrolled Courses */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-5">Khoá học của tôi</h2>
+        {/* Enrolled courses */}
+        <div className="bg-white rounded-3xl shadow-sm p-6 mb-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-purple-600" />
+              Khoá học của tôi
+            </h2>
+            <Link href="/khoa-hoc" className="text-sm font-semibold text-purple-600 hover:text-purple-700">
+              + Thêm khoá học
+            </Link>
+          </div>
 
           {enrollments.length === 0 ? (
-            <div className="text-center py-10">
-              <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-400 mb-4">Bạn chưa đăng ký khoá học nào</p>
-              <Link
-                href="/khoa-hoc"
-                className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition"
-              >
-                Khám phá khoá học
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🎓</div>
+              <p className="text-gray-500 font-semibold mb-2">Chưa có khoá học nào</p>
+              <p className="text-gray-400 text-sm mb-5">Đăng ký khoá học để bắt đầu học tập!</p>
+              <Link href="/khoa-hoc" className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-2xl font-black text-sm transition">
+                📚 Xem khoá học ngay
               </Link>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
-              {enrollments.map((enrollment) => (
-                <div
-                  key={enrollment.id}
-                  className="border border-gray-100 rounded-xl p-4 hover:border-purple-200 transition"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex-1">
-                      <p className="text-xs text-gray-400 font-mono mb-1">
-                        {enrollment.course.code}
-                      </p>
-                      <h3 className="font-bold text-gray-800 line-clamp-2">
-                        {enrollment.course.name}
-                      </h3>
-                    </div>
-                    <StatusBadge status={enrollment.status} />
-                  </div>
+              {enrollments.map((enrollment) => {
+                const cType = ((enrollment.course as any).courseType as CourseType) ?? 'TOAN'
+                const meta = COURSE_TYPE_META[cType] ?? COURSE_TYPE_META.TOAN
+                return (
+                  <div key={enrollment.id} className="relative rounded-2xl border-2 border-gray-100 overflow-hidden hover:border-purple-200 transition group">
+                    {/* Color strip top */}
+                    <div className={`h-1.5 bg-gradient-to-r ${meta.gradient}`} />
+                    <div className="p-4">
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${meta.gradient} flex items-center justify-center text-xl shadow-sm shrink-0`}>
+                            {meta.emoji}
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-gray-400 font-mono">{enrollment.course.code}</p>
+                            <h3 className="font-black text-gray-800 text-sm leading-snug line-clamp-2">
+                              {enrollment.course.name}
+                            </h3>
+                          </div>
+                        </div>
+                        <StatusBadge status={enrollment.status} />
+                      </div>
 
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-gray-400">
-                      {enrollment.course._count.subjects} chuyên đề
-                    </p>
-                    {enrollment.status === 'APPROVED' && (
-                      <Link
-                        href={`/khoa-hoc/${enrollment.course.id}`}
-                        className="text-purple-600 hover:text-purple-700 text-sm font-semibold"
-                      >
-                        Vào học →
-                      </Link>
-                    )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">{enrollment.course._count.subjects} chuyên đề</span>
+                        {enrollment.status === 'APPROVED' ? (
+                          <Link href={`/khoa-hoc/${enrollment.course.id}`}
+                            className={`text-xs font-black px-3 py-1.5 rounded-full bg-gradient-to-r ${meta.gradient} text-white hover:opacity-90 transition`}>
+                            Vào học →
+                          </Link>
+                        ) : enrollment.status === 'PENDING' ? (
+                          <span className="text-xs text-amber-600 font-semibold">⏳ Đang xét duyệt</span>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
@@ -171,21 +207,18 @@ export default async function HocVienPage() {
         {/* AI Dashboard */}
         <AIDashboard userId={userId} />
 
-        {/* Quick Links */}
-        <div className="grid md:grid-cols-3 gap-4">
+        {/* Quick Links — child-friendly big buttons */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
           {[
-            { href: '/khoa-hoc', label: 'Tìm khoá học mới', icon: BookOpen, color: 'bg-purple-600' },
-            { href: '/bang-vang', label: 'Bảng xếp hạng', icon: Trophy, color: 'bg-yellow-500' },
-            { href: '/tin-tuc', label: 'Tin tức AVAB', icon: Clock, color: 'bg-teal-600' },
-            { href: '/doi-mat-khau', label: 'Đổi mật khẩu', icon: CheckCircle, color: 'bg-gray-600' },
-          ].map(({ href, label, icon: Icon, color }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`${color} hover:opacity-90 text-white rounded-xl p-5 flex items-center gap-3 transition`}
-            >
-              <Icon className="w-6 h-6" />
-              <span className="font-semibold">{label}</span>
+            { href: '/khoa-hoc',       label: 'Khám phá khoá học', emoji: '📚', gradient: 'from-purple-500 to-indigo-600' },
+            { href: '/bang-vang',      label: 'Bảng xếp hạng',     emoji: '🏆', gradient: 'from-yellow-400 to-orange-500' },
+            { href: '/tin-tuc',        label: 'Tin tức',            emoji: '📰', gradient: 'from-teal-400 to-cyan-600' },
+            { href: '/doi-mat-khau',   label: 'Đổi mật khẩu',      emoji: '🔑', gradient: 'from-gray-500 to-gray-700' },
+          ].map(({ href, label, emoji, gradient }) => (
+            <Link key={href} href={href}
+              className={`bg-gradient-to-br ${gradient} text-white rounded-2xl p-4 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition`}>
+              <span className="text-3xl">{emoji}</span>
+              <span className="text-xs font-black leading-snug">{label}</span>
             </Link>
           ))}
         </div>

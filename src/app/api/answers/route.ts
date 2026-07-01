@@ -51,7 +51,16 @@ export async function POST(req: NextRequest) {
         const question = questions.find((q: typeof questions[0]) => q.id === a.questionId)
         if (!question) return null
 
-        const isCorrect = smartMatch(a.answer, question.correctAnswer)
+        // Multiple choice / matching / ordering: so sánh chính xác (case-insensitive trim)
+        // OPEN: dùng smartMatch linh hoạt
+        const qType = (question as any).questionType ?? 'OPEN'
+        let isCorrect: boolean
+        if (qType === 'OPEN') {
+          isCorrect = smartMatch(a.answer, question.correctAnswer)
+        } else {
+          // Exact match (normalized) for structured types
+          isCorrect = a.answer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()
+        }
         const penalty = isCorrect ? (a.hintPenalty ?? 0) : 0
         const score = Math.max(0, isCorrect ? question.points - penalty : 0)
 

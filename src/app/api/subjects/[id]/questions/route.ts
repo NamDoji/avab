@@ -23,8 +23,11 @@ export async function GET(
       select: {
         id: true,
         order: true,
+        questionType: true,
         content: true,
         imageUrl: true,
+        audioUrl: true,
+        options: true,      // Trả options cho multiple choice / matching
         points: true,
         // Không trả correctAnswer cho client
       },

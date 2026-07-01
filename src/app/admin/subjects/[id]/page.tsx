@@ -2,13 +2,37 @@
 
 import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Upload, Plus, Trash2, FileText, BookOpen, Video, CheckSquare, Play, Link2, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Upload, Plus, Trash2, FileText, BookOpen, Video, CheckSquare, Play, Link2, ExternalLink, X } from 'lucide-react'
+
+// ── Types ──────────────────────────────────────────────────────────────────
+
+type QuestionType = 'OPEN' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'MATCHING' | 'ORDERING'
+
+interface QuestionForm {
+  questionType: QuestionType
+  content: string
+  imageUrl: string
+  correctAnswer: string
+  explanation: string
+  points: string
+  // MULTIPLE_CHOICE
+  optionA: string
+  optionB: string
+  optionC: string
+  optionD: string
+  // MATCHING
+  matchPairs: Array<{ left: string; right: string }>
+  // ORDERING
+  orderItems: string[]
+}
 
 interface Question {
   id: string
   order: number
+  questionType: string
   content: string
   correctAnswer: string
+  options: any
   points: number
 }
 
@@ -32,22 +56,53 @@ interface SubjectDetail {
 type MaterialType = 'THEORY' | 'VIDEO' | 'ANSWER'
 type InputMode = 'url' | 'upload'
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+
 /** Chuyển Google Drive share link → embed/preview link */
 function toEmbedUrl(url: string): string {
   if (!url) return url
-  // Google Drive file: /file/d/ID/view → /file/d/ID/preview
   const driveFile = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)
   if (driveFile) return `https://drive.google.com/file/d/${driveFile[1]}/preview`
-  // Google Docs/Slides/Sheets
   if (url.includes('docs.google.com') || url.includes('slides.google.com') || url.includes('sheets.google.com')) {
     return url.replace(/\/(edit|pub|view).*$/, '/preview')
   }
-  // YouTube watch → embed
   const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/)
   if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`
-  // Canva: trả nguyên
   return url
 }
+
+const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
+  OPEN: '📝 Tự luận',
+  MULTIPLE_CHOICE: '🔤 Trắc nghiệm',
+  TRUE_FALSE: '✅ Đúng/Sai',
+  MATCHING: '🔗 Nối đáp án',
+  ORDERING: '📋 Sắp xếp',
+}
+
+const QUESTION_TYPE_BADGE: Record<string, string> = {
+  OPEN: 'bg-gray-100 text-gray-600',
+  MULTIPLE_CHOICE: 'bg-blue-100 text-blue-700',
+  TRUE_FALSE: 'bg-green-100 text-green-700',
+  MATCHING: 'bg-orange-100 text-orange-700',
+  ORDERING: 'bg-violet-100 text-violet-700',
+}
+
+const DEFAULT_FORM: QuestionForm = {
+  questionType: 'OPEN',
+  content: '',
+  imageUrl: '',
+  correctAnswer: '',
+  explanation: '',
+  points: '1',
+  optionA: '',
+  optionB: '',
+  optionC: '',
+  optionD: '',
+  matchPairs: [{ left: '', right: '' }],
+  orderItems: [''],
+}
+
+// ── Component ──────────────────────────────────────────────────────────────
 
 export default function AdminSubjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -60,9 +115,10 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const [parseResult, setParseResult] = useState<{ parsed: number; questions: Question[] } | null>(null)
   const [saving, setSaving] = useState(false)
 
-  // ── Manual question ──
+  // ── Rich question form ──
   const [showQForm, setShowQForm] = useState(false)
-  const [qForm, setQForm] = useState({ content: '', correctAnswer: '', points: '1' })
+  const [qForm, setQForm] = useState<QuestionForm>(DEFAULT_FORM)
+  const [savingQ, setSavingQ] = useState(false)
 
   // ── Lý thuyết ──
   const [lyThuyetMode, setLyThuyetMode] = useState<InputMode>('url')
@@ -133,22 +189,69 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
     setSaving(false)
   }
 
+  // ── Rich question add ──
   const handleAddQuestion = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!subject) return
-    const fd = new FormData()
-    const text = `1. ${qForm.content}\nĐáp án: ${qForm.correctAnswer}\nĐiểm: ${qForm.points}`
-    fd.append('file', new Blob([text], { type: 'text/plain' }), 'question.txt')
-    fd.append('save', 'true')
-    await fetch(`/api/admin/subjects/${id}/parse-homework`, { method: 'POST', body: fd })
-    setShowQForm(false)
-    setQForm({ content: '', correctAnswer: '', points: '1' })
-    load()
+    setSavingQ(true)
+
+    const { questionType, content, imageUrl, explanation, points } = qForm
+    let options: any = undefined
+    let correctAnswer = qForm.correctAnswer
+
+    if (questionType === 'MULTIPLE_CHOICE') {
+      options = [
+        { key: 'A', text: qForm.optionA },
+        { key: 'B', text: qForm.optionB },
+        { key: 'C', text: qForm.optionC },
+        { key: 'D', text: qForm.optionD },
+      ]
+      // correctAnswer is already set to selected key (A/B/C/D)
+    } else if (questionType === 'TRUE_FALSE') {
+      options = [
+        { key: 'Đúng', text: 'Đúng' },
+        { key: 'Sai', text: 'Sai' },
+      ]
+      // correctAnswer is "Đúng" or "Sai"
+    } else if (questionType === 'MATCHING') {
+      options = qForm.matchPairs
+      correctAnswer = JSON.stringify(qForm.matchPairs)
+    } else if (questionType === 'ORDERING') {
+      options = qForm.orderItems
+      correctAnswer = JSON.stringify(qForm.orderItems)
+    }
+
+    const body = {
+      subjectId: id,
+      questionType,
+      content,
+      correctAnswer,
+      options,
+      explanation,
+      points: Number(points),
+      imageUrl: imageUrl || undefined,
+    }
+
+    const res = await fetch('/api/admin/questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json()
+    if (data.success) {
+      showMsg('success', 'Đã thêm câu hỏi!')
+      setQForm(DEFAULT_FORM)
+      setShowQForm(false)
+      load()
+    } else {
+      showMsg('error', data.error || 'Lỗi khi thêm câu hỏi')
+    }
+    setSavingQ(false)
   }
 
   const handleDeleteQuestion = async (qId: string) => {
     if (!confirm('Xoá câu hỏi này?')) return
-    await fetch(`/api/admin/subjects/${qId}`, { method: 'DELETE' })
+    await fetch(`/api/admin/questions/${qId}`, { method: 'DELETE' })
     load()
   }
 
@@ -247,6 +350,18 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const getMaterials = (type: MaterialType) =>
     (subject?.materials ?? []).filter((m) => m.type === type)
 
+  // ── Matching pair helpers ──
+  const addMatchPair = () => setQForm(f => ({ ...f, matchPairs: [...f.matchPairs, { left: '', right: '' }] }))
+  const removeMatchPair = (i: number) => setQForm(f => ({ ...f, matchPairs: f.matchPairs.filter((_, idx) => idx !== i) }))
+  const updateMatchPair = (i: number, side: 'left' | 'right', val: string) =>
+    setQForm(f => ({ ...f, matchPairs: f.matchPairs.map((p, idx) => idx === i ? { ...p, [side]: val } : p) }))
+
+  // ── Ordering item helpers ──
+  const addOrderItem = () => setQForm(f => ({ ...f, orderItems: [...f.orderItems, ''] }))
+  const removeOrderItem = (i: number) => setQForm(f => ({ ...f, orderItems: f.orderItems.filter((_, idx) => idx !== i) }))
+  const updateOrderItem = (i: number, val: string) =>
+    setQForm(f => ({ ...f, orderItems: f.orderItems.map((item, idx) => idx === i ? val : item) }))
+
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Đang tải...</div>
   if (!subject) return <div className="min-h-screen flex items-center justify-center text-red-500">Không tìm thấy chuyên đề</div>
 
@@ -287,7 +402,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
           </div>
         )}
 
-        {/* ═══ 5 LOẠI NỘI DUNG ═══ */}
+        {/* ═══ NỘI DUNG ═══ */}
         <div className="space-y-4">
 
           {/* ── 1. BÀI GIẢNG (LÝ THUYẾT) ── */}
@@ -298,7 +413,6 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
               <span className="text-xs font-normal text-gray-400 ml-1">— Google Drive, Canva, PDF, Word...</span>
             </h2>
 
-            {/* Danh sách đã lưu */}
             {getMaterials('THEORY').length > 0 && (
               <div className="space-y-2 mb-4">
                 {getMaterials('THEORY').map((m) => (
@@ -406,7 +520,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
             </form>
           </div>
 
-          {/* ── 3. BTVN (Parse) ── */}
+          {/* ── 3. BTVN (Parse file) ── */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="font-bold text-gray-800 mb-2 flex items-center gap-2">
               <FileText className="w-5 h-5 text-purple-600" />
@@ -459,40 +573,21 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
               </div>
             )}
 
-            {/* Danh sách câu hỏi + thêm thủ công */}
-            <div className="mt-5 border-t pt-4">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-semibold text-gray-700">Đã có: {subject.questions.length} câu hỏi</p>
-                <button onClick={() => setShowQForm(!showQForm)} className="flex items-center gap-1 text-sm text-purple-600 font-semibold">
-                  <Plus className="w-4 h-4" /> Thêm thủ công
-                </button>
-              </div>
-
-              {showQForm && (
-                <form onSubmit={handleAddQuestion} className="mb-4 p-4 bg-purple-50 rounded-xl space-y-3">
-                  <textarea required placeholder="Nội dung câu hỏi" value={qForm.content}
-                    onChange={e => setQForm(f => ({ ...f, content: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" rows={3} />
-                  <div className="flex gap-3">
-                    <input required placeholder="Đáp án đúng" value={qForm.correctAnswer}
-                      onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
-                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
-                    <input type="number" min={1} value={qForm.points} onChange={e => setQForm(f => ({ ...f, points: e.target.value }))}
-                      className="w-20 border border-gray-200 rounded-lg px-3 py-2 text-sm" placeholder="Điểm" />
-                  </div>
-                  <div className="flex gap-2">
-                    <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-4 py-2 text-sm font-semibold">Thêm</button>
-                    <button type="button" onClick={() => setShowQForm(false)} className="border border-gray-200 rounded-lg px-4 py-2 text-sm">Huỷ</button>
-                  </div>
-                </form>
-              )}
-
-              {subject.questions.length > 0 && (
+            {/* Danh sách câu hỏi hiện có */}
+            {subject.questions.length > 0 && (
+              <div className="mt-5 border-t pt-4">
+                <p className="text-sm font-semibold text-gray-700 mb-3">Đã có: {subject.questions.length} câu hỏi</p>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {subject.questions.map(q => (
                     <div key={q.id} className="flex items-start gap-3 p-3 border border-gray-100 rounded-lg hover:border-purple-100">
                       <span className="text-sm text-gray-400 w-6 flex-shrink-0">{q.order}.</span>
                       <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${QUESTION_TYPE_BADGE[q.questionType] ?? 'bg-gray-100 text-gray-600'}`}>
+                            {QUESTION_TYPE_LABELS[q.questionType as QuestionType] ?? q.questionType}
+                          </span>
+                          <span className="text-xs text-gray-400">{q.points} điểm</span>
+                        </div>
                         <p className="text-sm text-gray-800 line-clamp-1">{q.content}</p>
                         <p className="text-xs text-teal-600 mt-0.5">Đáp án: {q.correctAnswer}</p>
                       </div>
@@ -502,11 +597,272 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
-          {/* ── 4. ĐÁP ÁN ── */}
+          {/* ── 4. THÊM CÂU HỎI (Rich form) ── */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-gray-800 flex items-center gap-2">
+                <Plus className="w-5 h-5 text-purple-600" />
+                ➕ Thêm câu hỏi
+              </h2>
+              {!showQForm && (
+                <button
+                  onClick={() => setShowQForm(true)}
+                  className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                  <Plus className="w-4 h-4" /> Tạo câu hỏi mới
+                </button>
+              )}
+            </div>
+
+            {showQForm && (
+              <form onSubmit={handleAddQuestion} className="space-y-5">
+
+                {/* ── Type selector ── */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Loại câu hỏi</label>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.keys(QUESTION_TYPE_LABELS) as QuestionType[]).map(type => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setQForm(f => ({ ...f, questionType: type, correctAnswer: '' }))}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition border ${
+                          qForm.questionType === type
+                            ? 'bg-purple-600 text-white border-purple-600'
+                            : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                        }`}>
+                        {QUESTION_TYPE_LABELS[type]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ── Common fields ── */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Nội dung câu hỏi *</label>
+                  <textarea
+                    required
+                    rows={3}
+                    placeholder="Nhập nội dung câu hỏi..."
+                    value={qForm.content}
+                    onChange={e => setQForm(f => ({ ...f, content: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">URL hình ảnh (tuỳ chọn)</label>
+                    <input
+                      type="url"
+                      placeholder="https://..."
+                      value={qForm.imageUrl}
+                      onChange={e => setQForm(f => ({ ...f, imageUrl: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Điểm *</label>
+                    <input
+                      type="number"
+                      min={1}
+                      required
+                      value={qForm.points}
+                      onChange={e => setQForm(f => ({ ...f, points: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Lời giải / Giải thích (tuỳ chọn)</label>
+                  <textarea
+                    rows={2}
+                    placeholder="Giải thích đáp án..."
+                    value={qForm.explanation}
+                    onChange={e => setQForm(f => ({ ...f, explanation: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  />
+                </div>
+
+                {/* ── OPEN ── */}
+                {qForm.questionType === 'OPEN' && (
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Đáp án đúng *</label>
+                    <input
+                      required
+                      placeholder="Nhập đáp án..."
+                      value={qForm.correctAnswer}
+                      onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    />
+                  </div>
+                )}
+
+                {/* ── MULTIPLE_CHOICE ── */}
+                {qForm.questionType === 'MULTIPLE_CHOICE' && (
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Các lựa chọn & Đáp án đúng *</label>
+                    <div className="space-y-2">
+                      {(['A', 'B', 'C', 'D'] as const).map(key => {
+                        const fieldKey = `option${key}` as 'optionA' | 'optionB' | 'optionC' | 'optionD'
+                        return (
+                          <div key={key} className="flex items-center gap-3">
+                            <input
+                              type="radio"
+                              name="mcCorrect"
+                              value={key}
+                              checked={qForm.correctAnswer === key}
+                              onChange={() => setQForm(f => ({ ...f, correctAnswer: key }))}
+                              className="accent-purple-600 w-4 h-4 flex-shrink-0"
+                            />
+                            <span className="w-6 text-sm font-bold text-gray-600">{key}.</span>
+                            <input
+                              required
+                              placeholder={`Lựa chọn ${key}`}
+                              value={qForm[fieldKey]}
+                              onChange={e => setQForm(f => ({ ...f, [fieldKey]: e.target.value }))}
+                              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            />
+                          </div>
+                        )
+                      })}
+                      {!qForm.correctAnswer && (
+                        <p className="text-xs text-orange-500 mt-1">⚠️ Chọn đáp án đúng bằng cách click vào radio bên trái</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── TRUE_FALSE ── */}
+                {qForm.questionType === 'TRUE_FALSE' && (
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Đáp án đúng *</label>
+                    <div className="flex gap-4">
+                      {['Đúng', 'Sai'].map(opt => (
+                        <label key={opt} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border cursor-pointer transition ${
+                          qForm.correctAnswer === opt
+                            ? 'border-purple-500 bg-purple-50 text-purple-700 font-semibold'
+                            : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                        }`}>
+                          <input
+                            type="radio"
+                            name="tfCorrect"
+                            value={opt}
+                            checked={qForm.correctAnswer === opt}
+                            onChange={() => setQForm(f => ({ ...f, correctAnswer: opt }))}
+                            className="accent-purple-600"
+                          />
+                          {opt === 'Đúng' ? '✅' : '❌'} {opt}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── MATCHING ── */}
+                {qForm.questionType === 'MATCHING' && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các cặp nối *</label>
+                      <button type="button" onClick={addMatchPair}
+                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        <Plus className="w-3.5 h-3.5" /> Thêm cặp
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {qForm.matchPairs.map((pair, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400 w-5 flex-shrink-0">{i + 1}.</span>
+                          <input
+                            required
+                            placeholder="Vế trái"
+                            value={pair.left}
+                            onChange={e => updateMatchPair(i, 'left', e.target.value)}
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          />
+                          <span className="text-gray-400 text-sm">→</span>
+                          <input
+                            required
+                            placeholder="Vế phải"
+                            value={pair.right}
+                            onChange={e => updateMatchPair(i, 'right', e.target.value)}
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          />
+                          {qForm.matchPairs.length > 1 && (
+                            <button type="button" onClick={() => removeMatchPair(i)}
+                              className="text-gray-400 hover:text-red-500 flex-shrink-0">
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">💡 Thứ tự các cặp chính là đáp án đúng</p>
+                  </div>
+                )}
+
+                {/* ── ORDERING ── */}
+                {qForm.questionType === 'ORDERING' && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các mục sắp xếp *</label>
+                      <button type="button" onClick={addOrderItem}
+                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        <Plus className="w-3.5 h-3.5" /> Thêm mục
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {qForm.orderItems.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400 w-5 text-center flex-shrink-0">{i + 1}</span>
+                          <input
+                            required
+                            placeholder={`Mục thứ ${i + 1}`}
+                            value={item}
+                            onChange={e => updateOrderItem(i, e.target.value)}
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          />
+                          {qForm.orderItems.length > 1 && (
+                            <button type="button" onClick={() => removeOrderItem(i)}
+                              className="text-gray-400 hover:text-red-500 flex-shrink-0">
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">💡 Thứ tự nhập vào ở đây chính là thứ tự đúng</p>
+                  </div>
+                )}
+
+                {/* ── Form actions ── */}
+                <div className="flex gap-2 pt-2 border-t border-gray-100">
+                  <button
+                    type="submit"
+                    disabled={savingQ}
+                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-semibold transition">
+                    {savingQ ? 'Đang lưu...' : '💾 Thêm câu hỏi'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowQForm(false); setQForm(DEFAULT_FORM) }}
+                    className="border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition">
+                    Huỷ
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {!showQForm && (
+              <p className="text-sm text-gray-400">Nhấn "Tạo câu hỏi mới" để thêm câu hỏi thủ công với nhiều loại câu hỏi phong phú.</p>
+            )}
+          </div>
+
+          {/* ── 5. ĐÁP ÁN ── */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
               <CheckSquare className="w-5 h-5 text-green-600" />
@@ -565,7 +921,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
             </form>
           </div>
 
-          {/* ── 5. VỞ GHI (info only) ── */}
+          {/* ── 6. VỞ GHI (info only) ── */}
           <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-300">
             <h2 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
               <FileText className="w-5 h-5 text-orange-500" />
