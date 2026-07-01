@@ -311,6 +311,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
     : [...BASE_TABS.slice(0,2), NOTEBOOK_TAB, ...BASE_TABS.slice(2)]
   const [activeTab, setActiveTab] = useState('homework')
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [videoCollapsed, setVideoCollapsed] = useState(false)
   const [expandedQ, setExpandedQ] = useState<string | null>(null)
 
   // Answer state
@@ -1265,18 +1266,41 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
         </div>
       </div>
 
-      {/* ══ RIGHT: Video sticky (desktop only) ══ */}
-      <div className="hidden lg:block lg:w-[42%] shrink-0">
-        <div className="sticky top-24">
-          <VideoPanel videoMaterial={videoMaterial} />
-          <div className="mt-3 bg-white rounded-2xl border border-purple-100 px-4 py-3 text-xs text-gray-500 space-y-1 shadow-sm">
-            <p>📖 <strong className="text-gray-700">Bài giảng:</strong> slide/PDF lý thuyết</p>
-            <p>✏️ <strong className="text-gray-700">BTVN:</strong> làm bài trực tiếp, chấm tự động</p>
-            <p>📓 <strong className="text-gray-700">Vở viết:</strong> tự luận, AI chấm điểm</p>
-            <p>✅ <strong className="text-gray-700">Đáp án:</strong> xem sau khi làm bài</p>
+      {/* ══ RIGHT: Video sticky (desktop only) — collapsible ══ */}
+      {!isFullscreen && (
+        <div className="hidden lg:flex shrink-0 items-start gap-0 transition-all duration-300">
+
+          {/* Nút mũi tên thu/mở — always visible */}
+          <div className="sticky top-24 flex flex-col items-center pt-2 mr-1">
+            <button
+              onClick={() => setVideoCollapsed(v => !v)}
+              title={videoCollapsed ? 'Mở video' : 'Thu video'}
+              className="w-7 h-14 flex items-center justify-center rounded-xl bg-white border-2 border-purple-100 hover:border-purple-400 hover:bg-purple-50 text-purple-400 hover:text-purple-600 shadow-sm transition-all duration-200"
+            >
+              {videoCollapsed
+                ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              }
+            </button>
+          </div>
+
+          {/* Video panel — slides in/out */}
+          <div
+            className={`transition-all duration-300 overflow-hidden ${
+              videoCollapsed ? 'w-0 opacity-0 pointer-events-none' : 'w-[40vw] max-w-[420px] opacity-100'
+            }`}
+          >
+            <div className="sticky top-24">
+              <VideoPanel videoMaterial={videoMaterial} />
+              <div className="mt-3 bg-white rounded-2xl border border-purple-100 px-4 py-3 text-xs text-gray-500 space-y-1 shadow-sm">
+                <p>📖 <strong className="text-gray-700">Bài giảng:</strong> slide/PDF lý thuyết</p>
+                <p>✏️ <strong className="text-gray-700">BTVN:</strong> làm bài trực tiếp, chấm tự động</p>
+                <p>✅ <strong className="text-gray-700">Đáp án:</strong> xem sau khi làm bài</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
     </div>
     </>
