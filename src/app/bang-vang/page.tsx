@@ -39,7 +39,7 @@ export default async function BangVangPage() {
             <Trophy className="w-16 h-16 text-yellow-400" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-2">Bảng Vàng</h1>
-          <p className="text-purple-200">Top 10 học sinh xuất sắc nhất AVAB</p>
+          <p className="text-purple-200">Top 15 học sinh xuất sắc nhất — cập nhật mỗi ngày</p>
         </div>
 
         {/* Top 3 Podium */}

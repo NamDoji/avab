@@ -295,6 +295,9 @@ interface Props {
   userId: string
   userName: string
   courseType?: CourseType
+  mySubjectScore?: number
+  myTotalScore?: number
+  maxScore?: number
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
@@ -302,7 +305,7 @@ const BASE_TABS = [
   { id: 'homework', label: 'BTVN',      emoji: '✏️' },
   { id: 'theory',   label: 'Bài giảng', emoji: '📖' },
   { id: 'answer',   label: 'Đáp án',    emoji: '✅' },
-  { id: 'top5',     label: 'Top 5',     emoji: '🏆' },
+  { id: 'top5',     label: 'Điểm',      emoji: '⭐' },
 ]
 const NOTEBOOK_TAB = { id: 'notebook', label: 'Vở viết', emoji: '📓' }
 
@@ -336,7 +339,7 @@ const MC_COLORS = [
 ]
 
 // ── Main Component ──────────────────────────────────────────────────────────
-export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType }: Props) {
+export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0 }: Props) {
   const hasIDE = courseType && IDE_COURSE_TYPES.includes(courseType)
   const TABS = hasIDE
     ? [...BASE_TABS.slice(0,2), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, ...BASE_TABS.slice(2)]
@@ -1323,32 +1326,76 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
           {/* ── TOP 5 ── */}
           {activeTab === 'top5' && (
-            <div>
-              <h2 className="text-lg font-black text-gray-900 mb-4">🏆 Top 5 cao điểm nhất</h2>
-              {top5.length === 0 ? (
-                <div className="text-center py-10 text-gray-400">
-                  <div className="text-5xl mb-3">🏆</div>
-                  <p>Chưa có ai làm bài. Hãy là người đầu tiên!</p>
+            <div className="space-y-4">
+              <h2 className="text-lg font-black text-gray-900">⭐ Điểm của bạn</h2>
+
+              {/* Điểm chưyên đề hiện tại */}
+              <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-3xl p-5 text-white">
+                <p className="text-white/70 text-sm font-semibold mb-1">📚 Chưyên đề hiện tại</p>
+                <p className="text-xs text-white/60 mb-3">{subject.name}</p>
+                <div className="flex items-end gap-2">
+                  <span className="text-5xl font-black text-yellow-300">{mySubjectScore}</span>
+                  <span className="text-white/60 text-lg mb-1">/ {questions.reduce((s, q) => s + q.points, 0)} điểm</span>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {top5.map((e) => (
-                    <div key={e.userId} className={`flex items-center gap-4 rounded-3xl p-4 shadow-sm ${e.isMe ? 'bg-yellow-50 border-2 border-yellow-300' : 'bg-white border border-gray-100'}`}>
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-xl font-black shrink-0 ${
-                        e.rank === 1 ? 'bg-yellow-400 text-yellow-900' : e.rank === 2 ? 'bg-gray-200 text-gray-700' : e.rank === 3 ? 'bg-orange-200 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
-                        {e.rank === 1 ? '🥇' : e.rank === 2 ? '🥈' : e.rank === 3 ? '🥉' : e.rank}
-                      </div>
-                      <p className="flex-1 font-bold text-gray-900">{e.name}{e.isMe && ' (Bạn)'}</p>
-                      <div className="text-right">
-                        <p className="text-xl font-black text-gradient">{e.score}</p>
-                        <p className="text-xs text-gray-400">điểm</p>
-                      </div>
+                {/* Progress bar */}
+                {questions.length > 0 && (
+                  <div className="mt-3">
+                    <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-yellow-400 rounded-full transition-all"
+                        style={{ width: `${Math.min(100, Math.round(mySubjectScore / Math.max(1, questions.reduce((s,q)=>s+q.points,0)) * 100))}%` }}
+                      />
                     </div>
-                  ))}
+                    <p className="text-xs text-white/60 mt-1 text-right">
+                      {Math.min(100, Math.round(mySubjectScore / Math.max(1, questions.reduce((s,q)=>s+q.points,0)) * 100))}% hoàn thành
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Tổng điểm toàn khoá */}
+              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-3xl p-5 text-white">
+                <p className="text-white/70 text-sm font-semibold mb-1">🏆 Tổng điểm toàn khoá</p>
+                <p className="text-xs text-white/60 mb-3">Cộng điểm cao nhất tất cả chưyên đề đã làm</p>
+                <div className="flex items-end gap-2">
+                  <span className="text-5xl font-black text-yellow-300">{myTotalScore}</span>
+                  {maxScore > 0 && <span className="text-white/60 text-lg mb-1">/ {maxScore} điểm</span>}
+                </div>
+                {maxScore > 0 && (
+                  <div className="mt-3">
+                    <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-yellow-400 rounded-full transition-all"
+                        style={{ width: `${Math.min(100, Math.round(myTotalScore / maxScore * 100))}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-white/60 mt-1 text-right">
+                      {Math.min(100, Math.round(myTotalScore / maxScore * 100))}% toàn khoá
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Top 5 */}
+              {top5.length > 0 && (
+                <div>
+                  <p className="text-sm font-black text-gray-700 mb-3">🏅 Top 5 chưyên đề này</p>
+                  <div className="space-y-2">
+                    {top5.map((e) => (
+                      <div key={e.userId} className={`flex items-center gap-3 rounded-2xl px-4 py-3 ${
+                        e.isMe ? 'bg-yellow-50 border-2 border-yellow-300' : 'bg-gray-50 border border-gray-100'
+                      }`}>
+                        <span className="text-lg shrink-0">{e.rank===1?'🥇':e.rank===2?'🥈':e.rank===3?'🥉':`#${e.rank}`}</span>
+                        <p className="flex-1 font-bold text-sm text-gray-800">{e.name}{e.isMe && ' ✨'}</p>
+                        <span className="font-black text-purple-700">{e.score} đ</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
-              <div className="mt-5 text-center bg-purple-50 rounded-2xl p-4">
-                <p className="text-sm text-purple-700 font-semibold">💪 Làm bài BTVN để leo bảng xếp hạng!</p>
+
+              <div className="text-center bg-purple-50 rounded-2xl p-4">
+                <p className="text-sm text-purple-700 font-semibold">💪 Làm BTVN để tăng điểm và leo bảng vàng!</p>
               </div>
             </div>
           )}

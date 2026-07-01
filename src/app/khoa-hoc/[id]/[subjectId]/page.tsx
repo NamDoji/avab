@@ -78,6 +78,31 @@ export default async function SubjectDetailPage({
 
   const answersMap = Object.fromEntries(userAnswers.map((a) => [a.questionId, a]))
 
+  // Điểm cao nhất chưyên đề hiện tại
+  const mySubjectScore = userAnswers.reduce((sum, a) => sum + (a.score || 0), 0)
+
+  // Tổng điểm tất cả chưyên đề trong khoá (sum of best score per subject)
+  // Lấy tất cả subjectId trong khoá để tính tổng điểm
+  const courseSubjects = await prisma.subject.findMany({
+    where: { courseId },
+    select: { id: true },
+  }).catch(() => [])
+  const courseSubjectIds = courseSubjects.map(s => s.id)
+
+  const allMyScores = await prisma.studentAnswer.groupBy({
+    by: ['subjectId'],
+    where: { userId, subjectId: { in: courseSubjectIds } },
+    _sum: { score: true },
+  }).catch(() => [])
+  const myTotalScore = allMyScores.reduce((sum, s) => sum + (s._sum.score || 0), 0)
+
+  // Tổng điểm tối đa có thể (để hiển thị %)
+  const maxPossible = await prisma.question.aggregate({
+    where: { subjectId: { in: courseSubjectIds } },
+    _sum: { points: true },
+  }).catch(() => ({ _sum: { points: 0 } }))
+  const maxScore = maxPossible._sum.points || 0
+
   // Tính số câu đã làm / tổng
   const doneCount = userAnswers.filter(a => a.isCorrect).length
   const totalQ = subject.questions.length
@@ -151,6 +176,9 @@ export default async function SubjectDetailPage({
           top5={top5Data}
           userId={userId}
           userName={session.user?.name || 'Học viên'}
+          mySubjectScore={mySubjectScore}
+          myTotalScore={myTotalScore}
+          maxScore={maxScore}
         />
       </div>
     </div>
