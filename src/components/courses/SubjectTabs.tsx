@@ -599,36 +599,43 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
         pairs = (ro as any[]).map((o: any) => ({ left: String(o.left??''), right: String(o.right??'') })).filter(p => p.left && p.right)
       if (!pairs.length && q.correctAnswer) pairs = rxExtract(q.correctAnswer)
       if (!pairs.length && ro) { try { pairs = rxExtract(JSON.stringify(ro)) } catch(_){} }
+      // Luôn cho phép thay đổi (không disable) để học sinh nhỏ dễ sửa
+      const [matchDone, setMatchDone] = useState(false)
       const inputs = matchingInputs[q.id] || {}
+      const rightOptions = pairs.map(p => p.right).filter(Boolean) as string[]
       const hasAnyInput = Object.values(inputs).some(v => v.trim())
       return (
         <div className="mb-3">
-          <p className="text-sm text-purple-700 font-bold mb-3">
-            🔗 Nối các từ bên trái với đáp án đúng:
+          <p className="text-sm text-purple-700 font-bold mb-2">
+            🔗 Nối từng từ bên trái với nghĩa đúng:
           </p>
+          {/* Hiển thị danh sách từ gợi ý */}
+          {rightOptions.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3 p-3 bg-yellow-50 rounded-2xl border border-yellow-200">
+              <span className="w-full text-xs text-yellow-700 font-bold">📌 Các nghĩa để chọn:</span>
+              {rightOptions.map((opt, j) => (
+                <span key={j} className="bg-white border border-yellow-300 text-yellow-900 text-sm font-semibold px-3 py-1 rounded-xl">{opt}</span>
+              ))}
+            </div>
+          )}
           <div className="space-y-3 mb-4">
             {pairs.map((pair, i) => {
               const leftKey = pair.left || String(i)
               const studentVal = inputs[leftKey] || ''
-              // Tất cả các giá trị bên phải làm dropdown
-              const rightOptions = pairs.map(p => p.right).filter(Boolean) as string[]
               return (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="flex-1 bg-blue-100 border-2 border-blue-300 rounded-2xl px-4 py-3 text-blue-900 font-black text-base min-w-0 shadow-sm">
+                <div key={i} className="flex items-center gap-2">
+                  <div className="flex-1 bg-blue-100 border-2 border-blue-300 rounded-2xl px-3 py-2.5 text-blue-900 font-black text-sm min-w-0">
                     {pair.left}
                   </div>
-                  <span className="text-gray-400 font-black shrink-0 text-xl">→</span>
+                  <span className="text-gray-400 font-black shrink-0">→</span>
                   <select
                     value={studentVal}
-                    onChange={e => !isDone && handleMatchingInput(q.id, leftKey, e.target.value)}
-                    disabled={isDone}
-                    className={`flex-1 px-4 py-3 rounded-2xl border-2 text-base font-semibold focus:outline-none transition-all min-w-0 shadow-sm bg-white ${
-                      isDone
-                        ? isCorrect ? 'border-teal-400 bg-teal-50 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
-                        : studentVal ? 'border-purple-400 bg-purple-50' : 'border-purple-200'
+                    onChange={e => handleMatchingInput(q.id, leftKey, e.target.value)}
+                    className={`flex-1 px-3 py-2.5 rounded-2xl border-2 text-sm font-semibold min-w-0 bg-white cursor-pointer ${
+                      studentVal ? 'border-purple-400 bg-purple-50 text-purple-900' : 'border-gray-300 text-gray-500'
                     }`}
                   >
-                    <option value="">— Chọn —</option>
+                    <option value="">— Chọn nghĩa —</option>
                     {rightOptions.map((opt, j) => (
                       <option key={j} value={opt}>{opt}</option>
                     ))}
