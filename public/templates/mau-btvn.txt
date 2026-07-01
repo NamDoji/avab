@@ -1,0 +1,22 @@
+====================================================
+MẪU FILE BÀI TẬP VỀ NHÀ (BTVN) - AVAB.VN
+====================================================
+Hướng dẫn:
+- Tên chuyên đề phải ghi ở dòng đầu tiên
+- Mỗi câu hỏi theo định dạng: "Câu [số thứ tự]: [nội dung]"
+- Hệ thống sẽ tự động đọc và tạo câu hỏi trong database
+
+====================================================
+Tên chuyên đề: Phép cộng, phép trừ có nhớ
+====================================================
+
+Câu 1: 27 + 38 = ?
+Câu 2: 63 - 27 = ?
+Câu 3: 45 + ___ = 82. Điền số còn thiếu.
+Câu 4: 91 - 46 = ?
+Câu 5: Tính: 35 + 47 + 18 = ?
+Câu 6: Bạn An có 54 viên bi, cho bạn Bình 18 viên. Hỏi An còn bao nhiêu viên bi?
+Câu 7: Lớp học có 28 học sinh, hôm nay vắng 7 bạn. Hỏi hôm nay có bao nhiêu bạn đi học?
+Câu 8: 76 - 38 + 14 = ?
+Câu 9: Số nào cộng với 47 thì bằng 100?
+Câu 10: Tính giá trị: 33 + 28 + 12 + 27 = ?

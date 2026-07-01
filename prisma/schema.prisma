@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  phone         String    @unique
+  email         String?   @unique
+  password      String
+  role          String    @default("STUDENT")
+  avatar        String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  enrollments   Enrollment[]
+  answers       StudentAnswer[]
+
+  @@map("avab_users")
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  thumbnail   String?
+  price       Int?     @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subjects    Subject[]
+  enrollments Enrollment[]
+
+  @@map("avab_courses")
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  status    String   @default("PENDING")
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("avab_enrollments")
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  courseId    String
+  order       Int      @default(0)
+  name        String
+  icon        String?
+  description String?
+  isActive    Boolean  @default(true)
+  isPreview   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course    Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  materials SubjectMaterial[]
+  questions Question[]
+
+  @@map("avab_subjects")
+}
+
+model SubjectMaterial {
+  id        String   @id @default(cuid())
+  subjectId String
+  type      String
+  title     String?
+  content   String?
+  fileUrl   String?
+  fileName  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@map("avab_subject_materials")
+}
+
+model Question {
+  id            String   @id @default(cuid())
+  subjectId     String
+  order         Int      @default(0)
+  content       String
+  imageUrl      String?
+  correctAnswer String
+  explanation   String?
+  points        Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  subject Subject         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  answers StudentAnswer[]
+
+  @@map("avab_questions")
+}
+
+model StudentAnswer {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  subjectId  String
+  answer     String
+  isCorrect  Boolean  @default(false)
+  score      Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@map("avab_student_answers")
+}
+
+model News {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  summary     String?
+  content     String
+  thumbnail   String?
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("avab_news")
+}
+
+model Recruitment {
+  id           String   @id @default(cuid())
+  title        String
+  type         String
+  description  String
+  requirements String?
+  benefits     String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("avab_recruitments")
+}
+
+model Registration {
+  id        String   @id @default(cuid())
+  name      String?
+  phone     String
+  email     String?
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@map("avab_registrations")
+}
