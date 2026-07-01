@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, Phone, Mail } from 'lucide-react'
 import { useLang } from '@/contexts/LanguageContext'
 
 export function Footer() {
@@ -27,19 +26,12 @@ export function Footer() {
     { href: '/lien-he',    label: 'Liên hệ',       labelEn: 'Contact' },
   ]
 
-  const stats = [
-    { value: '500+', label: vi ? 'Phụ huynh'       : 'Parents' },
-    { value: '100+', label: vi ? 'Học viên'         : 'Students' },
-    { value: '3',    label: vi ? 'Năm hoạt động'    : 'Years' },
-    { value: '10+',  label: vi ? 'Chuyên đề'        : 'Subjects' },
-  ]
-
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="container-custom py-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+      <div className="container-custom py-12 grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
 
         {/* Brand */}
-        <div className="col-span-2 md:col-span-2 lg:col-span-1">
+        <div className="col-span-2 md:col-span-1">
           <div className="mb-4">
             <div className="relative w-12 h-12">
               <Image src="/logo.png" alt="AvaB" fill className="object-contain" />
@@ -82,43 +74,6 @@ export function Footer() {
               </li>
             ))}
           </ul>
-
-          {/* Awards */}
-          <div className="mt-6 p-3 bg-gray-800 rounded-2xl">
-            <p className="text-xs text-purple-300 font-bold mb-1">🏆 {vi ? 'Giải thưởng' : 'Awards'}</p>
-            <p className="text-xs text-gray-400">{vi ? 'Giải Nhất vòng Trường' : '1st Prize – School Round'}</p>
-            <p className="text-xs text-gray-400">{vi ? 'Giải Nhì cụm Nam–Bắc Từ Liêm' : '2nd Prize – District Cluster'}</p>
-            <p className="text-xs text-gray-400">{vi ? 'Giải Ba Thành phố Hà Nội' : '3rd Prize – Hanoi City'}</p>
-          </div>
-        </div>
-
-        {/* Contact */}
-        <div>
-          <h4 className="font-bold text-white mb-4">{vi ? 'Liên hệ' : 'Contact'}</h4>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-2 text-sm text-gray-400">
-              <MapPin size={16} className="text-purple-400 mt-0.5 shrink-0" />
-              <span>SH1 Toà B, CC Paragon, Ngõ 86 Duy Tân, Cầu Giấy, {vi ? 'Hà Nội' : 'Hanoi'}</span>
-            </li>
-            <li className="flex items-center gap-2 text-sm text-gray-400">
-              <Phone size={16} className="text-purple-400 shrink-0" />
-              <a href="tel:0904290583" className="hover:text-purple-300 transition-colors">0904 290 583</a>
-            </li>
-            <li className="flex items-center gap-2 text-sm text-gray-400">
-              <Mail size={16} className="text-purple-400 shrink-0" />
-              <a href="mailto:nam@itsol.vn" className="hover:text-purple-300 transition-colors">nam@itsol.vn</a>
-            </li>
-          </ul>
-
-          {/* Stats */}
-          <div className="mt-6 grid grid-cols-2 gap-2">
-            {stats.map((stat) => (
-              <div key={stat.label} className="bg-gray-800 rounded-xl p-2 text-center">
-                <div className="text-purple-300 font-black text-lg">{stat.value}</div>
-                <div className="text-gray-500 text-xs">{stat.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
