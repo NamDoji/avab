@@ -3,6 +3,16 @@
 import { useState } from 'react'
 import { Loader2, VideoOff, Star, Maximize2, Minimize2 } from 'lucide-react'
 import { IDETab } from './IDETab'
+import ReactMarkdown from 'react-markdown'
+
+// ── Markdown renderer — renders bài giảng đẹp ───────────────────────────
+function MarkdownLesson({ content }: { content: string }) {
+  return (
+    <div className="prose prose-sm max-w-none prose-headings:font-black prose-headings:text-gray-900 prose-h1:text-xl prose-h2:text-lg prose-h2:text-purple-700 prose-h3:text-base prose-h3:text-gray-800 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900 prose-table:text-sm prose-th:bg-purple-50 prose-th:text-purple-800 prose-th:font-bold prose-td:border-gray-200 prose-pre:bg-gray-900 prose-pre:rounded-2xl prose-code:bg-gray-100 prose-code:text-purple-700 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
+      <ReactMarkdown>{content}</ReactMarkdown>
+    </div>
+  )
+}
 
 // ── Smart answer matching (giống server-side) ───────────────────────────────
 function smartMatch(student: string, correct: string): boolean {
@@ -1029,14 +1039,37 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             <div>
               <h2 className="text-lg font-black text-gray-900 mb-4">📖 Bài giảng — {subject.name}</h2>
               {getMaterial('THEORY').length > 0 ? (
-                getMaterial('THEORY').map((m) => (
-                  <div key={m.id} className="mb-4">
-                    {m.fileUrl
-                      ? <MaterialView url={m.fileUrl} title={m.title} />
-                      : <div className="bg-purple-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">{m.content}</div>
-                    }
-                  </div>
-                ))
+                getMaterial('THEORY').map((m) => {
+                  // Local content path → render markdown từ DB
+                  const isLocalPath = m.fileUrl?.startsWith('/content/')
+                  const hasContent = m.content && m.content.length > 50
+                  return (
+                    <div key={m.id} className="mb-4">
+                      {!isLocalPath && m.fileUrl ? (
+                        // URL bên ngoài: embed iframe
+                        <MaterialView url={m.fileUrl} title={m.title} />
+                      ) : hasContent ? (
+                        // Nội dung markdown từ DB
+                        <div className="bg-white rounded-3xl border border-purple-100 p-5 md:p-6 shadow-sm">
+                          <MarkdownLesson content={m.content!} />
+                          {m.fileUrl && (
+                            <div className="mt-5 pt-4 border-t border-gray-100 flex gap-3">
+                              <a
+                                href={`https://raw.githubusercontent.com/NamDoji/avab/main${m.fileUrl}`}
+                                target="_blank" rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition"
+                              >
+                                ⬇️ Tải file DOCX
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="bg-purple-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">{m.content || 'Đang cập nhật...'}</div>
+                      )}
+                    </div>
+                  )
+                })
               ) : (
                 <div className="text-center py-10 text-gray-400">
                   <div className="text-5xl mb-3">📄</div>
