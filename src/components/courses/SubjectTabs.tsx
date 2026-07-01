@@ -756,7 +756,16 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               </button>
             ))}
           </div>
-
+          {/* Nút phóng to — tất cả tab, tất cả khoá */}
+          <button
+            onClick={() => setIsFullscreen(f => !f)}
+            title={isFullscreen ? 'Thu nhỏ' : 'Phóng to'}
+            className="shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-white border-2 border-gray-100 hover:border-purple-300 hover:text-purple-600 text-gray-500 font-bold text-sm transition-all min-h-[44px] shadow-sm"
+          >
+            {isFullscreen
+              ? <><Minimize2 className="w-4 h-4" /><span className="hidden sm:inline">Thu nhỏ</span></>
+              : <><Maximize2 className="w-4 h-4" /><span className="hidden sm:inline">Phóng to</span></>}
+          </button>
         </div>
 
         {/* Tab content */}
