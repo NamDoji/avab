@@ -205,12 +205,11 @@ export default async function CourseDetailPage({
             return (
               <Link
                 key={subject.id}
-                href={canAccess ? `/khoa-hoc/${id}/${subject.id}` : (session ? '#' : '/dang-nhap')}
-                onClick={!canAccess ? (e) => e.preventDefault() : undefined}
+                href={canAccess ? `/khoa-hoc/${id}/${subject.id}` : '#'}
                 className={`group relative flex flex-col items-center p-4 rounded-3xl text-center border-2 transition-all duration-200 select-none
                   ${canAccess
                     ? 'border-white bg-white hover:border-purple-200 hover:-translate-y-2 hover:shadow-xl active:scale-95 cursor-pointer'
-                    : 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed'
+                    : 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed pointer-events-none'
                   }
                 `}
               >

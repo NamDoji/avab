@@ -32,7 +32,7 @@ function checkAnswerByType(answer: string, q: Question): boolean {
         s.split(',').map(p => {
           const eqIdx = p.indexOf('=')
           return {
-            left: p.slice(0, eqIdx).trim().toLowerCase(),
+            left:  p.slice(0, eqIdx).trim().toLowerCase(),
             right: p.slice(eqIdx + 1).trim().toLowerCase(),
           }
         })
@@ -42,9 +42,7 @@ function checkAnswerByType(answer: string, q: Question): boolean {
         const sp = studentPairs.find(x => x.left === cp.left)
         return sp ? smartMatch(sp.right, cp.right) : false
       })
-    } catch {
-      return false
-    }
+    } catch { return false }
   }
 
   if (qType === 'ORDERING') {
@@ -64,7 +62,6 @@ function checkAnswerByType(answer: string, q: Question): boolean {
     }
   }
 
-  // OPEN (default)
   return smartMatch(answer, q.correctAnswer)
 }
 
@@ -112,12 +109,12 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
       onClick={onClose}>
       <div className="bg-white rounded-4xl p-8 max-w-sm w-full text-center shadow-2xl"
         onClick={e => e.stopPropagation()}>
-        <div className="text-5xl mb-2 animate-bounce">🎉</div>
+        <div className="text-6xl mb-2 animate-bounce">🎉</div>
         <h2 className="text-2xl font-black text-purple-700 mb-1">Chúc mừng con!</h2>
         <p className="text-xl font-bold text-gray-800 mb-4">{name}</p>
         <div className="flex justify-center gap-2 mb-4">
           {[1,2,3].map(s => (
-            <Star key={s} size={36}
+            <Star key={s} size={40}
               className={s <= star ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200 fill-gray-200'}
             />
           ))}
@@ -135,7 +132,7 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
             </button>
             {correct < total && (
               <button onClick={onRetryWrong} className="flex-1 py-2.5 bg-orange-100 text-orange-700 font-bold rounded-2xl hover:bg-orange-200 transition text-sm">
-                🟡 Làm lại câu sai
+                💡 Làm lại câu chưa đúng
               </button>
             )}
           </div>
@@ -264,30 +261,31 @@ const TABS = [
   { id: 'top5',     label: 'Top 5',     emoji: '🏆' },
 ]
 
-// ── Option color palettes for MULTIPLE_CHOICE (child-friendly bright colors) ──
+// ── Child-friendly option palettes for MULTIPLE_CHOICE ────────────────────
+// A = blue, B = green, C = yellow, D = red/orange
 const MC_COLORS = [
   { // A — Blue
     base:    'bg-blue-100 border-blue-400 text-blue-900 hover:bg-blue-200 hover:border-blue-500 hover:scale-[1.02]',
     sel:     'bg-blue-200 border-blue-700 text-blue-900 border-4 scale-105 shadow-lg shadow-blue-200',
-    keyBase: 'bg-blue-400 text-white',
+    keyBase: 'bg-blue-500 text-white',
     keySel:  'bg-blue-700 text-white',
   },
   { // B — Green
     base:    'bg-green-100 border-green-400 text-green-900 hover:bg-green-200 hover:border-green-500 hover:scale-[1.02]',
     sel:     'bg-green-200 border-green-700 text-green-900 border-4 scale-105 shadow-lg shadow-green-200',
-    keyBase: 'bg-green-400 text-white',
+    keyBase: 'bg-green-500 text-white',
     keySel:  'bg-green-700 text-white',
   },
   { // C — Yellow
     base:    'bg-yellow-100 border-yellow-400 text-yellow-900 hover:bg-yellow-200 hover:border-yellow-500 hover:scale-[1.02]',
-    sel:     'bg-yellow-200 border-yellow-600 text-yellow-900 border-4 scale-105 shadow-lg shadow-yellow-200',
-    keyBase: 'bg-yellow-400 text-white',
+    sel:     'bg-yellow-100 border-yellow-600 text-yellow-900 border-4 scale-105 shadow-lg shadow-yellow-200',
+    keyBase: 'bg-yellow-500 text-white',
     keySel:  'bg-yellow-600 text-white',
   },
   { // D — Red/Orange
     base:    'bg-red-100 border-red-400 text-red-900 hover:bg-red-200 hover:border-red-500 hover:scale-[1.02]',
     sel:     'bg-red-200 border-red-700 text-red-900 border-4 scale-105 shadow-lg shadow-red-200',
-    keyBase: 'bg-red-400 text-white',
+    keyBase: 'bg-red-500 text-white',
     keySel:  'bg-red-700 text-white',
   },
 ]
@@ -371,11 +369,11 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
     setExpandedQ(null)
     if (onlyWrong) {
       const wrongIds = questions.filter(q => submitted[q.id] && !results[q.id]).map(q => q.id)
-      setSubmitted(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
-      setResults(p  => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
-      setUserAnswers(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
-      setShowHint(p    => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
-      setHintPeeked(p  => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setSubmitted(p     => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setResults(p       => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setUserAnswers(p   => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setShowHint(p      => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setHintPeeked(p    => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
       setMatchingInputs(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
     } else {
       setSubmitted({}); setResults({}); setUserAnswers({})
@@ -434,29 +432,31 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       const opts = (q.options || []) as QuestionOption[]
       return (
         <div className="mb-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             {opts.map((opt, i) => {
               const key = opt.key || String(i)
               const text = opt.text || ''
               const isSelected = selectedAns === key
               const isThisCorrect = isDone && key.toLowerCase() === q.correctAnswer.trim().toLowerCase()
-              const isThisWrong = isDone && isSelected && !isCorrect
+              const isThisWrong   = isDone && isSelected && !isCorrect
               const palette = MC_COLORS[i] || MC_COLORS[0]
 
-              let cls = 'flex items-center gap-3 p-3 rounded-2xl border-2 cursor-pointer transition-all text-left font-bold text-sm w-full '
+              // Card: min-h-[60px], large rounded, bold text, transition
+              let cls = 'flex items-center gap-3 px-4 rounded-2xl border-2 cursor-pointer transition-all duration-150 text-left font-black text-base w-full min-h-[60px] shadow-sm '
               if (isDone) {
-                if (isThisCorrect) cls += 'bg-teal-100 border-teal-400 text-teal-800'
-                else if (isThisWrong) cls += 'bg-red-100 border-red-400 text-red-800'
-                else cls += 'bg-gray-50 border-gray-200 text-gray-400'
+                if (isThisCorrect)   cls += 'bg-teal-100 border-teal-500 text-teal-800 border-4'
+                else if (isThisWrong) cls += 'bg-orange-100 border-orange-400 text-orange-800'
+                else                  cls += 'bg-gray-50 border-gray-200 text-gray-400'
               } else {
                 cls += isSelected ? palette.sel : palette.base
               }
 
-              let keyBgCls = 'w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black shrink-0 text-white '
+              // Key bubble
+              let keyBgCls = 'w-10 h-10 rounded-xl flex items-center justify-center text-base font-black shrink-0 '
               if (isDone) {
-                keyBgCls += isThisCorrect ? 'bg-teal-500' : isThisWrong ? 'bg-red-500' : 'bg-gray-300'
+                keyBgCls += isThisCorrect ? 'bg-teal-500 text-white' : isThisWrong ? 'bg-orange-400 text-white' : 'bg-gray-200 text-gray-500'
               } else {
-                keyBgCls += isSelected ? 'bg-purple-600' : palette.keyBg
+                keyBgCls += isSelected ? palette.keySel : palette.keyBase
               }
 
               return (
@@ -464,9 +464,9 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   onClick={() => setUserAnswers(p => ({ ...p, [q.id]: key }))}
                   className={cls}>
                   <span className={keyBgCls}>{key}</span>
-                  <span className="flex-1 leading-snug">{text}</span>
-                  {isDone && isThisCorrect && <span className="text-lg shrink-0">✅</span>}
-                  {isDone && isThisWrong   && <span className="text-lg shrink-0">❌</span>}
+                  <span className="flex-1 leading-snug py-2">{text}</span>
+                  {isDone && isThisCorrect && <span className="text-2xl shrink-0">✅</span>}
+                  {isDone && isThisWrong   && <span className="text-2xl shrink-0">💡</span>}
                 </button>
               )
             })}
@@ -474,8 +474,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {!isDone && (
             <button onClick={() => handleAnswerQ(q)}
               disabled={!selectedAns}
-              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
-              Nộp →
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
             </button>
           )}
         </div>
@@ -484,40 +484,33 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
     // ── TRUE_FALSE ───────────────────────────────────────────────────────────
     if (qType === 'TRUE_FALSE') {
-      const tfOpts = [
-        { key: 'Đúng', emoji: '✅' },
-        { key: 'Sai',  emoji: '❌' },
-      ]
       return (
         <div className="mb-3">
-          <div className="flex gap-3 mb-3">
-            {tfOpts.map(opt => {
-              const isSelected = selectedAns === opt.key
+          {/* Two giant buttons: min-h-[72px] */}
+          <div className="flex gap-3 mb-4">
+            {[
+              { key: 'Đúng', emoji: '✅', bgBase: 'bg-teal-100 border-teal-400 text-teal-800 hover:bg-teal-200 hover:border-teal-500', bgSel: 'bg-teal-500 border-teal-500 text-white scale-105 shadow-xl shadow-teal-300' },
+              { key: 'Sai',  emoji: '❌', bgBase: 'bg-red-100 border-red-400 text-red-800 hover:bg-red-200 hover:border-red-500',     bgSel: 'bg-red-500 border-red-500 text-white scale-105 shadow-xl shadow-red-300'   },
+            ].map(opt => {
+              const isSelected    = selectedAns === opt.key
               const isThisCorrect = isDone && opt.key.toLowerCase() === q.correctAnswer.trim().toLowerCase()
-              const isThisWrong = isDone && isSelected && !isCorrect
+              const isThisWrong   = isDone && isSelected && !isCorrect
 
-              let cls = 'flex-1 flex items-center justify-center gap-2 py-5 rounded-2xl border-2 cursor-pointer transition-all text-lg font-black '
+              let cls = 'flex-1 flex flex-col items-center justify-center gap-1 rounded-2xl border-2 cursor-pointer transition-all duration-150 font-black min-h-[72px] '
               if (isDone) {
-                if (isThisCorrect) cls += 'bg-teal-100 border-teal-400 text-teal-800'
-                else if (isThisWrong) cls += 'bg-red-100 border-red-400 text-red-800'
-                else cls += 'bg-gray-50 border-gray-200 text-gray-400'
+                if (isThisCorrect)   cls += 'bg-teal-100 border-teal-500 text-teal-800 border-4'
+                else if (isThisWrong) cls += 'bg-orange-100 border-orange-400 text-orange-800'
+                else                  cls += 'bg-gray-50 border-gray-200 text-gray-400'
               } else {
-                if (opt.key === 'Đúng') {
-                  cls += isSelected
-                    ? 'bg-teal-500 border-teal-500 text-white shadow-lg scale-105'
-                    : 'bg-teal-50 border-teal-300 text-teal-700 hover:bg-teal-100'
-                } else {
-                  cls += isSelected
-                    ? 'bg-red-500 border-red-500 text-white shadow-lg scale-105'
-                    : 'bg-red-50 border-red-300 text-red-700 hover:bg-red-100'
-                }
+                cls += isSelected ? opt.bgSel : opt.bgBase + ' hover:scale-[1.02]'
               }
 
               return (
                 <button key={opt.key} disabled={isDone}
                   onClick={() => setUserAnswers(p => ({ ...p, [q.id]: opt.key }))}
                   className={cls}>
-                  {opt.emoji} {opt.key}
+                  <span className="text-3xl">{isDone && isThisCorrect ? '✅' : isDone && isThisWrong ? '💡' : opt.emoji}</span>
+                  <span className="text-xl">{opt.key}</span>
                 </button>
               )
             })}
@@ -525,8 +518,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {!isDone && (
             <button onClick={() => handleAnswerQ(q)}
               disabled={!selectedAns}
-              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
-              Nộp →
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
             </button>
           )}
         </div>
@@ -540,30 +533,28 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       const hasAnyInput = Object.values(inputs).some(v => v.trim())
       return (
         <div className="mb-3">
-          <p className="text-xs text-purple-600 font-bold mb-3 flex items-center gap-1">
+          <p className="text-sm text-purple-700 font-bold mb-3">
             🔗 Nối các mục bên trái với đáp án tương ứng:
           </p>
-          <div className="space-y-2.5 mb-3">
+          <div className="space-y-3 mb-4">
             {pairs.map((pair, i) => {
               const leftKey = pair.left || String(i)
               const studentVal = inputs[leftKey] || ''
               return (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="flex-1 bg-blue-50 border-2 border-blue-200 rounded-xl px-4 py-2.5 text-blue-800 font-bold text-sm min-w-0">
+                  <div className="flex-1 bg-blue-100 border-2 border-blue-300 rounded-2xl px-4 py-3 text-blue-900 font-bold text-base min-w-0 shadow-sm">
                     {pair.left}
                   </div>
-                  <span className="text-gray-400 font-black shrink-0 text-lg">→</span>
+                  <span className="text-gray-400 font-black shrink-0 text-xl">→</span>
                   <input type="text"
                     value={studentVal}
                     onChange={e => !isDone && handleMatchingInput(q.id, leftKey, e.target.value)}
                     disabled={isDone}
                     placeholder="Điền đáp án..."
-                    className={`flex-1 px-3 py-2.5 rounded-xl border-2 text-sm font-semibold focus:outline-none transition-all min-w-0 ${
+                    className={`flex-1 px-4 py-3 rounded-2xl border-2 text-base font-semibold focus:outline-none transition-all min-w-0 shadow-sm ${
                       isDone
-                        ? isCorrect
-                          ? 'border-teal-400 bg-teal-50 text-teal-700'
-                          : 'border-red-300 bg-red-50 text-red-700'
-                        : 'border-purple-200 bg-white focus:border-purple-400'
+                        ? isCorrect ? 'border-teal-400 bg-teal-50 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
+                        : 'border-purple-300 bg-white focus:border-purple-500'
                     }`}
                   />
                 </div>
@@ -573,14 +564,14 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {!isDone && (
             <button onClick={() => handleAnswerQ(q)}
               disabled={!hasAnyInput}
-              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
-              Nộp →
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
             </button>
           )}
           {isDone && !isCorrect && (
-            <div className="mt-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-2xl px-4 py-3">
-              <p className="font-bold mb-1">❌ Chưa khớp. Đáp án đúng:</p>
-              <p className="font-mono text-xs text-red-600">{q.correctAnswer}</p>
+            <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
+              <p className="font-bold text-orange-700 mb-1">💡 Xem gợi ý để biết đáp án đúng nhé!</p>
+              <p className="font-mono text-xs text-orange-600">{q.correctAnswer}</p>
             </div>
           )}
         </div>
@@ -593,18 +584,18 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       return (
         <div className="mb-3">
           {shuffledItems.length > 0 && (
-            <div className="mb-3 p-3 bg-amber-50 border-2 border-amber-200 rounded-2xl">
-              <p className="text-xs font-bold text-amber-700 mb-2">📋 Các mục cần sắp xếp (đang bị xáo trộn):</p>
+            <div className="mb-3 p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl shadow-sm">
+              <p className="text-sm font-bold text-amber-800 mb-2">📋 Các mục cần sắp xếp (đang bị xáo trộn):</p>
               <div className="flex flex-wrap gap-2">
                 {shuffledItems.map((item, i) => (
-                  <span key={i} className="px-3 py-1.5 bg-white border-2 border-amber-300 rounded-xl text-sm font-bold text-amber-800">
+                  <span key={i} className="px-3 py-2 bg-white border-2 border-amber-400 rounded-xl text-base font-bold text-amber-900 shadow-sm">
                     {typeof item === 'string' ? item : (item as QuestionOption).text || String(i + 1)}
                   </span>
                 ))}
               </div>
             </div>
           )}
-          <p className="text-xs text-purple-600 font-bold mb-2">
+          <p className="text-sm text-purple-700 font-bold mb-2">
             ✍️ Nhập thứ tự đúng (mỗi mục một dòng):
           </p>
           <textarea
@@ -613,19 +604,17 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             disabled={isDone}
             placeholder={'Mục 1\nMục 2\nMục 3\n...'}
             rows={Math.max(4, shuffledItems.length + 1)}
-            className={`w-full px-4 py-3 rounded-2xl border-2 text-sm font-medium focus:outline-none transition-all resize-y mb-3 font-mono ${
+            className={`w-full px-4 py-3 rounded-2xl border-2 text-base font-medium focus:outline-none transition-all resize-y mb-3 font-mono shadow-sm ${
               isDone
-                ? isCorrect
-                  ? 'border-teal-400 bg-teal-50 text-teal-700'
-                  : 'border-red-300 bg-red-50 text-red-700'
-                : 'border-purple-200 bg-white focus:border-purple-400'
+                ? isCorrect ? 'border-teal-400 bg-teal-50 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
+                : 'border-purple-300 bg-white focus:border-purple-500'
             }`}
           />
           {!isDone && (
             <button onClick={() => handleAnswerQ(q)}
               disabled={!selectedAns.trim()}
-              className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50 w-full">
-              Nộp →
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
             </button>
           )}
         </div>
@@ -641,17 +630,17 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           disabled={isDone}
           placeholder="Nhập đáp số..."
           autoFocus
-          className={`flex-1 px-5 py-3 rounded-2xl border-2 font-black text-center text-xl focus:outline-none transition-all ${
+          className={`flex-1 px-5 py-4 rounded-2xl border-2 font-black text-center text-xl focus:outline-none transition-all shadow-sm ${
             isDone
-              ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-700' : 'border-red-400 bg-red-100 text-red-700'
+              ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
               : 'border-purple-300 bg-white focus:border-purple-500'
           }`}
         />
         {!isDone && (
           <button onClick={() => handleAnswerQ(q)}
             disabled={!selectedAns.trim()}
-            className="btn-primary !py-3 !px-6 !text-base font-black disabled:opacity-50">
-            Nộp →
+            className="btn-primary !py-4 !px-5 !text-lg font-black disabled:opacity-40 shrink-0 rounded-2xl">
+            →
           </button>
         )}
       </div>
@@ -696,23 +685,47 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
         </div>
 
         {/* Tab content */}
-        <div className="bg-white rounded-4xl border-2 border-purple-50 p-5 md:p-6">
+        <div className="bg-white rounded-4xl border-2 border-purple-50 p-5 md:p-6 shadow-sm">
 
           {/* ── BTVN ── */}
           {activeTab === 'homework' && (
             <div>
-              {/* Header + progress */}
+              {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-black text-gray-900">✏️ Bài Tập Về Nhà</h2>
                 {totalAnswered > 0 && (
                   <span className={`text-sm font-bold px-3 py-1 rounded-full ${
                     accuracy >= 80 ? 'bg-teal-100 text-teal-700'
                     : accuracy >= 50 ? 'bg-yellow-100 text-yellow-700'
-                    : 'bg-red-100 text-red-700'}`}>
+                    : 'bg-orange-100 text-orange-700'}`}>
                     {totalCorrect}/{questions.length} ({accuracy}%)
                   </span>
                 )}
               </div>
+
+              {/* ── PROGRESS BAR ── */}
+              {questions.length > 0 && (
+                <div className="mb-5">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-bold text-gray-500">
+                      {totalAnswered === questions.length ? '🎉 Hoàn thành!' : `${totalAnswered}/${questions.length} câu đã làm`}
+                    </span>
+                    <div className="flex gap-0.5">
+                      {[1,2,3].map(s => {
+                        const threshold = s === 1 ? 50 : s === 2 ? 70 : 90
+                        const lit = totalAnswered === questions.length && accuracy >= threshold
+                        return <span key={s} className={`text-lg transition-all ${lit ? 'scale-125' : 'opacity-25'}`}>⭐</span>
+                      })}
+                    </div>
+                  </div>
+                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                    <div
+                      className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400"
+                      style={{ width: `${questions.length > 0 ? (totalAnswered / questions.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+              )}
 
               {questions.length === 0 ? (
                 <div className="text-center py-10 text-gray-400">
@@ -735,14 +748,14 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             isDone
                               ? isCorrect
                                 ? 'bg-teal-500 text-white shadow-teal-200'
-                                : 'bg-red-500 text-white shadow-red-200'
+                                : 'bg-orange-400 text-white shadow-orange-200'
                               : hasInput
                               ? 'bg-orange-400 text-white shadow-orange-200 animate-pulse'
                               : isActive
                               ? 'bg-purple-600 text-white shadow-purple-200 scale-110'
                               : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-purple-300 hover:text-purple-600'
                           }`}>
-                          {isDone ? (isCorrect ? '✓' : '✗') : q.order}
+                          {isDone ? (isCorrect ? '✓' : '~') : q.order}
                         </button>
                       )
                     })}
@@ -752,36 +765,38 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   <div className="flex flex-wrap gap-3 mb-4 text-xs text-gray-500">
                     <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-gray-200 inline-block"/> Chưa làm</span>
                     <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-orange-400 inline-block"/> Đang điền</span>
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-teal-500 inline-block"/> Đúng</span>
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-500 inline-block"/> Sai</span>
+                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-teal-500 inline-block"/> Đúng rồi ✅</span>
+                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-orange-300 inline-block"/> Cần cố thêm 💡</span>
                   </div>
 
                   {/* ── NỘI DUNG CÂU ĐƯỢC CHỌN ── */}
                   {expandedQ && (() => {
                     const q = questions.find(q => q.id === expandedQ)!
                     if (!q) return null
+                    const qIdx      = questions.findIndex(x => x.id === expandedQ)
+                    const prevQ     = questions[qIdx - 1] ?? null
+                    const nextQ     = questions[qIdx + 1] ?? null
                     const isDone    = submitted[q.id]
                     const isCorrect = results[q.id]
                     const hint      = showHint[q.id]
                     return (
-                      <div className={`mb-5 rounded-3xl border-2 p-5 transition-all ${
+                      <div className={`mb-5 rounded-3xl border-2 p-5 transition-all shadow-md ${
                         isDone
-                          ? isCorrect ? 'border-teal-300 bg-teal-50' : 'border-red-300 bg-red-50'
+                          ? isCorrect ? 'border-teal-300 bg-teal-50' : 'border-orange-200 bg-orange-50'
                           : 'border-purple-300 bg-purple-50/30'
                       }`}>
-                        {/* Số câu + badge loại câu hỏi */}
-                        <div className="flex items-start gap-3 mb-4">
-                          <div className={`w-9 h-9 rounded-2xl flex items-center justify-center text-sm font-black shrink-0 ${
-                            isDone ? (isCorrect ? 'bg-teal-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-600 text-white'
+                        {/* Số câu + badge loại */}
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-base font-black shrink-0 shadow-sm ${
+                            isDone ? (isCorrect ? 'bg-teal-500 text-white' : 'bg-orange-400 text-white') : 'bg-purple-600 text-white'
                           }`}>{q.order}</div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-bold text-gray-900 text-base leading-relaxed">{q.content}</p>
                             {q.questionType && q.questionType !== 'OPEN' && (
-                              <span className={`inline-flex items-center gap-1 mt-1 text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                              <span className={`inline-flex items-center gap-1 mb-2 text-xs font-bold px-2.5 py-0.5 rounded-full ${
                                 q.questionType === 'MULTIPLE_CHOICE' ? 'bg-blue-100 text-blue-700'
-                                : q.questionType === 'TRUE_FALSE' ? 'bg-green-100 text-green-700'
-                                : q.questionType === 'MATCHING'   ? 'bg-purple-100 text-purple-700'
-                                : q.questionType === 'ORDERING'   ? 'bg-amber-100 text-amber-700'
+                                : q.questionType === 'TRUE_FALSE'   ? 'bg-green-100 text-green-700'
+                                : q.questionType === 'MATCHING'     ? 'bg-purple-100 text-purple-700'
+                                : q.questionType === 'ORDERING'     ? 'bg-amber-100 text-amber-700'
                                 : 'bg-gray-100 text-gray-600'
                               }`}>
                                 {q.questionType === 'MULTIPLE_CHOICE' && '🔘 Trắc nghiệm'}
@@ -793,47 +808,79 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           </div>
                         </div>
 
+                        {/* Hình ảnh minh họa (nếu có) */}
+                        {q.imageUrl && (
+                          <div className="mb-4">
+                            <img
+                              src={q.imageUrl}
+                              alt="Hình minh họa"
+                              className="w-full max-h-56 object-contain rounded-2xl border border-gray-100 bg-gray-50 shadow-sm"
+                            />
+                          </div>
+                        )}
+
+                        {/* Nội dung câu hỏi — text-xl, dễ đọc */}
+                        <div className="bg-white rounded-2xl px-4 py-3 mb-4 border border-gray-100 shadow-sm">
+                          <p className="font-bold text-gray-900 text-xl leading-relaxed">{q.content}</p>
+                        </div>
+
                         {/* ── Ô nhập đáp án theo loại câu hỏi ── */}
                         {renderQuestionInput(q, isDone, isCorrect)}
 
-                        {/* Kết quả */}
+                        {/* ── Feedback sau khi nộp ── */}
                         {isDone && (
-                          <div className={`flex items-center gap-2 text-sm font-bold mb-2 ${
-                            isCorrect ? 'text-teal-700' : 'text-red-700'
+                          <div className={`flex items-center gap-3 py-3 px-4 rounded-2xl mb-3 ${
+                            isCorrect
+                              ? 'bg-teal-100 border-2 border-teal-300'
+                              : 'bg-orange-100 border-2 border-orange-300'
                           }`}>
-                            <span className="text-xl">{isCorrect ? '🎉' : '💪'}</span>
-                            {isCorrect
-                              ? 'Chuẩn rồi! Con giỏi lắm!'
-                              : (q.questionType === 'MATCHING' || q.questionType === 'ORDERING')
-                                ? 'Chưa đúng — xem gợi ý bên dưới nhé!'
-                                : `Đáp án đúng là: ${q.correctAnswer}`
-                            }
+                            <span className="text-3xl">
+                              {isCorrect ? '✅' : '💡'}
+                            </span>
+                            <div>
+                              {isCorrect ? (
+                                <p className="text-teal-800 font-black text-lg">Đúng rồi! Con giỏi lắm! 🌟</p>
+                              ) : (
+                                <>
+                                  <p className="text-orange-800 font-black text-lg">Thử lại nhé!</p>
+                                  {/* For OPEN type, show correct answer directly */}
+                                  {(!q.questionType || q.questionType === 'OPEN') && (
+                                    <p className="text-orange-700 text-sm font-semibold mt-0.5">
+                                      Đáp án đúng: <span className="font-black">{q.correctAnswer}</span>
+                                    </p>
+                                  )}
+                                  {(q.questionType === 'MATCHING' || q.questionType === 'ORDERING') && (
+                                    <p className="text-orange-700 text-sm font-semibold mt-0.5">Xem gợi ý bên dưới nhé! 👇</p>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
                         )}
 
                         {/* Gợi ý + cảnh báo trừ điểm */}
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap mb-2">
                           <button onClick={() => {
                             if (!isDone && !hint) {
                               setHintPeeked(p => ({ ...p, [q.id]: true }))
                             }
                             setShowHint(p => ({ ...p, [q.id]: !p[q.id] }))
                           }}
-                            className="text-xs text-purple-500 hover:text-purple-700 font-semibold">
+                            className="text-sm text-purple-600 hover:text-purple-800 font-bold rounded-xl px-3 py-1.5 bg-purple-50 hover:bg-purple-100 transition">
                             {hint ? '🙈 Ẩn gợi ý' : '💡 Xem gợi ý / lời giải'}
                           </button>
                           {!isDone && (
                             <span className="text-xs text-orange-500 font-medium">
-                              (⚠️ xem gợi ý sẽ bị −0.5 điểm — hãy cân nhắc!)
+                              ⚠️ xem gợi ý sẽ bị −0.5 điểm
                             </span>
                           )}
                           {hintPeeked[q.id] && !isDone && (
-                            <span className="text-xs text-red-500 font-bold">→ Đã xem gợi ý</span>
+                            <span className="text-xs text-orange-600 font-bold">→ Đã xem gợi ý</span>
                           )}
                         </div>
                         {hint && (
-                          <div className="mt-2 bg-yellow-50 border border-yellow-200 rounded-2xl px-4 py-3 space-y-1.5">
-                            <p className="text-sm font-bold text-yellow-800">Đáp án: <span className="text-teal-700 text-base">{q.correctAnswer}</span></p>
+                          <div className="mb-4 bg-yellow-50 border-2 border-yellow-200 rounded-2xl px-4 py-3 space-y-1.5">
+                            <p className="text-base font-bold text-yellow-800">Đáp án: <span className="text-teal-700">{q.correctAnswer}</span></p>
                             {q.explanation && (
                               <div className="border-t border-yellow-200 pt-2">
                                 <p className="text-xs font-bold text-blue-700 mb-1">📝 Lời giải chi tiết:</p>
@@ -842,6 +889,22 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             )}
                           </div>
                         )}
+
+                        {/* ── Điều hướng Câu trước / Câu tiếp ── */}
+                        <div className="flex gap-3 mt-2">
+                          <button
+                            disabled={!prevQ}
+                            onClick={() => prevQ && setExpandedQ(prevQ.id)}
+                            className="flex-1 py-4 bg-gray-100 text-gray-700 font-black rounded-2xl hover:bg-gray-200 transition text-base disabled:opacity-30 shadow-sm">
+                            ← Câu trước
+                          </button>
+                          <button
+                            disabled={!nextQ}
+                            onClick={() => nextQ && setExpandedQ(nextQ.id)}
+                            className="flex-1 py-4 bg-purple-100 text-purple-700 font-black rounded-2xl hover:bg-purple-200 transition text-base disabled:opacity-30 shadow-sm">
+                            Câu tiếp →
+                          </button>
+                        </div>
                       </div>
                     )
                   })()}
@@ -853,17 +916,17 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     return (
                       <div className="mt-2">
                         {!allAnswered && (
-                          <p className="text-center text-xs text-gray-400 mb-2">
-                            📝 Hãy điền đáp án tất cả {questions.length} câu rồi mới nộp nhé!
+                          <p className="text-center text-sm text-gray-400 mb-2">
+                            📝 Hãy làm tất cả {questions.length} câu rồi mới nộp nhé!
                           </p>
                         )}
                         <button onClick={handleSubmitAll}
                           disabled={submittingAll || !allAnswered}
-                          className={`w-full !py-4 flex items-center justify-center gap-2 text-base font-black rounded-3xl transition-all ${
+                          className={`w-full !py-4 flex items-center justify-center gap-2 text-lg font-black rounded-3xl transition-all shadow-md ${
                             allAnswered ? 'btn-primary' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           }`}>
                           {submittingAll
-                            ? <><Loader2 className="animate-spin" size={18} /> Đang chấm & phân tích AI...</>
+                            ? <><Loader2 className="animate-spin" size={20} /> Đang chấm & phân tích AI...</>
                             : allDone
                             ? '🏆 Xem kết quả & nhận nhận xét AI'
                             : '🏆 Nộp bài & nhận nhận xét AI'
@@ -881,15 +944,15 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   )}
 
                   {aiResult && (
-                    <div className="mt-4 bg-gradient-to-br from-purple-50 to-teal-50 rounded-3xl p-5 border border-purple-100">
+                    <div className="mt-4 bg-gradient-to-br from-purple-50 to-teal-50 rounded-3xl p-5 border border-purple-100 shadow-sm">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-2xl">🤖</span>
                         <h3 className="font-black text-gray-900">Nhận xét của AI</h3>
-                        <span className={`ml-auto text-lg font-black ${accuracy >= 80 ? 'text-teal-600' : accuracy >= 50 ? 'text-orange-500' : 'text-red-500'}`}>{accuracy}%</span>
+                        <span className={`ml-auto text-lg font-black ${accuracy >= 80 ? 'text-teal-600' : accuracy >= 50 ? 'text-orange-500' : 'text-orange-600'}`}>{accuracy}%</span>
                       </div>
                       {aiResult.summary && <p className="text-gray-700 text-sm mb-3">{aiResult.summary}</p>}
                       {aiResult.recommendation && (
-                        <div className="bg-white rounded-2xl p-3 text-sm text-purple-900">
+                        <div className="bg-white rounded-2xl p-3 text-sm text-purple-900 shadow-sm">
                           🚀 <strong>Gợi ý tiếp theo:</strong> {aiResult.recommendation}
                         </div>
                       )}
@@ -904,7 +967,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                         {questions.some(q => submitted[q.id] && !results[q.id]) && (
                           <button onClick={() => handleRetry(true)}
                             className="flex-1 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition text-sm">
-                            🟡 Làm lại câu sai
+                            💡 Làm lại câu chưa đúng
                           </button>
                         )}
                       </div>
@@ -989,7 +1052,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     const q = questions.find(x => x.id === notebookQ)!
                     const done = notebookDone[q.id]
                     return (
-                      <div className={`mb-4 rounded-3xl border-2 p-5 transition-all ${
+                      <div className={`mb-4 rounded-3xl border-2 p-5 transition-all shadow-sm ${
                         done ? 'border-blue-300 bg-blue-50' : 'border-purple-300 bg-purple-50/40'
                       }`}>
                         <div className="flex items-center gap-3 mb-4">
@@ -998,8 +1061,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           }`}>{q.order}</div>
                           <p className="text-xs text-gray-500 font-medium">Câu {q.order} / {questions.length}</p>
                         </div>
-                        <div className="bg-white rounded-2xl p-4 mb-4 border border-gray-100">
-                          <p className="text-base md:text-lg font-bold text-gray-900 leading-relaxed">{q.content}</p>
+                        {q.imageUrl && (
+                          <div className="mb-3">
+                            <img src={q.imageUrl} alt="Hình minh họa" className="w-full max-h-56 object-contain rounded-2xl border border-gray-100 bg-gray-50" />
+                          </div>
+                        )}
+                        <div className="bg-white rounded-2xl p-4 mb-4 border border-gray-100 shadow-sm">
+                          <p className="text-xl font-bold text-gray-900 leading-relaxed">{q.content}</p>
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           {!done ? (
@@ -1010,13 +1078,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                                 const next = questions[idx + 1]
                                 setNotebookQ(next ? next.id : null)
                               }}
-                              className="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white font-black rounded-2xl transition text-base">
+                              className="flex-1 py-4 bg-blue-500 hover:bg-blue-600 text-white font-black rounded-2xl transition text-lg shadow-md">
                               ✓ Đã viết vào vở
                             </button>
                           ) : (
                             <button
                               onClick={() => setNotebookDone(p => { const n = {...p}; delete n[q.id]; return n })}
-                              className="flex-1 py-2.5 bg-gray-100 text-gray-500 font-semibold rounded-2xl transition text-sm">
+                              className="flex-1 py-3 bg-gray-100 text-gray-500 font-semibold rounded-2xl transition text-sm">
                               ← Chưa xong
                             </button>
                           )}
@@ -1024,15 +1092,15 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             {questions.findIndex(x => x.id === q.id) > 0 && (
                               <button
                                 onClick={() => setNotebookQ(questions[questions.findIndex(x => x.id === q.id) - 1].id)}
-                                className="px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-sm">
+                                className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-base shadow-sm">
                                 ← Trước
                               </button>
                             )}
                             {questions.findIndex(x => x.id === q.id) < questions.length - 1 && (
                               <button
                                 onClick={() => setNotebookQ(questions[questions.findIndex(x => x.id === q.id) + 1].id)}
-                                className="px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-sm">
-                                Sau →
+                                className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-base shadow-sm">
+                                Tiếp →
                               </button>
                             )}
                           </div>
@@ -1112,7 +1180,10 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               ) : questions.length > 0 ? (
                 <div className="space-y-3">
                   {questions.map((q) => (
-                    <div key={q.id} className="border border-teal-100 rounded-2xl p-4">
+                    <div key={q.id} className="border border-teal-100 rounded-2xl p-4 shadow-sm">
+                      {q.imageUrl && (
+                        <img src={q.imageUrl} alt="" className="w-full max-h-40 object-contain rounded-xl mb-2 bg-gray-50" />
+                      )}
                       <p className="text-sm font-semibold text-gray-700 mb-1">Câu {q.order}: {q.content}</p>
                       <p className="text-teal-700 font-black text-sm">✅ {q.correctAnswer}</p>
                       {q.explanation && <p className="text-blue-700 text-xs mt-1">📝 {q.explanation}</p>}
@@ -1139,7 +1210,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               ) : (
                 <div className="space-y-3">
                   {top5.map((e) => (
-                    <div key={e.userId} className={`flex items-center gap-4 rounded-3xl p-4 ${e.isMe ? 'bg-yellow-50 border-2 border-yellow-300' : 'bg-white border border-gray-100'}`}>
+                    <div key={e.userId} className={`flex items-center gap-4 rounded-3xl p-4 shadow-sm ${e.isMe ? 'bg-yellow-50 border-2 border-yellow-300' : 'bg-white border border-gray-100'}`}>
                       <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-xl font-black shrink-0 ${
                         e.rank === 1 ? 'bg-yellow-400 text-yellow-900' : e.rank === 2 ? 'bg-gray-200 text-gray-700' : e.rank === 3 ? 'bg-orange-200 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
                         {e.rank === 1 ? '🥇' : e.rank === 2 ? '🥈' : e.rank === 3 ? '🥉' : e.rank}
@@ -1165,7 +1236,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       <div className="hidden lg:block lg:w-[42%] shrink-0">
         <div className="sticky top-24">
           <VideoPanel videoMaterial={videoMaterial} />
-          <div className="mt-3 bg-white rounded-2xl border border-purple-100 px-4 py-3 text-xs text-gray-500 space-y-1">
+          <div className="mt-3 bg-white rounded-2xl border border-purple-100 px-4 py-3 text-xs text-gray-500 space-y-1 shadow-sm">
             <p>📖 <strong className="text-gray-700">Bài giảng:</strong> slide/PDF lý thuyết</p>
             <p>✏️ <strong className="text-gray-700">BTVN:</strong> làm bài trực tiếp, chấm tự động</p>
             <p>📓 <strong className="text-gray-700">Vở viết:</strong> tự luận, AI chấm điểm</p>
