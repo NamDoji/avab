@@ -381,14 +381,16 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const computeAnswer = (q: Question): string => {
     const qType = (q.questionType || 'OPEN').toUpperCase()
     if (qType === 'MATCHING') {
-      let pairs: QuestionOption[] = (q.options || []) as QuestionOption[]
-      if (pairs.length === 0 && q.correctAnswer) {
-        try { pairs = JSON.parse(q.correctAnswer) } catch {}
-      }
-      return pairs
-        .filter((p: QuestionOption) => p.left !== undefined)
-        .map((p: QuestionOption) => `${p.left}=${matchingInputs[q.id]?.[p.left!] || ''}`)
-        .join(',')
+      // Extract left keys via regex — works even when options is null/undefined
+      const getLeftKeys = (src: string) =>
+        [...src.matchAll(/"left"\s*:\s*"([^"]+)"/g)].map(m => m[1])
+      let leftKeys: string[] = []
+      const rawO = q.options
+      if (Array.isArray(rawO) && rawO.length > 0 && (rawO[0] as any)?.left)
+        leftKeys = (rawO as any[]).map((o: any) => String(o.left ?? '')).filter(Boolean)
+      if (!leftKeys.length && q.correctAnswer)
+        leftKeys = getLeftKeys(q.correctAnswer)
+      return leftKeys.map(l => `${l}=${matchingInputs[q.id]?.[l] || ''}`).join(',')
     }
     return userAnswers[q.id] || ''
   }
@@ -585,21 +587,18 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
     // ── MATCHING ─────────────────────────────────────────────────────────────
     if (qType === 'MATCHING') {
-      // Parse pairs từ options hoặc correctAnswer (dự phòng JSON serialize mất)
-      function parsePairs(src: any): Array<{left:string;right:string}> {
-        const arr = Array.isArray(src) ? src : []
-        return arr
-          .map((item: any) => ({
-            left:  String(item?.left  ?? item?.key  ?? ''),
-            right: String(item?.right ?? item?.text ?? ''),
-          }))
-          .filter((p: {left:string;right:string}) => p.left && p.right)
+      // Regex extract — reliable dù Prisma JSON field có serialize không
+      const rxExtract = (src: string): Array<{left:string;right:string}> => {
+        const ls = [...src.matchAll(/"left"\s*:\s*"([^"]+)"/g)].map(m => m[1])
+        const rs = [...src.matchAll(/"right"\s*:\s*"([^"]+)"/g)].map(m => m[1])
+        return ls.map((l, i) => ({ left: l, right: rs[i] || '' })).filter(p => p.left && p.right)
       }
-      // Ưu tiên options, fallback sang correctAnswer (JSON string)
-      let pairs = parsePairs(q.options)
-      if (pairs.length === 0 && q.correctAnswer) {
-        try { pairs = parsePairs(JSON.parse(q.correctAnswer)) } catch {}
-      }
+      let pairs: Array<{left:string;right:string}> = []
+      const ro = q.options
+      if (Array.isArray(ro) && ro.length > 0 && (ro[0] as any)?.left)
+        pairs = (ro as any[]).map((o: any) => ({ left: String(o.left??''), right: String(o.right??'') })).filter(p => p.left && p.right)
+      if (!pairs.length && q.correctAnswer) pairs = rxExtract(q.correctAnswer)
+      if (!pairs.length && ro) { try { pairs = rxExtract(JSON.stringify(ro)) } catch(_){} }
       const inputs = matchingInputs[q.id] || {}
       const hasAnyInput = Object.values(inputs).some(v => v.trim())
       return (
