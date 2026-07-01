@@ -579,13 +579,20 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
     // ── MATCHING ─────────────────────────────────────────────────────────────
     if (qType === 'MATCHING') {
-      const pairs = (q.options || []) as QuestionOption[]
+      // Parse options chắc chắn lấy được left/right dù JSON hay object
+      const rawOpts = q.options || []
+      const pairs: Array<{left: string; right: string}> = (Array.isArray(rawOpts) ? rawOpts : [])
+        .map((item: any) => ({
+          left:  String(item?.left  ?? item?.key  ?? ''),
+          right: String(item?.right ?? item?.text ?? ''),
+        }))
+        .filter(p => p.left && p.right)
       const inputs = matchingInputs[q.id] || {}
       const hasAnyInput = Object.values(inputs).some(v => v.trim())
       return (
         <div className="mb-3">
           <p className="text-sm text-purple-700 font-bold mb-3">
-            🔗 Nối các mục bên trái với đáp án tương ứng:
+            🔗 Nối các từ bên trái với đáp án đúng:
           </p>
           <div className="space-y-3 mb-4">
             {pairs.map((pair, i) => {
