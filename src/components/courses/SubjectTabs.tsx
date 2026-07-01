@@ -225,10 +225,18 @@ function VideoPanel({ videoMaterial }: { videoMaterial: { fileUrl: string | null
           }
         </div>
       ) : (
-        <div className="aspect-video flex flex-col items-center justify-center gap-3 text-gray-400 bg-gray-800">
-          <VideoOff size={40} className="text-gray-600" />
-          <p className="text-sm text-center px-4">Chuyên đề này chưa có video bài giảng</p>
-          <p className="text-xs text-gray-500">Giáo viên sẽ cập nhật sớm</p>
+        <div className="relative aspect-video w-full overflow-hidden">
+          {/* Ảnh mặc định giáo viên */}
+          <img
+            src="/default-teacher.jpg"
+            alt="Bảo Nam"
+            className="w-full h-full object-cover object-top"
+          />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-4">
+            <p className="text-white font-bold text-sm">🎥 Video sắp ra mắt</p>
+            <p className="text-white/70 text-xs mt-0.5">Giờ học trực tiếp với thầy Bảo Nam — cập nhật sớm!</p>
+          </div>
         </div>
       )}
       {url && (
