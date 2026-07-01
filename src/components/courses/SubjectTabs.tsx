@@ -230,7 +230,7 @@ function VideoPanel({ videoMaterial }: { videoMaterial: { fileUrl: string | null
           <img
             src="/default-teacher.jpg"
             alt="Bảo Nam"
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-cover object-center"
           />
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-4">
