@@ -51,14 +51,41 @@ export async function POST(req: NextRequest) {
         const question = questions.find((q: typeof questions[0]) => q.id === a.questionId)
         if (!question) return null
 
-        // Multiple choice / matching / ordering: so sánh chính xác (case-insensitive trim)
-        // OPEN: dùng smartMatch linh hoạt
-        const qType = (question as any).questionType ?? 'OPEN'
+        const qType = ((question as any).questionType ?? 'OPEN').toUpperCase()
         let isCorrect: boolean
+
         if (qType === 'OPEN') {
           isCorrect = smartMatch(a.answer, question.correctAnswer)
+
+        } else if (qType === 'MATCHING') {
+          // So sánh từng cặp left=right bất kể format (key=value hay JSON)
+          const parseMatchingPairs = (s: string): Record<string,string> => {
+            const map: Record<string,string> = {}
+            // Format: "Hello=Xin chào,Goodbye=Tạm biệt"
+            if (s.includes('=') && !s.startsWith('[')) {
+              s.split(',').forEach(pair => {
+                const idx = pair.indexOf('=')
+                if (idx > 0) map[pair.slice(0,idx).trim().toLowerCase()] = pair.slice(idx+1).trim().toLowerCase()
+              })
+              return map
+            }
+            // Format JSON: [{"left":"Hello","right":"Xin chào"},...]
+            try {
+              const arr = JSON.parse(s)
+              if (Array.isArray(arr)) arr.forEach((p: any) => {
+                if (p.left && p.right) map[String(p.left).trim().toLowerCase()] = String(p.right).trim().toLowerCase()
+              })
+            } catch {}
+            return map
+          }
+          const studentMap = parseMatchingPairs(a.answer)
+          const correctMap = parseMatchingPairs(question.correctAnswer)
+          // Chỉ check các cặp student đã điền (không penalty câu bỏ trống)
+          const filled = Object.entries(studentMap).filter(([,v]) => v)
+          isCorrect = filled.length > 0 && filled.every(([k,v]) => correctMap[k] === v)
+
         } else {
-          // Exact match (normalized) for structured types
+          // MC, TRUE_FALSE, ORDERING: exact match
           isCorrect = a.answer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()
         }
         const penalty = isCorrect ? (a.hintPenalty ?? 0) : 0
