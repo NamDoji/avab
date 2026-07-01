@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { BookOpen, Users, CheckSquare, Newspaper, Briefcase, BarChart3 } from 'lucide-react'
+import { BookOpen, Users, CheckSquare, Newspaper, Briefcase, BarChart3, MessageSquare } from 'lucide-react'
 
 export const metadata = { title: 'Admin Dashboard' }
 
@@ -10,17 +10,19 @@ export default async function AdminPage() {
   const session = await auth()
   if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const [coursesCount, usersCount, pendingEnrollments, newsCount] = await Promise.all([
+  const [coursesCount, usersCount, pendingEnrollments, newsCount, newContacts] = await Promise.all([
     prisma.course.count(),
     prisma.user.count(),
     prisma.enrollment.count({ where: { status: 'PENDING' } }),
     prisma.news.count(),
+    prisma.registration.count({ where: { status: 'NEW' } }),
   ])
 
   const stats = [
     { label: 'Khoá học', value: coursesCount, icon: BookOpen, href: '/admin/courses', color: 'from-purple-500 to-purple-700' },
     { label: 'Người dùng', value: usersCount, icon: Users, href: '/admin/users', color: 'from-teal-500 to-teal-700' },
     { label: 'Chờ duyệt', value: pendingEnrollments, icon: CheckSquare, href: '/admin/enrollments', color: 'from-orange-500 to-orange-700', alert: pendingEnrollments > 0 },
+    { label: 'Liên hệ mới', value: newContacts, icon: MessageSquare, href: '/admin/contacts', color: 'from-blue-500 to-blue-700', alert: newContacts > 0 },
     { label: 'Tin tức', value: newsCount, icon: Newspaper, href: '/admin/news', color: 'from-pink-500 to-pink-700' },
   ]
 

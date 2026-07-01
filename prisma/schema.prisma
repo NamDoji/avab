@@ -177,7 +177,11 @@ model Registration {
   phone     String
   email     String?
   note      String?
+  type      String   @default("CONTACT")  // CONTACT | ENROLLMENT
+  status    String   @default("NEW")      // NEW | WON | LOST | FOLLOWUP
+  note2     String?                       // Ghi chú admin
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("avab_registrations")
 }
