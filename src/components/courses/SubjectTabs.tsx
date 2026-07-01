@@ -684,9 +684,24 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       {/* ══ LEFT: Tabs + Content ══ */}
       <div className={isFullscreen ? 'flex-1 flex flex-col max-w-4xl mx-auto w-full' : 'w-full lg:flex-1 min-w-0'}>
 
-        {/* Video trên mobile */}
+        {/* Video trên mobile — có nút thu/mở lên trên */}
         <div className="lg:hidden mb-4">
-          <VideoPanel videoMaterial={videoMaterial} />
+          <div
+            className={`overflow-hidden transition-all duration-300 ${
+              videoCollapsed ? 'max-h-0 opacity-0 mb-0' : 'max-h-[400px] opacity-100'
+            }`}
+          >
+            <VideoPanel videoMaterial={videoMaterial} />
+          </div>
+          {/* Nút mũi tên thu/mở — mobile */}
+          <button
+            onClick={() => setVideoCollapsed(v => !v)}
+            className="w-full flex items-center justify-center gap-2 py-2 mt-1 rounded-2xl bg-white border-2 border-gray-100 hover:border-purple-300 text-gray-400 hover:text-purple-500 text-xs font-bold transition-all"
+          >
+            {videoCollapsed
+              ? <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg> Hiện video</>
+              : <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg> Thu video</>}
+          </button>
         </div>
 
         {/* Tab bar + Fullscreen button */}
