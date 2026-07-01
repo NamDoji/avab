@@ -600,7 +600,6 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       if (!pairs.length && q.correctAnswer) pairs = rxExtract(q.correctAnswer)
       if (!pairs.length && ro) { try { pairs = rxExtract(JSON.stringify(ro)) } catch(_){} }
       // Luôn cho phép thay đổi (không disable) để học sinh nhỏ dễ sửa
-      const [matchDone, setMatchDone] = useState(false)
       const inputs = matchingInputs[q.id] || {}
       const rightOptions = pairs.map(p => p.right).filter(Boolean) as string[]
       const hasAnyInput = Object.values(inputs).some(v => v.trim())
