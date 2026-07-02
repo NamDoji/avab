@@ -30,11 +30,14 @@ export function smartMatch(student: string, correct: string): boolean {
   // ── 2. Trích xuất key-value pairs "key = value" ──────────────────────────
   //    Hỗ trợ: "x = 4", "■ = 7", "x=4", v.v.
   const extractKV = (s: string): Map<string, string> | null => {
+    // Chuẩn hoá: thay "và" (tiếng Việt) → ";"
+    const normalized = s.replace(/\bvà\b/gi, ';')
     // Pattern: <key> = <value> ngăn cách bởi ; hoặc ,
-    const pairs = s.split(/[;,]/).map(p => p.trim()).filter(Boolean)
+    // Key không được chứa dấu =, ;, , để tránh parse sai
+    const pairs = normalized.split(/[;,]/).map(p => p.trim()).filter(Boolean)
     const map = new Map<string, string>()
     for (const p of pairs) {
-      const m = p.match(/^(.+?)\s*=\s*([\d.,]+)$/)
+      const m = p.match(/^([^=;,]+?)\s*=\s*([\d.,]+)$/)
       if (!m) return null // không phải tất cả đều dạng key=value → bail
       map.set(m[1].trim(), m[2].replace(',', '.'))
     }
@@ -79,10 +82,12 @@ export function smartMatch(student: string, correct: string): boolean {
   }
 
   // ── 3c. Học sinh chỉ nhập số (short form): "4;7" → match [4,7] ──────────
-  // Thử nhiều cách tách số khỏi chuỗi student (hỗ trợ cả "4,7" = 2 số riêng)
+  // Thử nhiều cách tách số khỏi chuỗi student
+  // (hỗ trợ: "4,7", "4 và 7", "x=4 và y=7" = 2 số riêng)
+  const aNorm = a.replace(/\bvà\b/gi, ';') // "và" → ngăn cách
   const candidateLists: string[][] = [
-    extractNums(a),                        // regex thông thường
-    a.split(/[;,\s]+/).flatMap(p => extractNums(p.trim())), // tách trước, rồi lấy số
+    extractNums(aNorm),
+    aNorm.split(/[;,\s]+/).flatMap(p => extractNums(p.trim())),
   ]
 
   for (const numsA of candidateLists) {
