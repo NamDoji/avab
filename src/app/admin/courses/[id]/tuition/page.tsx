@@ -14,6 +14,8 @@ interface TuitionPayment {
   paidAt: string | null
   note: string | null
   enrollment: {
+    pausedAt: string | null
+    resumedAt: string | null
     user: { id: string; name: string | null; phone: string; email: string | null }
   }
 }
@@ -48,7 +50,9 @@ interface CollectionSummary {
 interface Course {
   id: string
   name: string
+  price: number | null
   pricePerSession: number | null
+  paymentType: 'PER_COURSE' | 'PER_SESSION'
 }
 
 export default function TuitionPage({ params }: { params: Promise<{ id: string }> }) {
@@ -68,7 +72,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
 
   // Create modal
   const [showModal, setShowModal] = useState(false)
-  const [form, setForm] = useState({ title: '', sessions: '' })
+  const [form, setForm] = useState({ title: '', sessions: '', amount: '' })
   const [creating, setCreating] = useState(false)
 
   const loadList = async () => {
@@ -134,16 +138,22 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     setCreating(true)
+    const payload: Record<string, unknown> = { title: form.title }
+    if (course?.paymentType === 'PER_COURSE') {
+      payload.amount = Number(form.amount) || course?.price || 0
+    } else {
+      payload.sessions = Number(form.sessions)
+    }
     const res = await fetch(`/api/admin/courses/${id}/tuition`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: form.title, sessions: Number(form.sessions) }),
+      body: JSON.stringify(payload),
     })
     const data = await res.json()
     setCreating(false)
     if (data.success) {
       setShowModal(false)
-      setForm({ title: '', sessions: '' })
+      setForm({ title: '', sessions: '', amount: '' })
       loadList()
     } else {
       alert(data.error ?? 'Có lỗi xảy ra')
@@ -152,6 +162,8 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
 
   const pricePerSession = course?.pricePerSession ?? 0
   const previewAmount = form.sessions ? pricePerSession * Number(form.sessions) : 0
+  const isPERCOURSE = course?.paymentType === 'PER_COURSE'
+  const perCourseAmount = form.amount ? Number(form.amount) : (course?.price ?? 0)
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Đang tải...</div>
 
@@ -200,8 +212,10 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                     <div className="flex-1">
                       <h3 className="font-black text-gray-900">{col.title}</h3>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        {col.sessions} buổi · {fmt(col.unitAmount)}/buổi · {fmt(col.totalAmount)}/HS
-                        · {new Date(col.createdAt).toLocaleDateString('vi-VN')}
+                        {col.sessions === 0
+                          ? `Học phí khoá học · ${fmt(col.totalAmount)}/HS`
+                          : `${col.sessions} buổi · ${fmt(col.unitAmount)}/buổi · ${fmt(col.totalAmount)}/HS`}
+                        {' · '}{new Date(col.createdAt).toLocaleDateString('vi-VN')}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0 text-sm">
@@ -244,7 +258,10 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                                     <tr key={pay.id} className={current.isPaid ? 'bg-teal-50/40' : current.isFree ? 'bg-blue-50/30' : ''}>
                                       <td className="py-2.5 pr-3 text-gray-400">{idx + 1}</td>
                                       <td className="py-2.5 pr-3 font-medium text-gray-800">
-                                        {pay.enrollment.user.name ?? 'N/A'}
+                                        <span>{pay.enrollment.user.name ?? 'N/A'}</span>
+                                        {pay.enrollment.pausedAt && !pay.enrollment.resumedAt && (
+                                          <span className="ml-1.5 text-xs font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">PAUSED</span>
+                                        )}
                                       </td>
                                       <td className="py-2.5 pr-3 text-gray-500">{pay.enrollment.user.phone}</td>
                                       <td className="py-2.5 pr-3">
@@ -339,28 +356,51 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                   className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Số buổi thu</label>
-                <input
-                  required
-                  type="number"
-                  min="1"
-                  value={form.sessions}
-                  onChange={e => setForm(f => ({ ...f, sessions: e.target.value }))}
-                  placeholder="8"
-                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
-                />
-              </div>
-              {form.sessions && pricePerSession > 0 && (
-                <div className="bg-purple-50 rounded-xl px-4 py-3 text-sm">
-                  <p className="text-purple-700 font-semibold">
-                    💰 Số tiền mỗi HS: <span className="font-black text-purple-900">{fmt(previewAmount)}</span>
-                  </p>
-                  <p className="text-gray-400 text-xs mt-0.5">{form.sessions} buổi × {fmt(pricePerSession)}/buổi</p>
-                </div>
-              )}
-              {pricePerSession === 0 && (
-                <p className="text-amber-600 text-xs">⚠️ Khoá học chưa cài giá/buổi — số tiền sẽ là 0đ. Hãy cập nhật trong trang chi tiết khoá học.</p>
+              {isPERCOURSE ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Học phí (mỗi học viên)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={form.amount}
+                      onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
+                      placeholder={String(course?.price ?? 0)}
+                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                    />
+                  </div>
+                  <div className="bg-purple-50 rounded-xl px-4 py-3 text-sm">
+                    <p className="text-purple-700 font-semibold">
+                      💰 Học phí: <span className="font-black text-purple-900">{fmt(perCourseAmount)}</span>/HS
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Số buổi thu</label>
+                    <input
+                      required
+                      type="number"
+                      min="1"
+                      value={form.sessions}
+                      onChange={e => setForm(f => ({ ...f, sessions: e.target.value }))}
+                      placeholder="8"
+                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                    />
+                  </div>
+                  {form.sessions && pricePerSession > 0 && (
+                    <div className="bg-purple-50 rounded-xl px-4 py-3 text-sm">
+                      <p className="text-purple-700 font-semibold">
+                        💰 Số tiền mỗi HS: <span className="font-black text-purple-900">{fmt(previewAmount)}</span>
+                      </p>
+                      <p className="text-gray-400 text-xs mt-0.5">{form.sessions} buổi × {fmt(pricePerSession)}/buổi</p>
+                    </div>
+                  )}
+                  {pricePerSession === 0 && (
+                    <p className="text-amber-600 text-xs">⚠️ Khoá học chưa cài giá/buổi — số tiền sẽ là 0đ. Hãy cập nhật trong trang chi tiết khoá học.</p>
+                  )}
+                </>
               )}
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={creating}

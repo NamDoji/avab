@@ -60,11 +60,37 @@ export default async function CourseDetailPage({
   const { id } = await params
   const session = await auth()
 
+  // Check if enrolled and get enrollment status
+  let isEnrolled = false
+  let enrollmentStatus: string | null = null
+  let pausedAt: Date | null = null
+  let resumedAt: Date | null = null
+
+  if (session) {
+    const userId = (session.user as any).id
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId, courseId: id } },
+    }).catch(() => null)
+    isEnrolled = enrollment?.status === 'APPROVED' || enrollment?.status === 'ACTIVE'
+    enrollmentStatus = enrollment?.status ?? null
+    pausedAt = enrollment?.pausedAt ?? null
+    resumedAt = enrollment?.resumedAt ?? null
+  }
+
+  // Xây dựng bộ lọc chuyên đề theo trạng thái pause:
+  // - PAUSED: chỉ xem chuyên đề tạo trước ngày tạm dừng
+  // - Đã RESUME: lấy hết rồi filter sau (loại giai đoạn nghỉ)
+  // - Bình thường: xem tất cả
+  let subjectDateFilter: any = {}
+  if (enrollmentStatus === 'PAUSED' && pausedAt) {
+    subjectDateFilter = { lte: pausedAt }
+  }
+
   const course = await prisma.course.findUnique({
     where: { id, isActive: true },
     include: {
       subjects: {
-        where: { isActive: true },
+        where: { isActive: true, ...(Object.keys(subjectDateFilter).length ? { createdAt: subjectDateFilter } : {}) },
         orderBy: { order: 'asc' },
         include: {
           _count: { select: { questions: true } },
@@ -75,20 +101,16 @@ export default async function CourseDetailPage({
 
   if (!course) notFound()
 
+  // Filter out subjects created during the pause period (khi đã resume)
+  let visibleSubjects = course.subjects
+  if (isEnrolled && pausedAt && resumedAt) {
+    visibleSubjects = course.subjects.filter(
+      s => new Date((s as any).createdAt) <= pausedAt! || new Date((s as any).createdAt) >= resumedAt!
+    )
+  }
+
   const cType = ((course as any).courseType as CourseType) ?? 'TOAN'
   const theme = COURSE_TYPE_THEME[cType] ?? COURSE_TYPE_THEME.TOAN
-
-  // Check if enrolled and get enrollment status
-  let isEnrolled = false
-  let enrollmentStatus: string | null = null
-  if (session) {
-    const userId = (session.user as any).id
-    const enrollment = await prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId, courseId: id } },
-    }).catch(() => null)
-    isEnrolled = enrollment?.status === 'APPROVED'
-    enrollmentStatus = enrollment?.status ?? null
-  }
 
   const enrollCount = 350 + (course.id.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 1000000, 0) % 351)
 
@@ -121,7 +143,8 @@ export default async function CourseDetailPage({
               {/* Stats pills */}
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <span className="bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-1.5 rounded-full font-semibold">
-                  📚 {course.subjects.length} chuyên đề
+                  📚 {visibleSubjects.length} chuyên đề
+                  {enrollmentStatus === 'PAUSED' && ' (đang nghỉ)'}
                 </span>
                 <span className="bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-1.5 rounded-full font-semibold">
                   👨‍👩‍👧 {enrollCount.toLocaleString('vi-VN')} học viên
@@ -181,7 +204,19 @@ export default async function CourseDetailPage({
           )
         )}
 
-        {isEnrolled && (
+        {isEnrolled && enrollmentStatus === 'PAUSED' && (
+          <div className="bg-amber-50 border-2 border-amber-200 rounded-3xl p-5 mb-8 flex flex-col sm:flex-row items-center gap-4">
+            <div className="text-4xl">⏸️</div>
+            <div>
+              <p className="font-black text-amber-900 text-lg">Bạn đang tạm dừng học</p>
+              <p className="text-amber-700 text-sm mt-1">
+                Bạn chỉ xem được các chuyên đề trước ngày tạm dừng
+                {pausedAt && ` (${new Date(pausedAt).toLocaleDateString('vi-VN')})`}. Liên hệ giáo viên để học lại.  
+              </p>
+            </div>
+          </div>
+        )}
+        {isEnrolled && enrollmentStatus !== 'PAUSED' && (
           <div className="bg-gradient-to-r from-green-500 to-teal-600 rounded-3xl p-5 mb-8 flex items-center gap-4 text-white">
             <div className="text-4xl">🎉</div>
             <div>
@@ -198,7 +233,7 @@ export default async function CourseDetailPage({
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {course.subjects.map((subject, idx) => {
+          {visibleSubjects.map((subject, idx) => {
             const color = theme.subjectColors[idx % theme.subjectColors.length]
             const canAccess = isEnrolled || subject.isPreview
 

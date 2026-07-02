@@ -23,7 +23,6 @@ export async function PATCH(
   try {
     const { id: courseId, userId } = await params
     const body = await request.json()
-    const { parentName } = body
 
     const enrollment = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId, courseId } },
@@ -33,9 +32,28 @@ export async function PATCH(
       return NextResponse.json({ success: false, error: 'Không tìm thấy học viên' }, { status: 404 })
     }
 
+    const { parentName, action } = body
+    const updateData: any = {}
+
+    if (action === 'pause') {
+      updateData.status = 'PAUSED'
+      updateData.pausedAt = new Date()
+      updateData.resumedAt = null
+    } else if (action === 'resume') {
+      updateData.status = 'ACTIVE'
+      updateData.resumedAt = new Date()
+      // giữ pausedAt cũ — dùng để filter chưyên đề trong giai đoạn nghỉ
+    } else if (parentName !== undefined) {
+      updateData.parentName = parentName ?? null
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ success: false, error: 'Không có gì để cập nhật' }, { status: 400 })
+    }
+
     const updated = await prisma.enrollment.update({
       where: { id: enrollment.id },
-      data: { parentName: parentName ?? null },
+      data: updateData,
     })
 
     return NextResponse.json({ success: true, data: updated })

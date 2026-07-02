@@ -75,6 +75,8 @@ model Enrollment {
   isFree    Boolean   @default(false)    // Miễn học phí
   expiresAt DateTime?                    // Ngày hết hạn (PER_COURSE: +18 tháng từ ngày bắt đầu)
   parentName String?                     // Họ tên Phụ Huynh
+  pausedAt  DateTime?                     // Ngày tạm dừng học
+  resumedAt DateTime?                     // Ngày tiếp tục học (null = đang nghỉ)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 

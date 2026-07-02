@@ -22,7 +22,7 @@ export async function GET(
   const [course, collections] = await Promise.all([
     prisma.course.findUnique({
       where: { id: courseId },
-      select: { id: true, name: true, pricePerSession: true },
+      select: { id: true, name: true, pricePerSession: true, price: true, paymentType: true },
     }),
     prisma.tuitionCollection.findMany({
       where: { courseId },
@@ -73,24 +73,60 @@ export async function POST(
   const body = await req.json()
   const { title, sessions, note } = body
 
-  if (!title || !sessions) {
+  if (!title) {
     return NextResponse.json({ success: false, error: 'Thiếu thông tin' }, { status: 400 })
   }
 
   const course = await prisma.course.findUnique({
     where: { id: courseId },
-    select: { pricePerSession: true },
+    select: { pricePerSession: true, price: true, paymentType: true },
   })
   if (!course) return NextResponse.json({ success: false, error: 'Không tìm thấy khoá học' }, { status: 404 })
 
-  const unitAmount = course.pricePerSession ?? 0
-  const totalAmount = unitAmount * Number(sessions)
-
-  // Get all active enrollments for this course
+  // Get all active enrollments for this course (excluding PAUSED)
   const enrollments = await prisma.enrollment.findMany({
     where: { courseId, status: { in: ['ACTIVE', 'APPROVED'] } },
     select: { id: true, userId: true },
   })
+
+  if (course.paymentType === 'PER_COURSE') {
+    // Thu theo khoá: amount = course.price (hoặc body.amount nếu có)
+    const amount = body.amount ?? (course.price ?? 0)
+    const collection = await prisma.$transaction(async (tx) => {
+      const col = await tx.tuitionCollection.create({
+        data: {
+          courseId,
+          title,
+          sessions: 0,
+          unitAmount: amount,
+          totalAmount: amount,
+          note: note ?? null,
+        },
+      })
+      if (enrollments.length > 0) {
+        await tx.tuitionPayment.createMany({
+          data: enrollments.map(e => ({
+            collectionId: col.id,
+            enrollmentId: e.id,
+            userId: e.userId,
+            amount: amount,
+            isFree: false,
+            isPaid: false,
+          })),
+        })
+      }
+      return col
+    })
+    return NextResponse.json({ success: true, data: collection }, { status: 201 })
+  }
+
+  // PER_SESSION: require sessions
+  if (!sessions) {
+    return NextResponse.json({ success: false, error: 'Thiếu số buổi' }, { status: 400 })
+  }
+
+  const unitAmount = course.pricePerSession ?? 0
+  const totalAmount = unitAmount * Number(sessions)
 
   // Create collection + payments in a transaction
   const collection = await prisma.$transaction(async (tx) => {

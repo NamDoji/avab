@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff, Key } from 'lucide-react'
+import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff, Key, PauseCircle, PlayCircle } from 'lucide-react'
 
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 type PaymentType = 'PER_COURSE' | 'PER_SESSION'
@@ -58,6 +58,8 @@ interface StudentEnrollment {
   createdAt: string
   parentName: string | null
   totalPaid: number
+  pausedAt: string | null
+  resumedAt: string | null
   user: { id: string; name: string | null; phone: string; email: string | null }
 }
 
@@ -126,6 +128,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
   // Reset mật khẩu
   const [resettingPassword, setResettingPassword] = useState<string | null>(null)
   const [resetPasswordMsg, setResetPasswordMsg] = useState<Record<string, string>>({})
+
+  // Tạm ngừng / Tiếp tục học
+  const [togglingPause, setTogglingPause] = useState<string | null>(null)
 
   const lookupPhone = async (phone: string) => {
     if (phone.length < 9) { setPhoneLookup('idle'); return }
@@ -316,6 +321,31 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
       }
     } catch {}
     setResettingPassword(null)
+  }
+
+  const handleTogglePause = async (enrollmentId: string, userId: string, currentlyPaused: boolean, userName: string) => {
+    const action = currentlyPaused ? 'resume' : 'pause'
+    const label = currentlyPaused ? 'cho học viên này tiếp tục học?' : 'tạm ngừng học viên này?'
+    if (!confirm(`Bạn muốn ${label} (${userName})`)) return
+    setTogglingPause(enrollmentId)
+    const res = await fetch(`/api/admin/courses/${id}/students/${userId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      setStudents(prev => prev.map(s => {
+        if (s.id !== enrollmentId) return s
+        return {
+          ...s,
+          status: currentlyPaused ? 'ACTIVE' : 'PAUSED',
+          pausedAt: currentlyPaused ? s.pausedAt : new Date().toISOString(),
+          resumedAt: currentlyPaused ? new Date().toISOString() : null,
+        }
+      }))
+    }
+    setTogglingPause(null)
   }
 
   const handleSaveParentName = async (enrollmentId: string, userId: string) => {
@@ -771,7 +801,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                     {course.paymentType === 'PER_COURSE' && (
                       <th className="text-right pb-3 text-gray-500 font-medium whitespace-nowrap">Học phí khoá</th>
                     )}
-                    <th className="text-right pb-3 text-gray-500 font-medium whitespace-nowrap">Tổng đã đóng</th>
+                    <th className="text-right pb-3 text-gray-500 font-medium whitespace-nowrap">Đã đóng / Còn nợ</th>
                     <th className="text-left pb-3 text-gray-500 font-medium">Hết hạn</th>
                     <th className="text-left pb-3 text-gray-500 font-medium">Ngày vào</th>
                     <th className="text-right pb-3 text-gray-500 font-medium">Thao tác</th>
@@ -801,16 +831,26 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                         {savingParentName === e.id && <p className="text-xs text-teal-500 mt-0.5">Đang lưu...</p>}
                       </td>
                       <td className="py-3 pr-3">
-                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                          e.status === 'ACTIVE' ? 'bg-green-50 text-green-700' :
-                          e.status === 'EXPIRED' ? 'bg-orange-50 text-orange-700' :
-                          e.status === 'REMOVED' ? 'bg-red-50 text-red-700' :
-                          'bg-yellow-50 text-yellow-700'
-                        }`}>
-                          {e.status === 'ACTIVE' ? 'Hoạt động' :
-                           e.status === 'EXPIRED' ? 'Hết hạn' :
-                           e.status === 'REMOVED' ? 'Đã xoá' : e.status}
-                        </span>
+                        <div className="flex flex-col gap-0.5">
+                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full w-fit ${
+                            e.status === 'ACTIVE' ? 'bg-green-50 text-green-700' :
+                            e.status === 'PAUSED' ? 'bg-orange-50 text-orange-700' :
+                            e.status === 'EXPIRED' ? 'bg-red-50 text-red-600' :
+                            e.status === 'REMOVED' ? 'bg-gray-100 text-gray-500' :
+                            'bg-yellow-50 text-yellow-700'
+                          }`}>
+                            {e.status === 'ACTIVE' ? 'Hoạt động' :
+                             e.status === 'PAUSED' ? '⏸ Tạm ngừng' :
+                             e.status === 'EXPIRED' ? 'Hết hạn' :
+                             e.status === 'REMOVED' ? 'Đã xoá' : e.status}
+                          </span>
+                          {e.status === 'PAUSED' && e.pausedAt && (
+                            <span className="text-[10px] text-orange-400">từ {new Date(e.pausedAt).toLocaleDateString('vi-VN')}</span>
+                          )}
+                          {e.status === 'ACTIVE' && e.resumedAt && (
+                            <span className="text-[10px] text-teal-500">↩ {new Date(e.resumedAt).toLocaleDateString('vi-VN')}</span>
+                          )}
+                        </div>
                       </td>
                       {/* Học phí khoá (chỉ hiện PER_COURSE) */}
                       {course.paymentType === 'PER_COURSE' && (
@@ -819,11 +859,16 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                           {e.isFree && <span className="block text-xs text-green-600">Miễn phí</span>}
                         </td>
                       )}
-                      {/* Tổng đã đóng */}
+                      {/* Tổng đã đóng + còn nợ */}
                       <td className="py-3 pr-3 text-right">
-                        <span className={`text-sm font-semibold ${e.totalPaid > 0 ? 'text-teal-700' : 'text-gray-300'}`}>
+                        <span className={`text-sm font-semibold block ${e.totalPaid > 0 ? 'text-teal-700' : 'text-gray-300'}`}>
                           {e.totalPaid > 0 ? fmtVnd(e.totalPaid) : '—'}
                         </span>
+                        {course.paymentType === 'PER_COURSE' && !e.isFree && (() => {
+                          const debt = (course.price ?? 0) - e.totalPaid
+                          if (debt <= 0) return <span className="text-[10px] text-teal-500">✅ Đủ tiền</span>
+                          return <span className="text-[10px] text-red-500 font-semibold">Còn nợ {fmtVnd(debt)}</span>
+                        })()}
                       </td>
                       <td className="py-3 pr-3 text-gray-400 text-xs">
                         {e.expiresAt ? new Date(e.expiresAt).toLocaleDateString('vi-VN') : '—'}
@@ -833,6 +878,20 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                       </td>
                       <td className="py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {/* Tạm ngừng / Tiếp tục học */}
+                          {e.status !== 'REMOVED' && e.status !== 'EXPIRED' && (
+                            <button
+                              onClick={() => handleTogglePause(e.id, e.user.id, e.status === 'PAUSED', e.user.name ?? e.user.phone)}
+                              disabled={togglingPause === e.id}
+                              className={`p-1.5 transition disabled:opacity-40 ${e.status === 'PAUSED' ? 'text-teal-500 hover:text-teal-700' : 'text-gray-300 hover:text-orange-500'}`}
+                              title={e.status === 'PAUSED' ? 'Cho học tiếp' : 'Tạm ngừng học'}
+                            >
+                              {e.status === 'PAUSED'
+                                ? <PlayCircle className="w-4 h-4" />
+                                : <PauseCircle className="w-4 h-4" />
+                              }
+                            </button>
+                          )}
                           {/* Reset mật khẩu */}
                           <div className="relative">
                             <button
