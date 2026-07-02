@@ -53,6 +53,89 @@ function injectImageTags(text: string, placeholderToUrl: Map<string, string>): s
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// HTML TABLE PARSER — parse trực tiếp từ mammoth HTML output
+// Xử lý: mỗi câu = 1 <table>, có 3 dòng: đề bài | đáp án + ảnh | lời giải
+// Bảo toàn: những <img src="supabase-url"> được giữ nguyên
+// ─────────────────────────────────────────────────────────────────────────────
+function parseHtmlTables(
+  html: string
+): Array<{ order: number; content: string; correctAnswer: string; explanation: string; imageUrl?: string }> | null {
+  const plain = (h: string) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+  const innerHtml = (tag: string) =>
+    tag.replace(/^<\w+[^>]*>/, '').replace(/<\/\w+>$/, '').trim()
+
+  // Tách các <table>...</table>
+  const tables: string[] = []
+  const tableRe = /<table[\s\S]*?<\/table>/gi
+  let tm: RegExpExecArray | null
+  while ((tm = tableRe.exec(html)) !== null) tables.push(tm[0])
+
+  if (tables.length < 3) return null // không phải file dạng table
+
+  const questions: Array<{ order: number; content: string; correctAnswer: string; explanation: string; imageUrl?: string }> = []
+  let order = 1
+
+  for (const table of tables) {
+    const tableText = plain(table)
+    // Chỉ lấy bảng có chứa câu hỏi
+    if (!/câu\s*\d+/i.test(tableText)) continue
+
+    // Tách rows
+    const rows: string[] = table.match(/<tr[\s\S]*?<\/tr>/gi) || []
+    if (rows.length === 0) continue
+
+    // Row 1: nội dung đề bài (HTML, giữ <strong>, <img>)
+    const row1InnerHtml = rows[0]
+      .replace(/<\/?tr[^>]*>/gi, '')
+      .replace(/<td[^>]*>/gi, '').replace(/<\/td>/gi, '')
+      .replace(/<th[^>]*>/gi, '').replace(/<\/th>/gi, '')
+      .trim()
+    // Xóa prefix "Câu N:" nếu có (giữ phần còn lại)
+    const contentHtml = row1InnerHtml
+      .replace(/<strong>Câu\s*\d+[:.\s]*<\/strong>/i, '')
+      .replace(/Câu\s*\d+[:.\s]*/i, '')
+      .trim()
+
+    // Row 2: tách cells → đáp án + ảnh
+    const cells: string[] = (rows[1] || '').match(/<td[\s\S]*?<\/td>/gi) || []
+
+    let correctAnswer = ''
+    let imageUrl: string | undefined
+
+    if (cells.length >= 2) {
+      // Cột trái: đáp án (chỉ lấy dòng đáp án, bỏ "Mức độ", "Ghi chú"...)
+      const leftLines = plain(cells[0]).split(/\n|\s{2,}/).map(l => l.trim()).filter(Boolean)
+      const ansLine = leftLines.find(l => /(?:đáp án|đáp số|answer)/i.test(l)) || leftLines[0] || ''
+      const aMatch = ansLine.match(/(?:Đáp án|ĐA|đáp số|answer)[:\s]*(.+)/i)
+      correctAnswer = aMatch ? aMatch[1].trim() : ansLine.trim()
+      // Cột phải: ảnh sơ đồ
+      const imgM = cells[1].match(/<img[^>]+src="([^"]+)"[^>]*>/i)
+      if (imgM) imageUrl = imgM[1]
+    } else if (cells.length === 1) {
+      const cellText = plain(cells[0])
+      const aMatch = cellText.match(/(?:Đáp án|ĐA|đáp án|đáp số|answer)[:\s]*(.+)/i)
+      correctAnswer = aMatch ? aMatch[1].trim() : ''
+    }
+
+    // Rows 3+: lời giải HTML (giữ ảnh trong lời giải nếu có)
+    const explanationHtml = rows.slice(2).map(r =>
+      r.replace(/<\/?tr[^>]*>/gi, '')
+        .replace(/<td[^>]*>/gi, '').replace(/<\/td>/gi, '')
+        .trim()
+    ).join('\n').trim()
+
+    // Content = chỉ đề bài (không có ảnh — ảnh được hiển thị riêng qua imageUrl)
+    const finalContent = contentHtml
+
+    if (finalContent.trim()) {
+      questions.push({ order: order++, content: finalContent, correctAnswer, explanation: explanationHtml, imageUrl })
+    }
+  }
+
+  return questions.length >= 3 ? questions : null
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // AI PARSER — GPT-4o đọc mọi format + giữ [IMG:] markers
 // ─────────────────────────────────────────────────────────────────────────────
 async function aiParseDocument(
@@ -176,7 +259,7 @@ export async function POST(
 
     let text = ''
     let imageCount = 0
-    // Map placeholder → actual Supabase URL
+    let docxHtmlWithUrls = '' // HTML gốc với URL ảnh thật (dùng cho table parser)
     const placeholderToUrl = new Map<string, string>()
 
     if (file.name.endsWith('.docx') || file.type.includes('wordprocessingml')) {
@@ -192,13 +275,9 @@ export async function POST(
               const ext = (image.contentType || 'image/png').split('/')[1] || 'png'
               const imgPath = `homework-images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
               const url = await uploadFile('avab-materials', imgPath, Buffer.from(imgBuf), image.contentType)
-
-              // Dùng placeholder có thể tìm lại
               const placeholder = `__IMG_${imgIdx++}__`
               placeholderToUrl.set(placeholder, url)
               imageCount++
-
-              // Trả placeholder làm src — sẽ được nhúng vào text như [IMG:__IMG_0__]
               return { src: placeholder }
             } catch {
               return { src: '' }
@@ -206,7 +285,14 @@ export async function POST(
           }),
         }
       )
-      // Strip HTML nhưng giữ [IMG:placeholder] markers
+
+      // HTML với URL thật (thay placeholder bằng URL Supabase thật)
+      docxHtmlWithUrls = result.value
+      for (const [ph, url] of placeholderToUrl) {
+        docxHtmlWithUrls = docxHtmlWithUrls.replaceAll(ph, url)
+      }
+
+      // Text cho regex/AI parser (giữ [IMG:ph] marker)
       text = stripHtmlKeepImages(result.value)
 
     } else if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
@@ -218,22 +304,39 @@ export async function POST(
       text = buffer.toString('utf-8')
     }
 
-    // ── Parse: thử regex trước, dùng AI khi cần ──
-    let parsed = regexParseText(text)
-    const emptyAnswers = parsed.filter(q => !q.correctAnswer.trim()).length
-    const needsAI = parsed.length < 3 || emptyAnswers > parsed.length * 0.5 || imageCount > 3
+    // ── Parse pipeline (3 tầng) ────────────────────────────────────────────────────────────────
+    //   Tầng 1: HTML table parser (cho file dạng table với ảnh inline)
+    //   Tầng 2: Regex parser (cho file văn bản chuẩn)
+    //   Tầng 3: GPT-4o AI (cho mọi format lạ, có ảnh OCR)
 
-    if (needsAI) {
+    let parsed: Array<{ order: number; content: string; correctAnswer: string; explanation: string; imageUrl?: string }> = []
+    let usedAI = false
+
+    // Tầng 1: HTML table parser (file có cấu trúc table rõ ràng + ảnh)
+    if (docxHtmlWithUrls) {
+      const tableParsed = parseHtmlTables(docxHtmlWithUrls)
+      if (tableParsed && tableParsed.length >= 3) {
+        parsed = tableParsed
+      }
+    }
+
+    // Tầng 2: Regex (nếu chưa có kết quả)
+    if (parsed.length === 0) {
+      parsed = regexParseText(text)
+    }
+
+    // Tầng 3: GPT-4o AI (nếu cần)
+    if (parsed.length < 3 || parsed.filter(q => !q.correctAnswer.trim()).length > parsed.length * 0.5) {
       try {
         const aiResult = await aiParseDocument(text)
-        if (aiResult.length > parsed.length) parsed = aiResult
+        if (aiResult.length > parsed.length) { parsed = aiResult; usedAI = true }
       } catch (err) {
         console.error('[AI Parser] failed:', err)
       }
     }
 
-    // ── Inject ảnh thật vào content/explanation ──
-    if (imageCount > 0 && placeholderToUrl.size > 0) {
+    // Inject ảnh placeholder vào content/explanation (cho AI parser output)
+    if (!usedAI && imageCount > 0 && placeholderToUrl.size > 0) {
       parsed = parsed.map(q => ({
         ...q,
         content: injectImageTags(q.content, placeholderToUrl),
@@ -255,6 +358,7 @@ export async function POST(
           homeworkSetId: newSet.id,
           order: q.order,
           content: q.content,
+          imageUrl: (q as any).imageUrl || null,
           correctAnswer: q.correctAnswer,
           explanation: q.explanation || null,
           points: 1,
@@ -264,7 +368,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      data: { parsed: parsed.length, questions: parsed, imageCount, usedAI: needsAI, homeworkSetId },
+      data: { parsed: parsed.length, questions: parsed, imageCount, usedAI, homeworkSetId },
     })
   } catch (err) {
     console.error(err)
