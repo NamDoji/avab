@@ -455,11 +455,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
   const getMaterial = (type: string) => materials.filter((m) => m.type === type)
 
-  // Gộp VIDEO + THEORY thành 1 danh sách cho tab Bài Giảng
-  const allLectureMaterials = [
-    ...getMaterial('VIDEO').map(m => ({ ...m, emoji: '🎬' })),
-    ...getMaterial('THEORY').map(m => ({ ...m, emoji: '📄' })),
-  ]
+  // Tab Bài Giảng: chỉ THEORY (video đã có ở side panel)
+  const allLectureMaterials = getMaterial('THEORY').map(m => ({ ...m, emoji: '📚' }))
   const activeLecture = allLectureMaterials[activeLectureIdx] ?? allLectureMaterials[0] ?? null
 
   // Video panel (legacy — dùng cho side panel)
@@ -1241,12 +1238,10 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                         key={m.id}
                         onClick={() => setActiveLectureIdx(idx)}
                         className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
-                          activeLectureIdx === idx
-                            ? m.type === 'VIDEO' ? 'bg-red-500 text-white' : 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-blue-50'
+                          activeLectureIdx === idx ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-50'
                         }`}
                       >
-                        {m.emoji} {m.title || (m.type === 'VIDEO' ? `Video ${idx + 1}` : `Bài giảng ${idx + 1}`)}
+                        {m.emoji} {m.title || `Bài giảng ${idx + 1}`}
                       </button>
                     ))}
                   </div>
@@ -1254,25 +1249,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   {/* Nội dung theo tab đang chọn */}
                   {activeLecture && (() => {
                     const m = activeLecture
-                    if (m.type === 'VIDEO') {
-                      const url = m.fileUrl || m.content || ''
-                      const r = url ? resolveEmbedUrl(url) : null
-                      return r ? (
-                        <div className="rounded-2xl overflow-hidden shadow-md">
-                          {r.kind === 'iframe'
-                            ? <div className="aspect-video"><iframe src={r.src} className="w-full h-full" allowFullScreen title={m.title || 'Video'} /></div>
-                            : r.kind === 'video'
-                            ? <video src={r.src} controls className="w-full rounded-2xl" />
-                            : <a href={r.src} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-4 bg-red-50 rounded-2xl text-red-600 font-bold hover:bg-red-100">
-                                🔗 Mở video trong tab mới
-                              </a>
-                          }
-                        </div>
-                      ) : (
-                        <div className="text-center py-8 text-gray-400">⚠️ Video chưa có URL</div>
-                      )
-                    }
-                    // THEORY
+                    // THEORY only (video is in side panel)
                     const isLocalPath = m.fileUrl?.startsWith('/content/')
                     // HTML content (từ parse-theory) ưu tiên hơn fileUrl
                     const hasHtmlContent = m.content && m.content.length > 50 && /<[a-z]/i.test(m.content)

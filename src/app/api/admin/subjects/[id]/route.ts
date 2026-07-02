@@ -143,7 +143,7 @@ export async function POST(
   try {
     const { id } = await params
     const body = await request.json()
-    const { type, title, fileUrl, fileName } = body
+    const { type, title, content, fileUrl, fileName } = body
 
     if (!type) {
       return NextResponse.json(
@@ -157,6 +157,7 @@ export async function POST(
         subjectId: id,
         type,
         title: title ?? null,
+        content: content ?? null,   // ← bởi vậy HTML từ parse-theory không được lưu
         fileUrl: fileUrl ?? null,
         fileName: fileName ?? null,
       },
