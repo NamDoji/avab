@@ -125,6 +125,8 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const [saving, setSaving] = useState(false)
   const [setTitle, setSetTitle] = useState('')
   const [homeworkSets, setHomeworkSets] = useState<HomeworkSet[]>([])
+  const [saveMode, setSaveMode] = useState<'new' | 'replace'>('new')
+  const [replaceSetId, setReplaceSetId] = useState<string>('')
 
   // ── Rich question form ──
   const [showQForm, setShowQForm] = useState(false)
@@ -190,21 +192,40 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const handleParseAndSave = async () => {
     if (!uploadFile) return
     setSaving(true)
-    const fd = new FormData()
-    fd.append('file', uploadFile)
-    fd.append('save', 'true')
-    fd.append('setTitle', setTitle || uploadFile.name)
-    const res = await fetch(`/api/admin/subjects/${id}/parse-homework`, { method: 'POST', body: fd })
-    const data = await res.json()
-    if (data.success) {
-      const savedTitle = setTitle || uploadFile?.name || 'Đề mới'
-      showMsg('success', `Đã lưu ${data.data.parsed} câu hỏi vào đề "${savedTitle}"!`)
-      setParseResult(null)
-      setUploadFile(null)
-      setSetTitle('')
-      setTimeout(() => window.location.reload(), 1000)
-    } else {
-      showMsg('error', data.error)
+    try {
+      // Nếu "thay thế": xóa set cũ trước
+      const targetSet = homeworkSets.find(s => s.id === replaceSetId)
+      if (saveMode === 'replace' && replaceSetId) {
+        await fetch(`/api/admin/subjects/${id}/homework-sets/${replaceSetId}`, { method: 'DELETE' })
+      }
+
+      const finalTitle = setTitle.trim() ||
+        (saveMode === 'replace' && targetSet ? targetSet.title : null) ||
+        uploadFile.name
+
+      const fd = new FormData()
+      fd.append('file', uploadFile)
+      fd.append('save', 'true')
+      fd.append('setTitle', finalTitle)
+      const res = await fetch(`/api/admin/subjects/${id}/parse-homework`, { method: 'POST', body: fd })
+      const data = await res.json()
+      if (data.success) {
+        showMsg('success',
+          saveMode === 'replace'
+            ? `Đã thay thế đề "${finalTitle}" với ${data.data.parsed} câu hỏi mới!`
+            : `Đã lưu đề mới "${finalTitle}" — ${data.data.parsed} câu hỏi!`
+        )
+        setParseResult(null)
+        setUploadFile(null)
+        setSetTitle('')
+        setSaveMode('new')
+        setReplaceSetId('')
+        setTimeout(() => window.location.reload(), 1000)
+      } else {
+        showMsg('error', data.error)
+      }
+    } catch {
+      showMsg('error', 'Lưu thất bại')
     }
     setSaving(false)
   }
@@ -609,7 +630,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                 {parseResult && (
                   <button onClick={handleParseAndSave} disabled={saving}
                     className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
-                    {saving ? 'Đang lưu...' : `💾 Lưu thành đề mới (${parseResult.parsed} câu)`}
+                    {saving ? 'Đang lưu...' : saveMode === 'replace' ? `🔄 Thay thế (${parseResult.parsed} câu)` : `💾 Tạo đề mới (${parseResult.parsed} câu)`}
                   </button>
                 )}
               </div>
@@ -618,6 +639,56 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
             {parseResult && (
               <div className="mt-4 p-4 bg-teal-50 rounded-xl">
                 <p className="font-semibold text-teal-700 mb-3">Preview: {parseResult.parsed} câu hỏi</p>
+
+                {/* Chế độ lưu */}
+                <div className="mb-4 p-3 bg-white rounded-xl border border-teal-200">
+                  <p className="text-xs font-semibold text-gray-600 mb-2">❌ Chọn cách lưu:</p>
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => { setSaveMode('new'); setReplaceSetId('') }}
+                      className={`flex-1 min-w-28 px-3 py-2 rounded-lg text-sm font-semibold border-2 transition ${
+                        saveMode === 'new'
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 bg-white text-gray-600 hover:border-purple-300'
+                      }`}
+                    >
+                      ➕ Tạo đề mới
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSaveMode('replace')
+                        if (!replaceSetId && homeworkSets.length > 0) setReplaceSetId(homeworkSets[0].id)
+                      }}
+                      disabled={homeworkSets.length === 0}
+                      className={`flex-1 min-w-28 px-3 py-2 rounded-lg text-sm font-semibold border-2 transition disabled:opacity-40 ${
+                        saveMode === 'replace'
+                          ? 'border-orange-500 bg-orange-50 text-orange-700'
+                          : 'border-gray-200 bg-white text-gray-600 hover:border-orange-300'
+                      }`}
+                    >
+                      🔄 Thay thế đề cũ
+                    </button>
+                  </div>
+
+                  {/* Dropdown chọn đề cần thay */}
+                  {saveMode === 'replace' && homeworkSets.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-xs text-gray-500 mb-1">Chọn đề cần thay thế:</p>
+                      <select
+                        value={replaceSetId}
+                        onChange={e => setReplaceSetId(e.target.value)}
+                        className="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      >
+                        {homeworkSets.map(s => (
+                          <option key={s.id} value={s.id}>
+                            {s.title} ({s._count.questions} câu)
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-xs text-orange-600 mt-1">⚠️ Đề "{homeworkSets.find(s => s.id === replaceSetId)?.title}" sẽ bị xóa đi và thay bằng dữ liệu mới.</p>
+                    </div>
+                  )}
+                </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {parseResult.questions.map((q, i) => (
                     <div key={i} className="bg-white rounded-lg p-3 text-sm">
