@@ -30,6 +30,13 @@ export async function GET(
         course: { select: { id: true, name: true, code: true } },
         materials: { orderBy: { createdAt: 'asc' } },
         questions: { orderBy: { order: 'asc' } },
+        homeworkSets: {
+          orderBy: { order: 'asc' },
+          include: {
+            _count: { select: { questions: true } },
+            questions: { orderBy: { order: 'asc' } },
+          },
+        },
         _count: { select: { questions: true } },
       },
     })

@@ -50,6 +50,7 @@ interface HomeworkSet {
   order: number
   createdAt: string
   _count: { questions: number }
+  questions: Array<{ id: string; order: number; content: string; correctAnswer: string; homeworkSetId: string | null }>
 }
 
 interface SubjectDetail {
@@ -127,6 +128,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const [homeworkSets, setHomeworkSets] = useState<HomeworkSet[]>([])
   const [saveMode, setSaveMode] = useState<'new' | 'replace'>('new')
   const [replaceSetId, setReplaceSetId] = useState<string>('')
+  const [expandedSets, setExpandedSets] = useState<Record<string, boolean>>({})
 
   // ── Rich question form ──
   const [showQForm, setShowQForm] = useState(false)
@@ -700,30 +702,101 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
               </div>
             )}
 
-            {/* Danh sách câu hỏi hiện có */}
-            {subject.questions.length > 0 && (
-              <div className="mt-5 border-t pt-4">
-                <p className="text-sm font-semibold text-gray-700 mb-3">Đã có: {subject.questions.length} câu hỏi</p>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {subject.questions.map(q => (
-                    <div key={q.id} className="flex items-start gap-3 p-3 border border-gray-100 rounded-lg hover:border-purple-100">
-                      <span className="text-sm text-gray-400 w-6 flex-shrink-0">{q.order}.</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${QUESTION_TYPE_BADGE[q.questionType] ?? 'bg-gray-100 text-gray-600'}`}>
-                            {QUESTION_TYPE_LABELS[q.questionType as QuestionType] ?? q.questionType}
-                          </span>
-                          <span className="text-xs text-gray-400">{q.points} điểm</span>
-                        </div>
-                        <p className="text-sm text-gray-800 line-clamp-2 whitespace-pre-wrap">{q.content}</p>
-                        <p className="text-xs text-teal-600 mt-0.5">Đáp án: {q.correctAnswer}</p>
+            {/* ── Danh sách đề BTVN đã upload (per-set cards) ── */}
+            {(homeworkSets.length > 0 || subject.questions.filter((q: any) => !q.homeworkSetId).length > 0) && (
+              <div className="mt-5 border-t pt-4 space-y-3">
+                <p className="text-sm font-semibold text-gray-700">
+                  📚 Danh sách đề BTVN ({homeworkSets.length} đề)
+                </p>
+
+                {/* Các đề có HomeworkSet */}
+                {homeworkSets.map(set => (
+                  <div key={set.id} className="border border-purple-100 rounded-xl overflow-hidden">
+                    {/* Header card */}
+                    <div className="flex items-center justify-between px-4 py-3 bg-purple-50 hover:bg-purple-100 transition cursor-pointer"
+                      onClick={() => setExpandedSets(prev => ({ ...prev, [set.id]: !prev[set.id] }))}>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-purple-600 font-bold text-sm">📋 {set.title}</span>
+                        <span className="bg-purple-200 text-purple-800 text-xs font-bold px-2 py-0.5 rounded-full">
+                          {set._count.questions} câu
+                        </span>
                       </div>
-                      <button onClick={() => handleDeleteQuestion(q.id)} className="p-1 text-gray-400 hover:text-red-600">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-xs text-gray-400">
+                          {new Date(set.createdAt).toLocaleDateString('vi-VN')}
+                        </span>
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation()
+                            if (!confirm(`Xóa đề "${set.title}" và toàn bộ ${set._count.questions} câu hỏi?`)) return
+                            await fetch(`/api/admin/subjects/${id}/homework-sets/${set.id}`, { method: 'DELETE' })
+                            setHomeworkSets(prev => prev.filter(s => s.id !== set.id))
+                          }}
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition"
+                          title="Xóa đề này"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${expandedSets[set.id] ? 'rotate-180' : ''}`}
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </div>
                     </div>
-                  ))}
-                </div>
+
+                    {/* Question list (collapsed by default) */}
+                    {expandedSets[set.id] && (
+                      <div className="divide-y divide-gray-50 max-h-64 overflow-y-auto">
+                        {set.questions.map((q: any) => (
+                          <div key={q.id} className="flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50">
+                            <span className="text-xs text-gray-400 w-5 flex-shrink-0 pt-0.5">{q.order}.</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-gray-800 line-clamp-2 whitespace-pre-wrap">{q.content}</p>
+                              <p className="text-xs text-teal-600 mt-0.5">ĐA: {q.correctAnswer}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {/* Câu hỏi cũ không có set (legacy) */}
+                {(() => {
+                  const orphans = subject.questions.filter((q: any) => !q.homeworkSetId)
+                  if (orphans.length === 0) return null
+                  return (
+                    <div className="border border-gray-200 rounded-xl overflow-hidden">
+                      <div className="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer"
+                        onClick={() => setExpandedSets(prev => ({ ...prev, __orphan__: !prev['__orphan__'] }))}>
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-600 font-bold text-sm">📦 Câu hỏi chưa phân nhóm</span>
+                          <span className="bg-gray-200 text-gray-700 text-xs font-bold px-2 py-0.5 rounded-full">{orphans.length} câu</span>
+                        </div>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${expandedSets['__orphan__'] ? 'rotate-180' : ''}`}
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </div>
+                      {expandedSets['__orphan__'] && (
+                        <div className="divide-y divide-gray-50 max-h-48 overflow-y-auto">
+                          {orphans.map((q: any) => (
+                            <div key={q.id} className="flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50">
+                              <span className="text-xs text-gray-400 w-5 flex-shrink-0 pt-0.5">{q.order}.</span>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm text-gray-800 line-clamp-2">{q.content}</p>
+                                <p className="text-xs text-teal-600 mt-0.5">ĐA: {q.correctAnswer}</p>
+                              </div>
+                              <button onClick={() => handleDeleteQuestion(q.id)} className="p-1 text-gray-400 hover:text-red-600">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
             )}
           </div>
