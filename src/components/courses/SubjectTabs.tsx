@@ -21,6 +21,32 @@ function RichContent({ text, className }: { text: string; className?: string }) 
 }
 
 
+// ── TheoryContent: render HTML từ mammoth hoặc Markdown ─────────────────────
+function TheoryContent({ content }: { content: string }) {
+  const isHtml = /<(p|h[1-6]|ul|ol|li|table|strong|em|img|div|br)\b/i.test(content)
+  if (isHtml) {
+    return (
+      <div
+        className="prose prose-base max-w-none break-words
+          [&_h1]:text-xl [&_h1]:font-black [&_h1]:text-gray-900 [&_h1]:mb-3
+          [&_h2]:text-lg [&_h2]:font-black [&_h2]:text-purple-700 [&_h2]:border-b [&_h2]:border-purple-100 [&_h2]:pb-1 [&_h2]:mb-3
+          [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-gray-800 [&_h3]:mb-2
+          [&_p]:text-gray-700 [&_p]:leading-relaxed [&_p]:my-2
+          [&_li]:text-gray-700 [&_li]:my-1
+          [&_strong]:text-gray-900 [&_strong]:font-bold
+          [&_table]:w-full [&_table]:border-collapse [&_table]:my-3
+          [&_th]:bg-purple-50 [&_th]:text-purple-800 [&_th]:font-bold [&_th]:text-sm [&_th]:p-2 [&_th]:border [&_th]:border-purple-200
+          [&_td]:p-2 [&_td]:border [&_td]:border-gray-200 [&_td]:text-sm [&_td]:align-top
+          [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-3 [&_img]:shadow-sm [&_img]:block
+          [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2
+          [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-2"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    )
+  }
+  return <MarkdownLesson content={content} />
+}
+
 // ── Markdown renderer — renders bài giảng đẹp ───────────────────────────
 function MarkdownLesson({ content }: { content: string }) {
   return (
@@ -1254,13 +1280,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           <MaterialView url={m.fileUrl} title={m.title} />
                         ) : hasContent ? (
                           <div className="bg-white rounded-3xl border border-purple-100 p-5 md:p-6 shadow-sm">
-                            <MarkdownLesson content={m.content!} />
+                            <TheoryContent content={m.content!} />
                             {m.fileUrl && (
                               <div className="mt-5 pt-4 border-t border-gray-100">
-                                <a href={`https://raw.githubusercontent.com/NamDoji/avab/main${m.fileUrl}`}
+                                <a href={m.fileUrl}
                                   target="_blank" rel="noopener noreferrer"
                                   className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
-                                  ⬇️ Tải file DOCX
+                                  ⬇️ Tải file gốc
                                 </a>
                               </div>
                             )}
@@ -1526,15 +1552,26 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   })()}
                 </>
               ) : (allBTVNSets[activeAnswerSetIdx]?.questions ?? activeQuestions).length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {(allBTVNSets[activeAnswerSetIdx]?.questions ?? activeQuestions).map((q) => (
-                    <div key={q.id} className="border border-teal-100 rounded-2xl p-4 shadow-sm">
-                      {q.imageUrl && (
-                        <img src={q.imageUrl} alt="" className="w-full max-h-40 object-contain rounded-xl mb-2 bg-gray-50" />
+                    <div key={q.id} className="border border-teal-100 rounded-2xl p-5 shadow-sm bg-white">
+                      {/* Số câu */}
+                      <div className="flex items-start gap-3 mb-3">
+                        <span className="w-9 h-9 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-sm font-black flex-shrink-0">{q.order}</span>
+                        <RichContent text={q.content} className="font-bold text-gray-900 text-base flex-1" />
+                      </div>
+                      {/* Đáp án */}
+                      <div className="bg-teal-50 rounded-xl px-4 py-2.5 mb-2">
+                        <span className="text-xs font-semibold text-teal-600 uppercase tracking-wide">Đáp án</span>
+                        <p className="text-teal-800 font-black text-lg mt-0.5">{q.correctAnswer}</p>
+                      </div>
+                      {/* Lời giải */}
+                      {q.explanation && (
+                        <div className="bg-blue-50 rounded-xl px-4 py-3">
+                          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1 block">📝 Lời giải</span>
+                          <RichContent text={q.explanation} className="text-blue-900 text-sm" />
+                        </div>
                       )}
-                      <div className="text-sm font-semibold text-gray-700 mb-1">Câu {q.order}: <RichContent text={q.content} /></div>
-                      <p className="text-teal-700 font-black text-sm">✅ {q.correctAnswer}</p>
-                      {q.explanation && <div className="text-blue-700 text-xs mt-1">📝 <RichContent text={q.explanation} /></div>}
                     </div>
                   ))}
                 </div>
