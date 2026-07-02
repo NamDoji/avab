@@ -73,13 +73,20 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { code, name, description, thumbnail, price, isActive, courseType } = body
+    const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseDurationMonths, isActive, courseType } = body
 
     const validCourseTypes = ['TOAN', 'TIENG_ANH', 'LAP_TRINH_THUAT_TOAN', 'LAP_TRINH_SCRATCH', 'LAP_TRINH_PYTHON', 'LAP_TRINH_CPP']
+    const validPaymentTypes = ['PER_COURSE', 'PER_SESSION']
     const updateData: any = { code, name, description, thumbnail, price, isActive }
     if (courseType && validCourseTypes.includes(courseType)) {
       updateData.courseType = courseType
     }
+    if (paymentType && validPaymentTypes.includes(paymentType)) {
+      updateData.paymentType = paymentType
+    }
+    if (pricePerSession !== undefined) updateData.pricePerSession = pricePerSession
+    if (grade !== undefined) updateData.grade = grade || null
+    if (courseDurationMonths !== undefined) updateData.courseDurationMonths = courseDurationMonths
 
     const course = await prisma.course.update({
       where: { id },

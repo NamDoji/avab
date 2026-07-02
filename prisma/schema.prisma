@@ -34,36 +34,52 @@ enum CourseType {
   LAP_TRINH_CPP
 }
 
-model Course {
-  id          String     @id @default(cuid())
-  code        String     @unique
-  name        String
-  description String?
-  thumbnail   String?
-  price       Int?       @default(0)
-  courseType  CourseType @default(TOAN)
-  isActive    Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+// Loại thu tiền: theo khoá (18 tháng) hoặc theo buổi
+enum PaymentType {
+  PER_COURSE
+  PER_SESSION
+}
 
-  subjects    Subject[]
-  enrollments Enrollment[]
+model Course {
+  id                   String      @id @default(cuid())
+  code                 String      @unique
+  name                 String
+  description          String?
+  thumbnail            String?
+  price                Int?        @default(0)
+  courseType           CourseType  @default(TOAN)
+  // Loại thu tiền
+  paymentType          PaymentType @default(PER_COURSE)
+  pricePerSession      Int?        // Giá mỗi buổi khi paymentType = PER_SESSION
+  courseDurationMonths Int         @default(18) // Số tháng hiệu lực khi PER_COURSE
+  // Lớp (Grades 1–9)
+  grade                String?     // null = dành cho mọi lớp; "1".."9"
+  isActive             Boolean     @default(true)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  subjects            Subject[]
+  enrollments         Enrollment[]
+  tuitionCollections  TuitionCollection[]
 
   @@map("avab_courses")
 }
 
 model Enrollment {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
   courseId  String
-  status    String   @default("PENDING")
+  status    String    @default("ACTIVE") // ACTIVE | EXPIRED | PENDING | REMOVED
   note      String?
-  notified  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  notified  Boolean   @default(false)
+  isFree    Boolean   @default(false)    // Miễn học phí
+  expiresAt DateTime?                    // Ngày hết hạn (PER_COURSE: +18 tháng từ ngày bắt đầu)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course          Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tuitionPayments TuitionPayment[]
 
   @@unique([userId, courseId])
   @@map("avab_enrollments")
@@ -90,13 +106,15 @@ model Subject {
 }
 
 model HomeworkSet {
-  id        String   @id @default(cuid())
-  subjectId String
-  title     String
-  order     Int      @default(0)
-  fileUrl   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  subjectId       String
+  title           String
+  order           Int      @default(0)
+  fileUrl         String?
+  isAIGenerated   Boolean  @default(false) // AI tự sinh cho học viên
+  aiGeneratorId   String?  // userId của học viên đã yêu cầu sinh
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   subject   Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   questions Question[]
@@ -188,6 +206,61 @@ model Recruitment {
   updatedAt    DateTime @updatedAt
 
   @@map("avab_recruitments")
+}
+
+// ── Thu học phí ─────────────────────────────────────────────────────────────
+
+// Một đợt thu học phí (admin tạo)
+model TuitionCollection {
+  id          String   @id @default(cuid())
+  courseId    String
+  title       String   // Ví dụ: "Thu học phí tháng 3/2026"
+  sessions    Int      @default(0)  // Số buổi thu
+  unitAmount  Int      @default(0)  // Số tiền mỗi buổi (căn cứ pricePerSession)
+  totalAmount Int      @default(0)  // sessions * unitAmount (default, có thể ghi đè mỗi HS)
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  payments TuitionPayment[]
+
+  @@map("avab_tuition_collections")
+}
+
+// Chi tiết thu học phí của từng học viên trong 1 đợt thu
+model TuitionPayment {
+  id           String    @id @default(cuid())
+  collectionId String
+  enrollmentId String
+  userId       String
+  amount       Int       @default(0) // Số tiền (có thể thay đổi mỗi HS)
+  isFree       Boolean   @default(false) // Miễn học phí
+  isPaid       Boolean   @default(false) // Đã đóng chưa
+  paidAt       DateTime?
+  note         String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  collection TuitionCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  enrollment Enrollment        @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, enrollmentId])
+  @@map("avab_tuition_payments")
+}
+
+// Theo dõi số lần học viên yêu cầu AI sinh bài tập (tối đa 3 lần/chủ đề)
+model AIQuizGenLog {
+  id        String   @id @default(cuid())
+  userId    String
+  subjectId String
+  genCount  Int      @default(0)  // Số lần đã sinh
+  lastScore Int      @default(0)  // Điểm lần cuối (%) để check >=60%
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, subjectId])
+  @@map("avab_ai_quiz_gen_log")
 }
 
 model Registration {

@@ -24,12 +24,22 @@ function CourseTypeBadge({ type }: { type: CourseType }) {
   )
 }
 
+type PaymentType = 'PER_COURSE' | 'PER_SESSION'
+
+const GRADE_OPTIONS = [
+  { value: '', label: 'Tất cả lớp' },
+  ...Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
+]
+
 interface Course {
   id: string
   code: string
   name: string
   description: string | null
   price: number | null
+  pricePerSession: number | null
+  paymentType: PaymentType
+  grade: string | null
   courseType: CourseType
   isActive: boolean
   createdAt: string
@@ -40,7 +50,16 @@ export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ code: '', name: '', description: '', price: '1500000', courseType: 'TOAN' as CourseType })
+  const [form, setForm] = useState({
+    code: '',
+    name: '',
+    description: '',
+    price: '1500000',
+    pricePerSession: '200000',
+    paymentType: 'PER_COURSE' as PaymentType,
+    grade: '',
+    courseType: 'TOAN' as CourseType,
+  })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -61,12 +80,17 @@ export default function AdminCoursesPage() {
     const res = await fetch('/api/admin/courses', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, price: Number(form.price) }),
+      body: JSON.stringify({
+        ...form,
+        price: form.paymentType === 'PER_COURSE' ? Number(form.price) : null,
+        pricePerSession: form.paymentType === 'PER_SESSION' ? Number(form.pricePerSession) : null,
+        grade: form.grade || null,
+      }),
     })
     const data = await res.json()
     if (data.success) {
       setShowForm(false)
-      setForm({ code: '', name: '', description: '', price: '1500000', courseType: 'TOAN' })
+      setForm({ code: '', name: '', description: '', price: '1500000', pricePerSession: '200000', paymentType: 'PER_COURSE', grade: '', courseType: 'TOAN' })
       load()
     } else {
       setError(data.error)
@@ -156,13 +180,58 @@ export default function AdminCoursesPage() {
                 className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 md:col-span-2"
                 rows={2}
               />
-              <input
-                type="number"
-                placeholder="Học phí (VNĐ)"
-                value={form.price}
-                onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
-              />
+              {/* Loại thu tiền */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Loại thu tiền</label>
+                <div className="flex gap-3">
+                  <button type="button"
+                    onClick={() => setForm(f => ({ ...f, paymentType: 'PER_COURSE' }))}
+                    className={`flex-1 px-4 py-2.5 rounded-lg border-2 text-sm font-semibold transition ${
+                      form.paymentType === 'PER_COURSE'
+                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                        : 'border-gray-200 text-gray-600 hover:border-purple-300'
+                    }`}>
+                    🏦 Thu theo khoá (hết hạn 18 tháng)
+                  </button>
+                  <button type="button"
+                    onClick={() => setForm(f => ({ ...f, paymentType: 'PER_SESSION' }))}
+                    className={`flex-1 px-4 py-2.5 rounded-lg border-2 text-sm font-semibold transition ${
+                      form.paymentType === 'PER_SESSION'
+                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        : 'border-gray-200 text-gray-600 hover:border-teal-300'
+                    }`}>
+                    🗓️ Thu theo buổi
+                  </button>
+                </div>
+              </div>
+              {/* Giá */}
+              {form.paymentType === 'PER_COURSE' ? (
+                <input
+                  type="number"
+                  placeholder="Học phí cả khoá (VND)"
+                  value={form.price}
+                  onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+                  className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
+              ) : (
+                <input
+                  type="number"
+                  placeholder="Học phí mỗi buổi (VND)"
+                  value={form.pricePerSession}
+                  onChange={(e) => setForm((f) => ({ ...f, pricePerSession: e.target.value }))}
+                  className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                />
+              )}
+              {/* Lớp */}
+              <select
+                value={form.grade}
+                onChange={(e) => setForm(f => ({ ...f, grade: e.target.value }))}
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
+              >
+                {GRADE_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
               <div className="flex gap-3 items-center">
                 <button
                   type="submit"
@@ -212,7 +281,13 @@ export default function AdminCoursesPage() {
                     <div className="flex gap-4 text-sm text-gray-500">
                       <span>📚 {course._count.subjects} chuyên đề</span>
                       <span>👥 {course._count.enrollments} học viên</span>
-                      <span>{course.price ? `${course.price.toLocaleString()}đ` : 'Miễn phí'}</span>
+                      <span>
+                        {course.paymentType === 'PER_SESSION'
+                          ? (course.pricePerSession ? `${course.pricePerSession.toLocaleString()}đ/buổi` : 'Theo buổi')
+                          : (course.price ? `${course.price.toLocaleString()}đ` : 'Miễn phí')
+                        }
+                      </span>
+                      {course.grade && <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Lớp {course.grade}</span>}
                     </div>
                     <div className="flex gap-2">
                       <Link href={`/admin/courses/${course.id}`}
@@ -258,7 +333,11 @@ export default function AdminCoursesPage() {
                         <td className="p-4 text-gray-600">{course._count.subjects}</td>
                         <td className="p-4 text-gray-600">{course._count.enrollments}</td>
                         <td className="p-4 text-gray-600">
-                          {course.price ? `${course.price.toLocaleString()}đ` : 'Miễn phí'}
+                          {course.paymentType === 'PER_SESSION'
+                            ? (course.pricePerSession ? `${course.pricePerSession.toLocaleString()}đ/buổi` : 'Theo buổi')
+                            : (course.price ? `${course.price.toLocaleString()}đ` : 'Miễn phí')
+                          }
+                          {course.grade && <span className="ml-1 text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full">Lớp {course.grade}</span>}
                         </td>
                         <td className="p-4">
                           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${

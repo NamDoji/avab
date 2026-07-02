@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { code, name, description, thumbnail, price, courseType } = body
+    const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseType, courseDurationMonths } = body
 
     if (!code || !name) {
       return NextResponse.json(
@@ -59,9 +59,22 @@ export async function POST(request: NextRequest) {
 
     const validCourseTypes = ['TOAN', 'TIENG_ANH', 'LAP_TRINH_THUAT_TOAN', 'LAP_TRINH_SCRATCH', 'LAP_TRINH_PYTHON', 'LAP_TRINH_CPP']
     const finalCourseType = courseType && validCourseTypes.includes(courseType) ? courseType : 'TOAN'
+    const validPaymentTypes = ['PER_COURSE', 'PER_SESSION']
+    const finalPaymentType = paymentType && validPaymentTypes.includes(paymentType) ? paymentType : 'PER_COURSE'
 
     const course = await prisma.course.create({
-      data: { code, name, description, thumbnail, price: price ?? 0, courseType: finalCourseType as any },
+      data: {
+        code,
+        name,
+        description,
+        thumbnail,
+        price: price ?? 0,
+        pricePerSession: pricePerSession ?? null,
+        paymentType: finalPaymentType as any,
+        grade: grade || null,
+        courseDurationMonths: courseDurationMonths ?? 18,
+        courseType: finalCourseType as any,
+      },
     })
 
     return NextResponse.json({ success: true, data: course }, { status: 201 })

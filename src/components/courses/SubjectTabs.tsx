@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Loader2, VideoOff, Star, Maximize2, Minimize2 } from 'lucide-react'
 import { IDETab } from './IDETab'
 import ReactMarkdown from 'react-markdown'
@@ -350,7 +350,7 @@ function VideoPanel({ videoMaterial, videoMaterials, activeIdx, onSelect }: {
           </div>
         </div>
       )}
-      {/* Đã xóa link "Mở video trong tab mới" để bảo mật */
+      {/* Đã xóa link "Mở video trong tab mới" để bảo mật */}
     </div>
   )
 }
@@ -413,8 +413,8 @@ interface Props {
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
 const BASE_TABS = [
-  { id: 'homework', label: 'BTVN',      emoji: '✏️' },
   { id: 'theory',   label: 'Bài giảng', emoji: '📖' },
+  { id: 'homework', label: 'BTVN',      emoji: '✏️' },
   { id: 'answer',   label: 'Đáp án',    emoji: '✅' },
   { id: 'top5',     label: 'Điểm',      emoji: '⭐' },
 ]
@@ -453,9 +453,9 @@ const MC_COLORS = [
 export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0, homeworkSets }: Props) {
   const hasIDE = courseType && IDE_COURSE_TYPES.includes(courseType)
   const TABS = hasIDE
-    ? [...BASE_TABS.slice(0,2), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, ...BASE_TABS.slice(2)]
-    : [...BASE_TABS.slice(0,2), NOTEBOOK_TAB, ...BASE_TABS.slice(2)]
-  const [activeTab, setActiveTab] = useState('homework')
+    ? [...BASE_TABS.slice(0,3), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, BASE_TABS[3]]
+    : [...BASE_TABS.slice(0,3), NOTEBOOK_TAB, BASE_TABS[3]]
+  const [activeTab, setActiveTab] = useState('theory')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [videoCollapsed, setVideoCollapsed] = useState(false)
   const [expandedQ, setExpandedQ] = useState<string | null>(null)
@@ -478,6 +478,9 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const [aiLoading, setAiLoading] = useState(false)
   const [aiResult, setAiResult] = useState<any>(null)
   const [submittingAll, setSubmittingAll] = useState(false)
+  // AI Quiz Generation
+  const [aiQuizLoading, setAiQuizLoading] = useState(false)
+  const [aiQuizGenCount, setAiQuizGenCount] = useState<number | null>(null)
   const [notebookText, setNotebookText] = useState('')
   const [notebookSubmitting, setNotebookSubmitting] = useState(false)
   const [notebookResult, setNotebookResult] = useState<any>(null)
@@ -489,6 +492,14 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const [activeVideoIdx, setActiveVideoIdx] = useState(0) // for legacy VideoPanel
   const [activeAnswerIdx, setActiveAnswerIdx] = useState(0)
   const [activeAnswerSetIdx, setActiveAnswerSetIdx] = useState(0)
+
+  // Fetch AI quiz gen count on mount
+  useEffect(() => {
+    fetch(`/api/ai/generate-quiz?subjectId=${subject.id}`)
+      .then(r => r.json())
+      .then(d => { if (typeof d.genCount === 'number') setAiQuizGenCount(d.genCount) })
+      .catch(() => {})
+  }, [subject.id])
 
   const getMaterial = (type: string) => materials.filter((m) => m.type === type)
 
@@ -1256,6 +1267,62 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           </button>
                         )}
                       </div>
+
+                      {/* AI Quiz Generate Button */}
+                      {(() => {
+                        const allDoneNow = activeQuestions.length > 0 && activeQuestions.every(q => submitted[q.id])
+                        const canGenerate = allDoneNow && accuracy >= 60
+                        const genCount = aiQuizGenCount ?? 0
+                        const maxReached = genCount >= 3
+                        if (maxReached) {
+                          return (
+                            <div className="mt-3 text-center text-xs text-gray-400 bg-gray-50 rounded-2xl px-4 py-2">
+                              ⚠️ Đã đạt giới hạn 3 lần tạo bài AI
+                            </div>
+                          )
+                        }
+                        return (
+                          <div className="mt-3 relative group">
+                            <button
+                              disabled={!canGenerate || aiQuizLoading}
+                              onClick={async () => {
+                                setAiQuizLoading(true)
+                                try {
+                                  const res = await fetch('/api/ai/generate-quiz', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ subjectId: subject.id, subjectName: subject.name }),
+                                  })
+                                  const data = await res.json()
+                                  if (data.success) {
+                                    window.location.reload()
+                                  } else {
+                                    alert(data.error || 'Có lỗi xảy ra khi tạo bài AI')
+                                  }
+                                } catch {
+                                  alert('Không thể kết nối server')
+                                } finally {
+                                  setAiQuizLoading(false)
+                                }
+                              }}
+                              className={`w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
+                                canGenerate && !aiQuizLoading
+                                  ? 'bg-gradient-to-r from-violet-600 to-purple-700 text-white hover:from-violet-700 hover:to-purple-800 shadow-md'
+                                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                              }`}
+                            >
+                              {aiQuizLoading
+                                ? <><Loader2 className="animate-spin" size={16} /> 🤖 AI đang tạo bài...</>
+                                : <>🤖 Tạo bài AI <span className="text-xs opacity-70">({genCount}/3 lần)</span></>}
+                            </button>
+                            {!canGenerate && (
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-gray-800 text-white text-xs rounded-xl px-3 py-2 text-center opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
+                                Hoàn thành và đạt 60% để tạo bài mới
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })()}
                     </div>
                   )}
                 </>
