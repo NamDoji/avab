@@ -44,6 +44,7 @@ interface Subject {
   order: number
   name: string
   icon: string | null
+  description: string | null
   isActive: boolean
   isPreview: boolean
   _count: { questions: number; materials: number }
