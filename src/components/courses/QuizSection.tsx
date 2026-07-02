@@ -152,7 +152,7 @@ export function QuizSection({ subjectId, subjectName }: Props) {
                 `}>
                   {state === 'correct' ? '✓' : state === 'wrong' ? '✗' : index + 1}
                 </div>
-                <p className="font-bold text-gray-800 text-base leading-relaxed">{q.content}</p>
+                <p className="font-bold text-gray-800 text-base leading-relaxed whitespace-pre-wrap">{q.content}</p>
               </div>
 
               {/* Answer input */}

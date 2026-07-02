@@ -956,7 +956,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
                         {/* Nội dung câu hỏi — text-xl, dễ đọc */}
                         <div className="bg-white rounded-2xl px-4 py-3 mb-4 border border-gray-100 shadow-sm">
-                          <p className="font-bold text-gray-900 text-xl leading-relaxed">{q.content}</p>
+                          <p className="font-bold text-gray-900 text-xl leading-relaxed whitespace-pre-wrap">{q.content}</p>
                         </div>
 
                         {/* ── Ô nhập đáp án theo loại câu hỏi ── */}
@@ -1234,7 +1234,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           </div>
                         )}
                         <div className="bg-white rounded-2xl p-4 mb-4 border border-gray-100 shadow-sm">
-                          <p className="text-xl font-bold text-gray-900 leading-relaxed">{q.content}</p>
+                          <p className="text-xl font-bold text-gray-900 leading-relaxed whitespace-pre-wrap">{q.content}</p>
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           {!done ? (
@@ -1351,7 +1351,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       {q.imageUrl && (
                         <img src={q.imageUrl} alt="" className="w-full max-h-40 object-contain rounded-xl mb-2 bg-gray-50" />
                       )}
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Câu {q.order}: {q.content}</p>
+                      <p className="text-sm font-semibold text-gray-700 mb-1 whitespace-pre-wrap">Câu {q.order}: {q.content}</p>
                       <p className="text-teal-700 font-black text-sm">✅ {q.correctAnswer}</p>
                       {q.explanation && <p className="text-blue-700 text-xs mt-1">📝 {q.explanation}</p>}
                     </div>

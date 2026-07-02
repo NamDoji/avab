@@ -565,7 +565,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {parseResult.questions.map((q, i) => (
                     <div key={i} className="bg-white rounded-lg p-3 text-sm">
-                      <p className="font-medium text-gray-800">{q.order}. {q.content}</p>
+                      <p className="font-medium text-gray-800 whitespace-pre-wrap">{q.order}. {q.content}</p>
                       <p className="text-teal-600 mt-1">→ Đáp án: {q.correctAnswer}</p>
                     </div>
                   ))}
@@ -588,7 +588,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                           </span>
                           <span className="text-xs text-gray-400">{q.points} điểm</span>
                         </div>
-                        <p className="text-sm text-gray-800 line-clamp-1">{q.content}</p>
+                        <p className="text-sm text-gray-800 line-clamp-2 whitespace-pre-wrap">{q.content}</p>
                         <p className="text-xs text-teal-600 mt-0.5">Đáp án: {q.correctAnswer}</p>
                       </div>
                       <button onClick={() => handleDeleteQuestion(q.id)} className="p-1 text-gray-400 hover:text-red-600">
