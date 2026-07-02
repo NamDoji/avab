@@ -366,39 +366,44 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
         const r = await saveMaterialUrl('THEORY', lyThuyetUrl.trim(), theoryTitle || 'Bài giảng')
         if (r.success) { showMsg('success', 'Đã lưu bài giảng!'); setLyThuyetUrl(''); setTheoryTitle(''); load() }
         else showMsg('error', r.error)
-      } else {
-        if (!lyThuyetFile) return
-        if (theoryHtmlPreview) {
-          // Lưu HTML đã parse vào content + file URL gốc vào Supabase
-          const fd = new FormData()
-          fd.append('file', lyThuyetFile)
-          fd.append('bucket', 'avab-materials')
-          fd.append('folder', 'ly-thuyet')
-          const up = await fetch('/api/upload', { method: 'POST', body: fd }).then(r => r.json())
-          const fileUrl = up.success ? up.data.url : null
-          const res = await fetch(`/api/admin/subjects/${id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              type: 'THEORY',
-              title: theoryTitle || lyThuyetFile.name,
-              content: theoryHtmlPreview,  // ← HTML đã parse
-              fileUrl: fileUrl,
-              fileName: lyThuyetFile.name,
-            }),
-          })
-          const data = await res.json()
-          if (data.success) {
-            showMsg('success', 'Đã lưu bài giảng với nội dung HTML!')
-            setLyThuyetFile(null); setTheoryHtmlPreview(null); setTheoryTitle(''); load()
-          } else showMsg('error', data.error)
-        } else {
-          // Upload file trực tiếp (legacy)
-          const r = await uploadAndSave('THEORY', lyThuyetFile, 'ly-thuyet')
-          if (r.success) { showMsg('success', 'Đã tải lên bài giảng!'); setLyThuyetFile(null); load() }
-          else showMsg('error', r.error || 'Upload thất bại')
-        }
+        return
       }
+
+      if (!lyThuyetFile) return
+
+      // ── Upload file DOCX/PDF → tự động parse HTML rồi lưu ──
+      // Bước 1: parse sang HTML
+      const parseHtml = theoryHtmlPreview || await (async () => {
+        setParsingTheory(true)
+        const fd = new FormData()
+        fd.append('file', lyThuyetFile)
+        const r = await fetch(`/api/admin/subjects/${id}/parse-theory`, { method: 'POST', body: fd })
+        const d = await r.json()
+        setParsingTheory(false)
+        return d.success ? d.data.html : null
+      })()
+
+      if (!parseHtml) {
+        showMsg('error', 'Không thể parse file bài giảng')
+        return
+      }
+
+      // Bước 2: lưu vào DB (content = HTML, không cần upload file thô)
+      const res = await fetch(`/api/admin/subjects/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'THEORY',
+          title: theoryTitle || lyThuyetFile.name.replace(/\.[^.]+$/, ''),
+          content: parseHtml,
+          fileName: lyThuyetFile.name,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        showMsg('success', `Đã lưu bài giảng "${theoryTitle || lyThuyetFile.name}" thành công!`)
+        setLyThuyetFile(null); setTheoryHtmlPreview(null); setTheoryTitle(''); load()
+      } else showMsg('error', data.error)
     } finally { setSavingLyThuyet(false) }
   }
 
@@ -547,41 +552,21 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                   <input type="text" value={theoryTitle} onChange={e => setTheoryTitle(e.target.value)}
                     placeholder="Tên bài giảng (VD: Bài 1 - Biểu đồ Venn)"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-                  <div className="flex gap-2 mb-2">
+                  <div className="flex gap-2">
                     <label className="flex-1">
                       <input type="file" accept=".doc,.docx,.pdf" onChange={e => { setLyThuyetFile(e.target.files?.[0] ?? null); setTheoryHtmlPreview(null) }} className="hidden" />
                       <div className={`border-2 border-dashed rounded-lg p-3 text-center cursor-pointer text-sm transition ${lyThuyetFile ? 'border-blue-400 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-400 hover:border-blue-300'}`}>
                         {lyThuyetFile ? lyThuyetFile.name : '📄 Chọn file Word/PDF'}
                       </div>
                     </label>
-                    <div className="flex flex-col gap-1.5">
-                      <button type="button" onClick={handleParseTheory} disabled={parsingTheory || !lyThuyetFile}
-                        className="bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">
-                        {parsingTheory ? 'Đang parse...' : '🔍 Preview'}
-                      </button>
-                      <button type="submit" disabled={savingLyThuyet || !lyThuyetFile}
-                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">
-                        {savingLyThuyet ? 'Đang lưu...' : '💾 Lưu'}
-                      </button>
-                    </div>
+                    <button type="submit" disabled={savingLyThuyet || parsingTheory || !lyThuyetFile}
+                      className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold transition whitespace-nowrap">
+                      {parsingTheory ? '⚙️ Đang xử lý...' : savingLyThuyet ? '💾 Đang lưu...' : '📤 Tải lên & Lưu'}
+                    </button>
                   </div>
-
-                  {/* HTML Preview */}
-                  {theoryHtmlPreview && (
-                    <div className="mt-3 border border-blue-200 rounded-xl overflow-hidden">
-                      <div className="bg-blue-50 px-4 py-2 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-blue-700">✅ Preview HTML — sẽ hiển thị như vậy trên frontend</span>
-                        <button type="button" onClick={() => setTheoryHtmlPreview(null)} className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
-                      </div>
-                      <div
-                        className="p-4 max-h-72 overflow-y-auto text-sm prose prose-sm max-w-none [&_img]:max-w-full [&_img]:rounded-lg [&_img]:my-2 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-200 [&_td]:p-2 [&_th]:border [&_th]:border-gray-300 [&_th]:p-2 [&_th]:bg-gray-50"
-                        dangerouslySetInnerHTML={{ __html: theoryHtmlPreview }}
-                      />
-                    </div>
-                  )}
                 </>
               )}
-              <p className="text-xs text-gray-400 mt-2">💡 Upload Word/PDF → "Preview" để xem trước → "Lưu" để lưu HTML vào hệ thống</p>
+              <p className="text-xs text-gray-400 mt-2">💡 Chọn file Word/PDF → hệ thống tự parse thành HTML có ảnh → hiển thị đẹp trên frontend</p>
             </form>
           </div>
 
