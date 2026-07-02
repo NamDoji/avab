@@ -571,30 +571,30 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                 </div>
                 {course.description && <p className="text-gray-500 mt-2 text-sm">{course.description}</p>}
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <button onClick={handleStartEditCourse}
-                  className="flex items-center gap-1.5 border border-gray-200 hover:border-purple-300 text-gray-500 hover:text-purple-600 text-sm px-3 py-1.5 rounded-lg transition">
-                  <Edit2 className="w-4 h-4" /> Sửa
-                </button>
-                <button
-                  onClick={handleTogglePublish}
-                  disabled={togglingPublish}
-                  className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition ${
-                    course.isActive
-                      ? 'bg-green-50 text-green-700 hover:bg-orange-50 hover:text-orange-600'
-                      : 'bg-orange-50 text-orange-600 hover:bg-teal-50 hover:text-teal-700'
-                  } disabled:opacity-60`}
-                  title={course.isActive ? 'Click để hủy xuất bản' : 'Click để xuất bản'}
-                >
-                  {course.isActive
-                    ? <><Eye className="w-3 h-3" /> Đã xuất bản</>
-                    : <><EyeOff className="w-3 h-3" /> Nháp — click để xuất bản</>
-                  }
-                </button>
-              </div>
             </div>
           )}
-          <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-50 text-sm text-gray-500">
+          <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-gray-50 text-sm text-gray-500">
+            {/* Sửa + Trạng thái — chuyển xuống đây */}
+            <button onClick={handleStartEditCourse}
+              className="flex items-center gap-1.5 border border-gray-200 hover:border-purple-300 text-gray-500 hover:text-purple-600 text-sm px-3 py-1.5 rounded-lg transition">
+              <Edit2 className="w-4 h-4" /> Sửa
+            </button>
+            <button
+              onClick={handleTogglePublish}
+              disabled={togglingPublish}
+              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition ${
+                course.isActive
+                  ? 'bg-green-50 text-green-700 hover:bg-orange-50 hover:text-orange-600'
+                  : 'bg-orange-50 text-orange-600 hover:bg-teal-50 hover:text-teal-700'
+              } disabled:opacity-60`}
+              title={course.isActive ? 'Click để hủy xuất bản' : 'Click để xuất bản'}
+            >
+              {course.isActive
+                ? <><Eye className="w-3 h-3" /> Đã xuất bản</>
+                : <><EyeOff className="w-3 h-3" /> Nháp — click để xuất bản</>
+              }
+            </button>
+            <span className="text-gray-300">|</span>
             <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4 text-purple-600" />{course.subjects.length} chuyên đề</span>
             <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-teal-600" />{students.length} học viên</span>
             <Link href={`/admin/courses/${id}/tuition`}
