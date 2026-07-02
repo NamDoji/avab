@@ -274,9 +274,19 @@ export async function POST(
           convertImage: mammoth.images.imgElement(async (image) => {
             try {
               const imgBuf = await image.read()
-              const ext = (image.contentType || 'image/png').split('/')[1] || 'png'
-              const imgPath = `homework-images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
-              const url = await uploadFile('avab-materials', imgPath, Buffer.from(imgBuf), image.contentType)
+              const contentType = image.contentType || 'image/png'
+
+              // Ưu tiên upload Supabase; nếu fail → dùng base64 data URI (luôn hoạt động)
+              let url: string
+              try {
+                const ext = contentType.split('/')[1] || 'png'
+                const imgPath = `homework-images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+                url = await uploadFile('avab-materials', imgPath, Buffer.from(imgBuf), contentType)
+              } catch {
+                // Fallback: base64 data URI
+                url = `data:${contentType};base64,${Buffer.from(imgBuf).toString('base64')}`
+              }
+
               const placeholder = `__IMG_${imgIdx++}__`
               placeholderToUrl.set(placeholder, url)
               imageCount++

@@ -46,10 +46,17 @@ export async function POST(
           convertImage: mammoth.images.imgElement(async (image) => {
             try {
               const imgBuf = await image.read()
-              const ext = (image.contentType || 'image/png').split('/')[1] || 'png'
-              const imgPath = `theory-images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
-              const url = await uploadFile('avab-materials', imgPath, Buffer.from(imgBuf), image.contentType)
-              return { src: url, style: 'max-width:100%;border-radius:8px;margin:12px 0;display:block' }
+              const contentType = image.contentType || 'image/png'
+              // Try Supabase upload; fallback to base64 data URI
+              let src: string
+              try {
+                const ext = contentType.split('/')[1] || 'png'
+                const imgPath = `theory-images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+                src = await uploadFile('avab-materials', imgPath, Buffer.from(imgBuf), contentType)
+              } catch {
+                src = `data:${contentType};base64,${Buffer.from(imgBuf).toString('base64')}`
+              }
+              return { src, style: 'max-width:100%;border-radius:8px;margin:12px 0;display:block' }
             } catch {
               return { src: '' }
             }
