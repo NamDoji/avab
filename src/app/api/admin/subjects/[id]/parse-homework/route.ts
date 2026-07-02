@@ -10,108 +10,89 @@ async function requireAdmin() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Strip HTML → plain text, giữ bảng biểu dưới dạng dễ đọc
+// Strip HTML → plain text
+// • Giữ lại ảnh dưới dạng [IMG:placeholder] để inject lại sau
+// • Chuyển bảng thành markdown (| col | col |) để GPT-4o đọc được
 // ─────────────────────────────────────────────────────────────────────────────
-function stripHtml(html: string): string {
+function stripHtmlKeepImages(html: string): string {
   return html
+    // Ảnh → placeholder marker (src là placeholder như __IMG_0__)
+    .replace(/<img[^>]+src="([^"]+)"[^>]*\/?>/gi, '\n[IMG:$1]\n')
+    // Bảng → markdown style
+    .replace(/<\/td>/gi, ' | ')
+    .replace(/<\/th>/gi, ' | ')
+    .replace(/<\/tr>/gi, '\n')
+    // Block elements
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>/gi, '\n')
     .replace(/<\/li>/gi, '\n')
-    .replace(/<\/tr>/gi, '\n')
-    .replace(/<\/td>/gi, ' | ')
-    .replace(/<\/th>/gi, ' | ')
     .replace(/<\/div>/gi, '\n')
+    // Strip remaining tags
     .replace(/<[^>]+>/g, '')
+    // HTML entities
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    // Gộp nhiều dòng trống
+    // Clean up
     .replace(/\n{3,}/g, '\n\n')
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// OCR 1 ảnh bằng GPT-4o Vision
+// Sau khi GPT trả về content/explanation có [IMG:placeholder],
+// thay thành HTML <img src="actual-url">
 // ─────────────────────────────────────────────────────────────────────────────
-async function ocrImage(imgBuf: Buffer, contentType: string): Promise<string> {
-  try {
-    const base64 = imgBuf.toString('base64')
-    const res = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      max_tokens: 400,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: 'Đây là hình ảnh trong bài toán toán học tiếng Việt. Hãy mô tả ngắn gọn nội dung (biểu đồ, bảng, phép tính...) và trích xuất bất kỳ số liệu/ký hiệu nào có trong ảnh. Chỉ trả về text mô tả, không giải thích thêm.',
-          },
-          {
-            type: 'image_url',
-            image_url: { url: `data:${contentType};base64,${base64}`, detail: 'low' },
-          },
-        ],
-      }],
-    })
-    return res.choices[0]?.message?.content?.trim() ?? ''
-  } catch {
-    return ''
-  }
+function injectImageTags(text: string, placeholderToUrl: Map<string, string>): string {
+  return text.replace(/\[IMG:([^\]]+)\]/g, (_, placeholder: string) => {
+    const url = placeholderToUrl.get(placeholder.trim())
+    if (!url) return ''
+    return `<img src="${url}" alt="Hình minh họa" style="max-width:100%;border-radius:8px;margin:8px 0;display:block">`
+  })
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AI PARSER — GPT-4o đọc toàn bộ document text → JSON Q&A
-// Xử lý được mọi format: Câu 1. / Câu 1: / 1. / Question 1
-//                         Đáp án: / ĐA: / Answer: / có hoặc không có số
-//                         Lời giải có bảng biểu, hình ảnh, bullets
+// AI PARSER — GPT-4o đọc mọi format + giữ [IMG:] markers
 // ─────────────────────────────────────────────────────────────────────────────
 async function aiParseDocument(
   text: string
 ): Promise<Array<{ order: number; content: string; correctAnswer: string; explanation: string }>> {
   const prompt = `Bạn là hệ thống trích xuất bài tập từ tài liệu giáo dục tiếng Việt.
 
-Dưới đây là nội dung text đã trích xuất từ file bài tập về nhà (có thể bao gồm text từ OCR ảnh và bảng biểu).
+Dưới đây là nội dung đã trích xuất. Các marker [IMG:placeholder] là vị trí của hình ảnh.
 
-NHIỆM VỤ: Trích xuất TẤT CẢ câu hỏi/bài tập và trả về JSON.
+NHIỆM VỤ: Trích xuất TẤT CẢ câu hỏi, trả về JSON object {"questions": [...]}.
 
-QUY TẮC:
+QUY TẮC QUAN TRỌNG:
 - "order": số thứ tự câu (1, 2, 3...)
-- "content": toàn bộ đề bài của câu đó (giữ nguyên, không tóm tắt)
-- "correctAnswer": đáp án cuối cùng ngắn gọn (ví dụ: "5 bạn", "23 quả", "x=4; y=7")
-- "explanation": toàn bộ lời giải, kể cả bảng biểu (format bảng thành dạng: Cột1: val | Cột2: val)
-- Bỏ qua header/footer, chỉ lấy các câu bài tập
-- Không tóm tắt, giữ nguyên nội dung gốc
-- Trả về ĐÚNG JSON array, không có text nào khác
+- "content": toàn bộ đề bài, GIỮ NGUYÊN các marker [IMG:...] ở đúng vị trí
+- "correctAnswer": đáp án cuối cùng ngắn gọn (ví dụ: "5 bạn", "23 quả")
+- "explanation": toàn bộ lời giải, GIỮ NGUYÊN các marker [IMG:...] và bảng biểu
+- KHÔNG được bỏ, sửa hay thay thế các marker [IMG:...]
+- Bảng biểu giữ dạng: | Cột1 | Cột2 | ... (đã có sẵn trong text)
+- Bỏ qua header/ghi chú đầu file, chỉ lấy câu bài tập
 
-ĐỊNH DẠNG OUTPUT (chỉ JSON, không markdown):
-[{"order":1,"content":"...","correctAnswer":"...","explanation":"..."},...]
-
-NỘI DUNG TÀI LIỆU:
-${text.substring(0, 12000)}`
+NỘI DUNG:
+${text.substring(0, 14000)}`
 
   const res = await openai.chat.completions.create({
     model: 'gpt-4o',
-    max_tokens: 4000,
+    max_tokens: 6000,
     temperature: 0,
     messages: [{ role: 'user', content: prompt }],
     response_format: { type: 'json_object' },
   })
 
   const raw = res.choices[0]?.message?.content ?? '{}'
-  // GPT đôi khi trả về {"questions": [...]} hoặc {"data": [...]} hoặc [...]
   let parsed: any
-  try {
-    parsed = JSON.parse(raw)
-  } catch {
-    return []
-  }
+  try { parsed = JSON.parse(raw) } catch { return [] }
 
-  // Tìm array trong response
   const arr: any[] = Array.isArray(parsed)
     ? parsed
-    : parsed.questions ?? parsed.data ?? parsed.items ?? Object.values(parsed).find(v => Array.isArray(v)) ?? []
+    : parsed.questions ?? parsed.data ?? parsed.items
+      ?? (Object.values(parsed).find((v) => Array.isArray(v)) as any[])
+      ?? []
 
   return arr
     .filter((q: any) => q.content)
@@ -125,7 +106,7 @@ ${text.substring(0, 12000)}`
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// REGEX PARSER — nhanh, dùng cho file chuẩn theo mẫu
+// REGEX PARSER — nhanh cho file đúng mẫu
 // ─────────────────────────────────────────────────────────────────────────────
 function regexParseText(
   text: string
@@ -138,8 +119,6 @@ function regexParseText(
 
   for (const line of lines) {
     if (!line) continue
-
-    // Câu N: hoặc Câu N.
     const qM = line.match(/^Câu\s*(\d+)\s*[.:)]\s*(.*)/i)
     if (qM) {
       currentNum = parseInt(qM[1])
@@ -150,15 +129,10 @@ function regexParseText(
     }
     if (currentNum === null) continue
     const q = questionMap.get(currentNum)!
-
-    // Đáp án N: hoặc Đáp án: (không có số) — strip leading |
     const aM = line.replace(/^\|+\s*/, '').match(/^(?:Đáp án|ĐA|Đ\/A|Answer|Đáp số)\s*\d*\s*[.:)]\s*(.*)/i)
     if (aM) { phase = 'answer'; q.correctAnswer = aM[1].trim(); continue }
-
-    // Lời giải N: hoặc Lời giải: (không có số)
     const eM = line.replace(/^\|+\s*/, '').match(/^(?:Lời giải|LG|Giải|Hướng dẫn)\s*\d*\s*[.:)]\s*(.*)/i)
     if (eM) { phase = 'explanation'; const f = eM[1].trim(); if (f) q.explanationLines.push(f); continue }
-
     if (phase === 'content') q.contentLines.push(line)
     else if (phase === 'explanation') q.explanationLines.push(line)
   }
@@ -187,7 +161,6 @@ export async function POST(
   if (!(await requireAdmin())) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
-
   const { id: subjectId } = await params
 
   try {
@@ -196,21 +169,18 @@ export async function POST(
     const shouldSave = formData.get('save') === 'true'
     const setTitle = (formData.get('setTitle') as string) || file?.name || 'BTVN'
 
-    if (!file) {
-      return NextResponse.json({ success: false, error: 'No file' }, { status: 400 })
-    }
+    if (!file) return NextResponse.json({ success: false, error: 'No file' }, { status: 400 })
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
     let text = ''
     let imageCount = 0
-    const imageUrls: string[] = []
+    // Map placeholder → actual Supabase URL
+    const placeholderToUrl = new Map<string, string>()
 
-    // ── Trích xuất text + ảnh ──
     if (file.name.endsWith('.docx') || file.type.includes('wordprocessingml')) {
       const mammoth = await import('mammoth')
-      const ocrMap = new Map<string, string>()
       let imgIdx = 0
 
       const result = await mammoth.convertToHtml(
@@ -222,32 +192,22 @@ export async function POST(
               const ext = (image.contentType || 'image/png').split('/')[1] || 'png'
               const imgPath = `homework-images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
               const url = await uploadFile('avab-materials', imgPath, Buffer.from(imgBuf), image.contentType)
-              imageUrls.push(url)
+
+              // Dùng placeholder có thể tìm lại
+              const placeholder = `__IMG_${imgIdx++}__`
+              placeholderToUrl.set(placeholder, url)
               imageCount++
 
-              // OCR chỉ ảnh đầu tiên mỗi 3 ảnh để tiết kiệm (ảnh lặp lại trong file)
-              imgIdx++
-              if (imgIdx <= 5 || imgIdx % 3 === 0) {
-                const ocr = await ocrImage(Buffer.from(imgBuf), image.contentType)
-                if (ocr) ocrMap.set(url, ocr)
-              }
-              return { src: url }
+              // Trả placeholder làm src — sẽ được nhúng vào text như [IMG:__IMG_0__]
+              return { src: placeholder }
             } catch {
               return { src: '' }
             }
           }),
         }
       )
-
-      // Thay <img src="URL"> bằng [OCR text] trong text
-      const processedHtml = result.value.replace(
-        /<img[^>]+src="([^"]+)"[^>]*/gi,
-        (_match: string, url: string) => {
-          const ocr = ocrMap.get(url)
-          return ocr ? `<span>[Hình: ${ocr}]</span>` : ''
-        }
-      )
-      text = stripHtml(processedHtml)
+      // Strip HTML nhưng giữ [IMG:placeholder] markers
+      text = stripHtmlKeepImages(result.value)
 
     } else if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -258,12 +218,10 @@ export async function POST(
       text = buffer.toString('utf-8')
     }
 
-    // ── Parse: thử regex trước, nếu < 3 câu thì dùng AI ──
+    // ── Parse: thử regex trước, dùng AI khi cần ──
     let parsed = regexParseText(text)
-
-    // Điều kiện dùng AI: ít câu được tìm thấy HOẶC có ảnh nhiều HOẶC đáp án bị thiếu nhiều
     const emptyAnswers = parsed.filter(q => !q.correctAnswer.trim()).length
-    const needsAI = parsed.length < 3 || emptyAnswers > parsed.length * 0.5 || imageCount > 5
+    const needsAI = parsed.length < 3 || emptyAnswers > parsed.length * 0.5 || imageCount > 3
 
     if (needsAI) {
       try {
@@ -271,20 +229,26 @@ export async function POST(
         if (aiResult.length > parsed.length) parsed = aiResult
       } catch (err) {
         console.error('[AI Parser] failed:', err)
-        // Giữ kết quả regex nếu AI thất bại
       }
+    }
+
+    // ── Inject ảnh thật vào content/explanation ──
+    if (imageCount > 0 && placeholderToUrl.size > 0) {
+      parsed = parsed.map(q => ({
+        ...q,
+        content: injectImageTags(q.content, placeholderToUrl),
+        explanation: injectImageTags(q.explanation, placeholderToUrl),
+      }))
     }
 
     // ── Lưu vào DB ──
     let homeworkSetId: string | null = null
-
     if (shouldSave && parsed.length > 0) {
       const existingCount = await prisma.homeworkSet.count({ where: { subjectId } })
       const newSet = await prisma.homeworkSet.create({
         data: { subjectId, title: setTitle, order: existingCount },
       })
       homeworkSetId = newSet.id
-
       await prisma.question.createMany({
         data: parsed.map(q => ({
           subjectId,
@@ -300,13 +264,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      data: {
-        parsed: parsed.length,
-        questions: parsed,
-        imageCount,
-        usedAI: needsAI,
-        homeworkSetId,
-      },
+      data: { parsed: parsed.length, questions: parsed, imageCount, usedAI: needsAI, homeworkSetId },
     })
   } catch (err) {
     console.error(err)

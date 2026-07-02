@@ -1,6 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+
+function RichContent({ text, className }: { text: string; className?: string }) {
+  const isHtml = /<img|<table|<br/i.test(text)
+  if (isHtml) {
+    return (
+      <div
+        className={`[&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-2 [&_img]:block [&_img]:shadow-sm whitespace-pre-wrap leading-relaxed ${className ?? ''}`}
+        dangerouslySetInnerHTML={{ __html: text }}
+      />
+    )
+  }
+  return <p className={`whitespace-pre-wrap leading-relaxed ${className ?? ''}`}>{text}</p>
+}
 import { CheckCircle2, XCircle, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
 
 // Câu hỏi mẫu — sẽ load từ API sau
@@ -152,7 +165,7 @@ export function QuizSection({ subjectId, subjectName }: Props) {
                 `}>
                   {state === 'correct' ? '✓' : state === 'wrong' ? '✗' : index + 1}
                 </div>
-                <p className="font-bold text-gray-800 text-base leading-relaxed whitespace-pre-wrap">{q.content}</p>
+                <RichContent text={q.content} className="font-bold text-gray-800 text-base" />
               </div>
 
               {/* Answer input */}

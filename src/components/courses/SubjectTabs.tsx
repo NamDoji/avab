@@ -5,6 +5,22 @@ import { Loader2, VideoOff, Star, Maximize2, Minimize2 } from 'lucide-react'
 import { IDETab } from './IDETab'
 import ReactMarkdown from 'react-markdown'
 
+// ── RichContent: render HTML (có ảnh/bảng) hoặc plain text ──────────────────────────
+// Dùng cho content/explanation có thể chứa <img> và bảng
+function RichContent({ text, className }: { text: string; className?: string }) {
+  const isHtml = /<img|<table|<br/i.test(text)
+  if (isHtml) {
+    return (
+      <div
+        className={`rich-content [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-3 [&_img]:shadow-sm [&_img]:block [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-200 [&_td]:px-2 [&_td]:py-1 [&_td]:text-sm [&_th]:border [&_th]:border-gray-300 [&_th]:px-2 [&_th]:py-1 [&_th]:bg-purple-50 [&_th]:text-sm whitespace-pre-wrap leading-relaxed ${className ?? ''}`}
+        dangerouslySetInnerHTML={{ __html: text }}
+      />
+    )
+  }
+  return <p className={`whitespace-pre-wrap leading-relaxed ${className ?? ''}`}>{text}</p>
+}
+
+
 // ── Markdown renderer — renders bài giảng đẹp ───────────────────────────
 function MarkdownLesson({ content }: { content: string }) {
   return (
@@ -1029,7 +1045,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
                         {/* Nội dung câu hỏi — text-xl, dễ đọc */}
                         <div className="bg-white rounded-2xl px-4 py-3 mb-4 border border-gray-100 shadow-sm">
-                          <p className="font-bold text-gray-900 text-xl leading-relaxed whitespace-pre-wrap">{q.content}</p>
+                          <RichContent text={q.content} className="font-bold text-gray-900 text-xl" />
                         </div>
 
                         {/* ── Ô nhập đáp án theo loại câu hỏi ── */}
@@ -1092,7 +1108,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             {q.explanation && (
                               <div className="border-t border-yellow-200 pt-2">
                                 <p className="text-xs font-bold text-blue-700 mb-1">📝 Lời giải chi tiết:</p>
-                                <p className="text-sm text-blue-900 leading-relaxed">{q.explanation}</p>
+                                <RichContent text={q.explanation} className="text-sm text-blue-900" />
                               </div>
                             )}
                           </div>
@@ -1360,7 +1376,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           </div>
                         )}
                         <div className="bg-white rounded-2xl p-4 mb-4 border border-gray-100 shadow-sm">
-                          <p className="text-xl font-bold text-gray-900 leading-relaxed whitespace-pre-wrap">{q.content}</p>
+                          <RichContent text={q.content} className="text-xl font-bold text-gray-900" />
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           {!done ? (
@@ -1516,9 +1532,9 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       {q.imageUrl && (
                         <img src={q.imageUrl} alt="" className="w-full max-h-40 object-contain rounded-xl mb-2 bg-gray-50" />
                       )}
-                      <p className="text-sm font-semibold text-gray-700 mb-1 whitespace-pre-wrap">Câu {q.order}: {q.content}</p>
+                      <div className="text-sm font-semibold text-gray-700 mb-1">Câu {q.order}: <RichContent text={q.content} /></div>
                       <p className="text-teal-700 font-black text-sm">✅ {q.correctAnswer}</p>
-                      {q.explanation && <p className="text-blue-700 text-xs mt-1">📝 {q.explanation}</p>}
+                      {q.explanation && <div className="text-blue-700 text-xs mt-1">📝 <RichContent text={q.explanation} /></div>}
                     </div>
                   ))}
                 </div>
