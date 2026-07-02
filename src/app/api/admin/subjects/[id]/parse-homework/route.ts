@@ -102,32 +102,37 @@ function parseHtmlTables(
     let correctAnswer = ''
     let imageUrl: string | undefined
 
+    // Row 2 cell phải: sơ đồ — sẽ đưa vào đầu lời giải
+    let row2DiagramHtml = ''
     if (cells.length >= 2) {
-      // Cột trái: đáp án (chỉ lấy dòng đáp án, bỏ "Mức độ", "Ghi chú"...)
+      // Cột trái: đáp án
       const leftLines = plain(cells[0]).split(/\n|\s{2,}/).map(l => l.trim()).filter(Boolean)
       const ansLine = leftLines.find(l => /(?:đáp án|đáp số|answer)/i.test(l)) || leftLines[0] || ''
       const aMatch = ansLine.match(/(?:Đáp án|ĐA|đáp số|answer)[:\s]*(.+)/i)
       correctAnswer = (aMatch ? aMatch[1].trim() : ansLine.trim())
-        // Xóa các suffix thừa: "Mức độ: Dễ", "Mức độ: Khó", ...
         .replace(/\s*Mức độ[:\s].*/i, '').trim()
-      // Cột phải: ảnh sơ đồ
-      const imgM = cells[1].match(/<img[^>]+src="([^"]+)"[^>]*>/i)
-      if (imgM) imageUrl = imgM[1]
+      // Cột phải: sơ đồ → lưu HTML để nhúng vào lời giải
+      const rightContent = cells[1].replace(/<\/?td[^>]*>/gi, '').trim()
+      if (rightContent.includes('<img')) {
+        row2DiagramHtml = `<div class="solution-diagram">${rightContent}</div>`
+      }
     } else if (cells.length === 1) {
       const cellText = plain(cells[0])
       const aMatch = cellText.match(/(?:Đáp án|ĐA|đáp án|đáp số|answer)[:\s]*(.+)/i)
       correctAnswer = aMatch ? aMatch[1].trim() : ''
     }
 
-    // Rows 3+: lời giải HTML (giữ ảnh trong lời giải nếu có)
-    const explanationHtml = rows.slice(2).map(r =>
+    // Lời giải = sơ đồ (row 2 phải) + các bước (rows 3+)
+    const stepsHtml = rows.slice(2).map(r =>
       r.replace(/<\/?tr[^>]*>/gi, '')
         .replace(/<td[^>]*>/gi, '').replace(/<\/td>/gi, '')
         .trim()
     ).join('\n').trim()
+    const explanationHtml = [row2DiagramHtml, stepsHtml].filter(Boolean).join('\n')
 
-    // Content = chỉ đề bài (không có ảnh — ảnh được hiển thị riêng qua imageUrl)
+    // Content = chỉ đề bài text (+ ảnh nếu có trong row 1)
     const finalContent = contentHtml
+    imageUrl = undefined // không còn dùng imageUrl riêng
 
     if (finalContent.trim()) {
       questions.push({ order: order++, content: finalContent, correctAnswer, explanation: explanationHtml, imageUrl })
@@ -370,7 +375,6 @@ export async function POST(
           homeworkSetId: newSet.id,
           order: q.order,
           content: q.content,
-          imageUrl: (q as any).imageUrl || null,
           correctAnswer: q.correctAnswer,
           explanation: q.explanation || null,
           points: 1,
