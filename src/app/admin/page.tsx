@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { BookOpen, Users, CheckSquare, Newspaper, Briefcase, BarChart3, MessageSquare } from 'lucide-react'
+import { BookOpen, Users, CheckSquare, Newspaper, DollarSign, BarChart3, MessageSquare } from 'lucide-react'
 
 export const metadata = { title: 'Admin Dashboard' }
 
@@ -24,6 +24,7 @@ export default async function AdminPage() {
     { label: 'Chờ duyệt', value: pendingEnrollments, icon: CheckSquare, href: '/admin/enrollments', color: 'from-orange-500 to-orange-700', alert: pendingEnrollments > 0 },
     { label: 'Liên hệ mới', value: newContacts, icon: MessageSquare, href: '/admin/contacts', color: 'from-blue-500 to-blue-700', alert: newContacts > 0 },
     { label: 'Tin tức', value: newsCount, icon: Newspaper, href: '/admin/news', color: 'from-pink-500 to-pink-700' },
+    { label: 'Tài chính', value: '→', icon: DollarSign, href: '/admin/finance', color: 'from-emerald-500 to-emerald-700' },
   ]
 
   return (
@@ -56,6 +57,7 @@ export default async function AdminPage() {
             { href: '/admin/enrollments', icon: '✅', label: 'Duyệt đăng ký', desc: 'Xem và phê duyệt học sinh đăng ký mua khoá học' },
             { href: '/admin/users', icon: '👥', label: 'Quản lý người dùng', desc: 'Xem danh sách học sinh, phụ huynh' },
             { href: '/admin/news', icon: '📰', label: 'Quản lý tin tức', desc: 'Đăng bài viết, tin tức, thông báo' },
+            { href: '/admin/finance', icon: '💰', label: 'Tài chính', desc: 'Doanh thu, đợt thu học phí, xuất Excel' },
           ].map((item) => (
             <Link key={item.href} href={item.href}
               className="bg-white rounded-3xl p-5 border-2 border-purple-50 card-hover">

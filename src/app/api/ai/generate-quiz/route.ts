@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { openai } from '@/lib/openai'
+import { Prisma } from '@prisma/client'
 
 // GET: check current gen count for current user + subject
 export async function GET(req: NextRequest) {
@@ -131,7 +132,9 @@ Trả về ONLY valid JSON array, không thêm text khác.`
       content: q.content ?? '',
       correctAnswer: q.correctAnswer ?? '',
       explanation: q.explanation ?? null,
-      options: q.options ? (typeof q.options === 'string' ? q.options : JSON.stringify(q.options)) : null,
+      options: q.options
+        ? (typeof q.options === 'string' ? JSON.parse(q.options) : q.options)
+        : Prisma.JsonNull,
       points: q.points ?? 1,
     }))
 

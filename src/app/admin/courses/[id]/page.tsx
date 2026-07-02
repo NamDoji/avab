@@ -427,9 +427,13 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
               </div>
             </div>
           )}
-          <div className="flex gap-6 mt-4 pt-4 border-t border-gray-50 text-sm text-gray-500">
+          <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-50 text-sm text-gray-500">
             <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4 text-purple-600" />{course.subjects.length} chuyên đề</span>
             <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-teal-600" />{students.length} học viên</span>
+            <Link href={`/admin/courses/${id}/tuition`}
+              className="flex items-center gap-1.5 text-purple-600 hover:text-purple-800 font-semibold border border-purple-200 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-lg transition">
+              💰 Thu học phí
+            </Link>
           </div>
         </div>
 
