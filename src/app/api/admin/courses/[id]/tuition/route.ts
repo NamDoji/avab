@@ -9,36 +9,14 @@ async function requireAdmin() {
   return { session }
 }
 
-// GET /api/admin/courses/[id]/tuition — list collections + stats
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
-
-  const { id: courseId } = await params
-
-  const [course, collections] = await Promise.all([
-    prisma.course.findUnique({
-      where: { id: courseId },
-      select: { id: true, name: true, pricePerSession: true, price: true, paymentType: true },
-    }),
-    prisma.tuitionCollection.findMany({
-      where: { courseId },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        _count: { select: { payments: true } },
-        payments: {
-          select: { isPaid: true, isFree: true, amount: true },
-        },
-      },
-    }),
-  ])
-
-  if (!course) return NextResponse.json({ success: false, error: 'Không tìm thấy khoá học' }, { status: 404 })
-
-  const collectionsWithStats = collections.map(col => ({
+// Shared helper — map collection + payments to summary stats
+function toSummary(col: {
+  id: string; title: string; sessions: number; unitAmount: number; totalAmount: number;
+  note: string | null; createdAt: Date;
+  _count: { payments: number };
+  payments: { isPaid: boolean; isFree: boolean; amount: number }[];
+}) {
+  return {
     id: col.id,
     title: col.title,
     sessions: col.sessions,
@@ -52,11 +30,104 @@ export async function GET(
     unpaidCount: col.payments.filter(p => !p.isPaid && !p.isFree).length,
     collectedAmount: col.payments.filter(p => p.isPaid && !p.isFree).reduce((s, p) => s + p.amount, 0),
     pendingAmount: col.payments.filter(p => !p.isPaid && !p.isFree).reduce((s, p) => s + p.amount, 0),
-  }))
+  }
+}
+
+const COLLECTION_INCLUDE = {
+  _count: { select: { payments: true } },
+  payments: { select: { isPaid: true, isFree: true, amount: true } },
+} as const
+
+// GET /api/admin/courses/[id]/tuition — list collections + stats
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const check = await requireAdmin()
+  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+
+  const { id: courseId } = await params
+
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: { id: true, name: true, pricePerSession: true, price: true, paymentType: true },
+  })
+  if (!course) return NextResponse.json({ success: false, error: 'Không tìm thấy khoá học' }, { status: 404 })
+
+  // ── PER_COURSE: single collection, auto-create + auto-sync new enrollments ──
+  if (course.paymentType === 'PER_COURSE') {
+    const amount = course.price ?? 0
+
+    // Find or create the ONE collection for this course
+    let collection = await prisma.tuitionCollection.findFirst({
+      where: { courseId },
+      orderBy: { createdAt: 'asc' },
+    })
+
+    if (!collection) {
+      collection = await prisma.tuitionCollection.create({
+        data: {
+          courseId,
+          title: 'Học phí khoá học',
+          sessions: 0,
+          unitAmount: amount,
+          totalAmount: amount,
+          note: null,
+        },
+      })
+    }
+
+    // Sync: add newly enrolled students not yet in this collection
+    const existingPayments = await prisma.tuitionPayment.findMany({
+      where: { collectionId: collection.id },
+      select: { enrollmentId: true },
+    })
+    const existingEnrollmentIds = existingPayments.map(p => p.enrollmentId)
+
+    const newEnrollments = await prisma.enrollment.findMany({
+      where: {
+        courseId,
+        status: { in: ['ACTIVE', 'APPROVED'] },
+        ...(existingEnrollmentIds.length > 0 ? { id: { notIn: existingEnrollmentIds } } : {}),
+      },
+      select: { id: true, userId: true },
+    })
+
+    if (newEnrollments.length > 0) {
+      await prisma.tuitionPayment.createMany({
+        data: newEnrollments.map(e => ({
+          collectionId: collection!.id,
+          enrollmentId: e.id,
+          userId: e.userId,
+          amount,
+          isFree: false,
+          isPaid: false,
+        })),
+      })
+    }
+
+    // Fetch updated stats
+    const col = await prisma.tuitionCollection.findUniqueOrThrow({
+      where: { id: collection.id },
+      include: COLLECTION_INCLUDE,
+    })
+
+    return NextResponse.json({
+      success: true,
+      data: { course, collections: [toSummary(col)] },
+    })
+  }
+
+  // ── PER_SESSION: original multi-collection behaviour ──
+  const collections = await prisma.tuitionCollection.findMany({
+    where: { courseId },
+    orderBy: { createdAt: 'desc' },
+    include: COLLECTION_INCLUDE,
+  })
 
   return NextResponse.json({
     success: true,
-    data: { course, collections: collectionsWithStats },
+    data: { course, collections: collections.map(toSummary) },
   })
 }
 

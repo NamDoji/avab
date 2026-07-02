@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, ChevronDown, ChevronUp, Save, Loader2 } from 'lucide-react'
+import { ArrowLeft, Plus, ChevronDown, ChevronUp, Save, Loader2, RefreshCw } from 'lucide-react'
 
 const fmt = (n: number) => new Intl.NumberFormat('vi-VN').format(n) + 'đ'
 
@@ -75,18 +75,23 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
   const [form, setForm] = useState({ title: '', sessions: '', amount: '' })
   const [creating, setCreating] = useState(false)
 
-  const loadList = async () => {
+  const loadList = useCallback(async () => {
     setLoading(true)
     const res = await fetch(`/api/admin/courses/${id}/tuition`)
     const data = await res.json()
     if (data.success) {
       setCourse(data.data.course)
-      setCollections(data.data.collections)
+      const cols: CollectionSummary[] = data.data.collections
+      setCollections(cols)
+      // PER_COURSE: auto-expand the single collection
+      if (data.data.course?.paymentType === 'PER_COURSE' && cols.length > 0) {
+        setExpandedId(cols[0].id)
+      }
     }
     setLoading(false)
-  }
+  }, [id])
 
-  useEffect(() => { loadList() }, [id])
+  useEffect(() => { loadList() }, [loadList])
 
   const toggleExpand = async (colId: string) => {
     if (expandedId === colId) { setExpandedId(null); return }
@@ -179,12 +184,23 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
             <h1 className="text-2xl font-black text-gray-900">💰 Thu học phí</h1>
             {course && <p className="text-gray-500 text-sm mt-0.5">{course.name}</p>}
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2.5 rounded-xl transition text-sm"
-          >
-            <Plus className="w-4 h-4" /> Tạo đợt thu mới
-          </button>
+          {isPERCOURSE ? (
+            // PER_COURSE: refresh button to sync latest enrollment list
+            <button
+              onClick={loadList}
+              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl transition text-sm"
+            >
+              <RefreshCw className="w-4 h-4" /> Làm mới danh sách
+            </button>
+          ) : (
+            // PER_SESSION: original create button
+            <button
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2.5 rounded-xl transition text-sm"
+            >
+              <Plus className="w-4 h-4" /> Tạo đợt thu mới
+            </button>
+          )}
         </div>
 
         {/* Collections list */}
