@@ -237,11 +237,16 @@ function MaterialView({ url, title }: { url: string; title?: string | null }) {
   if (r.kind === 'iframe') return (
     <div className="relative select-none">
       {/*
-        Clip trick: iframe cao hơn container và bị đẩy lên -56px
-        để ẩn toolbar Google Drive ở top (expand icon) và bottom ("Mở trong tab mới").
-        overflow-hidden trên container sẽ cắt phần thừa ra.
+        - Container cao 72vh (min 520px) để xem file dài thoải mái
+        - Iframe offset -56px để chần trên Google Drive toolbar (expand icon)
+        - overflow-hidden cắt phần thừa
+        - Phần giữơ scroll: KHÔNG dùng overlay toàn phần
+          mà dùng 2 dải mỏ ở top/bottom chặn đúng chỗ có button Drive
       */}
-      <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-gray-200 relative">
+      <div
+        className="rounded-2xl overflow-hidden border border-gray-200 relative"
+        style={{ height: '72vh', minHeight: '520px' }}
+      >
         <iframe
           src={r.src}
           className="w-full absolute left-0"
@@ -250,12 +255,14 @@ function MaterialView({ url, title }: { url: string; title?: string | null }) {
           sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
         />
       </div>
-      {/* Overlay toàn phần — chặn right-click và touch context menu */}
-      <div
-        className="absolute inset-0 z-10"
-        style={{ background: 'transparent' }}
-        onContextMenu={(e) => e.preventDefault()}
-      />
+      {/* Dải trắng ở top — che expand icon Google Drive, block click vùng đó */}
+      <div className="absolute top-0 inset-x-0 h-14 z-20 bg-gray-50 rounded-t-2xl border-b border-gray-100
+                      flex items-center px-3 gap-1.5">
+        <span className="text-gray-300 text-xs">🔒</span>
+        <span className="text-xs text-gray-400 font-medium truncate">{title ?? 'Tài liệu'}</span>
+      </div>
+      {/* Dải trắng ở bottom — che link "Mở trong tab mới" Google Drive */}
+      <div className="absolute bottom-0 inset-x-0 h-10 z-20 bg-gray-50 rounded-b-2xl border-t border-gray-100" />
     </div>
   )
   if (r.kind === 'video') return (
