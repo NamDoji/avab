@@ -1058,21 +1058,22 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           </div>
                         </div>
 
-                        {/* Hình ảnh minh họa (nếu có) */}
-                        {q.imageUrl && (
-                          <div className="mb-4">
-                            <img
-                              src={q.imageUrl}
-                              alt="Hình minh họa"
-                              className="w-full max-h-56 object-contain rounded-2xl border border-gray-100 bg-gray-50 shadow-sm"
-                            />
-                          </div>
-                        )}
-
                         {/* Nội dung câu hỏi — text-xl, dễ đọc */}
                         <div className="bg-white rounded-2xl px-4 py-3 mb-4 border border-gray-100 shadow-sm">
                           <RichContent text={q.content} className="font-bold text-gray-900 text-xl" />
                         </div>
+
+                        {/* Sơ đồ / Hình minh họa (sau đề bài) */}
+                        {q.imageUrl && (
+                          <div className="mb-4 bg-gray-50 rounded-2xl p-2 border border-gray-100">
+                            <img
+                              src={q.imageUrl}
+                              alt="Sơ đồ minh họa"
+                              className="w-full object-contain rounded-xl shadow-sm"
+                              style={{ maxHeight: '220px' }}
+                            />
+                          </div>
+                        )}
 
                         {/* ── Ô nhập đáp án theo loại câu hỏi ── */}
                         {renderQuestionInput(q, isDone, isCorrect)}
@@ -1560,6 +1561,17 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                         <span className="w-9 h-9 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-sm font-black flex-shrink-0">{q.order}</span>
                         <RichContent text={q.content} className="font-bold text-gray-900 text-base flex-1" />
                       </div>
+                      {/* Sơ đồ / Hình minh họa */}
+                      {q.imageUrl && (
+                        <div className="mb-3 bg-gray-50 rounded-2xl p-2 border border-gray-100">
+                          <img
+                            src={q.imageUrl}
+                            alt="Sơ đồ minh họa"
+                            className="w-full object-contain rounded-xl"
+                            style={{ maxHeight: '220px' }}
+                          />
+                        </div>
+                      )}
                       {/* Đáp án */}
                       <div className="bg-teal-50 rounded-xl px-4 py-2.5 mb-2">
                         <span className="text-xs font-semibold text-teal-600 uppercase tracking-wide">Đáp án</span>
