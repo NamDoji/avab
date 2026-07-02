@@ -107,7 +107,9 @@ function parseHtmlTables(
       const leftLines = plain(cells[0]).split(/\n|\s{2,}/).map(l => l.trim()).filter(Boolean)
       const ansLine = leftLines.find(l => /(?:đáp án|đáp số|answer)/i.test(l)) || leftLines[0] || ''
       const aMatch = ansLine.match(/(?:Đáp án|ĐA|đáp số|answer)[:\s]*(.+)/i)
-      correctAnswer = aMatch ? aMatch[1].trim() : ansLine.trim()
+      correctAnswer = (aMatch ? aMatch[1].trim() : ansLine.trim())
+        // Xóa các suffix thừa: "Mức độ: Dễ", "Mức độ: Khó", ...
+        .replace(/\s*Mức độ[:\s].*/i, '').trim()
       // Cột phải: ảnh sơ đồ
       const imgM = cells[1].match(/<img[^>]+src="([^"]+)"[^>]*>/i)
       if (imgM) imageUrl = imgM[1]

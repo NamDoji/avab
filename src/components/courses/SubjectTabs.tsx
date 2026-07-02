@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown'
 // ── RichContent: render HTML (có ảnh/bảng) hoặc plain text ──────────────────────────
 // Dùng cho content/explanation có thể chứa <img> và bảng
 function RichContent({ text, className }: { text: string; className?: string }) {
-  const isHtml = /<img|<table|<br/i.test(text)
+  const isHtml = /<(img|table|br|p|strong|em|ul|ol|li|h[1-6]|div)\b/i.test(text)
   if (isHtml) {
     return (
       <div

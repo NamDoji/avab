@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 function RichContent({ text, className }: { text: string; className?: string }) {
-  const isHtml = /<img|<table|<br/i.test(text)
+  const isHtml = /<(img|table|br|p|strong|em|ul|ol|li|h[1-6]|div)\b/i.test(text)
   if (isHtml) {
     return (
       <div
