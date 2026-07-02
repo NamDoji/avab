@@ -767,16 +767,36 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                   if (orphans.length === 0) return null
                   return (
                     <div className="border border-gray-200 rounded-xl overflow-hidden">
-                      <div className="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer"
-                        onClick={() => setExpandedSets(prev => ({ ...prev, __orphan__: !prev['__orphan__'] }))}>
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between px-4 py-3 bg-gray-50">
+                        <div
+                          className="flex items-center gap-2 flex-1 cursor-pointer"
+                          onClick={() => setExpandedSets(prev => ({ ...prev, __orphan__: !prev['__orphan__'] }))}
+                        >
                           <span className="text-gray-600 font-bold text-sm">📦 Câu hỏi chưa phân nhóm</span>
                           <span className="bg-gray-200 text-gray-700 text-xs font-bold px-2 py-0.5 rounded-full">{orphans.length} câu</span>
                         </div>
-                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${expandedSets['__orphan__'] ? 'rotate-180' : ''}`}
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <polyline points="6 9 12 15 18 9" />
-                        </svg>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Xóa toàn bộ ${orphans.length} câu hỏi chưa phân nhóm?`)) return
+                              await fetch(`/api/admin/subjects/${id}/questions?orphansOnly=true`, { method: 'DELETE' })
+                              window.location.reload()
+                            }}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 border border-red-200 transition"
+                            title="Xóa toàn bộ nhóm này"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Xóa nhóm
+                          </button>
+                          <button
+                            onClick={() => setExpandedSets(prev => ({ ...prev, __orphan__: !prev['__orphan__'] }))}
+                            className="p-1.5 rounded-lg hover:bg-gray-200 transition"
+                          >
+                            <svg className={`w-4 h-4 text-gray-400 transition-transform ${expandedSets['__orphan__'] ? 'rotate-180' : ''}`}
+                              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                       {expandedSets['__orphan__'] && (
                         <div className="divide-y divide-gray-50 max-h-48 overflow-y-auto">

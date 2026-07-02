@@ -413,8 +413,15 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const getMaterial = (type: string) => materials.filter((m) => m.type === type)
   const videoMaterials = getMaterial('VIDEO')
   const videoMaterial = videoMaterials[activeVideoIdx] ?? videoMaterials[0] ?? null
-  const activeQuestions = homeworkSets && homeworkSets.length > 0
-    ? (homeworkSets[activeBTVNSet]?.questions ?? [])
+  // Build combined set list: named sets + orphan questions as a virtual set
+  const setQIds = new Set((homeworkSets ?? []).flatMap(s => s.questions.map(q => q.id)))
+  const orphanQuestions = questions.filter(q => !setQIds.has(q.id))
+  const allBTVNSets: Array<{ id: string; title: string; questions: Question[] }> = [
+    ...(homeworkSets ?? []),
+    ...(orphanQuestions.length > 0 ? [{ id: '__orphan__', title: 'Bài tập chung', questions: orphanQuestions }] : []),
+  ]
+  const activeQuestions = allBTVNSets.length > 0
+    ? (allBTVNSets[activeBTVNSet]?.questions ?? [])
     : questions
 
   // ── Compute the final answer string for any question type ─────────────────
@@ -860,20 +867,22 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* ── BTVN ── */}
           {activeTab === 'homework' && (
             <div>
-              {/* Sub-tabs BTVN */}
-              {homeworkSets && homeworkSets.length > 1 && (
-                <div className="flex gap-1.5 overflow-x-auto pb-1 mb-4 scrollbar-hide">
-                  {homeworkSets.map((set, idx) => (
+              {/* Sub-tabs BTVN — hiển khi có ≥ 2 nhóm (named sets + orphan) */}
+              {allBTVNSets.length > 1 && (
+                <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+                  {allBTVNSets.map((set, idx) => (
                     <button
                       key={set.id}
                       onClick={() => setActiveBTVNSet(idx)}
-                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
                         activeBTVNSet === idx
-                          ? 'bg-purple-600 text-white'
+                          ? set.id === '__orphan__'
+                            ? 'bg-gray-600 text-white'
+                            : 'bg-purple-600 text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-purple-50'
                       }`}
                     >
-                      📚 {set.title}
+                      {set.id === '__orphan__' ? '📦' : '📚'} {set.title}
                       <span className="ml-1 opacity-70">({set.questions.length})</span>
                     </button>
                   ))}
