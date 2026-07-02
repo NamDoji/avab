@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff, Key } from 'lucide-react'
 
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 type PaymentType = 'PER_COURSE' | 'PER_SESSION'
@@ -56,8 +56,12 @@ interface StudentEnrollment {
   isFree: boolean
   expiresAt: string | null
   createdAt: string
+  parentName: string | null
+  totalPaid: number
   user: { id: string; name: string | null; phone: string; email: string | null }
 }
+
+const fmtVnd = (n: number) => new Intl.NumberFormat('vi-VN').format(n) + 'đ'
 
 interface CourseDetail {
   id: string
@@ -114,6 +118,14 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
   const [addingStudent, setAddingStudent] = useState(false)
   const [addStudentMsg, setAddStudentMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [phoneLookup, setPhoneLookup] = useState<'idle' | 'loading' | 'found' | 'not_found'>('idle')
+
+  // Phụ huynh inline edit
+  const [editingParentName, setEditingParentName] = useState<Record<string, string>>({})
+  const [savingParentName, setSavingParentName] = useState<string | null>(null)
+
+  // Reset mật khẩu
+  const [resettingPassword, setResettingPassword] = useState<string | null>(null)
+  const [resetPasswordMsg, setResetPasswordMsg] = useState<Record<string, string>>({})
 
   const lookupPhone = async (phone: string) => {
     if (phone.length < 9) { setPhoneLookup('idle'); return }
@@ -290,6 +302,34 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
       setAddStudentMsg({ type: 'error', text: data.error || 'Không thể thêm học viên.' })
     }
     setAddingStudent(false)
+  }
+
+  const handleResetPassword = async (userId: string, userName: string) => {
+    if (!confirm(`Reset mật khẩu về "123456" cho "${userName}"?`)) return
+    setResettingPassword(userId)
+    try {
+      const res = await fetch(`/api/admin/courses/${id}/students/${userId}/reset-password`, { method: 'POST' })
+      const data = await res.json()
+      if (data.success) {
+        setResetPasswordMsg(prev => ({ ...prev, [userId]: '✅ Đã reset' }))
+        setTimeout(() => setResetPasswordMsg(prev => { const n = { ...prev }; delete n[userId]; return n }), 3000)
+      }
+    } catch {}
+    setResettingPassword(null)
+  }
+
+  const handleSaveParentName = async (enrollmentId: string, userId: string) => {
+    const parentName = editingParentName[enrollmentId]
+    if (parentName === undefined) return
+    setSavingParentName(enrollmentId)
+    await fetch(`/api/admin/courses/${id}/students/${userId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ parentName }),
+    })
+    setSavingParentName(null)
+    setStudents(prev => prev.map(s => s.id === enrollmentId ? { ...s, parentName } : s))
+    setEditingParentName(prev => { const n = { ...prev }; delete n[enrollmentId]; return n })
   }
 
   const handleDeleteStudent = async (userId: string, userName: string) => {
@@ -726,22 +766,41 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                   <tr className="border-b border-gray-100">
                     <th className="text-left pb-3 text-gray-500 font-medium">Học viên</th>
                     <th className="text-left pb-3 text-gray-500 font-medium">SĐT</th>
+                    <th className="text-left pb-3 text-gray-500 font-medium min-w-[140px]">Phụ huynh</th>
                     <th className="text-left pb-3 text-gray-500 font-medium">Trạng thái</th>
+                    {course.paymentType === 'PER_COURSE' && (
+                      <th className="text-right pb-3 text-gray-500 font-medium whitespace-nowrap">Học phí khoá</th>
+                    )}
+                    <th className="text-right pb-3 text-gray-500 font-medium whitespace-nowrap">Tổng đã đóng</th>
                     <th className="text-left pb-3 text-gray-500 font-medium">Hết hạn</th>
                     <th className="text-left pb-3 text-gray-500 font-medium">Ngày vào</th>
-                    <th className="text-right pb-3 text-gray-500 font-medium">Xoá</th>
+                    <th className="text-right pb-3 text-gray-500 font-medium">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {students.map((e) => (
                     <tr key={e.id}>
-                      <td className="py-3">
+                      <td className="py-3 pr-3">
                         <p className="font-medium text-gray-800">{e.user.name ?? 'N/A'}</p>
                         {e.user.email && <p className="text-xs text-gray-400">{e.user.email}</p>}
                         {e.isFree && <span className="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded-full">Miễn phí</span>}
                       </td>
-                      <td className="py-3 text-gray-500">{e.user.phone}</td>
-                      <td className="py-3">
+                      <td className="py-3 pr-3 text-gray-500">{e.user.phone}</td>
+                      {/* Phụ huynh — editable inline */}
+                      <td className="py-3 pr-3">
+                        <input
+                          type="text"
+                          value={editingParentName[e.id] ?? e.parentName ?? ''}
+                          onChange={ev => setEditingParentName(prev => ({ ...prev, [e.id]: ev.target.value }))}
+                          onBlur={() => handleSaveParentName(e.id, e.user.id)}
+                          onKeyDown={ev => { if (ev.key === 'Enter') (ev.target as HTMLInputElement).blur() }}
+                          placeholder="Nhập tên PH..."
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-teal-300"
+                          disabled={savingParentName === e.id}
+                        />
+                        {savingParentName === e.id && <p className="text-xs text-teal-500 mt-0.5">Đang lưu...</p>}
+                      </td>
+                      <td className="py-3 pr-3">
                         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                           e.status === 'ACTIVE' ? 'bg-green-50 text-green-700' :
                           e.status === 'EXPIRED' ? 'bg-orange-50 text-orange-700' :
@@ -753,20 +812,52 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                            e.status === 'REMOVED' ? 'Đã xoá' : e.status}
                         </span>
                       </td>
-                      <td className="py-3 text-gray-400 text-xs">
+                      {/* Học phí khoá (chỉ hiện PER_COURSE) */}
+                      {course.paymentType === 'PER_COURSE' && (
+                        <td className="py-3 pr-3 text-right">
+                          <span className="text-sm font-semibold text-gray-700">{fmtVnd(course.price ?? 0)}</span>
+                          {e.isFree && <span className="block text-xs text-green-600">Miễn phí</span>}
+                        </td>
+                      )}
+                      {/* Tổng đã đóng */}
+                      <td className="py-3 pr-3 text-right">
+                        <span className={`text-sm font-semibold ${e.totalPaid > 0 ? 'text-teal-700' : 'text-gray-300'}`}>
+                          {e.totalPaid > 0 ? fmtVnd(e.totalPaid) : '—'}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-3 text-gray-400 text-xs">
                         {e.expiresAt ? new Date(e.expiresAt).toLocaleDateString('vi-VN') : '—'}
                       </td>
-                      <td className="py-3 text-gray-400 text-xs">
+                      <td className="py-3 pr-3 text-gray-400 text-xs">
                         {new Date(e.createdAt).toLocaleDateString('vi-VN')}
                       </td>
-                      <td className="py-3 text-right">
-                        <button
-                          onClick={() => handleDeleteStudent(e.user.id, e.user.name ?? e.user.phone)}
-                          className="p-1.5 text-gray-300 hover:text-red-500 transition"
-                          title="Xoá học viên"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                      <td className="py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          {/* Reset mật khẩu */}
+                          <div className="relative">
+                            <button
+                              onClick={() => handleResetPassword(e.user.id, e.user.name ?? e.user.phone)}
+                              disabled={resettingPassword === e.user.id}
+                              className="p-1.5 text-gray-300 hover:text-amber-500 transition disabled:opacity-40"
+                              title="Reset mật khẩu về 123456"
+                            >
+                              <Key className="w-4 h-4" />
+                            </button>
+                            {resetPasswordMsg[e.user.id] && (
+                              <span className="absolute -top-6 right-0 bg-teal-600 text-white text-xs px-2 py-0.5 rounded-lg whitespace-nowrap z-10">
+                                {resetPasswordMsg[e.user.id]}
+                              </span>
+                            )}
+                          </div>
+                          {/* Xoá */}
+                          <button
+                            onClick={() => handleDeleteStudent(e.user.id, e.user.name ?? e.user.phone)}
+                            className="p-1.5 text-gray-300 hover:text-red-500 transition"
+                            title="Xoá học viên"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

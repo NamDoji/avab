@@ -28,11 +28,20 @@ export async function GET(
       where: { courseId, status: { not: 'REMOVED' } },
       include: {
         user: { select: { id: true, name: true, phone: true, email: true } },
+        tuitionPayments: {
+          where: { isPaid: true },
+          select: { amount: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json({ success: true, data: enrollments })
+    const data = enrollments.map(({ tuitionPayments, ...e }) => ({
+      ...e,
+      totalPaid: tuitionPayments.reduce((sum, p) => sum + p.amount, 0),
+    }))
+
+    return NextResponse.json({ success: true, data })
   } catch (error) {
     console.error('Get students error:', error)
     return NextResponse.json({ success: false, error: 'Không thể tải danh sách học viên' }, { status: 500 })
