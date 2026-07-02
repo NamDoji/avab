@@ -44,6 +44,14 @@ interface Material {
   fileName: string | null
 }
 
+interface HomeworkSet {
+  id: string
+  title: string
+  order: number
+  createdAt: string
+  _count: { questions: number }
+}
+
 interface SubjectDetail {
   id: string
   name: string
@@ -51,6 +59,7 @@ interface SubjectDetail {
   course: { id: string; name: string; code: string }
   questions: Question[]
   materials: Material[]
+  homeworkSets: HomeworkSet[]
 }
 
 type MaterialType = 'THEORY' | 'VIDEO' | 'ANSWER'
@@ -114,6 +123,8 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const [parsing, setParsing] = useState(false)
   const [parseResult, setParseResult] = useState<{ parsed: number; questions: Question[] } | null>(null)
   const [saving, setSaving] = useState(false)
+  const [setTitle, setSetTitle] = useState('')
+  const [homeworkSets, setHomeworkSets] = useState<HomeworkSet[]>([])
 
   // ── Rich question form ──
   const [showQForm, setShowQForm] = useState(false)
@@ -155,6 +166,11 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
 
   useEffect(() => { load() }, [id])
 
+  // Sync homeworkSets from loaded subject
+  useEffect(() => {
+    if (subject) setHomeworkSets(subject.homeworkSets ?? [])
+  }, [subject])
+
   // ── BTVN parse ──
   const handleParsePreview = async () => {
     if (!uploadFile) return
@@ -163,6 +179,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
     const fd = new FormData()
     fd.append('file', uploadFile)
     fd.append('save', 'false')
+    fd.append('setTitle', setTitle || uploadFile.name)
     const res = await fetch(`/api/admin/subjects/${id}/parse-homework`, { method: 'POST', body: fd })
     const data = await res.json()
     if (data.success) setParseResult(data.data)
@@ -176,13 +193,16 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
     const fd = new FormData()
     fd.append('file', uploadFile)
     fd.append('save', 'true')
+    fd.append('setTitle', setTitle || uploadFile.name)
     const res = await fetch(`/api/admin/subjects/${id}/parse-homework`, { method: 'POST', body: fd })
     const data = await res.json()
     if (data.success) {
-      showMsg('success', `Đã lưu ${data.data.parsed} câu hỏi!`)
+      const savedTitle = setTitle || uploadFile?.name || 'Đề mới'
+      showMsg('success', `Đã lưu ${data.data.parsed} câu hỏi vào đề "${savedTitle}"!`)
       setParseResult(null)
       setUploadFile(null)
-      load()
+      setSetTitle('')
+      setTimeout(() => window.location.reload(), 1000)
     } else {
       showMsg('error', data.error)
     }
@@ -528,6 +548,33 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
               <span className="text-xs font-normal text-gray-400 ml-1">— Upload file Word/PDF theo mẫu → tự động tách câu hỏi</span>
             </h2>
 
+            {/* Danh sách BTVN sets đã upload */}
+            {homeworkSets.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-gray-500 mb-2">Các đề BTVN đã upload:</p>
+                <div className="space-y-1.5">
+                  {homeworkSets.map(set => (
+                    <div key={set.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-3 py-2 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-700">{set.title}</span>
+                        <span className="ml-2 text-xs text-teal-600">{set._count.questions} câu</span>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          if (!confirm(`Xóa đề "${set.title}" và toàn bộ ${set._count.questions} câu hỏi?`)) return
+                          await fetch(`/api/admin/subjects/${id}/homework-sets/${set.id}`, { method: 'DELETE' })
+                          setHomeworkSets(prev => prev.filter(s => s.id !== set.id))
+                        }}
+                        className="p-1 text-gray-400 hover:text-red-500"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Template download */}
             <div className="bg-purple-50 border border-purple-200 rounded-lg px-4 py-3 mb-4 flex items-center justify-between flex-wrap gap-2">
               <p className="text-xs text-purple-700 font-semibold">📋 Dùng đúng file mẫu để parse chính xác</p>
@@ -536,6 +583,15 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                 ⬇️ Tải mẫu BTVN (câu hỏi + đáp án + lời giải)
               </a>
             </div>
+
+            {/* Title input for new set */}
+            <input
+              type="text"
+              placeholder="Tên đề (VD: Đề 1 - So sánh thay thế)"
+              value={setTitle}
+              onChange={e => setSetTitle(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-purple-300"
+            />
 
             <div className="flex gap-3 flex-wrap">
               <label className="flex-1 min-w-48">
@@ -553,7 +609,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                 {parseResult && (
                   <button onClick={handleParseAndSave} disabled={saving}
                     className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
-                    {saving ? 'Đang lưu...' : `💾 Lưu ${parseResult.parsed} câu`}
+                    {saving ? 'Đang lưu...' : `💾 Lưu thành đề mới (${parseResult.parsed} câu)`}
                   </button>
                 )}
               </div>

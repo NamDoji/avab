@@ -31,6 +31,12 @@ export default async function SubjectDetailPage({
       include: {
         materials: { orderBy: { type: 'asc' } },
         questions: { orderBy: { order: 'asc' } },
+        homeworkSets: {
+          orderBy: { order: 'asc' },
+          include: {
+            questions: { orderBy: { order: 'asc' } },
+          },
+        },
         course: { select: { id: true, name: true, courseType: true } },
       },
     }).catch(() => null),
@@ -172,6 +178,23 @@ export default async function SubjectDetailPage({
             explanation: q.explanation ?? undefined,
             points: q.points,
           }))}
+          homeworkSets={(subject as any).homeworkSets?.map((s: any) => ({
+            id: s.id,
+            title: s.title,
+            order: s.order,
+            questions: s.questions.map((q: any) => ({
+              id: q.id,
+              order: q.order,
+              questionType: q.questionType ?? 'OPEN',
+              content: q.content,
+              imageUrl: q.imageUrl ?? undefined,
+              audioUrl: q.audioUrl ?? undefined,
+              options: q.options ?? undefined,
+              correctAnswer: q.correctAnswer,
+              explanation: q.explanation ?? undefined,
+              points: q.points,
+            })),
+          })) ?? []}
           answersMap={answersMap}
           top5={top5Data}
           userId={userId}

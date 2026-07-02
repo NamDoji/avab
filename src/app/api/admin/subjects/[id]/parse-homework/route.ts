@@ -167,6 +167,7 @@ export async function POST(
     const formData = await req.formData()
     const file = formData.get('file') as File
     const shouldSave = formData.get('save') === 'true'
+    const setTitle = (formData.get('setTitle') as string) || file?.name || 'BTVN'
 
     if (!file) {
       return NextResponse.json({ success: false, error: 'No file' }, { status: 400 })
@@ -244,11 +245,25 @@ export async function POST(
 
     const parsed = parseHomeworkText(text)
 
+    let homeworkSetId: string | null = null
+
     if (shouldSave && parsed.length > 0) {
-      await prisma.question.deleteMany({ where: { subjectId } })
+      // Đếm số set hiện có để auto-order
+      const existingCount = await prisma.homeworkSet.count({ where: { subjectId } })
+
+      const newSet = await prisma.homeworkSet.create({
+        data: {
+          subjectId,
+          title: setTitle,
+          order: existingCount,
+        },
+      })
+      homeworkSetId = newSet.id
+
       await prisma.question.createMany({
         data: parsed.map((q) => ({
           subjectId,
+          homeworkSetId: newSet.id,
           order: q.order,
           content: q.content,
           correctAnswer: q.correctAnswer,
@@ -260,7 +275,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      data: { parsed: parsed.length, questions: parsed, imageCount },
+      data: { parsed: parsed.length, questions: parsed, imageCount, homeworkSetId },
     })
   } catch (err) {
     console.error(err)

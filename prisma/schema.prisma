@@ -81,11 +81,27 @@ model Subject {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  course    Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  materials SubjectMaterial[]
-  questions Question[]
+  course       Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  materials    SubjectMaterial[]
+  questions    Question[]
+  homeworkSets HomeworkSet[]
 
   @@map("avab_subjects")
+}
+
+model HomeworkSet {
+  id        String   @id @default(cuid())
+  subjectId String
+  title     String
+  order     Int      @default(0)
+  fileUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subject   Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  questions Question[]
+
+  @@map("avab_homework_sets")
 }
 
 model SubjectMaterial {
@@ -107,6 +123,7 @@ model SubjectMaterial {
 model Question {
   id            String   @id @default(cuid())
   subjectId     String
+  homeworkSetId String?
   order         Int      @default(0)
   questionType  String   @default("OPEN")
   content       String
@@ -120,8 +137,9 @@ model Question {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  subject Subject         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  answers StudentAnswer[]
+  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  homeworkSet HomeworkSet? @relation(fields: [homeworkSetId], references: [id], onDelete: SetNull)
+  answers     StudentAnswer[]
 
   @@map("avab_questions")
 }

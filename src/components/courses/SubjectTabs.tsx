@@ -213,7 +213,12 @@ function MaterialView({ url, title }: { url: string; title?: string | null }) {
 }
 
 // ── Video Panel (right side) ────────────────────────────────────────────────
-function VideoPanel({ videoMaterial }: { videoMaterial: { fileUrl: string | null; content: string | null; title: string | null } | null }) {
+function VideoPanel({ videoMaterial, videoMaterials, activeIdx, onSelect }: {
+  videoMaterial: { fileUrl: string | null; content: string | null; title: string | null } | null
+  videoMaterials?: Array<{ id: string; fileUrl: string | null; content: string | null; title: string | null }>
+  activeIdx?: number
+  onSelect?: (idx: number) => void
+}) {
   const url = videoMaterial?.fileUrl || videoMaterial?.content || ''
   const r = url ? resolveEmbedUrl(url) : null
   return (
@@ -222,6 +227,21 @@ function VideoPanel({ videoMaterial }: { videoMaterial: { fileUrl: string | null
         <span className="text-red-400 text-lg">🎬</span>
         <span className="text-white font-bold text-sm">Video bài giảng</span>
       </div>
+      {videoMaterials && videoMaterials.length > 1 && (
+        <div className="flex gap-1 px-2 pt-2 overflow-x-auto">
+          {videoMaterials.map((v, idx) => (
+            <button
+              key={v.id}
+              onClick={() => onSelect?.(idx)}
+              className={`flex-shrink-0 text-xs px-2.5 py-1 rounded-full font-medium transition ${
+                activeIdx === idx ? 'bg-white text-purple-700' : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              {v.title || `Video ${idx + 1}`}
+            </button>
+          ))}
+        </div>
+      )}
       {r && (r.kind === 'iframe' || r.kind === 'video') ? (
         <div className="aspect-video w-full">
           {r.kind === 'iframe'
@@ -279,6 +299,12 @@ interface Material {
   id: string; type: string; title: string | null
   content: string | null; fileUrl: string | null; fileName: string | null
 }
+interface HomeworkSet {
+  id: string
+  title: string
+  order: number
+  questions: Question[]
+}
 interface Top5Entry { rank: number; userId: string; name: string; score: number; isMe: boolean }
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 
@@ -295,6 +321,7 @@ interface Props {
   subject: { id: string; name: string; courseId: string }
   materials: Material[]
   questions: Question[]
+  homeworkSets?: HomeworkSet[]
   answersMap: Record<string, { answer: string; isCorrect: boolean; score: number }>
   top5: Top5Entry[]
   userId: string
@@ -344,7 +371,7 @@ const MC_COLORS = [
 ]
 
 // ── Main Component ──────────────────────────────────────────────────────────
-export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0 }: Props) {
+export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0, homeworkSets }: Props) {
   const hasIDE = courseType && IDE_COURSE_TYPES.includes(courseType)
   const TABS = hasIDE
     ? [...BASE_TABS.slice(0,2), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, ...BASE_TABS.slice(2)]
@@ -378,9 +405,17 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const [notebookDone, setNotebookDone] = useState<Record<string, boolean>>({})
   const [notebookQ, setNotebookQ] = useState<string | null>(null)
   const [showCongrat, setShowCongrat] = useState(false)
+  const [activeBTVNSet, setActiveBTVNSet] = useState(0)
+  const [activeVideoIdx, setActiveVideoIdx] = useState(0)
+  const [activeAnswerIdx, setActiveAnswerIdx] = useState(0)
+  const [activeTheoryIdx, setActiveTheoryIdx] = useState(0)
 
   const getMaterial = (type: string) => materials.filter((m) => m.type === type)
-  const videoMaterial = getMaterial('VIDEO')[0] ?? null
+  const videoMaterials = getMaterial('VIDEO')
+  const videoMaterial = videoMaterials[activeVideoIdx] ?? videoMaterials[0] ?? null
+  const activeQuestions = homeworkSets && homeworkSets.length > 0
+    ? (homeworkSets[activeBTVNSet]?.questions ?? [])
+    : questions
 
   // ── Compute the final answer string for any question type ─────────────────
   const computeAnswer = (q: Question): string => {
@@ -780,7 +815,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               videoCollapsed ? 'max-h-0 opacity-0 mb-0' : 'max-h-[400px] opacity-100'
             }`}
           >
-            <VideoPanel videoMaterial={videoMaterial} />
+            <VideoPanel videoMaterial={videoMaterial} videoMaterials={videoMaterials} activeIdx={activeVideoIdx} onSelect={setActiveVideoIdx} />
           </div>
           {/* Nút mũi tên thu/mở — mobile */}
           <button
@@ -825,6 +860,25 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* ── BTVN ── */}
           {activeTab === 'homework' && (
             <div>
+              {/* Sub-tabs BTVN */}
+              {homeworkSets && homeworkSets.length > 1 && (
+                <div className="flex gap-1.5 overflow-x-auto pb-1 mb-4 scrollbar-hide">
+                  {homeworkSets.map((set, idx) => (
+                    <button
+                      key={set.id}
+                      onClick={() => setActiveBTVNSet(idx)}
+                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                        activeBTVNSet === idx
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-purple-50'
+                      }`}
+                    >
+                      📚 {set.title}
+                      <span className="ml-1 opacity-70">({set.questions.length})</span>
+                    </button>
+                  ))}
+                </div>
+              )}
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-black text-gray-900">✏️ Bài Tập Về Nhà</h2>
@@ -833,22 +887,22 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     accuracy >= 80 ? 'bg-teal-100 text-teal-700'
                     : accuracy >= 50 ? 'bg-yellow-100 text-yellow-700'
                     : 'bg-orange-100 text-orange-700'}`}>
-                    {totalCorrect}/{questions.length} ({accuracy}%)
+                    {totalCorrect}/{activeQuestions.length} ({accuracy}%)
                   </span>
                 )}
               </div>
 
               {/* ── PROGRESS BAR ── */}
-              {questions.length > 0 && (
+              {activeQuestions.length > 0 && (
                 <div className="mb-5">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-xs font-bold text-gray-500">
-                      {totalAnswered === questions.length ? '🎉 Hoàn thành!' : `${totalAnswered}/${questions.length} câu đã làm`}
+                      {totalAnswered === activeQuestions.length ? '🎉 Hoàn thành!' : `${totalAnswered}/${activeQuestions.length} câu đã làm`}
                     </span>
                     <div className="flex gap-0.5">
                       {[1,2,3].map(s => {
                         const threshold = s === 1 ? 50 : s === 2 ? 70 : 90
-                        const lit = totalAnswered === questions.length && accuracy >= threshold
+                        const lit = totalAnswered === activeQuestions.length && accuracy >= threshold
                         return <span key={s} className={`text-lg transition-all ${lit ? 'scale-125' : 'opacity-25'}`}>⭐</span>
                       })}
                     </div>
@@ -856,13 +910,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   <div className="h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                     <div
                       className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400"
-                      style={{ width: `${questions.length > 0 ? (totalAnswered / questions.length) * 100 : 0}%` }}
+                      style={{ width: `${activeQuestions.length > 0 ? (totalAnswered / activeQuestions.length) * 100 : 0}%` }}
                     />
                   </div>
                 </div>
               )}
 
-              {questions.length === 0 ? (
+              {activeQuestions.length === 0 ? (
                 <div className="text-center py-10 text-gray-400">
                   <div className="text-5xl mb-3">📝</div>
                   <p>Giáo viên chưa tải lên bài tập</p>
@@ -871,7 +925,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                 <>
                   {/* ── GRID CÂU HỎI ── */}
                   <div className="flex flex-wrap justify-center gap-2 mb-5 p-3 bg-gray-50 rounded-2xl">
-                    {questions.map((q) => {
+                    {activeQuestions.map((q) => {
                       const isDone    = submitted[q.id]
                       const isCorrect = results[q.id]
                       const hasInput  = !isDone && !!computeAnswer(q).trim()
@@ -906,11 +960,11 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
                   {/* ── NỘI DUNG CÂU ĐƯỢC CHỌN ── */}
                   {expandedQ && (() => {
-                    const q = questions.find(q => q.id === expandedQ)!
+                    const q = activeQuestions.find(q => q.id === expandedQ)!
                     if (!q) return null
-                    const qIdx      = questions.findIndex(x => x.id === expandedQ)
-                    const prevQ     = questions[qIdx - 1] ?? null
-                    const nextQ     = questions[qIdx + 1] ?? null
+                    const qIdx      = activeQuestions.findIndex(x => x.id === expandedQ)
+                    const prevQ     = activeQuestions[qIdx - 1] ?? null
+                    const nextQ     = activeQuestions[qIdx + 1] ?? null
                     const isDone    = submitted[q.id]
                     const isCorrect = results[q.id]
                     const hint      = showHint[q.id]
@@ -1046,13 +1100,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
                   {/* Nút nộp tất cả */}
                   {!aiResult && (() => {
-                    const allAnswered = questions.every(q => submitted[q.id] || computeAnswer(q).trim())
-                    const allDone    = questions.every(q => submitted[q.id])
+                    const allAnswered = activeQuestions.every(q => submitted[q.id] || computeAnswer(q).trim())
+                    const allDone    = activeQuestions.every(q => submitted[q.id])
                     return (
                       <div className="mt-2">
                         {!allAnswered && (
                           <p className="text-center text-sm text-gray-400 mb-2">
-                            📝 Hãy làm tất cả {questions.length} câu rồi mới nộp nhé!
+                            📝 Hãy làm tất cả {activeQuestions.length} câu rồi mới nộp nhé!
                           </p>
                         )}
                         <button onClick={handleSubmitAll}
@@ -1099,7 +1153,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           className="flex-1 py-3 bg-purple-600 text-white font-bold rounded-2xl hover:bg-purple-700 transition text-sm">
                           🔄 Làm lại toàn bộ
                         </button>
-                        {questions.some(q => submitted[q.id] && !results[q.id]) && (
+                        {activeQuestions.some(q => submitted[q.id] && !results[q.id]) && (
                           <button onClick={() => handleRetry(true)}
                             className="flex-1 py-3 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition text-sm">
                             💡 Làm lại câu chưa đúng
@@ -1118,37 +1172,56 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             <div>
               <h2 className="text-lg font-black text-gray-900 mb-4">📖 Bài giảng — {subject.name}</h2>
               {getMaterial('THEORY').length > 0 ? (
-                getMaterial('THEORY').map((m) => {
-                  // Local content path → render markdown từ DB
-                  const isLocalPath = m.fileUrl?.startsWith('/content/')
-                  const hasContent = m.content && m.content.length > 50
-                  return (
-                    <div key={m.id} className="mb-4">
-                      {!isLocalPath && m.fileUrl ? (
-                        // URL bên ngoài: embed iframe
-                        <MaterialView url={m.fileUrl} title={m.title} />
-                      ) : hasContent ? (
-                        // Nội dung markdown từ DB
-                        <div className="bg-white rounded-3xl border border-purple-100 p-5 md:p-6 shadow-sm">
-                          <MarkdownLesson content={m.content!} />
-                          {m.fileUrl && (
-                            <div className="mt-5 pt-4 border-t border-gray-100 flex gap-3">
-                              <a
-                                href={`https://raw.githubusercontent.com/NamDoji/avab/main${m.fileUrl}`}
-                                target="_blank" rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition"
-                              >
-                                ⬇️ Tải file DOCX
-                              </a>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="bg-purple-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">{m.content || 'Đang cập nhật...'}</div>
-                      )}
+                <>
+                  {getMaterial('THEORY').length > 1 && (
+                    <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3">
+                      {getMaterial('THEORY').map((m, idx) => (
+                        <button
+                          key={m.id}
+                          onClick={() => setActiveTheoryIdx(idx)}
+                          className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                            activeTheoryIdx === idx ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-50'
+                          }`}
+                        >
+                          {m.title || `Bài ${idx + 1}`}
+                        </button>
+                      ))}
                     </div>
-                  )
-                })
+                  )}
+                  {(() => {
+                    const m = getMaterial('THEORY')[activeTheoryIdx] ?? getMaterial('THEORY')[0]
+                    if (!m) return null
+                    // Local content path → render markdown từ DB
+                    const isLocalPath = m.fileUrl?.startsWith('/content/')
+                    const hasContent = m.content && m.content.length > 50
+                    return (
+                      <div className="mb-4">
+                        {!isLocalPath && m.fileUrl ? (
+                          // URL bên ngoài: embed iframe
+                          <MaterialView url={m.fileUrl} title={m.title} />
+                        ) : hasContent ? (
+                          // Nội dung markdown từ DB
+                          <div className="bg-white rounded-3xl border border-purple-100 p-5 md:p-6 shadow-sm">
+                            <MarkdownLesson content={m.content!} />
+                            {m.fileUrl && (
+                              <div className="mt-5 pt-4 border-t border-gray-100 flex gap-3">
+                                <a
+                                  href={`https://raw.githubusercontent.com/NamDoji/avab/main${m.fileUrl}`}
+                                  target="_blank" rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition"
+                                >
+                                  ⬇️ Tải file DOCX
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="bg-purple-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">{m.content || 'Đang cập nhật...'}</div>
+                        )}
+                      </div>
+                    )
+                  })()}
+                </>
               ) : (
                 <div className="text-center py-10 text-gray-400">
                   <div className="text-5xl mb-3">📄</div>
@@ -1157,7 +1230,6 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               )}
             </div>
           )}
-
           {/* ── VỞ VIẾT ── */}
           {activeTab === 'ide' && courseType && hasIDE && (
             <div className="py-2"><IDETab
@@ -1336,14 +1408,35 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             <div>
               <h2 className="text-lg font-black text-gray-900 mb-4">✅ Đáp án & Hướng dẫn giải</h2>
               {getMaterial('ANSWER').length > 0 ? (
-                getMaterial('ANSWER').map((m) => (
-                  <div key={m.id} className="mb-4">
-                    {m.fileUrl
-                      ? <MaterialView url={m.fileUrl} title={m.title} />
-                      : <div className="bg-teal-50 rounded-3xl p-5 text-gray-700 whitespace-pre-wrap text-sm">{m.content}</div>
-                    }
-                  </div>
-                ))
+                <>
+                  {getMaterial('ANSWER').length > 1 && (
+                    <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3">
+                      {getMaterial('ANSWER').map((m, idx) => (
+                        <button
+                          key={m.id}
+                          onClick={() => setActiveAnswerIdx(idx)}
+                          className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                            activeAnswerIdx === idx ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-teal-50'
+                          }`}
+                        >
+                          {m.title || `Đáp án ${idx + 1}`}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {(() => {
+                    const m = getMaterial('ANSWER')[activeAnswerIdx] ?? getMaterial('ANSWER')[0]
+                    if (!m) return null
+                    return (
+                      <div className="mb-4">
+                        {m.fileUrl
+                          ? <MaterialView url={m.fileUrl} title={m.title} />
+                          : <div className="bg-teal-50 rounded-3xl p-5 text-gray-700 whitespace-pre-wrap text-sm">{m.content}</div>
+                        }
+                      </div>
+                    )
+                  })()}
+                </>
               ) : questions.length > 0 ? (
                 <div className="space-y-3">
                   {questions.map((q) => (
@@ -1364,7 +1457,6 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               )}
             </div>
           )}
-
           {/* ── TOP 5 ── */}
           {activeTab === 'top5' && (
             <div className="space-y-4">
@@ -1468,7 +1560,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             }`}
           >
             <div className="sticky top-24">
-              <VideoPanel videoMaterial={videoMaterial} />
+              <VideoPanel videoMaterial={videoMaterial} videoMaterials={videoMaterials} activeIdx={activeVideoIdx} onSelect={setActiveVideoIdx} />
               <div className="mt-3 bg-white rounded-2xl border border-purple-100 px-4 py-3 text-xs text-gray-500 space-y-1 shadow-sm">
                 <p>📖 <strong className="text-gray-700">Bài giảng:</strong> slide/PDF lý thuyết</p>
                 <p>✏️ <strong className="text-gray-700">BTVN:</strong> làm bài trực tiếp, chấm tự động</p>
