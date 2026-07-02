@@ -406,13 +406,23 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const [notebookQ, setNotebookQ] = useState<string | null>(null)
   const [showCongrat, setShowCongrat] = useState(false)
   const [activeBTVNSet, setActiveBTVNSet] = useState(0)
-  const [activeVideoIdx, setActiveVideoIdx] = useState(0)
+  const [activeLectureIdx, setActiveLectureIdx] = useState(0)
+  const [activeVideoIdx, setActiveVideoIdx] = useState(0) // for legacy VideoPanel
   const [activeAnswerIdx, setActiveAnswerIdx] = useState(0)
-  const [activeTheoryIdx, setActiveTheoryIdx] = useState(0)
+  const [activeAnswerSetIdx, setActiveAnswerSetIdx] = useState(0)
 
   const getMaterial = (type: string) => materials.filter((m) => m.type === type)
+
+  // Gộp VIDEO + THEORY thành 1 danh sách cho tab Bài Giảng
+  const allLectureMaterials = [
+    ...getMaterial('VIDEO').map(m => ({ ...m, emoji: '🎬' })),
+    ...getMaterial('THEORY').map(m => ({ ...m, emoji: '📄' })),
+  ]
+  const activeLecture = allLectureMaterials[activeLectureIdx] ?? allLectureMaterials[0] ?? null
+
+  // Video panel (legacy — dùng cho side panel)
   const videoMaterials = getMaterial('VIDEO')
-  const videoMaterial = videoMaterials[activeVideoIdx] ?? videoMaterials[0] ?? null
+  const videoMaterial = videoMaterials[0] ?? null
   // Build combined set list: named sets + orphan questions as a virtual set
   const setQIds = new Set((homeworkSets ?? []).flatMap(s => s.questions.map(q => q.id)))
   const orphanQuestions = questions.filter(q => !setQIds.has(q.id))
@@ -1176,49 +1186,64 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             </div>
           )}
 
-          {/* ── BÀI GIẢNG (LÝ THUYẾT) ── */}
+          {/* ── BÀI GIẢNG ── */}
           {activeTab === 'theory' && (
             <div>
-              <h2 className="text-lg font-black text-gray-900 mb-4">📖 Bài giảng — {subject.name}</h2>
-              {getMaterial('THEORY').length > 0 ? (
+              {allLectureMaterials.length > 0 ? (
                 <>
-                  {getMaterial('THEORY').length > 1 && (
-                    <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3">
-                      {getMaterial('THEORY').map((m, idx) => (
-                        <button
-                          key={m.id}
-                          onClick={() => setActiveTheoryIdx(idx)}
-                          className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                            activeTheoryIdx === idx ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-50'
-                          }`}
-                        >
-                          {m.title || `Bài ${idx + 1}`}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {(() => {
-                    const m = getMaterial('THEORY')[activeTheoryIdx] ?? getMaterial('THEORY')[0]
-                    if (!m) return null
-                    // Local content path → render markdown từ DB
+                  {/* Sub-tabs — hiển người dùng dù chỉ 1 file */}
+                  <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+                    {allLectureMaterials.map((m, idx) => (
+                      <button
+                        key={m.id}
+                        onClick={() => setActiveLectureIdx(idx)}
+                        className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
+                          activeLectureIdx === idx
+                            ? m.type === 'VIDEO' ? 'bg-red-500 text-white' : 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-blue-50'
+                        }`}
+                      >
+                        {m.emoji} {m.title || (m.type === 'VIDEO' ? `Video ${idx + 1}` : `Bài giảng ${idx + 1}`)}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Nội dung theo tab đang chọn */}
+                  {activeLecture && (() => {
+                    const m = activeLecture
+                    if (m.type === 'VIDEO') {
+                      const url = m.fileUrl || m.content || ''
+                      const r = url ? resolveEmbedUrl(url) : null
+                      return r ? (
+                        <div className="rounded-2xl overflow-hidden shadow-md">
+                          {r.kind === 'iframe'
+                            ? <div className="aspect-video"><iframe src={r.src} className="w-full h-full" allowFullScreen title={m.title || 'Video'} /></div>
+                            : r.kind === 'video'
+                            ? <video src={r.src} controls className="w-full rounded-2xl" />
+                            : <a href={r.src} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-4 bg-red-50 rounded-2xl text-red-600 font-bold hover:bg-red-100">
+                                🔗 Mở video trong tab mới
+                              </a>
+                          }
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-gray-400">⚠️ Video chưa có URL</div>
+                      )
+                    }
+                    // THEORY
                     const isLocalPath = m.fileUrl?.startsWith('/content/')
                     const hasContent = m.content && m.content.length > 50
                     return (
                       <div className="mb-4">
                         {!isLocalPath && m.fileUrl ? (
-                          // URL bên ngoài: embed iframe
                           <MaterialView url={m.fileUrl} title={m.title} />
                         ) : hasContent ? (
-                          // Nội dung markdown từ DB
                           <div className="bg-white rounded-3xl border border-purple-100 p-5 md:p-6 shadow-sm">
                             <MarkdownLesson content={m.content!} />
                             {m.fileUrl && (
-                              <div className="mt-5 pt-4 border-t border-gray-100 flex gap-3">
-                                <a
-                                  href={`https://raw.githubusercontent.com/NamDoji/avab/main${m.fileUrl}`}
+                              <div className="mt-5 pt-4 border-t border-gray-100">
+                                <a href={`https://raw.githubusercontent.com/NamDoji/avab/main${m.fileUrl}`}
                                   target="_blank" rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition"
-                                >
+                                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
                                   ⬇️ Tải file DOCX
                                 </a>
                               </div>
@@ -1251,16 +1276,36 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           )}
           {activeTab === 'notebook' && !hasIDE && (
             <div>
+              {/* Sub-tabs theo đề — giống BTVN */}
+              {allBTVNSets.length > 1 && (
+                <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+                  {allBTVNSets.map((set, idx) => (
+                    <button
+                      key={set.id}
+                      onClick={() => setActiveBTVNSet(idx)}
+                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
+                        activeBTVNSet === idx
+                          ? set.id === '__orphan__' ? 'bg-gray-600 text-white' : 'bg-indigo-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-indigo-50'
+                      }`}
+                    >
+                      {set.id === '__orphan__' ? '📦' : '📓'} {set.title}
+                      <span className="ml-1 opacity-70">({set.questions.length})</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-black text-gray-900">📓 Vở viết</h2>
-                {questions.length > 0 && (
+                {activeQuestions.length > 0 && (
                   <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                    Đã chép: {Object.keys(notebookDone).length}/{questions.length}
+                    Đã chép: {Object.keys(notebookDone).length}/{activeQuestions.length}
                   </span>
                 )}
               </div>
 
-              {questions.length === 0 ? (
+              {activeQuestions.length === 0 ? (
                 <div className="text-center py-10 text-gray-400">
                   <div className="text-5xl mb-3">📓</div>
                   <p>Chưa có bài tập nào</p>
@@ -1272,7 +1317,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   </div>
 
                   <div className="flex flex-wrap justify-center gap-2 mb-4 p-3 bg-gray-50 rounded-2xl">
-                    {questions.map((q) => {
+                    {activeQuestions.map((q) => {
                       const done   = notebookDone[q.id]
                       const active = notebookQ === q.id
                       return (
@@ -1297,7 +1342,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   </div>
 
                   {notebookQ && (() => {
-                    const q = questions.find(x => x.id === notebookQ)!
+                    const q = activeQuestions.find(x => x.id === notebookQ)!
                     const done = notebookDone[q.id]
                     return (
                       <div className={`mb-4 rounded-3xl border-2 p-5 transition-all shadow-sm ${
@@ -1307,7 +1352,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 ${
                             done ? 'bg-blue-500 text-white' : 'bg-purple-600 text-white'
                           }`}>{q.order}</div>
-                          <p className="text-xs text-gray-500 font-medium">Câu {q.order} / {questions.length}</p>
+                          <p className="text-xs text-gray-500 font-medium">Câu {q.order} / {activeQuestions.length}</p>
                         </div>
                         {q.imageUrl && (
                           <div className="mb-3">
@@ -1322,8 +1367,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             <button
                               onClick={() => {
                                 setNotebookDone(p => ({ ...p, [q.id]: true }))
-                                const idx = questions.findIndex(x => x.id === q.id)
-                                const next = questions[idx + 1]
+                                const idx = activeQuestions.findIndex(x => x.id === q.id)
+                                const next = activeQuestions[idx + 1]
                                 setNotebookQ(next ? next.id : null)
                               }}
                               className="flex-1 py-4 bg-blue-500 hover:bg-blue-600 text-white font-black rounded-2xl transition text-lg shadow-md">
@@ -1337,16 +1382,16 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             </button>
                           )}
                           <div className="flex gap-2">
-                            {questions.findIndex(x => x.id === q.id) > 0 && (
+                            {activeQuestions.findIndex(x => x.id === q.id) > 0 && (
                               <button
-                                onClick={() => setNotebookQ(questions[questions.findIndex(x => x.id === q.id) - 1].id)}
+                                onClick={() => setNotebookQ(activeQuestions[activeQuestions.findIndex(x => x.id === q.id) - 1].id)}
                                 className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-base shadow-sm">
                                 ← Trước
                               </button>
                             )}
-                            {questions.findIndex(x => x.id === q.id) < questions.length - 1 && (
+                            {activeQuestions.findIndex(x => x.id === q.id) < activeQuestions.length - 1 && (
                               <button
-                                onClick={() => setNotebookQ(questions[questions.findIndex(x => x.id === q.id) + 1].id)}
+                                onClick={() => setNotebookQ(activeQuestions[activeQuestions.findIndex(x => x.id === q.id) + 1].id)}
                                 className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-base shadow-sm">
                                 Tiếp →
                               </button>
@@ -1358,7 +1403,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   })()}
 
                   <div className={`transition-all ${
-                    Object.keys(notebookDone).length === questions.length ? 'opacity-100' : 'opacity-40'
+                    Object.keys(notebookDone).length === activeQuestions.length ? 'opacity-100' : 'opacity-40'
                   }`}>
                     <div className="border-t-2 border-dashed border-blue-200 pt-4 mb-3">
                       <p className="text-sm font-bold text-blue-700 mb-1">🤖 Nộp bài tự luận cho AI chấm</p>
@@ -1415,24 +1460,42 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* ── ĐÁP ÁN ── */}
           {activeTab === 'answer' && (
             <div>
-              <h2 className="text-lg font-black text-gray-900 mb-4">✅ Đáp án & Hướng dẫn giải</h2>
+              {/* Sub-tabs đề BTVN — để chọn xem đáp án của đề nào */}
+              {allBTVNSets.length > 1 && (
+                <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+                  {allBTVNSets.map((set, idx) => (
+                    <button
+                      key={set.id}
+                      onClick={() => setActiveAnswerSetIdx(idx)}
+                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
+                        activeAnswerSetIdx === idx
+                          ? set.id === '__orphan__' ? 'bg-gray-600 text-white' : 'bg-teal-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-teal-50'
+                      }`}
+                    >
+                      {set.id === '__orphan__' ? '📦' : '✅'} {set.title}
+                      <span className="ml-1 opacity-70">({set.questions.length})</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {getMaterial('ANSWER').length > 0 ? (
                 <>
-                  {getMaterial('ANSWER').length > 1 && (
-                    <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3">
-                      {getMaterial('ANSWER').map((m, idx) => (
-                        <button
-                          key={m.id}
-                          onClick={() => setActiveAnswerIdx(idx)}
-                          className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                            activeAnswerIdx === idx ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-teal-50'
-                          }`}
-                        >
-                          {m.title || `Đáp án ${idx + 1}`}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  {/* Sub-tabs file đáp án — hiển dù chỉ 1 file */}
+                  <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+                    {getMaterial('ANSWER').map((m, idx) => (
+                      <button
+                        key={m.id}
+                        onClick={() => setActiveAnswerIdx(idx)}
+                        className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
+                          activeAnswerIdx === idx ? 'bg-teal-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-teal-50'
+                        }`}
+                      >
+                        📄 {m.title || `Đáp án ${idx + 1}`}
+                      </button>
+                    ))}
+                  </div>
                   {(() => {
                     const m = getMaterial('ANSWER')[activeAnswerIdx] ?? getMaterial('ANSWER')[0]
                     if (!m) return null
@@ -1446,9 +1509,9 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     )
                   })()}
                 </>
-              ) : questions.length > 0 ? (
+              ) : (allBTVNSets[activeAnswerSetIdx]?.questions ?? activeQuestions).length > 0 ? (
                 <div className="space-y-3">
-                  {questions.map((q) => (
+                  {(allBTVNSets[activeAnswerSetIdx]?.questions ?? activeQuestions).map((q) => (
                     <div key={q.id} className="border border-teal-100 rounded-2xl p-4 shadow-sm">
                       {q.imageUrl && (
                         <img src={q.imageUrl} alt="" className="w-full max-h-40 object-contain rounded-xl mb-2 bg-gray-50" />
