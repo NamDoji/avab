@@ -10,50 +10,16 @@ async function requireAdmin() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// OCR ảnh bằng GPT-4o Vision
-// ─────────────────────────────────────────────────────────────────────────────
-async function ocrImageBuffer(imgBuf: Buffer, contentType: string): Promise<string> {
-  try {
-    const base64 = imgBuf.toString('base64')
-    const result = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      max_tokens: 800,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `Đây là ảnh nội dung bài toán/lời giải tiếng Việt cho học sinh mầm non/lớp 1.
-Hãy trích xuất TOÀN BỘ nội dung trong ảnh (text, phép tính, ký hiệu toán học, mô tả hình vẽ).
-Chỉ trả về nội dung đã trích xuất, không giải thích thêm.`,
-            },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:${contentType};base64,${base64}`,
-                detail: 'high',
-              },
-            },
-          ],
-        },
-      ],
-    })
-    return result.choices[0]?.message?.content?.trim() ?? ''
-  } catch (err) {
-    console.error('[OCR] Failed:', err)
-    return ''
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Strip HTML → plain text (giữ ngắt dòng)
+// Strip HTML → plain text, giữ bảng biểu dưới dạng dễ đọc
 // ─────────────────────────────────────────────────────────────────────────────
 function stripHtml(html: string): string {
   return html
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>/gi, '\n')
     .replace(/<\/li>/gi, '\n')
+    .replace(/<\/tr>/gi, '\n')
+    .replace(/<\/td>/gi, ' | ')
+    .replace(/<\/th>/gi, ' | ')
     .replace(/<\/div>/gi, '\n')
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
@@ -62,77 +28,139 @@ function stripHtml(html: string): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    // Gộp nhiều dòng trống
+    .replace(/\n{3,}/g, '\n\n')
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// State-machine parser — hỗ trợ:
-//   • Nội dung nhiều dòng (Cân 1, Cân 2...)
-//   • Lời giải nhiều dòng (Bước 1, Bước 2, Sơ đồ...)
-//   • Text trích xuất từ ảnh (via OCR placeholder)
-//
-// Cấu trúc file mong đợi:
-//   Câu N: [dòng đầu]
-//   [các dòng tiếp theo / OCR từ ảnh]
-//   Đáp án N: [đáp án]
-//   Lời giải N:
-//   [các dòng lời giải / OCR từ ảnh]
-//   Câu N+1: ...
+// OCR 1 ảnh bằng GPT-4o Vision
 // ─────────────────────────────────────────────────────────────────────────────
-function parseHomeworkText(
+async function ocrImage(imgBuf: Buffer, contentType: string): Promise<string> {
+  try {
+    const base64 = imgBuf.toString('base64')
+    const res = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      max_tokens: 400,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: 'Đây là hình ảnh trong bài toán toán học tiếng Việt. Hãy mô tả ngắn gọn nội dung (biểu đồ, bảng, phép tính...) và trích xuất bất kỳ số liệu/ký hiệu nào có trong ảnh. Chỉ trả về text mô tả, không giải thích thêm.',
+          },
+          {
+            type: 'image_url',
+            image_url: { url: `data:${contentType};base64,${base64}`, detail: 'low' },
+          },
+        ],
+      }],
+    })
+    return res.choices[0]?.message?.content?.trim() ?? ''
+  } catch {
+    return ''
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI PARSER — GPT-4o đọc toàn bộ document text → JSON Q&A
+// Xử lý được mọi format: Câu 1. / Câu 1: / 1. / Question 1
+//                         Đáp án: / ĐA: / Answer: / có hoặc không có số
+//                         Lời giải có bảng biểu, hình ảnh, bullets
+// ─────────────────────────────────────────────────────────────────────────────
+async function aiParseDocument(
+  text: string
+): Promise<Array<{ order: number; content: string; correctAnswer: string; explanation: string }>> {
+  const prompt = `Bạn là hệ thống trích xuất bài tập từ tài liệu giáo dục tiếng Việt.
+
+Dưới đây là nội dung text đã trích xuất từ file bài tập về nhà (có thể bao gồm text từ OCR ảnh và bảng biểu).
+
+NHIỆM VỤ: Trích xuất TẤT CẢ câu hỏi/bài tập và trả về JSON.
+
+QUY TẮC:
+- "order": số thứ tự câu (1, 2, 3...)
+- "content": toàn bộ đề bài của câu đó (giữ nguyên, không tóm tắt)
+- "correctAnswer": đáp án cuối cùng ngắn gọn (ví dụ: "5 bạn", "23 quả", "x=4; y=7")
+- "explanation": toàn bộ lời giải, kể cả bảng biểu (format bảng thành dạng: Cột1: val | Cột2: val)
+- Bỏ qua header/footer, chỉ lấy các câu bài tập
+- Không tóm tắt, giữ nguyên nội dung gốc
+- Trả về ĐÚNG JSON array, không có text nào khác
+
+ĐỊNH DẠNG OUTPUT (chỉ JSON, không markdown):
+[{"order":1,"content":"...","correctAnswer":"...","explanation":"..."},...]
+
+NỘI DUNG TÀI LIỆU:
+${text.substring(0, 12000)}`
+
+  const res = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    max_tokens: 4000,
+    temperature: 0,
+    messages: [{ role: 'user', content: prompt }],
+    response_format: { type: 'json_object' },
+  })
+
+  const raw = res.choices[0]?.message?.content ?? '{}'
+  // GPT đôi khi trả về {"questions": [...]} hoặc {"data": [...]} hoặc [...]
+  let parsed: any
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return []
+  }
+
+  // Tìm array trong response
+  const arr: any[] = Array.isArray(parsed)
+    ? parsed
+    : parsed.questions ?? parsed.data ?? parsed.items ?? Object.values(parsed).find(v => Array.isArray(v)) ?? []
+
+  return arr
+    .filter((q: any) => q.content)
+    .map((q: any, i: number) => ({
+      order: Number(q.order) || i + 1,
+      content: String(q.content ?? '').trim(),
+      correctAnswer: String(q.correctAnswer ?? q.answer ?? q.dapAn ?? '').trim(),
+      explanation: String(q.explanation ?? q.loiGiai ?? q.giai ?? '').trim(),
+    }))
+    .sort((a, b) => a.order - b.order)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REGEX PARSER — nhanh, dùng cho file chuẩn theo mẫu
+// ─────────────────────────────────────────────────────────────────────────────
+function regexParseText(
   text: string
 ): Array<{ order: number; content: string; correctAnswer: string; explanation: string }> {
-  const lines = text.split('\n').map((l) => l.trim())
-
+  const lines = text.split('\n').map(l => l.trim())
   type QEntry = { contentLines: string[]; correctAnswer: string; explanationLines: string[] }
   const questionMap = new Map<number, QEntry>()
-
   let currentNum: number | null = null
   let phase: 'content' | 'answer' | 'explanation' = 'content'
 
   for (const line of lines) {
     if (!line) continue
 
-    // ── Câu N: ... ──────────────────────────────────────────────────────────
+    // Câu N: hoặc Câu N.
     const qM = line.match(/^Câu\s*(\d+)\s*[.:)]\s*(.*)/i)
     if (qM) {
       currentNum = parseInt(qM[1])
       phase = 'content'
-      const firstContent = qM[2].trim()
-      questionMap.set(currentNum, {
-        contentLines: firstContent ? [firstContent] : [],
-        correctAnswer: '',
-        explanationLines: [],
-      })
+      const f = qM[2].trim()
+      questionMap.set(currentNum, { contentLines: f ? [f] : [], correctAnswer: '', explanationLines: [] })
       continue
     }
-
     if (currentNum === null) continue
     const q = questionMap.get(currentNum)!
 
-    // ── Đáp án N: ... ───────────────────────────────────────────────────────
-    const aM = line.match(/^(?:Đáp án|ĐA|Đ\/A|Answer)\s*(\d+)\s*[.:)]\s*(.*)/i)
-    if (aM && parseInt(aM[1]) === currentNum) {
-      phase = 'answer'
-      q.correctAnswer = aM[2].trim()
-      continue
-    }
+    // Đáp án N: hoặc Đáp án: (không có số) — strip leading |
+    const aM = line.replace(/^\|+\s*/, '').match(/^(?:Đáp án|ĐA|Đ\/A|Answer|Đáp số)\s*\d*\s*[.:)]\s*(.*)/i)
+    if (aM) { phase = 'answer'; q.correctAnswer = aM[1].trim(); continue }
 
-    // ── Lời giải N: ... (có thể trống cùng dòng) ────────────────────────────
-    const eM = line.match(/^(?:Lời giải|LG|Giải|Hướng dẫn)\s*(\d+)\s*[.:)]\s*(.*)/i)
-    if (eM && parseInt(eM[1]) === currentNum) {
-      phase = 'explanation'
-      const firstExpl = eM[2].trim()
-      if (firstExpl) q.explanationLines.push(firstExpl)
-      continue
-    }
+    // Lời giải N: hoặc Lời giải: (không có số)
+    const eM = line.replace(/^\|+\s*/, '').match(/^(?:Lời giải|LG|Giải|Hướng dẫn)\s*\d*\s*[.:)]\s*(.*)/i)
+    if (eM) { phase = 'explanation'; const f = eM[1].trim(); if (f) q.explanationLines.push(f); continue }
 
-    // ── Append theo phase hiện tại ───────────────────────────────────────────
-    if (phase === 'content') {
-      q.contentLines.push(line)
-    } else if (phase === 'explanation') {
-      q.explanationLines.push(line)
-    }
-    // phase === 'answer': bỏ qua (đáp án chỉ 1 dòng)
+    if (phase === 'content') q.contentLines.push(line)
+    else if (phase === 'explanation') q.explanationLines.push(line)
   }
 
   const questions: Array<{ order: number; content: string; correctAnswer: string; explanation: string }> = []
@@ -146,7 +174,6 @@ function parseHomeworkText(
       })
     }
   }
-
   return questions.sort((a, b) => a.order - b.order)
 }
 
@@ -178,12 +205,13 @@ export async function POST(
 
     let text = ''
     let imageCount = 0
+    const imageUrls: string[] = []
 
+    // ── Trích xuất text + ảnh ──
     if (file.name.endsWith('.docx') || file.type.includes('wordprocessingml')) {
       const mammoth = await import('mammoth')
-
-      // Map: imgUrl → ocr text (để inject vào đúng vị trí trong HTML)
       const ocrMap = new Map<string, string>()
+      let imgIdx = 0
 
       const result = await mammoth.convertToHtml(
         { buffer },
@@ -192,48 +220,35 @@ export async function POST(
             try {
               const imgBuf = await image.read()
               const ext = (image.contentType || 'image/png').split('/')[1] || 'png'
-              const imgId = `${Date.now()}_${Math.random().toString(36).slice(2)}`
-              const imgPath = `homework-images/${imgId}.${ext}`
-
-              // Upload ảnh lên Supabase để hiển thị
-              const url = await uploadFile(
-                'avab-materials',
-                imgPath,
-                Buffer.from(imgBuf),
-                image.contentType
-              )
+              const imgPath = `homework-images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+              const url = await uploadFile('avab-materials', imgPath, Buffer.from(imgBuf), image.contentType)
+              imageUrls.push(url)
               imageCount++
 
-              // OCR ảnh để lấy text nội dung
-              const ocrText = await ocrImageBuffer(Buffer.from(imgBuf), image.contentType)
-              if (ocrText) ocrMap.set(url, ocrText)
-
+              // OCR chỉ ảnh đầu tiên mỗi 3 ảnh để tiết kiệm (ảnh lặp lại trong file)
+              imgIdx++
+              if (imgIdx <= 5 || imgIdx % 3 === 0) {
+                const ocr = await ocrImage(Buffer.from(imgBuf), image.contentType)
+                if (ocr) ocrMap.set(url, ocr)
+              }
               return { src: url }
-            } catch (err) {
-              console.error('[Image handler]', err)
+            } catch {
               return { src: '' }
             }
           }),
         }
       )
 
-      if (imageCount === 0) {
-        // Không có ảnh → strip HTML bình thường
-        text = stripHtml(result.value)
-      } else {
-        // Có ảnh → thay <img src="URL"> bằng text OCR (nếu có) trước khi strip
-        const processedHtml = result.value.replace(
-          /<img[^>]+src="([^"]+)"[^>]*/gi,
-          (_match, url: string) => {
-            const ocr = ocrMap.get(url)
-            // Giữ lại ảnh + chèn OCR text dưới ảnh
-            return ocr
-              ? `<img src="${url}" />\n<span class="ocr-text">${ocr}</span>`
-              : `<img src="${url}" />`
-          }
-        )
-        text = stripHtml(processedHtml)
-      }
+      // Thay <img src="URL"> bằng [OCR text] trong text
+      const processedHtml = result.value.replace(
+        /<img[^>]+src="([^"]+)"[^>]*/gi,
+        (_match: string, url: string) => {
+          const ocr = ocrMap.get(url)
+          return ocr ? `<span>[Hình: ${ocr}]</span>` : ''
+        }
+      )
+      text = stripHtml(processedHtml)
+
     } else if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pdfParse = ((await import('pdf-parse')) as any).default ?? (await import('pdf-parse'))
@@ -243,25 +258,35 @@ export async function POST(
       text = buffer.toString('utf-8')
     }
 
-    const parsed = parseHomeworkText(text)
+    // ── Parse: thử regex trước, nếu < 3 câu thì dùng AI ──
+    let parsed = regexParseText(text)
 
+    // Điều kiện dùng AI: ít câu được tìm thấy HOẶC có ảnh nhiều HOẶC đáp án bị thiếu nhiều
+    const emptyAnswers = parsed.filter(q => !q.correctAnswer.trim()).length
+    const needsAI = parsed.length < 3 || emptyAnswers > parsed.length * 0.5 || imageCount > 5
+
+    if (needsAI) {
+      try {
+        const aiResult = await aiParseDocument(text)
+        if (aiResult.length > parsed.length) parsed = aiResult
+      } catch (err) {
+        console.error('[AI Parser] failed:', err)
+        // Giữ kết quả regex nếu AI thất bại
+      }
+    }
+
+    // ── Lưu vào DB ──
     let homeworkSetId: string | null = null
 
     if (shouldSave && parsed.length > 0) {
-      // Đếm số set hiện có để auto-order
       const existingCount = await prisma.homeworkSet.count({ where: { subjectId } })
-
       const newSet = await prisma.homeworkSet.create({
-        data: {
-          subjectId,
-          title: setTitle,
-          order: existingCount,
-        },
+        data: { subjectId, title: setTitle, order: existingCount },
       })
       homeworkSetId = newSet.id
 
       await prisma.question.createMany({
-        data: parsed.map((q) => ({
+        data: parsed.map(q => ({
           subjectId,
           homeworkSetId: newSet.id,
           order: q.order,
@@ -275,7 +300,13 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      data: { parsed: parsed.length, questions: parsed, imageCount, homeworkSetId },
+      data: {
+        parsed: parsed.length,
+        questions: parsed,
+        imageCount,
+        usedAI: needsAI,
+        homeworkSetId,
+      },
     })
   } catch (err) {
     console.error(err)
