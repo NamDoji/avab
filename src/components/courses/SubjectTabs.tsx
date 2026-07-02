@@ -235,16 +235,22 @@ function resolveEmbedUrl(url: string): { kind: 'iframe' | 'video' | 'link'; src:
 function MaterialView({ url, title }: { url: string; title?: string | null }) {
   const r = resolveEmbedUrl(url)
   if (r.kind === 'iframe') return (
-    <div className="relative">
-      <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-gray-200">
+    <div className="relative select-none">
+      {/*
+        Clip trick: iframe cao hơn container và bị đẩy lên -56px
+        để ẩn toolbar Google Drive ở top (expand icon) và bottom ("Mở trong tab mới").
+        overflow-hidden trên container sẽ cắt phần thừa ra.
+      */}
+      <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-gray-200 relative">
         <iframe
           src={r.src}
-          className="w-full h-full"
+          className="w-full absolute left-0"
+          style={{ top: '-56px', height: 'calc(100% + 100px)' }}
           title={title ?? 'Tài liệu'}
           sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
         />
       </div>
-      {/* Overlay trong suốt — chặn chuột phải trên vùng iframe */}
+      {/* Overlay toàn phần — chặn right-click và touch context menu */}
       <div
         className="absolute inset-0 z-10"
         style={{ background: 'transparent' }}
@@ -344,14 +350,7 @@ function VideoPanel({ videoMaterial, videoMaterials, activeIdx, onSelect }: {
           </div>
         </div>
       )}
-      {url && (
-        <div className="px-4 py-2 border-t border-white/10">
-          <a href={url} target="_blank" rel="noopener noreferrer"
-            className="text-xs text-gray-400 hover:text-white transition flex items-center gap-1">
-            🔗 Mở video trong tab mới
-          </a>
-        </div>
-      )}
+      {/* Đã xóa link "Mở video trong tab mới" để bảo mật */
     </div>
   )
 }
