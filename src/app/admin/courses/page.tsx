@@ -275,7 +275,7 @@ export default function AdminCoursesPage() {
                       <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${
                         course.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
                       }`}>
-                        {course.isActive ? 'Hoạt động' : 'Ẩn'}
+                        {course.isActive ? '✅ Đã xuất bản' : '✏️ Nháp'}
                       </span>
                     </div>
                     <div className="flex gap-4 text-sm text-gray-500">
@@ -295,8 +295,14 @@ export default function AdminCoursesPage() {
                         <Edit className="w-3.5 h-3.5" /> Chi tiết
                       </Link>
                       <button onClick={() => handleToggleActive(course)}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gray-50 text-gray-600 font-semibold text-sm hover:bg-gray-100 transition">
-                        {course.isActive ? <><EyeOff className="w-3.5 h-3.5" /> Ẩn</> : <><Eye className="w-3.5 h-3.5" /> Hiện</>}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg font-semibold text-sm transition ${
+                          course.isActive
+                            ? 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                            : 'bg-teal-50 text-teal-700 hover:bg-teal-100'
+                        }`}>
+                        {course.isActive
+                          ? <><EyeOff className="w-3.5 h-3.5" /> Hủy XB</>
+                          : <><Eye className="w-3.5 h-3.5" /> Xuất bản</>}
                       </button>
                       <button onClick={() => handleDelete(course.id)}
                         className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-red-50 text-red-600 font-semibold text-sm hover:bg-red-100 transition">
@@ -341,9 +347,9 @@ export default function AdminCoursesPage() {
                         </td>
                         <td className="p-4">
                           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                            course.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
+                            course.isActive ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-600'
                           }`}>
-                            {course.isActive ? 'Hoạt động' : 'Ẩn'}
+                            {course.isActive ? '✅ Đã xuất bản' : '✏️ Nháp'}
                           </span>
                         </td>
                         <td className="p-4">
@@ -354,7 +360,7 @@ export default function AdminCoursesPage() {
                             </Link>
                             <button onClick={() => handleToggleActive(course)}
                               className="p-1.5 text-gray-400 hover:text-teal-600 transition"
-                              title={course.isActive ? 'Ẩn' : 'Hiện'}>
+                              title={course.isActive ? 'Hủy xuất bản' : 'Xuất bản'}>
                               {course.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
                             <button onClick={() => handleDelete(course.id)}

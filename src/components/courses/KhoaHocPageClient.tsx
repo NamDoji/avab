@@ -89,7 +89,8 @@ export function KhoaHocPageClient({ courses }: Props) {
 
   const filtered = useMemo(() => {
     if (selectedGrade === 'all') return courses
-    return courses.filter(c => c.grade === selectedGrade || !c.grade)
+    // Chỉ hiện khoá đúng lớp đã chọn (không kèm khoá không có lớp)
+    return courses.filter(c => c.grade === selectedGrade)
   }, [courses, selectedGrade])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
