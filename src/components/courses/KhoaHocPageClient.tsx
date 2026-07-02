@@ -181,7 +181,7 @@ export function KhoaHocPageClient({ courses }: Props) {
                   <div className="p-5 flex flex-col flex-1">
                     <h3 className="font-black text-gray-900 text-lg leading-snug mb-2">{course.name}</h3>
                     {course.description && (
-                      <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-3">{course.description}</p>
+                      <p className="text-gray-500 text-sm leading-relaxed line-clamp-3 mb-3 whitespace-pre-line">{course.description}</p>
                     )}
 
                     <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 pb-4 border-b border-gray-100">

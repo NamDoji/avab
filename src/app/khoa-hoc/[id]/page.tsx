@@ -116,7 +116,7 @@ export default async function CourseDetailPage({
                 </div>
               </div>
               {course.description && (
-                <p className="text-white/80 mb-5 max-w-2xl text-base">{course.description}</p>
+                <p className="text-white/80 mb-5 max-w-2xl text-base whitespace-pre-line">{course.description}</p>
               )}
               {/* Stats pills */}
               <div className="flex flex-wrap items-center gap-3 text-sm">
