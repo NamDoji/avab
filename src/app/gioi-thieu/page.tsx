@@ -12,7 +12,7 @@ const team = [
     roleEn: 'Team Lead & CEO',
     emoji: '👨‍💼',
     class: 'Lớp 10G0',
-    highlight: 'Khởi xướng ý tưởng AvaB, dẫn dắt nhóm từ cuoc thi đến sản phẩm thương mại thực sự',
+    highlight: 'Khởi xướng ý tưởng AvaB, dẫn dắt nhóm từ cuộc thi đến sản phẩm thương mại thực sự',
     highlightEn: 'Initiated the AvaB idea, led the team from competition to a real commercial product',
     contact: 'dobaonam8386@gmail.com',
   },

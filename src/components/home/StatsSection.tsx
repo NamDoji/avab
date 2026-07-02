@@ -1,9 +1,21 @@
+'use client'
+
+import { useLang } from '@/contexts/LanguageContext'
+
 export function StatsSection() {
-  const stats = [
+  const { lang } = useLang()
+  const vi = lang === 'vi'
+
+  const stats = vi ? [
     { value: '590+', label: 'Thành viên tham gia / năm', emoji: '👨‍👩‍👧‍👦', color: 'from-purple-500 to-purple-700' },
     { value: '330', label: 'Học viên mua khoá học', emoji: '📖', color: 'from-teal-400 to-teal-600' },
     { value: '490+M', label: 'Doanh thu năm đỉnh (VND)', emoji: '💰', color: 'from-orange-400 to-orange-600' },
     { value: '3+', label: 'Năm học hoạt động', emoji: '📅', color: 'from-pink-500 to-pink-700' },
+  ] : [
+    { value: '590+', label: 'Members per year', emoji: '👨‍👩‍👧‍👦', color: 'from-purple-500 to-purple-700' },
+    { value: '330', label: 'Enrolled students', emoji: '📖', color: 'from-teal-400 to-teal-600' },
+    { value: '490M+', label: 'Peak annual revenue (VND)', emoji: '💰', color: 'from-orange-400 to-orange-600' },
+    { value: '3+', label: 'Years in operation', emoji: '📅', color: 'from-pink-500 to-pink-700' },
   ]
 
   return (

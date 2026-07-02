@@ -2,12 +2,15 @@
 
 import { useState } from 'react'
 import { Phone, Mail, MapPin, Send, CheckCircle } from 'lucide-react'
+import { useLang } from '@/contexts/LanguageContext'
 
 export default function LienHePage() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
   const [error, setError] = useState('')
+  const { lang } = useLang()
+  const vi = lang === 'vi'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,10 +26,10 @@ export default function LienHePage() {
       if (data.success || res.ok) {
         setDone(true)
       } else {
-        setError(data.error || 'Có lỗi xảy ra. Vui lòng thử lại.')
+        setError(data.error || (vi ? 'Có lỗi xảy ra. Vui lòng thử lại.' : 'Something went wrong. Please try again.'))
       }
     } catch {
-      setError('Không thể gửi. Vui lòng thử lại sau.')
+      setError(vi ? 'Không thể gửi. Vui lòng thử lại sau.' : 'Cannot send. Please try again later.')
     }
     setSubmitting(false)
   }
@@ -36,9 +39,13 @@ export default function LienHePage() {
       {/* Header */}
       <div className="gradient-hero text-white py-16 pt-28">
         <div className="container-custom text-center">
-          <h1 className="text-3xl md:text-4xl font-black mb-3">📬 Liên hệ với AvaB</h1>
+          <h1 className="text-3xl md:text-4xl font-black mb-3">
+            {vi ? '📬 Liên hệ với AvaB' : '📬 Contact AvaB'}
+          </h1>
           <p className="text-white/80 text-lg max-w-xl mx-auto">
-            Có câu hỏi về khoá học? Muốn hợp tác? Hãy để lại thông tin — chúng tôi sẽ phản hồi trong vòng 24 giờ.
+            {vi
+              ? 'Có câu hỏi về khoá học? Muốn hợp tác? Hãy để lại thông tin — chúng tôi sẽ phản hồi trong vòng 24 giờ.'
+              : 'Have questions about courses? Want to partner? Leave your info — we’ll reply within 24 hours.'}
           </p>
         </div>
       </div>
@@ -51,21 +58,21 @@ export default function LienHePage() {
             {done ? (
               <div className="flex flex-col items-center justify-center text-center py-10 gap-4">
                 <CheckCircle className="w-16 h-16 text-teal-500" />
-                <h2 className="text-xl font-black text-gray-900">Đã gửi thành công!</h2>
-                <p className="text-gray-500">Chúng tôi sẽ liên hệ lại với bạn sớm nhất có thể. Cảm ơn bạn!</p>
+                <h2 className="text-xl font-black text-gray-900">{vi ? 'Đã gửi thành công!' : 'Message sent!'}</h2>
+                <p className="text-gray-500">{vi ? 'Chúng tôi sẽ liên hệ lại với bạn sớm nhất có thể. Cảm ơn bạn!' : 'We’ll get back to you as soon as possible. Thank you!'}</p>
                 <button
                   onClick={() => { setDone(false); setForm({ name: '', phone: '', email: '', message: '' }) }}
                   className="mt-2 text-purple-600 font-semibold hover:underline text-sm"
                 >
-                  Gửi thêm
+                  {vi ? 'Gửi thêm' : 'Send another'}
                 </button>
               </div>
             ) : (
               <>
-                <h2 className="text-xl font-black text-gray-900 mb-6">Gửi tin nhắn cho chúng tôi</h2>
+                <h2 className="text-xl font-black text-gray-900 mb-6">{vi ? 'Gửi tin nhắn cho chúng tôi' : 'Send us a message'}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Họ và tên *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{vi ? 'Họ và tên *' : 'Full name *'}</label>
                     <input
                       required
                       type="text"
@@ -76,7 +83,7 @@ export default function LienHePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Số điện thoại *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{vi ? 'Số điện thoại *' : 'Phone number *'}</label>
                     <input
                       required
                       type="tel"
@@ -87,7 +94,7 @@ export default function LienHePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{vi ? 'Email' : 'Email'}</label>
                     <input
                       type="email"
                       placeholder="email@example.com"
@@ -97,7 +104,7 @@ export default function LienHePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Nội dung *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{vi ? 'Nội dung *' : 'Message *'}</label>
                     <textarea
                       required
                       rows={4}
@@ -113,7 +120,9 @@ export default function LienHePage() {
                     disabled={submitting}
                     className="btn-primary w-full !py-3.5 flex items-center justify-center gap-2 disabled:opacity-60"
                   >
-                    {submitting ? 'Đang gửi...' : <><Send size={16} /> Gửi liên hệ</>}
+                    {submitting
+                      ? (vi ? 'Đang gửi...' : 'Sending...')
+                      : <><Send size={16} /> {vi ? 'Gửi liên hệ' : 'Send message'}</>}
                   </button>
                 </form>
               </>
@@ -165,8 +174,8 @@ export default function LienHePage() {
             {/* Banner Zalo */}
             <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-4xl p-6 text-white">
               <p className="text-2xl mb-2">💬</p>
-              <h3 className="font-black text-lg mb-1">Nhắn Zalo ngay!</h3>
-              <p className="text-white/80 text-sm mb-4">Được tư vấn miễn phí về khoá học phù hợp cho bé.</p>
+              <h3 className="font-black text-lg mb-1">{vi ? 'Nhắn Zalo ngay!' : 'Message us on Zalo!'}</h3>
+              <p className="text-white/80 text-sm mb-4">{vi ? 'Được tư vấn miễn phí về khoá học phù hợp cho bé.' : 'Get a free consultation about the right course for your child.'}</p>
               <a
                 href="https://zalo.me/0904290583"
                 target="_blank"

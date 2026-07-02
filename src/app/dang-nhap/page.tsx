@@ -5,12 +5,15 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { LogIn, Phone, Lock } from 'lucide-react'
+import { useLang } from '@/contexts/LanguageContext'
 
 export default function DangNhapPage() {
   const [form, setForm] = useState({ phone: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  const { lang } = useLang()
+  const vi = lang === 'vi'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,7 +29,7 @@ export default function DangNhapPage() {
     setLoading(false)
 
     if (result?.error) {
-      setError('Số điện thoại hoặc mật khẩu không đúng.')
+      setError(vi ? 'Số điện thoại hoặc mật khẩu không đúng.' : 'Incorrect phone number or password.')
     } else {
       router.push('/hoc-vien')
     }
@@ -38,8 +41,8 @@ export default function DangNhapPage() {
         <div className="bg-white rounded-4xl shadow-xl border border-purple-100 overflow-hidden">
           <div className="gradient-hero text-white p-6 text-center">
             <LogIn className="mx-auto mb-2" size={36} />
-            <h1 className="text-2xl font-black">Đăng nhập</h1>
-            <p className="text-white/80 text-sm mt-1">Vào trang học của con</p>
+            <h1 className="text-2xl font-black">{vi ? 'Đăng nhập' : 'Sign In'}</h1>
+            <p className="text-white/80 text-sm mt-1">{vi ? 'Vào trang học của con' : 'Access your learning dashboard'}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -51,7 +54,7 @@ export default function DangNhapPage() {
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1.5">
-                <Phone size={14} className="inline mr-1" /> Số điện thoại
+                <Phone size={14} className="inline mr-1" /> {vi ? 'Số điện thoại' : 'Phone number'}
               </label>
               <input
                 type="tel"
@@ -65,7 +68,7 @@ export default function DangNhapPage() {
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1.5">
-                <Lock size={14} className="inline mr-1" /> Mật khẩu
+                <Lock size={14} className="inline mr-1" /> {vi ? 'Mật khẩu' : 'Password'}
               </label>
               <input
                 type="password"
@@ -82,15 +85,17 @@ export default function DangNhapPage() {
               disabled={loading}
               className={`btn-primary w-full !py-4 text-base ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              {loading ? '⏳ Đang đăng nhập...' : '🔑 Đăng nhập'}
+              {loading
+                ? (vi ? '⏳ Đang đăng nhập...' : '⏳ Signing in...')
+                : (vi ? '🔑 Đăng nhập' : '🔑 Sign In')}
             </button>
           </form>
 
           <div className="px-6 pb-6 text-center">
             <p className="text-gray-500 text-sm">
-              Chưa có tài khoản?{' '}
+              {vi ? 'Chưa có tài khoản?' : "Don't have an account?"}{' '}
               <Link href="/dang-ky" className="text-purple-600 font-bold hover:underline">
-                Đăng ký miễn phí
+                {vi ? 'Đăng ký miễn phí' : 'Sign up free'}
               </Link>
             </p>
           </div>

@@ -8,6 +8,7 @@ import { useLang } from '@/contexts/LanguageContext'
 export function HeroSection() {
   const { data: session } = useSession()
   const { lang } = useLang()
+  const vi = lang === 'vi'
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
       {/* Background gradient */}
@@ -42,26 +43,42 @@ export function HeroSection() {
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 text-white/90">
             <Award size={16} className="text-yellow-400" />
             <span className="text-sm font-semibold">
-              Giải Ba Thành phố Hà Nội • Khởi nghiệp sáng tạo TenGo
+              {vi
+                ? 'Giải Ba Thành phố Hà Nội • Khởi nghiệp sáng tạo TenGo'
+                : 'Hanoi City 3rd Place Award • TenGo Innovation Startup'}
             </span>
           </div>
 
           {/* Main headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6">
-            Con Tự Tin
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-teal-300 to-purple-300">
-              Chinh Phục
-            </span>
-            <br />
-            Học Bổng Lớp 1
+            {vi ? (
+              <>
+                Con Tự Tin
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-teal-300 to-purple-300">
+                  Chinh Phục
+                </span>
+                <br />
+                Học Bổng Lớp 1
+              </>
+            ) : (
+              <>
+                Your Child
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-teal-300 to-purple-300">
+                  Conquers
+                </span>
+                <br />
+                Grade 1 Scholarship
+              </>
+            )}
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Phương pháp toán tư duy đỉnh cao, được nghiên cứu và phát triển bởi những học sinh
-            xuất sắc đạt giải tại các kỳ thi Toán Tư Duy Quốc Tế. Giúp con yêu thích toán học
-            và sẵn sàng bứt phá trong kỳ thi tuyển vào các trường chất lượng cao danh giá.
+            {vi
+              ? 'Phương pháp toán tư duy đỉnh cao, được nghiên cứu và phát triển bởi những học sinh xuất sắc đạt giải tại các kỳ thi Toán Tư Duy Quốc Tế. Giúp con yêu thích toán học và sẵn sàng bứt phá trong kỳ thi tuyển vào các trường chất lượng cao danh giá.'
+              : 'A world-class logical thinking math methodology, developed by award-winning students from International Math Olympiads. Help your child love mathematics and ace the entrance exams at Hanoi’s top schools.'}
           </p>
 
           {/* CTA buttons */}
@@ -88,10 +105,10 @@ export function HeroSection() {
           {/* Social proof */}
           <div className="flex flex-wrap justify-center gap-6">
             {[
-              { icon: '👨‍👩‍👧', value: '1.500+', label: 'Phụ huynh tin tưởng' },
-              { icon: '🎓', value: '715+', label: 'Học viên đã mua' },
-              { icon: '⭐', value: '3 năm', label: 'Hoạt động liên tục' },
-              { icon: '🏆', value: 'Top 10', label: 'Điểm số tư duy' },
+              { icon: '👨‍👩‍👧', value: '1.500+', label: vi ? 'Phụ huynh tin tưởng' : 'Trusting parents' },
+              { icon: '🎓', value: '715+', label: vi ? 'Học viên đã mua' : 'Enrolled students' },
+              { icon: '⭐', value: vi ? '3 năm' : '3 years', label: vi ? 'Hoạt động liên tục' : 'In operation' },
+              { icon: '🏆', value: 'Top 10', label: vi ? 'Điểm số tư duy' : 'Thinking scores' },
             ].map((item) => (
               <div key={item.label} className="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 border border-white/20">
                 <span className="text-2xl mb-1">{item.icon}</span>

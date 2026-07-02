@@ -1735,7 +1735,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             <div className="space-y-4">
               <h2 className="text-lg font-black text-gray-900">⭐ Điểm của bạn</h2>
 
-              {/* Điểm chưyên đề hiện tại */}
+              {/* Điểm chuyên đề hiện tại */}
               <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-3xl p-5 text-white">
                 <p className="text-white/70 text-sm font-semibold mb-1">📚 Chưyên đề hiện tại</p>
                 <p className="text-xs text-white/60 mb-3">{subject.name}</p>
@@ -1762,7 +1762,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               {/* Tổng điểm toàn khoá */}
               <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-3xl p-5 text-white">
                 <p className="text-white/70 text-sm font-semibold mb-1">🏆 Tổng điểm toàn khoá</p>
-                <p className="text-xs text-white/60 mb-3">Cộng điểm cao nhất tất cả chưyên đề đã làm</p>
+                <p className="text-xs text-white/60 mb-3">Cộng điểm cao nhất tất cả chuyên đề đã làm</p>
                 <div className="flex items-end gap-2">
                   <span className="text-5xl font-black text-yellow-300">{myTotalScore}</span>
                   {maxScore > 0 && <span className="text-white/60 text-lg mb-1">/ {maxScore} điểm</span>}
@@ -1785,7 +1785,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               {/* Top 5 */}
               {top5.length > 0 && (
                 <div>
-                  <p className="text-sm font-black text-gray-700 mb-3">🏅 Top 5 chưyên đề này</p>
+                  <p className="text-sm font-black text-gray-700 mb-3">🏅 Top 5 chuyên đề này</p>
                   <div className="space-y-2">
                     {top5.map((e) => (
                       <div key={e.userId} className={`flex items-center gap-3 rounded-2xl px-4 py-3 ${

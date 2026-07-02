@@ -81,7 +81,7 @@ export function Footer() {
       <div className="border-t border-gray-800">
         <div className="container-custom py-4 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p className="text-gray-500 text-sm">
-            © 2024 AvaB – avab.vn. {vi ? 'Bảo lưu mọi quyền.' : 'All rights reserved.'}
+            © {new Date().getFullYear()} AvaB – avab.vn. {vi ? 'Bảo lưu mọi quyền.' : 'All rights reserved.'}
           </p>
           <p className="text-gray-600 text-xs">
             {vi ? 'Phát triển bởi' : 'Built by'} <span className="text-purple-400 font-semibold">TenGo Team</span>

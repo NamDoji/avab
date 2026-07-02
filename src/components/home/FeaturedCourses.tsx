@@ -1,57 +1,104 @@
-import Link from 'next/link'
-import { ArrowRight, Star, BookOpen, Video, ClipboardCheck } from 'lucide-react'
+'use client'
 
-const courses = [
-  {
-    id: 1,
-    name: 'Toán Tư Duy Nền Tảng',
-    emoji: '🌱',
-    level: 'Cơ bản',
-    levelColor: 'text-green-600 bg-green-50',
-    subjects: 8,
-    desc: 'Xây dựng nền tảng tư duy logic vững chắc cho trẻ 5 tuổi qua các bài toán hình ảnh trực quan.',
-    features: ['Lý thuyết có hình ảnh minh hoạ', 'Video bài giảng', 'Bài tập tự luyện'],
-    price: '1,5 triệu/năm',
-    popular: false,
-  },
-  {
-    id: 2,
-    name: 'Luyện Thi Học Bổng Lớp 1',
-    emoji: '🏆',
-    level: 'Flagship',
-    levelColor: 'text-purple-600 bg-purple-50',
-    subjects: 25,
-    desc: 'Toàn bộ 25 chuyên đề luyện thi học bổng vào lớp 1 các trường chất lượng cao: Lương Thế Vinh, Nguyễn Siêu, Vinschool… Kèm khoá học nhóm có gia sư (tối đa 15 bạn).',
-    features: ['25 chuyên đề Toán Tư Duy', 'Khoá học nhóm có gia sư', 'AI lộ trình cá nhân', 'Chấm bài tự động + Bảng xếp hạng'],
-    price: '1,5 triệu/năm',
-    popular: true,
-  },
-  {
-    id: 3,
-    name: 'Mở rộng — Sắp ra mắt',
-    emoji: '🌱',
-    level: '2026+',
-    levelColor: 'text-teal-600 bg-teal-50',
-    subjects: 0,
-    desc: 'Toán Tư Duy lớp 2–5, Tiếng Anh tư duy, Lập trình cho trẻ. Đặng ký danh sách chờ để ưu tiên nhận thông báo đầu tiên.',
-    features: ['Toán lớp 1–9', 'Tiếng Anh Tư Duy', 'Lập trình cơ bản'],
-    price: 'Sắp ra mắt',
-    popular: false,
-  },
-]
+import Link from 'next/link'
+import { ArrowRight, BookOpen } from 'lucide-react'
+import { useLang } from '@/contexts/LanguageContext'
 
 export function FeaturedCourses() {
+  const { lang } = useLang()
+  const vi = lang === 'vi'
+
+  const courses = vi ? [
+    {
+      id: 1,
+      name: 'Toán Tư Duy Nền Tảng',
+      emoji: '🌱',
+      level: 'Cơ bản',
+      levelColor: 'text-green-600 bg-green-50',
+      subjects: 8,
+      desc: 'Xây dựng nền tảng tư duy logic vững chắc cho trẻ 5 tuổi qua các bài toán hình ảnh trực quan.',
+      features: ['Lý thuyết có hình ảnh minh hoạ', 'Video bài giảng', 'Bài tập tự luyện'],
+      price: '1,5 triệu/năm',
+      popular: false,
+    },
+    {
+      id: 2,
+      name: 'Luyện Thi Học Bổng Lớp 1',
+      emoji: '🏆',
+      level: 'Flagship',
+      levelColor: 'text-purple-600 bg-purple-50',
+      subjects: 25,
+      desc: 'Toàn bộ 25 chuyên đề luyện thi học bổng vào lớp 1 các trường chất lượng cao: Lương Thế Vinh, Nguyễn Siêu, Vinschool…',
+      features: ['25 chuyên đề Toán Tư Duy', 'Khoá học nhóm có gia sư', 'AI lộ trình cá nhân', 'Chấm bài tự động + Bảng xếp hạng'],
+      price: '1,5 triệu/năm',
+      popular: true,
+    },
+    {
+      id: 3,
+      name: 'Mở rộng — Sắp ra mắt',
+      emoji: '🌱',
+      level: '2026+',
+      levelColor: 'text-teal-600 bg-teal-50',
+      subjects: 0,
+      desc: 'Toán Tư Duy lớp 2–5, Tiếng Anh tư duy, Lập trình cho trẻ. Đăng ký danh sách chờ ngay!',
+      features: ['Toán lớp 1–9', 'Tiếng Anh Tư Duy', 'Lập trình cơ bản'],
+      price: 'Sắp ra mắt',
+      popular: false,
+    },
+  ] : [
+    {
+      id: 1,
+      name: 'Foundation Thinking Math',
+      emoji: '🌱',
+      level: 'Starter',
+      levelColor: 'text-green-600 bg-green-50',
+      subjects: 8,
+      desc: 'Build solid logical thinking foundations for 5-year-olds through intuitive visual math problems.',
+      features: ['Illustrated theory lessons', 'Video lectures', 'Self-practice exercises'],
+      price: '1.5M VND/year',
+      popular: false,
+    },
+    {
+      id: 2,
+      name: 'Grade 1 Scholarship Prep',
+      emoji: '🏆',
+      level: 'Flagship',
+      levelColor: 'text-purple-600 bg-purple-50',
+      subjects: 25,
+      desc: 'All 25 modules for Grade 1 scholarship exams at top schools: Lương Thế Vinh, Nguyễn Siêu, Vinschool…',
+      features: ['25 Thinking Math modules', 'Group class with tutor', 'AI personalised pathway', 'Auto-grading + Leaderboard'],
+      price: '1.5M VND/year',
+      popular: true,
+    },
+    {
+      id: 3,
+      name: 'Expansion — Coming Soon',
+      emoji: '🌱',
+      level: '2026+',
+      levelColor: 'text-teal-600 bg-teal-50',
+      subjects: 0,
+      desc: 'Thinking Math for Grades 2–5, English thinking, Coding for kids. Join the waitlist now!',
+      features: ['Math for Grades 1–9', 'English Thinking', 'Basic Coding'],
+      price: 'Coming soon',
+      popular: false,
+    },
+  ]
+
   return (
     <section className="section-padding bg-white">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">Khoá học</span>
+          <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">
+            {vi ? 'Khoá học' : 'Courses'}
+          </span>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-4">
-            Chương trình{' '}
-            <span className="text-gradient">đỉnh cao</span>
+            {vi ? <> Chương trình{' '}<span className="text-gradient">đỉnh cao</span></>
+                : <> World-class{' '}<span className="text-gradient">curriculum</span></>}
           </h2>
           <p className="text-gray-500 max-w-xl mx-auto">
-            Hệ thống khoá học được thiết kế khoa học, từng bước giúp con tự tin chinh phục mọi kỳ thi.
+            {vi
+              ? 'Hệ thống khoá học được thiết kế khoa học, từng bước giúp con tự tin chinh phục mọi kỳ thi.'
+              : 'Scientifically designed courses that build confidence step by step for every exam.'}
           </p>
         </div>
 
@@ -67,7 +114,7 @@ export function FeaturedCourses() {
             >
               {course.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-center text-xs font-bold py-2 tracking-wider">
-                  ⭐ PHỔ BIẾN NHẤT
+                  ⭐ {vi ? 'PHỔ BIẾN NHẤT' : 'MOST POPULAR'}
                 </div>
               )}
 
@@ -112,7 +159,7 @@ export function FeaturedCourses() {
                       : 'btn-outline'
                   }`}
                 >
-                  Xem chi tiết <ArrowRight size={16} />
+                  {vi ? 'Xem chi tiết' : 'View details'} <ArrowRight size={16} />
                 </Link>
               </div>
             </div>
@@ -121,7 +168,7 @@ export function FeaturedCourses() {
 
         <div className="text-center mt-8">
           <Link href="/khoa-hoc" className="btn-secondary inline-flex items-center gap-2">
-            Xem tất cả khoá học <ArrowRight size={16} />
+            {vi ? 'Xem tất cả khoá học' : 'Browse all courses'} <ArrowRight size={16} />
           </Link>
         </div>
       </div>

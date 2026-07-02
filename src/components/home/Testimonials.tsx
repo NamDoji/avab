@@ -1,5 +1,12 @@
+'use client'
+
+import { useLang } from '@/contexts/LanguageContext'
+
 export function Testimonials() {
-  const testimonials = [
+  const { lang } = useLang()
+  const vi = lang === 'vi'
+
+  const testimonials = vi ? [
     {
       name: 'Chị Thanh Hương',
       child: 'Con Minh Khoa, 5 tuổi',
@@ -21,16 +28,41 @@ export function Testimonials() {
       text: 'Giáo viên nhiệt tình, tài liệu bài bản, giao diện đẹp và dễ dùng. Cả nhà đánh giá cao chương trình AvaB. Sẽ tiếp tục đăng ký cho kỳ sau.',
       stars: 5,
     },
+  ] : [
+    {
+      name: 'Ms. Thanh Huong',
+      child: 'Child: Minh Khoa, age 5',
+      avatar: '👩',
+      text: 'My child loves AvaB because the exercises show vivid visuals — he works independently without prompting. After 2 months he was admitted to Nguyễn Siêu school!',
+      stars: 5,
+    },
+    {
+      name: 'Mr. Quoc Tuan',
+      child: 'Child: Bao Chau, age 5',
+      avatar: '👨',
+      text: 'What I love most is the auto-grading system and leaderboard — my child gets so motivated seeing his name climb up. The teaching methodology is very scientific.',
+      stars: 5,
+    },
+    {
+      name: 'Ms. Mai Anh',
+      child: 'Child: Gia Huy, age 5',
+      avatar: '👩',
+      text: 'Dedicated teachers, quality materials, beautiful and easy-to-use interface. The whole family highly recommends AvaB. We will definitely re-enrol next term.',
+      stars: 5,
+    },
   ]
 
   return (
     <section className="section-padding bg-gradient-to-br from-purple-50 to-teal-50">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">Phụ huynh nói gì</span>
+          <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">
+            {vi ? 'Phụ huynh nói gì' : 'What parents say'}
+          </span>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">
-            Hàng trăm gia đình{' '}
-            <span className="text-gradient">tin tưởng AvaB</span>
+            {vi
+              ? <> Hàng trăm gia đình{' '}<span className="text-gradient">tin tưởng AvaB</span></>
+              : <> Hundreds of families{' '}<span className="text-gradient">trust AvaB</span></>}
           </h2>
         </div>
 
