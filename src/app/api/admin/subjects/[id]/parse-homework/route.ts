@@ -53,35 +53,79 @@ function injectImageTags(text: string, placeholderToUrl: Map<string, string>): s
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Depth-tracking HTML parsers — xử lý đúng nested tables
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Lấy các outer <table> (không bị cắt bởi nested tables)
+function extractOuterTables(html: string): string[] {
+  const tables: string[] = []
+  let depth = 0, start = -1
+  for (let i = 0; i < html.length; i++) {
+    if (html[i] === '<') {
+      if (html.startsWith('<table', i) && /^<table[\s>]/i.test(html.slice(i, i + 7))) {
+        if (depth === 0) start = i
+        depth++
+      } else if (html.startsWith('<\/table>', i) || html.startsWith('</table>', i)) {
+        depth--
+        if (depth === 0 && start >= 0) {
+          tables.push(html.slice(start, i + 8))
+          start = -1
+        }
+      }
+    }
+  }
+  return tables
+}
+
+// Lấy các outer <tr> (không bị cắt bởi nested <tr> bên trong nested tables)
+function extractOuterRows(tableHtml: string): string[] {
+  const rows: string[] = []
+  let tblDepth = 0, trDepth = 0, start = -1
+  for (let i = 0; i < tableHtml.length; i++) {
+    if (tableHtml[i] !== '<') continue
+    if (/^<table[\s>]/i.test(tableHtml.slice(i, i + 7))) {
+      tblDepth++
+    } else if (/^<\/table>/i.test(tableHtml.slice(i, i + 8))) {
+      tblDepth--
+    } else if (/^<tr[\s>]/i.test(tableHtml.slice(i, i + 4)) && tblDepth === 1) {
+      // Chỉ lấy row trực tiếp trong outer table
+      if (trDepth === 0) start = i
+      trDepth++
+    } else if (/^<\/tr>/i.test(tableHtml.slice(i, i + 5)) && tblDepth === 1) {
+      trDepth--
+      if (trDepth === 0 && start >= 0) {
+        rows.push(tableHtml.slice(start, i + 5))
+        start = -1
+      }
+    }
+  }
+  return rows
+}
+
 // HTML TABLE PARSER — parse trực tiếp từ mammoth HTML output
 // Xử lý: mỗi câu = 1 <table>, có 3 dòng: đề bài | đáp án + ảnh | lời giải
 // Bảo toàn: những <img src="supabase-url"> được giữ nguyên
+// Giờ hỗ trợ nested tables (ví dụ: inner table chứa đáp án + ảnh)
 // ─────────────────────────────────────────────────────────────────────────────
 function parseHtmlTables(
   html: string
 ): Array<{ order: number; content: string; correctAnswer: string; explanation: string; imageUrl?: string }> | null {
   const plain = (h: string) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
-  const innerHtml = (tag: string) =>
-    tag.replace(/^<\w+[^>]*>/, '').replace(/<\/\w+>$/, '').trim()
 
-  // Tách các <table>...</table>
-  const tables: string[] = []
-  const tableRe = /<table[\s\S]*?<\/table>/gi
-  let tm: RegExpExecArray | null
-  while ((tm = tableRe.exec(html)) !== null) tables.push(tm[0])
+  // Dùng depth-tracking để lấy outer tables đúng (khắc phục nested tables)
+  const tables = extractOuterTables(html)
 
-  if (tables.length < 3) return null // không phải file dạng table
+  if (tables.length < 3) return null
 
   const questions: Array<{ order: number; content: string; correctAnswer: string; explanation: string; imageUrl?: string }> = []
   let order = 1
 
   for (const table of tables) {
     const tableText = plain(table)
-    // Chỉ lấy bảng có chứa câu hỏi
     if (!/câu\s*\d+/i.test(tableText)) continue
 
-    // Tách rows
-    const rows: string[] = table.match(/<tr[\s\S]*?<\/tr>/gi) || []
+    // Dùng depth-tracking để lấy outer rows (không bị nested <tr> cắt)
+    const rows = extractOuterRows(table)
     if (rows.length === 0) continue
 
     // Row 1: nội dung đề bài (HTML, giữ <strong>, <img>)
@@ -123,11 +167,15 @@ function parseHtmlTables(
     }
 
     // Lời giải = sơ đồ (row 2 phải) + các bước (rows 3+)
-    const stepsHtml = rows.slice(2).map(r =>
-      r.replace(/<\/?tr[^>]*>/gi, '')
+    // rows[2+] là outer rows thực sự (depth-tracking đảm bảo không bị bỏ)
+    const stepsHtml = rows.slice(2).map(r => {
+      // Strip outer tr/td tags nhưng giữ nội dung HTML bên trong
+      return r
+        .replace(/^<tr[^>]*>/i, '').replace(/<\/tr>$/i, '')
         .replace(/<td[^>]*>/gi, '').replace(/<\/td>/gi, '')
+        .replace(/<th[^>]*>/gi, '').replace(/<\/th>/gi, '')
         .trim()
-    ).join('\n').trim()
+    }).join('\n').trim()
     const explanationHtml = [row2DiagramHtml, stepsHtml].filter(Boolean).join('\n')
 
     // Content = chỉ đề bài text (+ ảnh nếu có trong row 1)
