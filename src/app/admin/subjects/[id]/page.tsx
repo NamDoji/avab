@@ -549,24 +549,54 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                 </>
               ) : (
                 <>
+                  {/* Bước 1: Chọn file + Đặt tên */}
                   <input type="text" value={theoryTitle} onChange={e => setTheoryTitle(e.target.value)}
                     placeholder="Tên bài giảng (VD: Bài 1 - Biểu đồ Venn)"
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 mb-2">
                     <label className="flex-1">
                       <input type="file" accept=".doc,.docx,.pdf" onChange={e => { setLyThuyetFile(e.target.files?.[0] ?? null); setTheoryHtmlPreview(null) }} className="hidden" />
-                      <div className={`border-2 border-dashed rounded-lg p-3 text-center cursor-pointer text-sm transition ${lyThuyetFile ? 'border-blue-400 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-400 hover:border-blue-300'}`}>
-                        {lyThuyetFile ? lyThuyetFile.name : '📄 Chọn file Word/PDF'}
+                      <div className={`border-2 border-dashed rounded-xl p-3 text-center cursor-pointer text-sm transition ${lyThuyetFile ? 'border-blue-400 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-400 hover:border-blue-300'}`}>
+                        <FileText className="w-6 h-6 mx-auto mb-1 text-gray-400" />
+                        <p>{lyThuyetFile ? lyThuyetFile.name : '📄 Chọn file Word/PDF'}</p>
                       </div>
                     </label>
-                    <button type="submit" disabled={savingLyThuyet || parsingTheory || !lyThuyetFile}
-                      className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold transition whitespace-nowrap">
-                      {parsingTheory ? '⚙️ Đang xử lý...' : savingLyThuyet ? '💾 Đang lưu...' : '📤 Tải lên & Lưu'}
-                    </button>
+                    <div className="flex flex-col gap-1.5">
+                      {/* Bước 2: Preview */}
+                      <button type="button" onClick={handleParseTheory} disabled={parsingTheory || !lyThuyetFile}
+                        className="bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+                        {parsingTheory ? 'Đang đọc...' : '🔍 Preview'}
+                      </button>
+                      {/* Bước 3: Tạo bài giảng mới (chỉ hiện sau khi preview) */}
+                      {theoryHtmlPreview && (
+                        <button type="submit" disabled={savingLyThuyet}
+                          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap">
+                          {savingLyThuyet ? 'Đang lưu...' : '📚 Tạo bài giảng'}
+                        </button>
+                      )}
+                    </div>
                   </div>
+
+                  {/* HTML Preview (giống BTVN) */}
+                  {theoryHtmlPreview && (
+                    <div className="mt-3 border border-blue-200 rounded-xl overflow-hidden">
+                      <div className="bg-blue-50 px-4 py-2 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-blue-700">✅ Preview — sẽ hiển thị như vậy trên Tab Bài Giảng</span>
+                        <button type="button" onClick={() => setTheoryHtmlPreview(null)} className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
+                      </div>
+                      <div
+                        className="p-4 max-h-80 overflow-y-auto
+                          [&_img]:max-w-full [&_img]:rounded-lg [&_img]:my-2
+                          [&_table]:w-full [&_table]:border-collapse
+                          [&_td]:border [&_td]:border-gray-200 [&_td]:p-2
+                          [&_th]:border [&_th]:border-gray-300 [&_th]:p-2 [&_th]:bg-gray-50"
+                        dangerouslySetInnerHTML={{ __html: theoryHtmlPreview }}
+                      />
+                    </div>
+                  )}
                 </>
               )}
-              <p className="text-xs text-gray-400 mt-2">💡 Chọn file Word/PDF → hệ thống tự parse thành HTML có ảnh → hiển thị đẹp trên frontend</p>
+              <p className="text-xs text-gray-400 mt-2">💡 Chọn file → Preview → Tạo bài giảng mới</p>
             </form>
           </div>
 

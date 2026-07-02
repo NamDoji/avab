@@ -1274,26 +1274,25 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     }
                     // THEORY
                     const isLocalPath = m.fileUrl?.startsWith('/content/')
-                    const hasContent = m.content && m.content.length > 50
+                    // HTML content (từ parse-theory) ưu tiên hơn fileUrl
+                    const hasHtmlContent = m.content && m.content.length > 50 && /<[a-z]/i.test(m.content)
                     return (
                       <div className="mb-4">
-                        {!isLocalPath && m.fileUrl ? (
-                          <MaterialView url={m.fileUrl} title={m.title} />
-                        ) : hasContent ? (
-                          <div className="bg-white rounded-3xl border border-purple-100 p-5 md:p-6 shadow-sm">
+                        {hasHtmlContent ? (
+                          // HTML đã parse → hiển thị đẹp
+                          <div className="bg-white rounded-3xl border border-blue-100 p-5 md:p-6 shadow-sm">
                             <TheoryContent content={m.content!} />
-                            {m.fileUrl && (
-                              <div className="mt-5 pt-4 border-t border-gray-100">
-                                <a href={m.fileUrl}
-                                  target="_blank" rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition">
-                                  ⬇️ Tải file gốc
-                                </a>
-                              </div>
-                            )}
                           </div>
+                        ) : !isLocalPath && m.fileUrl ? (
+                          // File URL (cũ) → embed iframe
+                          <MaterialView url={m.fileUrl} title={m.title} />
+                        ) : m.content ? (
+                          <div className="bg-blue-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">{m.content}</div>
                         ) : (
-                          <div className="bg-purple-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">{m.content || 'Đang cập nhật...'}</div>
+                          <div className="text-center py-10 text-gray-400">
+                            <div className="text-4xl mb-2">📚</div>
+                            <p className="text-sm">Bài giảng chưa có nội dung</p>
+                          </div>
                         )}
                       </div>
                     )
