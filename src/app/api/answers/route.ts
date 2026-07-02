@@ -2,25 +2,97 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
-// So sánh đáp án thông minh: tích số, bỏ đơn vị, chấp nhận viết tắt
+// ─────────────────────────────────────────────────────────────────────────────
+// smartMatch — so sánh đáp án thông minh
+//
+// Hỗ trợ:
+//   • Đáp án 1 biến:  "5" = "5 cái kẹo" = "5.0"
+//   • Đáp án nhiều biến: "x = 4; y = 7"
+//       ✓ full form:  "x = 4; y = 7"
+//       ✓ short form: "4; 7"  hoặc  "4 7"  hoặc  "4,7"
+//       ✓ đảo thứ tự: "y = 7; x = 4"
+//       ✓ ký hiệu Unicode: "■ = 7; ● = 6" → "7;6" ✓
+// ─────────────────────────────────────────────────────────────────────────────
 export function smartMatch(student: string, correct: string): boolean {
-  const norm = (s: string) => s.trim().toLowerCase()
-    .replace(/[()\[\]{}]/g, ' ')
-    .replace(/[.,;:!?]/g, '')
-    .replace(/\s+/g, ' ').trim()
+  if (!student.trim()) return false
+
+  // Normalize: lowercase, bỏ khoảng trắng thừa
+  const norm = (s: string) =>
+    s.trim().toLowerCase().replace(/\s+/g, ' ')
 
   const a = norm(student)
   const b = norm(correct)
-  if (!a) return false
-  if (a === b) return true
 
-  // So sánh chỉ phần số đầu tiên
-  const numA = a.match(/^(\d+([.,]\d+)?)/)?.[0]?.replace(',', '.')
-  const numB = b.match(/^(\d+([.,]\d+)?)/)?.[0]?.replace(',', '.')
-  if (numA && numB && numA === numB) return true
+  // ── 1. So sánh sau khi strip dấu câu ────────────────────────────────────
+  const strip = (s: string) => s.replace(/[\s.,;:!?()\[\]{}]/g, '')
+  if (strip(a) === strip(b)) return true
 
-  // Học sinh viết ngắn hơn (“5” vs “5 cái kẹo”)
-  if (b.startsWith(a) || a.startsWith(b)) return true
+  // ── 2. Trích xuất key-value pairs "key = value" ──────────────────────────
+  //    Hỗ trợ: "x = 4", "■ = 7", "x=4", v.v.
+  const extractKV = (s: string): Map<string, string> | null => {
+    // Pattern: <key> = <value> ngăn cách bởi ; hoặc ,
+    const pairs = s.split(/[;,]/).map(p => p.trim()).filter(Boolean)
+    const map = new Map<string, string>()
+    for (const p of pairs) {
+      const m = p.match(/^(.+?)\s*=\s*([\d.,]+)$/)
+      if (!m) return null // không phải tất cả đều dạng key=value → bail
+      map.set(m[1].trim(), m[2].replace(',', '.'))
+    }
+    return map.size > 0 ? map : null
+  }
+
+  // ── 3. Trích xuất danh sách số ───────────────────────────────────────────
+  const extractNums = (s: string): string[] =>
+    (s.match(/\d+([.,]\d+)?/g) ?? []).map(n => n.replace(',', '.'))
+
+  const kvCorrect = extractKV(b)
+  const numsCorrect = extractNums(b)
+
+  // Không có số trong đáp án đúng → chỉ dùng exact match (đã check ở trên)
+  if (numsCorrect.length === 0) {
+    // "đúng" / "sai" / chữ → so sánh bỏ dấu câu
+    return strip(a) === strip(b)
+  }
+
+  // ── 3a. Đáp án 1 biến ────────────────────────────────────────────────────
+  if (numsCorrect.length === 1) {
+    const numsA = extractNums(a)
+    if (numsA.length >= 1 && numsA[0] === numsCorrect[0]) return true
+    // Học sinh viết dài hơn/ngắn hơn: "5" ↔ "5 cái kẹo"
+    if (b.startsWith(a) || a.startsWith(b)) return true
+    return false
+  }
+
+  // ── 3b. Đáp án nhiều biến: thử match theo key ────────────────────────────
+  const kvStudent = extractKV(a)
+  if (kvCorrect && kvStudent) {
+    // Cả hai đều dạng key=value → check từng key (không phụ thuộc thứ tự)
+    if (kvStudent.size !== kvCorrect.size) return false
+    for (const [k, v] of kvCorrect) {
+      // Tìm key trong student map (so sánh strip)
+      const studentVal = [...kvStudent.entries()].find(
+        ([sk]) => strip(sk) === strip(k)
+      )?.[1]
+      if (studentVal !== v) return false
+    }
+    return true
+  }
+
+  // ── 3c. Học sinh chỉ nhập số (short form): "4;7" → match [4,7] ──────────
+  // Thử nhiều cách tách số khỏi chuỗi student (hỗ trợ cả "4,7" = 2 số riêng)
+  const candidateLists: string[][] = [
+    extractNums(a),                        // regex thông thường
+    a.split(/[;,\s]+/).flatMap(p => extractNums(p.trim())), // tách trước, rồi lấy số
+  ]
+
+  for (const numsA of candidateLists) {
+    if (numsA.length === numsCorrect.length) {
+      if (numsA.every((n, i) => n === numsCorrect[i])) return true
+      const sortedA = [...numsA].sort()
+      const sortedB = [...numsCorrect].sort()
+      if (sortedA.every((n, i) => n === sortedB[i])) return true
+    }
+  }
 
   return false
 }
