@@ -89,8 +89,8 @@ export function KhoaHocPageClient({ courses }: Props) {
 
   const filtered = useMemo(() => {
     if (selectedGrade === 'all') return courses
-    // Chỉ hiện khoá đúng lớp đã chọn (không kèm khoá không có lớp)
-    return courses.filter(c => c.grade === selectedGrade)
+    // Hỗ trợ grade lưu nhiều lớp dạng "1,2,3"
+    return courses.filter(c => c.grade?.split(',').includes(selectedGrade))
   }, [courses, selectedGrade])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
@@ -165,8 +165,12 @@ export function KhoaHocPageClient({ courses }: Props) {
                       </div>
                     )}
                     {course.grade && (
-                      <div className="absolute top-3 left-3 bg-white/90 text-purple-700 text-xs font-black px-2.5 py-1 rounded-full">
-                        Lớp {course.grade}
+                      <div className="absolute top-3 left-3 flex flex-wrap gap-1">
+                        {course.grade.split(',').filter(Boolean).map(g => (
+                          <span key={g} className="bg-white/90 text-purple-700 text-xs font-black px-2.5 py-1 rounded-full">
+                            Lớp {g}
+                          </span>
+                        ))}
                       </div>
                     )}
                     <div className="absolute bottom-3 left-3 bg-white/20 text-white text-xs font-mono px-2 py-0.5 rounded">

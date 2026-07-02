@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy } from 'lucide-react'
+import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff } from 'lucide-react'
 
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 type PaymentType = 'PER_COURSE' | 'PER_SESSION'
@@ -16,10 +16,19 @@ const COURSE_TYPE_OPTIONS: { value: CourseType; label: string; emoji: string; co
   { value: 'LAP_TRINH_CPP',        label: 'Lập trình C++',        emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
 ]
 
-const GRADE_OPTIONS = [
-  { value: '', label: 'Tất cả lớp' },
-  ...Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
-]
+const GRADE_OPTIONS = Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` }))
+
+function GradeBadges({ grade }: { grade: string | null }) {
+  if (!grade) return <span className="text-xs text-gray-400">Tất cả lớp</span>
+  const grades = grade.split(',').filter(Boolean)
+  return (
+    <span className="flex flex-wrap gap-1">
+      {grades.map(g => (
+        <span key={g} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-semibold">Lớp {g}</span>
+      ))}
+    </span>
+  )
+}
 
 function CourseTypeBadge({ type }: { type: CourseType }) {
   const opt = COURSE_TYPE_OPTIONS.find(o => o.value === type) ?? COURSE_TYPE_OPTIONS[0]
@@ -91,11 +100,44 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
   const [showActionMenu, setShowActionMenu] = useState(false)
   const actionMenuRef = useRef<HTMLDivElement>(null)
 
+  // Publish toggle
+  const [togglingPublish, setTogglingPublish] = useState(false)
+
   // Add student modal
   const [showAddStudent, setShowAddStudent] = useState(false)
   const [addStudentForm, setAddStudentForm] = useState({ phone: '', email: '', name: '', isFree: false })
   const [addingStudent, setAddingStudent] = useState(false)
   const [addStudentMsg, setAddStudentMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [phoneLookup, setPhoneLookup] = useState<'idle' | 'loading' | 'found' | 'not_found'>('idle')
+
+  const lookupPhone = async (phone: string) => {
+    if (phone.length < 9) { setPhoneLookup('idle'); return }
+    setPhoneLookup('loading')
+    try {
+      const res = await fetch(`/api/admin/users?search=${encodeURIComponent(phone)}`)
+      const data = await res.json()
+      const found = data.success && data.data?.find((u: any) => u.phone === phone)
+      if (found) {
+        setPhoneLookup('found')
+        setAddStudentForm(f => ({ ...f, name: found.name ?? f.name, email: found.email ?? f.email }))
+      } else {
+        setPhoneLookup('not_found')
+        setAddStudentForm(f => ({ ...f, name: '', email: '' }))
+      }
+    } catch { setPhoneLookup('idle') }
+  }
+
+  const handleTogglePublish = async () => {
+    if (!course) return
+    setTogglingPublish(true)
+    await fetch(`/api/admin/courses/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isActive: !course.isActive }),
+    })
+    await load()
+    setTogglingPublish(false)
+  }
 
   // Import XLS modal
   const [showImport, setShowImport] = useState(false)
@@ -421,9 +463,21 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                   className="flex items-center gap-1.5 border border-gray-200 hover:border-purple-300 text-gray-500 hover:text-purple-600 text-sm px-3 py-1.5 rounded-lg transition">
                   <Edit2 className="w-4 h-4" /> Sửa
                 </button>
-                <span className={`text-xs font-semibold px-3 py-1.5 rounded-full ${course.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {course.isActive ? 'Hoạt động' : 'Ẩn'}
-                </span>
+                <button
+                  onClick={handleTogglePublish}
+                  disabled={togglingPublish}
+                  className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition ${
+                    course.isActive
+                      ? 'bg-green-50 text-green-700 hover:bg-orange-50 hover:text-orange-600'
+                      : 'bg-orange-50 text-orange-600 hover:bg-teal-50 hover:text-teal-700'
+                  } disabled:opacity-60`}
+                  title={course.isActive ? 'Click để hủy xuất bản' : 'Click để xuất bản'}
+                >
+                  {course.isActive
+                    ? <><Eye className="w-3 h-3" /> Đã xuất bản</>
+                    : <><EyeOff className="w-3 h-3" /> Nháp — click để xuất bản</>
+                  }
+                </button>
               </div>
             </div>
           )}
@@ -641,18 +695,42 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
               </div>
             )}
             <form onSubmit={handleAddStudent} className="space-y-3">
+              {/* SĐT — đầu tiên, tự tìm kiếm khi blur */}
+              <div>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    placeholder="Số điện thoại *"
+                    value={addStudentForm.phone}
+                    onChange={e => {
+                      setAddStudentForm(f => ({ ...f, phone: e.target.value }))
+                      setPhoneLookup('idle')
+                    }}
+                    onBlur={e => lookupPhone(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 pr-28"
+                  />
+                  {phoneLookup === 'loading' && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">Tìm kiếm...</span>
+                  )}
+                  {phoneLookup === 'found' && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-teal-600 font-semibold">✅ Đã có TK</span>
+                  )}
+                  {phoneLookup === 'not_found' && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-orange-500 font-semibold">🆕 Tạo mới</span>
+                  )}
+                </div>
+                {phoneLookup === 'found' && (
+                  <p className="text-xs text-teal-600 mt-1">Đã điền thông tin từ tài khoản có sẵn</p>
+                )}
+                {phoneLookup === 'not_found' && (
+                  <p className="text-xs text-orange-500 mt-1">Chưa có tài khoản — sẽ tự tạo với mật khẩu 123456</p>
+                )}
+              </div>
               <input
                 type="text"
                 placeholder="Họ tên"
                 value={addStudentForm.name}
                 onChange={e => setAddStudentForm(f => ({ ...f, name: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-              />
-              <input
-                type="tel"
-                placeholder="Số điện thoại"
-                value={addStudentForm.phone}
-                onChange={e => setAddStudentForm(f => ({ ...f, phone: e.target.value }))}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
               />
               <input

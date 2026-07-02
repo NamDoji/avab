@@ -26,10 +26,19 @@ function CourseTypeBadge({ type }: { type: CourseType }) {
 
 type PaymentType = 'PER_COURSE' | 'PER_SESSION'
 
-const GRADE_OPTIONS = [
-  { value: '', label: 'Tất cả lớp' },
-  ...Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
-]
+const GRADE_OPTIONS = Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` }))
+
+function GradeBadges({ grade }: { grade: string | null }) {
+  if (!grade) return <span className="text-xs text-gray-400">Tất cả lớp</span>
+  const grades = grade.split(',').filter(Boolean)
+  return (
+    <span className="flex flex-wrap gap-1">
+      {grades.map(g => (
+        <span key={g} className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full font-medium">Lớp {g}</span>
+      ))}
+    </span>
+  )
+}
 
 interface Course {
   id: string
@@ -57,7 +66,7 @@ export default function AdminCoursesPage() {
     price: '1500000',
     pricePerSession: '200000',
     paymentType: 'PER_COURSE' as PaymentType,
-    grade: '',
+    grades: [] as string[],
     courseType: 'TOAN' as CourseType,
   })
   const [saving, setSaving] = useState(false)
@@ -84,13 +93,13 @@ export default function AdminCoursesPage() {
         ...form,
         price: form.paymentType === 'PER_COURSE' ? Number(form.price) : null,
         pricePerSession: form.paymentType === 'PER_SESSION' ? Number(form.pricePerSession) : null,
-        grade: form.grade || null,
+        grade: form.grades.length > 0 ? form.grades.join(',') : null,
       }),
     })
     const data = await res.json()
     if (data.success) {
       setShowForm(false)
-      setForm({ code: '', name: '', description: '', price: '1500000', pricePerSession: '200000', paymentType: 'PER_COURSE', grade: '', courseType: 'TOAN' })
+      setForm({ code: '', name: '', description: '', price: '1500000', pricePerSession: '200000', paymentType: 'PER_COURSE', grades: [], courseType: 'TOAN' })
       load()
     } else {
       setError(data.error)
@@ -222,16 +231,29 @@ export default function AdminCoursesPage() {
                   className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-400"
                 />
               )}
-              {/* Lớp */}
-              <select
-                value={form.grade}
-                onChange={(e) => setForm(f => ({ ...f, grade: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
-              >
-                {GRADE_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
+              {/* Lớp — chọn nhiều lớp */}
+              <div className="border border-gray-200 rounded-lg px-4 py-3">
+                <p className="text-xs text-gray-500 font-semibold mb-2">🏫 Lớp áp dụng (chọn nhiều)</p>
+                <div className="flex flex-wrap gap-2">
+                  {GRADE_OPTIONS.map(opt => (
+                    <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={form.grades.includes(opt.value)}
+                        onChange={e => setForm(f => ({
+                          ...f,
+                          grades: e.target.checked
+                            ? [...f.grades, opt.value]
+                            : f.grades.filter(g => g !== opt.value)
+                        }))}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-gray-700">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+                {form.grades.length === 0 && <p className="text-xs text-gray-400 mt-1.5">Không chọn = dành cho tất cả các lớp</p>}
+              </div>
               <div className="flex gap-3 items-center">
                 <button
                   type="submit"
@@ -287,7 +309,7 @@ export default function AdminCoursesPage() {
                           : (course.price ? `${course.price.toLocaleString()}đ` : 'Miễn phí')
                         }
                       </span>
-                      {course.grade && <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Lớp {course.grade}</span>}
+                      <GradeBadges grade={course.grade} />
                     </div>
                     <div className="flex gap-2">
                       <Link href={`/admin/courses/${course.id}`}
@@ -343,7 +365,7 @@ export default function AdminCoursesPage() {
                             ? (course.pricePerSession ? `${course.pricePerSession.toLocaleString()}đ/buổi` : 'Theo buổi')
                             : (course.price ? `${course.price.toLocaleString()}đ` : 'Miễn phí')
                           }
-                          {course.grade && <span className="ml-1 text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full">Lớp {course.grade}</span>}
+                          <GradeBadges grade={course.grade} />
                         </td>
                         <td className="p-4">
                           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
