@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import { KhoaHocPageClient } from '@/components/courses/KhoaHocPageClient'
 
+// Render động để luôn phản ánh khoá học mới nhất từ DB
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Khoá học — AvaB',
   description: 'Các khoá học Toán, Tiếng Anh, Lập trình dành cho trẻ em tại AvaB',

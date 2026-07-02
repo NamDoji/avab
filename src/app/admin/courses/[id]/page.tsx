@@ -82,6 +82,10 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
   const [showSubjectForm, setShowSubjectForm] = useState(false)
   const [subjectForm, setSubjectForm] = useState({ name: '', icon: '', description: '', order: '0' })
   const [saving, setSaving] = useState(false)
+  // Inline edit subject
+  const [editingSubjectId, setEditingSubjectId] = useState<string | null>(null)
+  const [editSubjectForm, setEditSubjectForm] = useState({ name: '', icon: '', description: '', order: '0' })
+  const [savingSubject, setSavingSubject] = useState(false)
 
   // Edit course
   const [editingCourse, setEditingCourse] = useState(false)
@@ -92,7 +96,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
     price: '1500000',
     pricePerSession: '200000',
     paymentType: 'PER_COURSE' as PaymentType,
-    grade: '',
+    grades: [] as string[],
   })
   const [savingCourse, setSavingCourse] = useState(false)
 
@@ -201,6 +205,34 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
     load()
   }
 
+  const handleStartEditSubject = (subject: any) => {
+    setEditingSubjectId(subject.id)
+    setEditSubjectForm({
+      name: subject.name ?? '',
+      icon: subject.icon ?? '',
+      description: subject.description ?? '',
+      order: String(subject.order ?? 0),
+    })
+  }
+
+  const handleSaveSubject = async () => {
+    if (!editingSubjectId) return
+    setSavingSubject(true)
+    await fetch(`/api/admin/subjects/${editingSubjectId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: editSubjectForm.name,
+        icon: editSubjectForm.icon,
+        description: editSubjectForm.description,
+        order: Number(editSubjectForm.order),
+      }),
+    })
+    setSavingSubject(false)
+    setEditingSubjectId(null)
+    load()
+  }
+
   const handleStartEditCourse = () => {
     if (!course) return
     setEditCourseForm({
@@ -210,7 +242,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
       price: String(course.price ?? 1500000),
       pricePerSession: String(course.pricePerSession ?? 200000),
       paymentType: course.paymentType ?? 'PER_COURSE',
-      grade: course.grade ?? '',
+      grades: course.grade ? course.grade.split(',').filter(Boolean) : [],
     })
     setEditingCourse(true)
   }
@@ -228,7 +260,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
         paymentType: editCourseForm.paymentType,
         price: editCourseForm.paymentType === 'PER_COURSE' ? Number(editCourseForm.price) || 1500000 : null,
         pricePerSession: editCourseForm.paymentType === 'PER_SESSION' ? Number(editCourseForm.pricePerSession) || 200000 : null,
-        grade: editCourseForm.grade || null,
+        grade: editCourseForm.grades.length > 0 ? editCourseForm.grades.join(',') : null,
       }),
     })
     const data = await res.json()
@@ -415,16 +447,26 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">🎓 Lớp</label>
-                  <select
-                    value={editCourseForm.grade}
-                    onChange={(e) => setEditCourseForm(f => ({ ...f, grade: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
-                  >
+                  <label className="block text-sm font-medium text-gray-700 mb-1">🎓 Lớp áp dụng (chọn nhiều)</label>
+                  <div className="border border-gray-200 rounded-lg px-3 py-2 flex flex-wrap gap-2">
                     {GRADE_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editCourseForm.grades.includes(opt.value)}
+                          onChange={e => setEditCourseForm(f => ({
+                            ...f,
+                            grades: e.target.checked
+                              ? [...f.grades, opt.value]
+                              : f.grades.filter(g => g !== opt.value)
+                          }))}
+                          className="rounded"
+                        />
+                        <span className="text-sm text-gray-700">{opt.label}</span>
+                      </label>
                     ))}
-                  </select>
+                  </div>
+                  {editCourseForm.grades.length === 0 && <p className="text-xs text-gray-400 mt-1">Không chọn = dành cho tất cả các lớp</p>}
                 </div>
               </div>
               <div className="flex gap-2">
@@ -541,39 +583,91 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
           ) : (
             <div className="space-y-2">
               {course.subjects.map((subject) => (
-                <div key={subject.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-lg hover:border-purple-100">
-                  <span className="text-gray-400 text-sm w-6 text-center">{subject.order}</span>
-                  <span className="text-xl">{subject.icon ?? '📘'}</span>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-800">{subject.name}</p>
-                    <p className="text-xs text-gray-400">{subject._count.questions} câu hỏi · {subject._count.materials} tài liệu</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={async () => {
-                        await fetch(`/api/admin/subjects/${subject.id}`, {
-                          method: 'PUT',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ isPreview: !subject.isPreview }),
-                        })
-                        load()
-                      }}
-                      className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full border font-semibold transition ${
-                        subject.isPreview
-                          ? 'bg-teal-50 border-teal-300 text-teal-700 hover:bg-teal-100'
-                          : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
-                      }`}
-                      title="Bật/tắt Xem thử"
-                    >
-                      👁 Xem thử
-                    </button>
-                    <Link href={`/admin/subjects/${subject.id}`} className="p-1.5 text-gray-400 hover:text-purple-600">
-                      <Edit2 className="w-4 h-4" />
-                    </Link>
-                    <button onClick={() => handleDeleteSubject(subject.id)} className="p-1.5 text-gray-400 hover:text-red-600">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                <div key={subject.id} className="border border-gray-100 rounded-xl hover:border-purple-100 overflow-hidden">
+                  {editingSubjectId === subject.id ? (
+                    /* ── Inline edit mode ── */
+                    <div className="p-3 bg-purple-50 space-y-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          placeholder="Tên chuyên đề"
+                          value={editSubjectForm.name}
+                          onChange={e => setEditSubjectForm(f => ({ ...f, name: e.target.value }))}
+                          className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+                        <input
+                          placeholder="Icon (emoji, vd: 📘)"
+                          value={editSubjectForm.icon}
+                          onChange={e => setEditSubjectForm(f => ({ ...f, icon: e.target.value }))}
+                          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+                        <input
+                          type="number"
+                          placeholder="Thứ tự"
+                          value={editSubjectForm.order}
+                          onChange={e => setEditSubjectForm(f => ({ ...f, order: e.target.value }))}
+                          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+                        <input
+                          placeholder="Mô tả ngắn"
+                          value={editSubjectForm.description}
+                          onChange={e => setEditSubjectForm(f => ({ ...f, description: e.target.value }))}
+                          className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={handleSaveSubject} disabled={savingSubject}
+                          className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white text-sm px-3 py-1.5 rounded-lg transition disabled:opacity-50">
+                          <Check className="w-3.5 h-3.5" /> {savingSubject ? 'Lưu...' : 'Lưu'}
+                        </button>
+                        <button onClick={() => setEditingSubjectId(null)}
+                          className="flex items-center gap-1 border border-gray-200 text-gray-600 text-sm px-3 py-1.5 rounded-lg hover:bg-gray-50 transition">
+                          <X className="w-3.5 h-3.5" /> Huỷ
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* ── View mode ── */
+                    <div className="flex items-center gap-3 p-3">
+                      <span className="text-gray-400 text-sm w-6 text-center">{subject.order}</span>
+                      <span className="text-xl">{subject.icon ?? '📘'}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-800 truncate">{subject.name}</p>
+                        {subject.description && <p className="text-xs text-gray-400 truncate">{subject.description}</p>}
+                        <p className="text-xs text-gray-400">{subject._count.questions} câu hỏi · {subject._count.materials} tài liệu</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={async () => {
+                            await fetch(`/api/admin/subjects/${subject.id}`, {
+                              method: 'PUT',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ isPreview: !subject.isPreview }),
+                            })
+                            load()
+                          }}
+                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full border font-semibold transition ${
+                            subject.isPreview
+                              ? 'bg-teal-50 border-teal-300 text-teal-700 hover:bg-teal-100'
+                              : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
+                          }`}
+                        >
+                          👁 Xem thử
+                        </button>
+                        <button onClick={() => handleStartEditSubject(subject)}
+                          className="p-1.5 text-gray-400 hover:text-purple-600 transition" title="Sửa tên/mô tả">
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <Link href={`/admin/subjects/${subject.id}`}
+                          className="p-1.5 text-gray-400 hover:text-teal-600 transition" title="Quản lý nội dung">
+                          <BookOpen className="w-4 h-4" />
+                        </Link>
+                        <button onClick={() => handleDeleteSubject(subject.id)}
+                          className="p-1.5 text-gray-400 hover:text-red-600 transition">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -1216,8 +1216,10 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   {!aiResult && (() => {
                     const allAnswered = activeQuestions.every(q => submitted[q.id] || computeAnswer(q).trim())
                     const allDone    = activeQuestions.every(q => submitted[q.id])
+                    const canGenAI   = allDone && accuracy >= 60
+                    const genCount   = aiQuizGenCount ?? 0
                     return (
-                      <div className="mt-2">
+                      <div className="mt-2 space-y-2">
                         {!allAnswered && (
                           <p className="text-center text-sm text-gray-400 mb-2">
                             📝 Hãy làm tất cả {activeQuestions.length} câu rồi mới nộp nhé!
@@ -1235,6 +1237,47 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             : '🏆 Nộp bài & nhận nhận xét AI'
                           }
                         </button>
+
+                        {/* Nút Tạo bài AI — cạnh nút nộp bài */}
+                        {genCount < 3 ? (
+                          <div className="relative group">
+                            <button
+                              disabled={!canGenAI || aiQuizLoading}
+                              onClick={async () => {
+                                setAiQuizLoading(true)
+                                try {
+                                  const res = await fetch('/api/ai/generate-quiz', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ subjectId: subject.id, subjectName: subject.name }),
+                                  })
+                                  const data = await res.json()
+                                  if (data.success) { window.location.reload() }
+                                  else { alert(data.error || 'Có lỗi xảy ra khi tạo bài AI') }
+                                } catch { alert('Không thể kết nối server') }
+                                finally { setAiQuizLoading(false) }
+                              }}
+                              className={`w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
+                                canGenAI && !aiQuizLoading
+                                  ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-md'
+                                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                              }`}
+                            >
+                              {aiQuizLoading
+                                ? <><Loader2 className="animate-spin" size={16} /> 🤖 AI đang tạo bài...</>
+                                : <>🤖 Tạo bài AI mới <span className="text-xs opacity-70">({genCount}/3 lần)</span></>}
+                            </button>
+                            {!canGenAI && !aiQuizLoading && (
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-gray-800 text-white text-xs rounded-xl px-3 py-2 text-center opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
+                                {!allDone ? 'Hoàn thành tất cả câu hỏi trước' : 'Cần đạt ≥60% để tạo bài mới'}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-center text-xs text-gray-400 bg-gray-50 rounded-2xl px-4 py-2">
+                            ⚠️ Đã đạt giới hạn 3 lần tạo bài AI
+                          </p>
+                        )}
                       </div>
                     )
                   })()}
