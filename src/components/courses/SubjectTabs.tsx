@@ -235,22 +235,60 @@ function resolveEmbedUrl(url: string): { kind: 'iframe' | 'video' | 'link'; src:
 function MaterialView({ url, title }: { url: string; title?: string | null }) {
   const r = resolveEmbedUrl(url)
   if (r.kind === 'iframe') return (
-    <div>
+    <div className="relative">
       <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-gray-200">
-        <iframe src={r.src} className="w-full h-full" allowFullScreen title={title ?? 'Tài liệu'} />
+        <iframe
+          src={r.src}
+          className="w-full h-full"
+          title={title ?? 'Tài liệu'}
+          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+        />
       </div>
-      <a href={url} target="_blank" rel="noopener noreferrer"
-        className="mt-2 inline-flex items-center gap-1 text-purple-600 text-xs hover:underline">
-        🔗 Mở trong tab mới
-      </a>
+      {/* Overlay trong suốt — chặn chuột phải trên vùng iframe */}
+      <div
+        className="absolute inset-0 z-10"
+        style={{ background: 'transparent' }}
+        onContextMenu={(e) => e.preventDefault()}
+      />
     </div>
   )
-  if (r.kind === 'video') return <video src={r.src} controls className="w-full rounded-2xl" />
+  if (r.kind === 'video') return (
+    <video
+      src={r.src}
+      controls
+      className="w-full rounded-2xl"
+      controlsList="nodownload nofullscreen"
+      onContextMenu={(e) => e.preventDefault()}
+    />
+  )
   return (
-    <a href={r.src} target="_blank" rel="noopener noreferrer"
-      className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-2xl px-4 py-3 text-purple-700 hover:bg-purple-100 transition">
-      📥 {title ?? 'Tải về tài liệu'}
-    </a>
+    <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-2xl px-4 py-3 text-purple-600">
+      📄 {title ?? 'Tài liệu'}
+    </div>
+  )
+}
+
+// ── ProtectedContent: ngăn copy, right-click, kéo thả, chụp ───────────────
+function ProtectedContent({ children, className }: { children: React.ReactNode; className?: string }) {
+  const block = (e: React.SyntheticEvent) => e.preventDefault()
+  return (
+    <div
+      className={`protected-content select-none ${className ?? ''}`}
+      onCopy={block}
+      onCut={block}
+      onContextMenu={block}
+      onKeyDown={(e) => {
+        if (
+          (e.ctrlKey || e.metaKey) &&
+          ['c', 'a', 's', 'p', 'u', 'x'].includes(e.key.toLowerCase())
+        ) {
+          e.preventDefault()
+        }
+      }}
+      draggable={false}
+    >
+      {children}
+    </div>
   )
 }
 
@@ -1256,15 +1294,17 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     return (
                       <div className="mb-4">
                         {hasHtmlContent ? (
-                          // HTML đã parse → hiển thị đẹp
-                          <div className="bg-white rounded-3xl border border-blue-100 p-5 md:p-6 shadow-sm">
+                          // HTML đã parse → hiển thị đẹp + bảo vệ
+                          <ProtectedContent className="bg-white rounded-3xl border border-blue-100 p-5 md:p-6 shadow-sm">
                             <TheoryContent content={m.content!} />
-                          </div>
+                          </ProtectedContent>
                         ) : !isLocalPath && m.fileUrl ? (
-                          // File URL (cũ) → embed iframe
+                          // File URL (cũ) → embed iframe (có bảo vệ)
                           <MaterialView url={m.fileUrl} title={m.title} />
                         ) : m.content ? (
-                          <div className="bg-blue-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">{m.content}</div>
+                          <ProtectedContent className="bg-blue-50 rounded-3xl p-5 text-gray-600 whitespace-pre-wrap text-sm">
+                            {m.content}
+                          </ProtectedContent>
                         ) : (
                           <div className="text-center py-10 text-gray-400">
                             <div className="text-4xl mb-2">📚</div>
@@ -1522,14 +1562,18 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       <div className="mb-4">
                         {m.fileUrl
                           ? <MaterialView url={m.fileUrl} title={m.title} />
-                          : <div className="bg-teal-50 rounded-3xl p-5 text-gray-700 whitespace-pre-wrap text-sm">{m.content}</div>
+                          : (
+                            <ProtectedContent className="bg-teal-50 rounded-3xl p-5 text-gray-700 whitespace-pre-wrap text-sm">
+                              {m.content}
+                            </ProtectedContent>
+                          )
                         }
                       </div>
                     )
                   })()}
                 </>
               ) : (allBTVNSets[activeAnswerSetIdx]?.questions ?? activeQuestions).length > 0 ? (
-                <div className="space-y-4">
+                <ProtectedContent className="space-y-4">
                   {(allBTVNSets[activeAnswerSetIdx]?.questions ?? activeQuestions).map((q) => (
                     <div key={q.id} className="border border-teal-100 rounded-2xl p-5 shadow-sm bg-white">
                       {/* Số câu */}
@@ -1562,7 +1606,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       )}
                     </div>
                   ))}
-                </div>
+                </ProtectedContent>
               ) : (
                 <div className="text-center py-10 text-gray-400">
                   <div className="text-5xl mb-3">📋</div><p>Chưa có đáp án</p>
