@@ -151,19 +151,60 @@ export default async function AdminPage() {
 
         {/* ── Portals ───────────────────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🎓 Portals</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🎓 Portals người dùng</p>
+
+          {/* Học thuật */}
+          <p className="text-xs font-semibold text-gray-400 mb-2 ml-0.5">Học thuật</p>
+          <div className="grid grid-cols-3 gap-3 mb-5">
             {[
-              { href: '/giao-vien', icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Nhận xét buổi học · Hồ sơ lớp', color: 'from-cyan-500 to-teal-600' },
-              { href: '/hoc-vien',  icon: '👦',   label: 'Học sinh',   desc: 'Bài tập · AI Tutor · Tiến độ',   color: 'from-blue-500 to-indigo-600' },
-              { href: '/phu-huynh',icon: '👨‍👩‍👧‍👦', label: 'Phụ huynh', desc: 'Theo dõi con · Báo cáo',          color: 'from-orange-400 to-amber-500' },
+              { href: '/giao-vien', icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Nhận xét · Lớp học · BTVN',        color: 'from-cyan-500 to-teal-600'     },
+              { href: '/hoc-vien',  icon: '👦',   label: 'Học sinh',   desc: 'Bài tập · AI Tutor · Tiến độ',     color: 'from-blue-500 to-indigo-600'   },
+              { href: '/phu-huynh',icon: '👨‍👩‍👧‍👦', label: 'Phụ huynh', desc: 'Theo dõi con · Báo cáo học tập',   color: 'from-orange-400 to-amber-500'  },
             ].map(p => (
               <Link key={p.href} href={p.href}
-                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${p.color} p-5 text-white hover:scale-[1.01] transition-transform shadow-sm hover:shadow-md`}>
+                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${p.color} p-5 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg`}>
                 <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                 <div className="text-3xl mb-2">{p.icon}</div>
-                <h3 className="font-black">{p.label}</h3>
-                <p className="text-white/70 text-xs mt-1">{p.desc}</p>
+                <h3 className="font-black text-sm">{p.label}</h3>
+                <p className="text-white/70 text-xs mt-1 leading-relaxed">{p.desc}</p>
+              </Link>
+            ))}
+          </div>
+
+          {/* Quản lý tổ chức */}
+          <p className="text-xs font-semibold text-gray-400 mb-2 ml-0.5">Quản lý tổ chức</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            {[
+              { href: '/admin/analytics',   icon: '🏫', label: 'Ban Giám Hiệu',  desc: 'Tổng quan · KPIs · Reports',       color: 'from-rose-500 to-pink-600'     },
+              { href: '/admin/ai-studio',   icon: '📐', label: 'Academic Dir.',  desc: 'Chương trình · Nội dung · AI',     color: 'from-violet-500 to-purple-600' },
+              { href: '/admin/enrollments', icon: '📋', label: 'Quản lý lớp',   desc: 'Lớp học · Đăng ký · Học viên',   color: 'from-sky-500 to-blue-600'      },
+              { href: '/admin/finance',     icon: '💰', label: 'Kế toán',        desc: 'Học phí · Doanh thu · Xuất báo cáo', color: 'from-emerald-500 to-green-600' },
+            ].map(p => (
+              <Link key={p.href} href={p.href}
+                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${p.color} p-4 text-white hover:scale-[1.01] transition-transform shadow-sm hover:shadow-md`}>
+                <div className="absolute top-0 right-0 w-14 h-14 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">{p.icon}</div>
+                <h3 className="font-black text-sm">{p.label}</h3>
+                <p className="text-white/60 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
+              </Link>
+            ))}
+          </div>
+
+          {/* Vận hành */}
+          <p className="text-xs font-semibold text-gray-400 mb-2 ml-0.5">Vận hành</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { href: '/admin/contacts',    icon: '📞', label: 'Sales / CSKH',  desc: 'Leads · CRM · Chăm sóc',          color: 'from-yellow-500 to-orange-500' },
+              { href: '/admin/users',       icon: '👥', label: 'Người dùng',    desc: 'HS · GV · PH · Phân quyền',       color: 'from-teal-500 to-cyan-600'     },
+              { href: '/admin/news',        icon: '📰', label: 'Marketing',     desc: 'Tin tức · Nội dung truyền thông', color: 'from-fuchsia-500 to-pink-600'  },
+              { href: '/admin/roles',       icon: '🛡️', label: 'Trưởng BP',    desc: 'Roles · Permissions · Audit',     color: 'from-slate-600 to-gray-700'    },
+            ].map(p => (
+              <Link key={p.href} href={p.href}
+                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${p.color} p-4 text-white hover:scale-[1.01] transition-transform shadow-sm hover:shadow-md`}>
+                <div className="absolute top-0 right-0 w-14 h-14 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">{p.icon}</div>
+                <h3 className="font-black text-sm">{p.label}</h3>
+                <p className="text-white/60 text-xs mt-0.5 leading-relaxed">{p.desc}</p>
               </Link>
             ))}
           </div>
