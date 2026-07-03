@@ -3,6 +3,11 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { BookOpen, ArrowRight, CheckCircle2, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  SUBJECTS_WITH_ALL,
+  GRADE_OPTIONS_WITH_ALL,
+  getSubjectMeta as getEduSubjectMeta,
+} from '@/lib/constants/education'
 
 // ─── Legacy CourseType (backward compat) ──────────────────────────────────────
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
@@ -190,35 +195,17 @@ const SUBJECT_META: Record<string, SubjectMeta> = {
   },
 }
 
-const SUBJECT_OPTIONS = [
-  { value: 'all', label: 'Tất cả môn' },
-  { value: 'THINKING_MATH', label: '🧠 Toán Tư Duy' },
-  { value: 'MATH', label: '📐 Toán' },
-  { value: 'VIETNAMESE', label: '📖 Tiếng Việt' },
-  { value: 'ENGLISH', label: '🇬🇧 Tiếng Anh' },
-  { value: 'SCIENCE', label: '🔬 Khoa học' },
-  { value: 'HISTORY', label: '🏰 Lịch sử' },
-  { value: 'GEOGRAPHY', label: '🌍 Địa lý' },
-  { value: 'PHYSICS', label: '⚛️ Vật lý' },
-  { value: 'CHEMISTRY', label: '🧪 Hóa học' },
-  { value: 'BIOLOGY', label: '🧬 Sinh học' },
-  { value: 'INFORMATICS', label: '💻 Tin học' },
-  { value: 'CIVIC', label: '⚖️ GDCD' },
-  { value: 'PE', label: '⚽ Thể dục' },
-  { value: 'MUSIC', label: '🎵 Âm nhạc' },
-  { value: 'ART', label: '🎨 Mỹ thuật' },
-  { value: 'ALGO', label: '🤖 Thuật toán' },
-  { value: 'SCRATCH', label: '🐱 Scratch' },
-  { value: 'PYTHON', label: '🐍 Python' },
-  { value: 'CPP', label: '⚡ C++' },
-  { value: 'IELTS', label: '📝 IELTS' },
-  { value: 'CAMBRIDGE', label: '🎓 Cambridge' },
-]
+const SUBJECT_OPTIONS = SUBJECTS_WITH_ALL.map(s => ({
+  value: s.value,
+  label: s.value === 'all' ? 'Tất cả môn' : `${s.emoji} ${s.label}`,
+}))
 
 const GRADE_OPTIONS = [
-  { value: 'all', label: 'Tất cả' },
-  { value: 'preschool', label: 'Mầm non' },
-  ...Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
+  ...GRADE_OPTIONS_WITH_ALL.map(g => ({
+    value: g.value,
+    label: g.value === 'all' ? 'Tất cả' : g.label,
+  })),
+  { value: 'university', label: 'Đại học' },
 ]
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

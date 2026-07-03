@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { GRADE_OPTIONS, SUBJECTS } from '@/lib/constants/education'
 import Link from 'next/link'
 import {
   Sparkles, Zap, Copy, Download, Save, RefreshCw,
@@ -35,8 +36,8 @@ const QUICK_ACTIONS = [
   { icon: '🎯', label: 'Sinh đề kiểm tra',    type: 'quiz',     extra: { numItems: '20' }, color: 'from-pink-600 to-pink-700' },
 ]
 
-const GRADES   = ['1','2','3','4','5','6','7','8','9']
-const SUBJECTS = ['Toán','Tiếng Việt','Tiếng Anh','Khoa học','Lập trình']
+const GRADES = GRADE_OPTIONS
+const SUBJECT_LIST = SUBJECTS
 const DIFFICULTIES = [
   { value: 'EASY',   label: '🟢 Dễ' },
   { value: 'MEDIUM', label: '🟡 Trung bình' },
@@ -273,7 +274,7 @@ export default function ContentStudioPage() {
               onChange={e => setParams(p => ({ ...p, grade: e.target.value }))}
               className="w-full border-2 border-gray-200 rounded-xl px-3 py-3 text-sm focus:border-purple-400 focus:outline-none bg-white"
             >
-              {GRADES.map(g => <option key={g} value={g}>Lớp {g}</option>)}
+              {GRADES.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
             </select>
           </div>
 
@@ -285,7 +286,7 @@ export default function ContentStudioPage() {
               onChange={e => setParams(p => ({ ...p, subject: e.target.value }))}
               className="w-full border-2 border-gray-200 rounded-xl px-3 py-3 text-sm focus:border-purple-400 focus:outline-none bg-white"
             >
-              {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
+              {SUBJECT_LIST.map(s => <option key={s.value} value={s.label}>{s.emoji} {s.label}</option>)}
             </select>
           </div>
 

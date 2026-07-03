@@ -4,33 +4,19 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Sparkles, AlertCircle } from 'lucide-react'
+import {
+  GRADE_OPTIONS as EDUCATION_GRADES,
+  SUBJECTS as EDUCATION_SUBJECTS,
+  CURRICULUM_OPTIONS,
+} from '@/lib/constants/education'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const CURRICULA = [
-  { value: 'K12-VN',    label: 'K12 Việt Nam' },
-  { value: 'CAMBRIDGE', label: 'Cambridge' },
-  { value: 'IB',        label: 'IB Programme' },
-  { value: 'IELTS',     label: 'IELTS Prep' },
-]
+const CURRICULA = CURRICULUM_OPTIONS
 
-const GRADES = [
-  { value: 'preschool', label: 'Mầm non' },
-  ...Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
-]
+const GRADES = EDUCATION_GRADES
 
-const SUBJECTS = [
-  { value: 'MATH',         label: 'Toán',         emoji: '📐' },
-  { value: 'ENGLISH',      label: 'Tiếng Anh',    emoji: '🔤' },
-  { value: 'VIETNAMESE',   label: 'Tiếng Việt',   emoji: '📖' },
-  { value: 'SCIENCE',      label: 'Khoa học',      emoji: '🔬' },
-  { value: 'CODING',       label: 'Lập trình',    emoji: '💻' },
-  { value: 'HISTORY',      label: 'Lịch sử',      emoji: '🏛️' },
-  { value: 'GEOGRAPHY',    label: 'Địa lý',       emoji: '🌍' },
-  { value: 'ART',          label: 'Mỹ thuật',     emoji: '🎨' },
-  { value: 'MUSIC',        label: 'Âm nhạc',      emoji: '🎵' },
-  { value: 'PE',           label: 'Thể dục',      emoji: '⚽' },
-]
+const SUBJECTS = EDUCATION_SUBJECTS
 
 const DIFFICULTIES = [
   { value: 'easy',   label: 'Dễ',        desc: 'Học sinh TB làm được',    emoji: '🟢' },

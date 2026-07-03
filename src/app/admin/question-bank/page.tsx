@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Search, Filter, Sparkles, BookOpen, ChevronRight, X, Layers, BarChart3, RefreshCw } from 'lucide-react'
+import { GRADE_OPTIONS_WITH_ALL, SUBJECT_META, getSubjectMeta } from '@/lib/constants/education'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,18 +38,21 @@ interface Stats {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const GRADE_OPTIONS = [
-  { value: '', label: 'Tất cả lớp' },
-  ...Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
-]
+// GRADE_OPTIONS dùng từ shared constants (Mầm non → Lớp 12 → Đại học)
+const GRADE_OPTIONS = GRADE_OPTIONS_WITH_ALL.map(g => ({ value: g.value === 'all' ? '' : g.value, label: g.value === 'all' ? 'Tất cả lớp' : g.label }))
 
 const COURSE_TYPE_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
+  // Legacy codes
   TOAN: { label: 'Toán', emoji: '📐', color: 'bg-blue-100 text-blue-700' },
   TIENG_ANH: { label: 'Tiếng Anh', emoji: '🇬🇧', color: 'bg-green-100 text-green-700' },
   LAP_TRINH_THUAT_TOAN: { label: 'Lập trình thuật toán', emoji: '🤖', color: 'bg-yellow-100 text-yellow-700' },
   LAP_TRINH_SCRATCH: { label: 'Lập trình Scratch', emoji: '🐱', color: 'bg-orange-100 text-orange-700' },
   LAP_TRINH_PYTHON: { label: 'Lập trình Python', emoji: '🐍', color: 'bg-teal-100 text-teal-700' },
   LAP_TRINH_CPP: { label: 'Lập trình C++', emoji: '⚡', color: 'bg-purple-100 text-purple-700' },
+  // K12 generic codes — map to SUBJECT_META
+  ...Object.fromEntries(
+    Object.entries(SUBJECT_META).map(([k, v]) => [k, { label: v.label, emoji: v.emoji, color: `${v.color} ${v.textColor}` }])
+  ),
 }
 
 const Q_TYPE_LABELS: Record<string, { label: string; color: string }> = {

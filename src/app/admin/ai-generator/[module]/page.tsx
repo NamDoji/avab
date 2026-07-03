@@ -1,12 +1,18 @@
 'use client'
 
 import React, { useState, useEffect, use } from 'react'
+import { GRADE_OPTIONS, SUBJECTS } from '@/lib/constants/education'
 import Link from 'next/link'
 import {
   Sparkles, RefreshCw, Eye, CheckSquare, Upload, History,
   Settings, Loader2, ChevronLeft, Clock, FileText,
   BookOpen, Zap, CheckCircle2, AlertCircle, XCircle
 } from 'lucide-react'
+
+// ─── Education Data (from shared constants) ────────────────────────────────────
+const ALL_SUBJECT_LABELS = SUBJECTS.map(s => `${s.emoji} ${s.label}`)
+const ALL_GRADE_LABELS   = GRADE_OPTIONS.map(g => g.label)
+const GRADE_RANGE_LABELS = ['Mầm non', 'Lớp 1-3', 'Lớp 4-5', 'Lớp 6-9', 'Lớp 10-12', 'Đại học', 'Toàn cấp']
 
 // ─── Module Registry ───────────────────────────────────────────────────────────
 const MODULES: Record<string, {
@@ -24,9 +30,9 @@ const MODULES: Record<string, {
     outputs: ['Standard document', 'Competency matrix', 'Assessment criteria', 'Implementation guide'],
     workflow: ['Define Scope', '→', 'AI Draft', '→', 'Expert Review', '→', 'Finalize', '→', 'Publish'],
     fields: [
-      { id: 'subject', label: 'Môn học', type: 'select', options: ['Toán Tư Duy', 'Tiếng Anh', 'Tin học', 'Khoa học'], required: true },
+      { id: 'subject', label: 'Môn học', type: 'select', options: ALL_SUBJECT_LABELS, required: true },
       { id: 'framework', label: 'Framework', type: 'select', options: ['Bloom Taxonomy', 'CEFR', 'STEAM', 'Custom AvaB'], required: true },
-      { id: 'gradeRange', label: 'Phạm vi khối lớp', type: 'select', options: ['Lớp 1-3', 'Lớp 4-6', 'Lớp 7-9', 'Toàn cấp'], required: true },
+      { id: 'gradeRange', label: 'Phạm vi khối lớp', type: 'select', options: GRADE_RANGE_LABELS, required: true },
       { id: 'requirements', label: 'Yêu cầu đặc biệt', type: 'textarea', placeholder: 'Nhập các yêu cầu cụ thể...' },
     ],
   },
@@ -39,8 +45,8 @@ const MODULES: Record<string, {
     outputs: ['Curriculum outline', 'Unit plan', 'Topic sequence', 'Time allocation', 'Resource list'],
     workflow: ['Input Parameters', '→', 'AI Generate', '→', 'Validate Standard', '→', 'Review', '→', 'Export'],
     fields: [
-      { id: 'subject', label: 'Môn học', type: 'select', options: ['Toán Tư Duy', 'Tiếng Anh', 'Tin học'], required: true },
-      { id: 'grade', label: 'Khối lớp', type: 'select', options: ['Lớp 1', 'Lớp 2', 'Lớp 3', 'Lớp 4', 'Lớp 5', 'Lớp 6', 'Lớp 7', 'Lớp 8', 'Lớp 9'], required: true },
+      { id: 'subject', label: 'Môn học', type: 'select', options: ALL_SUBJECT_LABELS, required: true },
+      { id: 'grade', label: 'Khối lớp', type: 'select', options: ALL_GRADE_LABELS, required: true },
       { id: 'weeks', label: 'Số tuần học', type: 'number', placeholder: '35', required: true },
       { id: 'hoursPerWeek', label: 'Tiết/tuần', type: 'number', placeholder: '4' },
       { id: 'requirements', label: 'Mục tiêu đặc biệt', type: 'textarea', placeholder: 'Mục tiêu, yêu cầu đặc thù...' },
@@ -55,8 +61,8 @@ const MODULES: Record<string, {
     outputs: ['Lesson plan', 'Teaching notes', 'Student worksheet', 'Assessment rubric', 'Slide outline'],
     workflow: ['Define Topic', '→', 'AI Draft', '→', 'Add Activities', '→', 'QA Check', '→', 'Finalize'],
     fields: [
-      { id: 'subject', label: 'Môn học', type: 'select', options: ['Toán Tư Duy', 'Tiếng Anh', 'Tin học', 'Khoa học'], required: true },
-      { id: 'grade', label: 'Khối lớp', type: 'select', options: ['Lớp 1', 'Lớp 2', 'Lớp 3', 'Lớp 4', 'Lớp 5', 'Lớp 6', 'Lớp 7', 'Lớp 8', 'Lớp 9'], required: true },
+      { id: 'subject', label: 'Môn học', type: 'select', options: ALL_SUBJECT_LABELS, required: true },
+      { id: 'grade', label: 'Khối lớp', type: 'select', options: ALL_GRADE_LABELS, required: true },
       { id: 'topic', label: 'Chủ đề / Topic', type: 'text', placeholder: 'VD: Phép nhân có nhớ trong bảng 6', required: true },
       { id: 'lessonCount', label: 'Số bài học', type: 'number', placeholder: '1' },
       { id: 'duration', label: 'Thời lượng (phút)', type: 'select', options: ['30', '45', '60', '90'], required: true },
@@ -73,8 +79,8 @@ const MODULES: Record<string, {
     outputs: ['Question set', 'Answer key', 'Step-by-step solutions', 'Difficulty map', 'Rubric'],
     workflow: ['Set Parameters', '→', 'Generate Questions', '→', 'Add Solutions', '→', 'QA Validate', '→', 'Export'],
     fields: [
-      { id: 'subject', label: 'Môn học', type: 'select', options: ['Toán Tư Duy', 'Tiếng Anh', 'Tin học'], required: true },
-      { id: 'grade', label: 'Khối lớp', type: 'select', options: ['Lớp 1', 'Lớp 2', 'Lớp 3', 'Lớp 4', 'Lớp 5', 'Lớp 6', 'Lớp 7', 'Lớp 8', 'Lớp 9'], required: true },
+      { id: 'subject', label: 'Môn học', type: 'select', options: ALL_SUBJECT_LABELS, required: true },
+      { id: 'grade', label: 'Khối lớp', type: 'select', options: ALL_GRADE_LABELS, required: true },
       { id: 'topic', label: 'Chủ đề', type: 'text', placeholder: 'VD: Phân số, Hình học không gian...', required: true },
       { id: 'count', label: 'Số câu hỏi', type: 'number', placeholder: '10', required: true },
       { id: 'difficulty', label: 'Phân bổ độ khó', type: 'select', options: ['Dễ 80% / Khó 20%', 'Đều 33/33/34%', 'Khó 60% / Dễ 40%', 'Tùy chỉnh'] },
