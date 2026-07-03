@@ -3,11 +3,12 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { openai } from '@/lib/openai'
 
-async function requireAdmin() {
+async function requireAdminOrTeacher() {
   const session = await auth()
-  if (!session?.user) return { error: 'Chưa đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN') return { error: 'Không có quyền', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Chưa đăng nhập', status: 401 as const }
+  const role = (session.user as any).role
+  if (role !== 'ADMIN' && role !== 'TEACHER') return { error: 'Không có quyền', status: 403 as const }
+  return { session, role, userId: (session.user as any).id as string }
 }
 
 const L: Record<number, string> = { 1: 'Rất yếu', 2: 'Yếu', 3: 'Trung bình', 4: 'Tốt', 5: 'Xuất sắc' }
@@ -29,8 +30,8 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string; feedbackId: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+  const check = await requireAdminOrTeacher()
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
   const { id: subjectId, feedbackId } = await params
   const { userId } = await req.json()
@@ -46,6 +47,11 @@ export async function POST(
     },
   })
   if (!feedback) return NextResponse.json({ success: false, error: 'Không tìm thấy session' }, { status: 404 })
+
+  // TEACHER chỉ được gọi nếu là người tạo buổi học
+  if (check.role === 'TEACHER' && feedback.createdBy !== check.userId) {
+    return NextResponse.json({ success: false, error: 'Bạn không có quyền với buổi học này' }, { status: 403 })
+  }
 
   const records = feedback.records
   if (records.length === 0) return NextResponse.json({ success: false, error: 'Không có học sinh' }, { status: 400 })
