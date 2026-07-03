@@ -98,13 +98,13 @@ export default function EducationStandardsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-700 to-teal-600 text-white p-6">
+      <div className="bg-gradient-to-r from-purple-700 to-teal-600 text-white p-4 sm:p-6">
         <a href="/admin" className="flex items-center gap-1 text-white/70 text-sm mb-3 hover:text-white">
           <ChevronLeft size={14} /> Admin
         </a>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-black flex items-center gap-2">
+            <h1 className="text-lg sm:text-2xl font-black flex items-center gap-2">
               <BookOpen size={24} /> AvaB Standards Suite v1.0
             </h1>
             <p className="text-white/70 text-sm mt-1">
@@ -117,9 +117,9 @@ export default function EducationStandardsPage() {
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-140px)]">
+      <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-140px)]">
         {/* Sidebar */}
-        <div className="w-80 shrink-0 border-r border-gray-200 bg-white overflow-y-auto">
+        <div className="w-full lg:w-80 shrink-0 border-b lg:border-b-0 lg:border-r border-gray-200 bg-white overflow-y-auto lg:max-h-full max-h-64">
           {loadingList ? (
             <div className="flex items-center justify-center h-40 text-gray-400">
               <Loader2 className="animate-spin mr-2" size={18} /> Đang tải...
@@ -162,13 +162,13 @@ export default function EducationStandardsPage() {
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-[60vh] lg:min-h-0">
           {!selected ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-400">
               <BookOpen size={48} className="mb-4 opacity-30" />
               <p className="text-lg font-semibold">Chọn tài liệu để xem</p>
               <p className="text-sm mt-1">{files.length} standards có sẵn</p>
-              <div className="mt-6 grid grid-cols-2 gap-3 max-w-lg w-full px-8">
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-lg w-full px-4 sm:px-8">
                 {Object.entries(CATEGORY_MAP).map(([, meta]) => (
                   <div key={meta.label} className={`rounded-xl px-3 py-2 text-sm font-semibold ${meta.color} flex items-center gap-2`}>
                     <span>{meta.emoji}</span> {meta.label}

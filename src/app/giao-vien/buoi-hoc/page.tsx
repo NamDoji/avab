@@ -31,7 +31,7 @@ export default async function TeacherSessionsPage({
   const totalPages = Math.ceil(total / pageSize)
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl">
       <div className="mb-6">
         <h1 className="text-2xl font-black text-gray-900">📚 Buổi học của tôi</h1>
         <p className="text-gray-500 mt-1 text-sm">{total} buổi học</p>
@@ -46,7 +46,7 @@ export default async function TeacherSessionsPage({
           </div>
         ) : (
           <>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto"><table className="w-full text-sm min-w-[600px]">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
                   <th className="text-left px-5 py-3 text-xs font-bold text-gray-500">Môn học</th>
@@ -107,7 +107,7 @@ export default async function TeacherSessionsPage({
                   )
                 })}
               </tbody>
-            </table>
+            </table></div>
 
             {/* Pagination */}
             {totalPages > 1 && (

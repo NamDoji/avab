@@ -35,9 +35,9 @@ export default async function TeacherDashboard() {
   })
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl">
       {/* Greeting */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-black text-gray-900">
           Xin chào, {session!.user!.name}! 👋
         </h1>
@@ -45,7 +45,7 @@ export default async function TeacherDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
           <p className="text-3xl font-black text-teal-600">{totalSessions}</p>
           <p className="text-sm text-gray-500 mt-1">Buổi đã dạy</p>
