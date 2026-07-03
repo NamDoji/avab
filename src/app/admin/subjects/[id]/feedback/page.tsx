@@ -226,9 +226,11 @@ function StudentDrawer({
             )}
 
             {/* AI Nhận xét */}
-            <div className="border-t border-gray-100 pt-4">
+            <div className="border-t border-gray-100 pt-4" id="ai-comment-section">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">🤖 Nhận xét AI</p>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">🤖 Nhận xét AI
+                  <span className="ml-2 font-normal text-gray-400 normal-case">(AI tự tạo — GV sửa trước khi gửi PH)</span>
+                </p>
                 <button onClick={handleAI} disabled={aiLoading}
                   className="flex items-center gap-1.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 disabled:opacity-50 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
                   {aiLoading ? <><Loader2 size={12} className="animate-spin" /> Đang sinh...</> : <><Brain size={12} /> Sinh AI</>}
@@ -463,13 +465,16 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
         ) : currentFeedback && records.length > 0 ? (
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
             {/* Session info bar */}
-            <div className="flex items-center gap-4 px-4 py-3 bg-purple-50 border-b border-purple-100">
+            <div className="flex items-center gap-4 px-4 py-3 bg-purple-50 border-b border-purple-100 flex-wrap">
               <Calendar size={14} className="text-purple-600" />
               <span className="text-sm font-semibold text-purple-700">
                 Buổi ngày {new Date(currentFeedback.sessionDate).toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
               <span className="text-xs text-gray-500">{records.filter(r => r.attendance).length}/{records.length} có mặt</span>
-              <span className="text-xs text-gray-500">· {records.filter(r => r.aiComment).length} nhận xét AI</span>
+              <span className="text-xs text-gray-500">· {records.filter(r => r.aiComment).length}/{records.length} nhận xét AI</span>
+              <span className="text-xs text-gray-400 border-l border-purple-200 pl-4 hidden sm:inline">
+                💡 Đánh giá nhanh trên bảng • Click ✨“Sinh nhận xét” để AI tự tạo • Click “Xem/Sửa” để đọc đầy đủ • Click ✏️ để mở chi tiết
+              </span>
             </div>
 
             {/* Scrollable table */}
@@ -487,8 +492,8 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                     <th className="px-2 py-3 text-center text-xs font-bold text-gray-500 whitespace-nowrap">⭐ Ý thức</th>
                     <th className="px-2 py-3 text-center text-xs font-bold text-gray-500 whitespace-nowrap">📚 BTVN</th>
                     <th className="px-2 py-3 text-center text-xs font-bold text-gray-500 whitespace-nowrap">😊 Cảm xúc</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-500 whitespace-nowrap">🤖 AI</th>
-                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-500 whitespace-nowrap">Chi tiết</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-500 whitespace-nowrap">🤖 Nhận xét AI</th>
+                    <th className="px-2 py-3 text-center text-xs font-bold text-gray-500 whitespace-nowrap">✏️ Chi tiết</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -551,11 +556,21 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                       {/* AI status */}
                       <td className="px-2 py-2.5 text-center">
                         {record.aiComment ? (
-                          <span className="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2 py-0.5 rounded-full font-semibold">✓ Có</span>
+                          <button
+                            onClick={() => setDrawerRecord(record)}
+                            title="Click để xem / sửa nhận xét AI"
+                            className="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2.5 py-1 rounded-full font-semibold hover:bg-violet-100 transition">
+                            ✓ Xem / Sửa
+                          </button>
                         ) : (
-                          <button onClick={() => handleAIGenerate(record.userId)} disabled={!!aiLoading[record.userId]}
-                            className="text-xs text-gray-400 hover:text-violet-600 transition px-2 py-0.5 rounded-full border border-gray-200 hover:border-violet-300">
-                            {aiLoading[record.userId] ? '...' : '+ Sinh'}
+                          <button
+                            onClick={() => handleAIGenerate(record.userId)}
+                            disabled={!!aiLoading[record.userId]}
+                            title="Sinh nhận xét AI tự động cho học sinh này"
+                            className="text-xs text-violet-600 hover:text-white hover:bg-violet-600 transition px-2.5 py-1 rounded-full border border-violet-300 hover:border-violet-600 font-semibold">
+                            {aiLoading[record.userId]
+                              ? <span className="flex items-center gap-1"><Loader2 size={10} className="animate-spin" /> Đang sinh...</span>
+                              : '🤖 Sinh nhận xét'}
                           </button>
                         )}
                       </td>
