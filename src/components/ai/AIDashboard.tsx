@@ -649,6 +649,61 @@ const TABS: { id: TabId; label: string; emoji: string; apiPath: string; method: 
 
 const AI_REFRESH_DAYS = 14
 
+// Dữ liệu mặc định hiện khi chưa có kết quả AI thật
+const DEFAULT_DATA = {
+  diagnose: {
+    overallState: 'Học viên đang bắt đầu hành trình học Toán Tư Duy. Hệ thống AI sẽ phân tích chi tiết hơn sau khi có dữ liệu làm bài.',
+    knowledgeProfile: [],
+    masteredCount: 0, developingCount: 0, strugglingCount: 0, totalSubjects: 0,
+    behavior: { totalAnswered: 0, avgPerDay: '0', learningTrend: 0, learningTrendLabel: 'Ổn định' },
+    cognitive: { load: 'low', maxConsecutiveWrong: 0 },
+    engagement: { level: 'medium', score: 40, subjectsCovered: 0 },
+    knowledgeSummary: 'Chưa có dữ liệu để phân tích bản đồ tri thức. Hãy bắt đầu làm bài!',
+    behaviorInsight: 'Học viên mới bắt đầu. Hãy hướng dẫn con làm thử các bài Quản sát và Phân loại trước.',
+    diagnosticConclusion: 'Đây là điểm khởi đầu. Làm bài đều đặn mỗi ngày để AI có thể xây dựng bản đồ học tập cá nhân cho con.',
+  },
+  predict: {
+    probability: 50,
+    level: 'Đang khởi đầu',
+    verdict: 'Hệ thống đang thu thập dữ liệu. Làm nhiều bài hơn, AI sẽ dự báo chính xác khả năng của con.',
+    stats: { totalScore: 0, overallAccuracy: 0, subjectsDone: 0, totalSubjects: 0, coveragePct: 0, totalAnswered: 0, improvement: 0, recentAccuracy: 0 },
+    multiDimension: { engagementRisk: 'low', cognitiveLoad: 'low', readinessToAdvance: 'borderline' },
+    actionPlan: ['Bắt đầu với chùm bài Quản sát & Phân loại', 'Làm ít nhất 5 bài/ngày trong tuần đầu', 'Nhờ phụ huynh điều hặn giờ học'],
+    readinessSignals: ['Học viên mới — tiềm năng chưa được khám phá'],
+    parentNote: 'Hãy cùng con làm thử 3–5 bài đầu tiên để làm quen với nền tảng.',
+  },
+  intervene: {
+    packageType: 'standard',
+    packageLabel: 'Gói Khởi Đầu — Khám Phá & Xây Nền',
+    packageRationale: 'Bắt đầu với lộ trình khám phá toàn diện, xác định điểm mạnh và điểm cần phát triển.',
+    interventionGoal: 'Làm quen toàn bộ các dạng bài Toán Tư Duy trong 4 tuần đầu, xây nền tảng vững chắc.',
+    learningPathway: [
+      'Tuần 1: Làm quen các dạng Quản sát, So sánh, Phân loại',
+      'Tuần 2: Khám phá Quy luật và Mối liên hệ',
+      'Tuần 3: Làm lại các chùm bài có điểm chưa cao',
+      'Tuần 4: Ôn tổng hợp và đánh giá tiến bộ',
+    ],
+    teachingMethod: 'Học qua trò chơi, quan sát thực tế — phù hợp lứa tuổi 5–6.',
+    estimatedDays: 28,
+    successCriteria: 'Đạt ư 60% ở ít nhất 5 chùm bài sau 4 tuần.',
+    parentGuidance: 'Hòa cùng con 15–20 phút mỗi ngày. Khen ngợi sự cố gắng hơn là kết quả.',
+  },
+  recommend: {
+    teachingStrategy: 'Bắt đầu với các bài tập đơn giản, trực quan. Xây dựng sự tự tin trước khi tăng độ khó.',
+    supportLevel: 'high',
+    selfStudyStrategy: 'Học 15–20 phút/ngày vào buổi sáng hoặc sớm buổi tối. Không học quá 30 phút liên tục.',
+    dailyGoal: 'Làm ít nhất 5 bài/ngày để AI có thể phân tích tiến trình.',
+    motivation: 'Học Toán Tư Duy giúp con thông minh hơn mỗi ngày!',
+    exercises: [
+      { type: 'Quan sát & Phân biệt', difficulty: 'Dễ', description: 'Tìm điểm giống và khác nhau giữa các hình', example: 'Hình nào khống giống các hình còn lại?', pedagogicalReason: 'Xây dựng nền tảng tư duy quan sát' },
+      { type: 'Sắp xếp theo quy luật', difficulty: 'Trung bình', description: 'Tìm quy luật và điền số/hình còn thiếu', example: '2, 4, 6, 8, __?', pedagogicalReason: 'Phát triển tư duy logic cơ bản' },
+      { type: 'Phân loại đồ vật', difficulty: 'Dễ', description: 'Nhóm các đồ vật theo đặc điểm chung', example: 'Con nào có 2 chân? Con nào có 4 chân?', pedagogicalReason: 'Tăng khả năng phân tích đặc điểm' },
+    ],
+    teacherActions: ['Chọn bài phù hợp trình độ khởi đầu', 'Tạo không khí vui vẻ, không áp lực điểm số'],
+    parentActions: ['Cùng con học 15 phút/ngày', 'Khen khi con cố gắng, dù sai hay đúng'],
+  },
+} as const
+
 export function AIDashboard({ userId }: Props) {
   const [data, setData] = useState<Partial<Record<TabId, any>>>({})
   const [activeTab, setActiveTab] = useState<TabId>('diagnose')
@@ -707,19 +762,14 @@ export function AIDashboard({ userId }: Props) {
   useEffect(() => {
     const init = async () => {
       const results = await Promise.all(TABS.map(t => loadCache(t.id)))
-      // Nếu tất cả đều null → gọi init-all (song song, 1 request)
+      // Nếu tất cả đều null → dùng data mặc định luôn (không gọi OpenAI)
       if (results.every(r => !r)) {
-        setInitializing(true)
-        try {
-          const res = await fetch('/api/ai/init-all', { method: 'POST' })
-          const json = await res.json()
-          if (json.success && json.results) {
-            const r = json.results
-            setData({ diagnose: r.diagnose, predict: r.predict, intervene: r.intervene, recommend: r.recommend })
-            setRefreshedAt(new Date())
-          }
-        } catch (e) { console.error('init-all error:', e) }
-        setInitializing(false)
+        setData({
+          diagnose: DEFAULT_DATA.diagnose,
+          predict: DEFAULT_DATA.predict,
+          intervene: DEFAULT_DATA.intervene,
+          recommend: DEFAULT_DATA.recommend,
+        })
       }
     }
     init()
