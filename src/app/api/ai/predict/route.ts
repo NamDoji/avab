@@ -53,25 +53,50 @@ export async function GET(req: NextRequest) {
     probability += Math.max(0, Math.min(improvement * 0.5, 15)) // Cải thiện (max 15%)
     probability = Math.round(Math.min(probability, 98))
 
-    const prompt = `Học sinh luyện thi học bổng lớp 1:
-- Tổng điểm: ${totalScore}
-- Độ chính xác tổng: ${overallAccuracy}%
-- Đã làm ${subjectsDone}/${totalSubjects} chuyên đề (${coveragePct}%)
-- Tổng câu đã làm: ${totalAnswered}
-- Độ chính xác gần đây: ${recentAccuracy}%
-- Cải thiện so với ban đầu: ${improvement > 0 ? '+' : ''}${improvement}%
-- Xác suất đỗ tính toán: ${probability}%
+    // Tính các chỉ số đa chiều theo Biài toán 2: Dự báo tiến trình học tập
+    // Risk engagement: tỷ lệ câu chưa làm so với tổng
+    const engagementRiskScore = Math.max(0, 100 - coveragePct - Math.min(totalAnswered / 2, 30))
+    const engagementRisk = engagementRiskScore > 60 ? 'high' : engagementRiskScore > 30 ? 'medium' : 'low'
 
-Đánh giá JSON (không markdown):
+    // Cognitive load proxy: cắn mạnh số câu sai liên tiếp
+    const recentAnswers = answers.slice(0, 10)
+    let streak = 0, maxStreak = 0
+    for (const a of recentAnswers) {
+      if (!a.isCorrect) { streak++; maxStreak = Math.max(maxStreak, streak) } else streak = 0
+    }
+    const cognitiveLoad = maxStreak >= 5 ? 'high' : maxStreak >= 3 ? 'medium' : 'low'
+
+    // Readiness to advance: cần độ chính xác cao + độ phủ rộng
+    const readinessScore = Math.round(overallAccuracy * 0.5 + coveragePct * 0.3 + Math.min(improvement, 20) * 0.2)
+    const readinessToAdvance = readinessScore >= 70 ? 'ready' : readinessScore >= 45 ? 'borderline' : 'not_ready'
+
+    const prompt = `Học sinh luyện thi học bổng lớp 1. Dự báo tiến trình học tập theo hướng DKT/multi-task prediction:
+
+DỮ LIỆU ĐẦU VÀO:
+- Tổng điểm tich lũy: ${totalScore}
+- Độ chính xác thoảng: ${overallAccuracy}% | Gần đây: ${recentAccuracy}%
+- Độ phủ chuyên đề: ${subjectsDone}/${totalSubjects} (${coveragePct}%)
+- Câu hỏi đã làm: ${totalAnswered} | Cải thiện: ${improvement > 0 ? '+' : ''}${improvement}%
+- Xác suất đỗ (tính toán): ${probability}%
+- Rủi ro gắt kết: ${engagementRisk} | Tải nhận thức: ${cognitiveLoad}
+- Sẵn sàng tiếp theo: ${readinessToAdvance}
+
+Dự báo JSON đa chiều (không markdown):
 {
   "probability": ${probability},
-  "level": "Xuất sắc/Tốt/Trung bình/Cần cố gắng thêm",
-  "verdict": "Nhận xét tổng quan 1-2 câu thật sự có giá trị",
+  "level": "Xuất sắc/Tốt/Trung bình/Cần cố gắng",
+  "verdict": "Dự báo tính huống học tập sắp tới (1-2 câu, ngôn ngữ sư phạm)",
+  "successForecast": "Xác suất thành công bước tiếp theo (%) và điều kiện kèm",
+  "engagementForecast": "Dự báo mức gắt kết trong 1-2 tuần tới nếu không can thiệp",
+  "cognitiveLoadForecast": "Dự báo tải nhận thức khi tiếp tuc theo lộ trình hiện tại",
+  "readinessSignals": ["Dấu hiệu sẵn sàng 1", "Dấu hiệu sẵn sàng 2"],
+  "riskSignals": ["Dấu hiệu rủi ro 1", "Dấu hiệu rủi ro 2"],
   "strongPoints": ["Điểm mạnh 1", "Điểm mạnh 2"],
-  "gapAreas": ["Khoảng trống cần bù 1", "Khoảng trống cần bù 2"],
-  "timeToReady": "Ước tính thời gian để đạt 80%+ sẵn sàng",
-  "actionPlan": ["Hành động 1 cần làm ngay", "Hành động 2", "Hành động 3"],
-  "parentNote": "Lời nhắn cho phụ huynh (1-2 câu thực tế, không hoa mỹ)"
+  "gapAreas": ["Khoảng trống 1", "Khoảng trống 2"],
+  "timeToReady": "Ước tính thời gian đạt 80%+ sẵn sàng",
+  "actionPlan": ["Hành động uu tiên 1", "Hành động uu tiên 2", "Hành động uu tiên 3"],
+  "interventionUrgency": "immediate/soon/monitor",
+  "parentNote": "Lời nhắn thực tế cho phụ huynh (có thể hành động ngay)"
 }`
 
     const completion = await openai.chat.completions.create({
@@ -98,6 +123,13 @@ export async function GET(req: NextRequest) {
           coveragePct,
           totalAnswered,
           improvement,
+          recentAccuracy,
+        },
+        // Chỉ số đa chiều (Biài toán 2)
+        multiDimension: {
+          engagementRisk,
+          cognitiveLoad,
+          readinessToAdvance,
         },
         ...prediction,
         probability: prediction.probability ?? probability,

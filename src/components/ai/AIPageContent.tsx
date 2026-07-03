@@ -11,28 +11,28 @@ interface Props {
 
 const content = {
   vi: {
-    badge: 'Powered by GPT-4o — AvaB AI',
+    badge: 'BKT · DKT · Recommender Systems — AvaB AI',
     title: 'AI Hỗ Trợ Học Tập',
-    subtitle: (name: string) => `Trợ lý AI phân tích cá nhân — không phải thống kê chung chung, mà là nhận xét riêng dành cho ${name}.`,
+    subtitle: (name: string) => `Phân tích đa chiều theo framework AI giáo dục — chẩn đoán trạng thái, dự báo tiến trình, lựa chọn can thiệp và khuyến nghị sư phạm riêng cho `,
     features: [
-      { icon: '🎯', title: 'AI Đánh giá khả năng đỗ', desc: 'Phân tích toàn bộ kết quả học tập, đưa ra xác suất đỗ học bổng và kế hoạch cải thiện cụ thể.' },
-      { icon: '🔍', title: 'AI Phân tích lỗi sai', desc: 'Nhận dạng dạng toán học sinh hay mắc lỗi, tìm ra nguyên nhân và đề xuất cách khắc phục.' },
-      { icon: '🗺️', title: 'AI Cá nhân hoá lộ trình', desc: 'Dựa trên năng lực thực tế, AI xây dựng kế hoạch học theo tuần, ưu tiên đúng chuyên đề.' },
-      { icon: '💡', title: 'AI Gợi ý bài tập', desc: 'Đề xuất bài tập phù hợp với trình độ hiện tại, không quá dễ nhàm, không quá khó nản.' },
+      { icon: '🔬', title: 'Chẩn đoán trạng thái người học', desc: 'Mô hình hóa tri thức theo hướng BKT/DKT — bản đồ kiến thức, hành vi học tập, mức gắn kết và tải nhận thức.' },
+      { icon: '📡', title: 'Dự báo tiến trình học tập', desc: 'Dự báo đa chiều: xác suất thành công, rủi ro gắn kết, tải nhận thức, mức sẵn sàng tiếp theo (DKT/Transformer).' },
+      { icon: '🎯', title: 'Lựa chọn gói can thiệp', desc: 'Recommender system đề xuất gói can thiệp tối ưu: lộ trình cá nhân, phương pháp, thời gian ước tính.' },
+      { icon: '💡', title: 'Khuyến nghị can thiệp sư phạm', desc: 'Aware recommendation: chiến lược dạy học, mức hỗ trợ, hướng dẫn phụ huynh — tính toàn diện.' },
     ],
-    note: '🤖 AI phân tích dựa trên dữ liệu làm bài thực tế của bạn. Kết quả chính xác hơn khi bạn làm nhiều câu hỏi hơn.',
+    note: '🤖 AI phân tích dựa trên dữ liệu làm bài thực tế. Kết quả chính xác hơn khi làm nhiều bài hơn. Đây là AI hỗ trợ — không thay thế đánh giá của giáo viên.',
   },
   en: {
-    badge: 'Powered by GPT-4o — AvaB AI',
-    title: 'AI Learning Assistant',
-    subtitle: (name: string) => `Personal AI analysis — not generic statistics, but insights tailored specifically for ${name}.`,
+    badge: 'BKT · DKT · Recommender Systems — AvaB AI',
+    title: 'AI Learning Support',
+    subtitle: (name: string) => `Multi-dimensional AI analysis based on educational AI framework — diagnosis, prediction, intervention selection and personalised pedagogical guidance for `,
     features: [
-      { icon: '🎯', title: 'AI Admission Prediction', desc: 'Analyzes your full learning history to predict scholarship chances and suggest a concrete improvement plan.' },
-      { icon: '🔍', title: 'AI Error Analysis', desc: 'Identifies recurring mistake patterns, finds root causes, and recommends targeted remediation strategies.' },
-      { icon: '🗺️', title: 'AI Personalised Pathway', desc: 'Based on actual performance, AI builds a week-by-week study plan prioritising the right topics.' },
-      { icon: '💡', title: 'AI Exercise Suggestions', desc: 'Recommends exercises matched to current level — not too easy to bore, not too hard to discourage.' },
+      { icon: '🔬', title: 'Learner State Diagnosis', desc: 'BKT/DKT-inspired knowledge modelling — knowledge map, learning behaviour, engagement level, and cognitive load.' },
+      { icon: '📡', title: 'Learning Progress Prediction', desc: 'Multi-task prediction: success probability, engagement risk, cognitive load, readiness to advance (DKT/Transformer).' },
+      { icon: '🎯', title: 'Intervention Package Selection', desc: 'Recommender system selects the optimal intervention package: personalised pathway, method, and estimated timeline.' },
+      { icon: '💡', title: 'Pedagogical Intervention', desc: 'Aware recommendation: teaching strategy, support intensity, parent guidance — comprehensive and actionable.' },
     ],
-    note: '🤖 AI analysis is based on your actual practice data. Results improve as you complete more questions.',
+    note: '🤖 AI analysis is based on actual practice data. Results improve with more exercises. This is AI support — not a replacement for teacher assessment.',
   },
 }
 
@@ -58,12 +58,17 @@ export function AIPageContent({ userId, userName }: Props) {
       </div>
 
       <div className="container-custom py-12 max-w-4xl">
-        {/* Feature cards */}
+        {/* 4 bài toán AI giáo dục */}
         <div className="grid sm:grid-cols-2 gap-4 mb-8">
-          {t.features.map((f) => (
+          {t.features.map((f, i) => (
             <div key={f.title} className="bg-white rounded-3xl p-5 border border-purple-50 shadow-sm flex gap-3">
               <span className="text-3xl shrink-0">{f.icon}</span>
               <div>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-xs font-bold text-purple-400 bg-purple-50 px-2 py-0.5 rounded-full">
+                    Bài toán {i + 1}
+                  </span>
+                </div>
                 <h3 className="font-bold text-gray-900 text-sm mb-1">{f.title}</h3>
                 <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
               </div>
