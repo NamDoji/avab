@@ -707,12 +707,18 @@ export function AIDashboard({ userId }: Props) {
   useEffect(() => {
     const init = async () => {
       const results = await Promise.all(TABS.map(t => loadCache(t.id)))
-      // Nếu tất cả đều null (user mới, chưa có cache) → tự generate với init=true
+      // Nếu tất cả đều null → gọi init-all (song song, 1 request)
       if (results.every(r => !r)) {
         setInitializing(true)
-        for (const t of TABS) {
-          await forceRefreshTab(t.id, true) // init=true: bypass 14-day check
-        }
+        try {
+          const res = await fetch('/api/ai/init-all', { method: 'POST' })
+          const json = await res.json()
+          if (json.success && json.results) {
+            const r = json.results
+            setData({ diagnose: r.diagnose, predict: r.predict, intervene: r.intervene, recommend: r.recommend })
+            setRefreshedAt(new Date())
+          }
+        } catch (e) { console.error('init-all error:', e) }
         setInitializing(false)
       }
     }
