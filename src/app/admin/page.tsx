@@ -89,19 +89,35 @@ export default async function AdminPage() {
   if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
 
   // ── Zone A data: today's operational snapshot ────────────────────────────
+  const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+
   const [
     activeStudents,
     pendingApprovals,
     newContacts,
     activeProjects,
     totalCourses,
+    unpaidCount,
+    paidThisMonth,
   ] = await Promise.all([
     prisma.enrollment.count({ where: { status: 'ACTIVE' } }),
     prisma.enrollment.count({ where: { status: 'PENDING' } }),
     prisma.registration.count({ where: { status: 'NEW' } }),
     prisma.aIProject.count({ where: { status: 'in-progress' } }),
     prisma.course.count({ where: { isActive: true } }),
+    prisma.tuitionPayment.count({ where: { isPaid: false, isFree: false } }),
+    prisma.tuitionPayment.aggregate({
+      where: { isPaid: true, isFree: false, paidAt: { gte: thisMonthStart } },
+      _sum: { amount: true },
+    }),
   ])
+
+  const paidThisMonthAmt = paidThisMonth._sum.amount ?? 0
+  const fmtVNDShort = (n: number) => {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
+    if (n >= 1_000) return Math.round(n / 1_000) + 'K'
+    return String(n)
+  }
 
   // ── Zone B: primary action cards ────────────────────────────────────────
   const primaryActions = [
@@ -213,6 +229,34 @@ export default async function AdminPage() {
             <p className="text-3xl font-black">{totalCourses}</p>
           </div>
         </div>
+
+        {/* Finance quick-stats bar */}
+        <Link
+          href="/admin/finance"
+          className="flex items-center justify-between rounded-2xl px-5 py-3.5 text-white shadow-sm hover:opacity-90 active:scale-[0.99] transition-all"
+          style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)' }}
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">💰</span>
+            <div>
+              <p className="text-xs font-semibold text-emerald-200 leading-tight">Tài chính tháng này</p>
+              <p className="text-sm font-black text-white">{fmtVNDShort(paidThisMonthAmt)}đ đã thu</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {unpaidCount > 0 && (
+              <span className="text-xs font-black bg-red-500 text-white px-2.5 py-1 rounded-full">
+                🔴 {unpaidCount} chưa thu
+              </span>
+            )}
+            {unpaidCount === 0 && (
+              <span className="text-xs font-semibold bg-white/20 text-white px-2.5 py-1 rounded-full">
+                ✅ Không có công nợ
+              </span>
+            )}
+            <span className="text-white/60 text-sm">→</span>
+          </div>
+        </Link>
       </div>
 
       <div className="container-custom py-6 space-y-6">

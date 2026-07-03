@@ -3,162 +3,138 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
-export const metadata = { title: 'Điểm danh — School ERP' }
+export const metadata = { title: 'Điểm danh — AvaB ERP' }
 
-const statusLabel: Record<string, string> = {
-  present: 'Có mặt',
-  absent: 'Vắng',
-  late: 'Muộn',
-  excused: 'Có phép',
+// ── Grade label helper ────────────────────────────────────────────
+function gradeLabel(grade: string | null): string {
+  if (!grade) return ''
+  if (grade === '0' || grade === 'preschool') return 'Mầm non'
+  return `Lớp ${grade}`
 }
 
-const statusColor: Record<string, string> = {
-  present: 'background:#dcfce7;color:#166534',
-  absent: 'background:#fee2e2;color:#991b1b',
-  late: 'background:#fef9c3;color:#854d0e',
-  excused: 'background:#dbeafe;color:#1e40af',
+// ── Subject colour map (small subset for cards) ───────────────────
+const SUBJECT_COLORS: Record<string, string> = {
+  THINKING_MATH: '#7c3aed',
+  MATH:          '#2563eb',
+  ENGLISH:       '#059669',
+  VIETNAMESE:    '#dc2626',
+  SCIENCE:       '#0891b2',
+  PYTHON:        '#0d9488',
+  ALGO:          '#ca8a04',
+  SCRATCH:       '#ea580c',
+  CPP:           '#9333ea',
+  IELTS:         '#0369a1',
+  CAMBRIDGE:     '#be123c',
+  GENERAL:       '#4b5563',
 }
 
-export default async function AttendancePage() {
+function subjectColor(code: string): string {
+  return SUBJECT_COLORS[code] ?? SUBJECT_COLORS.GENERAL
+}
+
+// ── Page ──────────────────────────────────────────────────────────
+export default async function AttendanceSelectorPage() {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-  const records = await prisma.attendance.findMany({
-    where: { date: { gte: sevenDaysAgo } },
-    orderBy: [{ date: 'desc' }, { courseId: 'asc' }],
-    take: 200,
+  const courses = await prisma.course.findMany({
+    where: { isActive: true },
+    include: { _count: { select: { enrollments: true } } },
+    orderBy: [{ grade: 'asc' }, { name: 'asc' }],
   })
 
-  // Load users and courses referenced
-  const userIds = [...new Set(records.map((r) => r.userId))]
-  const courseIds = [...new Set(records.map((r) => r.courseId))]
-
-  const [users, courses] = await Promise.all([
-    prisma.user.findMany({
-      where: { id: { in: userIds } },
-      select: { id: true, name: true, phone: true },
-    }),
-    prisma.course.findMany({
-      where: { id: { in: courseIds } },
-      select: { id: true, name: true, code: true },
-    }),
-  ])
-
-  const userMap = Object.fromEntries(users.map((u) => [u.id, u]))
-  const courseMap = Object.fromEntries(courses.map((c) => [c.id, c]))
-
-  const presentCount = records.filter((r) => r.status === 'present').length
-  const absentCount = records.filter((r) => r.status === 'absent').length
-  const lateCount = records.filter((r) => r.status === 'late').length
-  const total = records.length
-  const presentPct = total > 0 ? Math.round((presentCount / total) * 100) : 0
+  const totalStudents = courses.reduce((sum, c) => sum + c._count.enrollments, 0)
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
-      {/* Header */}
+      {/* ── Header ── */}
       <div
         className="relative overflow-hidden text-white py-10"
-        style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)' }}
       >
+        <div
+          className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
+          style={{ background: 'rgba(255,255,255,0.06)', transform: 'translate(30%, -50%)' }}
+        />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-blue-200 text-sm mb-1">
-            <Link href="/admin/erp" className="hover:text-white transition-colors">School ERP</Link>
+          <div className="flex items-center gap-2 text-green-200 text-sm mb-2">
+            <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
+            <span>/</span>
+            <Link href="/admin/erp" className="hover:text-white transition-colors">ERP</Link>
             <span>/</span>
             <span>Điểm danh</span>
           </div>
-          <h1 className="text-3xl font-black mb-1">📋 Điểm danh</h1>
-          <p className="text-blue-200 text-sm">7 ngày gần nhất — {total} bản ghi</p>
-
-          {/* Stats */}
-          <div className="flex flex-wrap gap-6 mt-5">
-            <div>
-              <div className="text-2xl font-black text-green-300">{presentPct}%</div>
-              <div className="text-xs text-blue-200">Có mặt</div>
-            </div>
-            <div>
-              <div className="text-2xl font-black text-red-300">{absentCount}</div>
-              <div className="text-xs text-blue-200">Vắng</div>
-            </div>
-            <div>
-              <div className="text-2xl font-black text-yellow-300">{lateCount}</div>
-              <div className="text-xs text-blue-200">Muộn</div>
-            </div>
-          </div>
+          <h1 className="text-3xl font-black mb-1">✅ Điểm danh</h1>
+          <p className="text-green-200 text-sm">
+            {courses.length} lớp · {totalStudents} học viên — Chọn lớp để điểm danh nhanh
+          </p>
         </div>
       </div>
 
       <div className="container-custom py-6">
-        {/* Action bar */}
-        <div className="flex justify-end mb-4">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="font-bold text-gray-700">Chọn lớp điểm danh</h2>
           <Link
             href="/admin/erp/attendance/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white shadow hover:opacity-90 transition-opacity"
-            style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
           >
-            + Điểm danh mới
+            ✏️ Điểm danh tuỳ chỉnh
           </Link>
         </div>
 
-        {/* Table */}
-        {records.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-            <div className="text-4xl mb-3">📋</div>
-            <p className="text-gray-500 font-semibold">Chưa có dữ liệu điểm danh</p>
-            <p className="text-gray-400 text-sm mt-1">Bắt đầu điểm danh cho buổi học đầu tiên</p>
+        {courses.length === 0 ? (
+          <div className="bg-white rounded-2xl p-14 text-center shadow-sm">
+            <div className="text-5xl mb-3">✅</div>
+            <p className="text-gray-700 font-bold text-lg mb-1">Chưa có lớp học</p>
+            <p className="text-gray-400 text-sm mb-5">
+              Tạo khóa học và ghi danh học sinh để bắt đầu điểm danh.
+            </p>
+            <Link
+              href="/admin/courses"
+              className="inline-block px-5 py-2.5 rounded-xl text-sm font-bold text-white"
+              style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
+            >
+              ➕ Tạo khóa học
+            </Link>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr style={{ background: '#f8fafc' }}>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600 text-xs uppercase">#</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600 text-xs uppercase">Học sinh</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600 text-xs uppercase">Khóa học</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600 text-xs uppercase">Ngày</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600 text-xs uppercase">Trạng thái</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600 text-xs uppercase">Ghi chú</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {records.map((record, idx) => {
-                    const user = userMap[record.userId]
-                    const course = courseMap[record.courseId]
-                    const [bgStr, colorStr] = (statusColor[record.status] ?? 'background:#f3f4f6;color:#374151').split(';')
-                    const bg = bgStr.replace('background:', '')
-                    const color = colorStr.replace('color:', '')
-                    return (
-                      <tr key={record.id} style={{ borderTop: '1px solid #f1f5f9' }}>
-                        <td className="px-4 py-3 text-gray-400">{idx + 1}</td>
-                        <td className="px-4 py-3">
-                          <div className="font-semibold text-gray-900">{user?.name ?? '—'}</div>
-                          <div className="text-xs text-gray-400">{user?.phone}</div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="font-medium text-gray-700">{course?.name ?? record.courseId}</div>
-                          <div className="text-xs text-gray-400">{course?.code}</div>
-                        </td>
-                        <td className="px-4 py-3 text-gray-600">
-                          {new Date(record.date).toLocaleDateString('vi-VN')}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className="text-xs font-bold px-2.5 py-1 rounded-full"
-                            style={{ background: bg, color }}
-                          >
-                            {statusLabel[record.status] ?? record.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-gray-500 text-xs">{record.note ?? '—'}</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {courses.map((course) => {
+              const color = subjectColor(course.subjectCode)
+              const gl = gradeLabel(course.grade)
+              return (
+                <Link
+                  key={course.id}
+                  href={`/admin/erp/attendance/${course.id}`}
+                  className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all hover:scale-[1.01] flex items-start gap-4"
+                >
+                  {/* Color dot */}
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg flex-shrink-0"
+                    style={{ background: color }}
+                  >
+                    ✅
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-gray-900 leading-tight truncate">{course.name}</h3>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      {gl && (
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#f0fdf4', color: '#166534' }}>
+                          {gl}
+                        </span>
+                      )}
+                      <span className="text-xs text-gray-500">
+                        {course._count.enrollments} học viên
+                      </span>
+                    </div>
+                    <div className="mt-2 text-xs font-semibold" style={{ color }}>
+                      Điểm danh ngay →
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         )}
       </div>
