@@ -798,10 +798,10 @@ export function AIDashboard({ userId }: Props) {
 
       {/* Panel content */}
       <div className="p-4 sm:p-5">
-        {activeTab === 'diagnose'  && <DiagnosePanel  data={data.diagnose}  loading={loading.diagnose} />}
-        {activeTab === 'predict'   && <PredictPanel   data={data.predict}   loading={loading.predict} />}
-        {activeTab === 'intervene' && <IntervenePanel data={data.intervene} loading={loading.intervene} />}
-        {activeTab === 'recommend' && <RecommendPanel data={data.recommend} loading={loading.recommend} />}
+        {activeTab === 'diagnose'  && <DiagnosePanel  data={data.diagnose}  loading={forceLoading} />}
+        {activeTab === 'predict'   && <PredictPanel   data={data.predict}   loading={forceLoading} />}
+        {activeTab === 'intervene' && <IntervenePanel data={data.intervene} loading={forceLoading} />}
+        {activeTab === 'recommend' && <RecommendPanel data={data.recommend} loading={forceLoading} />}
       </div>
     </div>
   )
