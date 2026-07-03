@@ -16,13 +16,21 @@ export async function getAICache(userId: string, type: AnalysisType) {
   return { cached: true as const, data: cache.data, refreshedAt: cache.refreshedAt }
 }
 
+const TOTAL_TABS = 4 // diagnose | predict | intervene | recommend
+
 /**
  * Kiểm tra xem user có được phép refresh không.
- * Trả về { allowed: true } hoặc { allowed: false, nextAt, daysLeft }
+ * - Nếu chưa có đủ 4 tab cache (đang khởi tạo lần đầu) → luôn cho phép
+ * - Sau khi đủ 4 tab: kiểm tra 14 ngày
  */
 export async function canRefresh(userId: string): Promise<
   { allowed: true } | { allowed: false; nextAt: Date; daysLeft: number }
 > {
+  // Cho phép nếu chưa khởi tạo đủ 4 tab
+  const cacheCount = await prisma.aIAnalysisCache.count({ where: { userId } })
+  if (cacheCount < TOTAL_TABS) return { allowed: true }
+
+  // Đủ 4 tab: kiểm tra 14 ngày
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { aiRefreshedAt: true },
