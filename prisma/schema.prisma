@@ -26,6 +26,8 @@ model User {
   sessionRecords    StudentSessionRecord[]
   aiCaches          AIAnalysisCache[]
   aiRefreshedAt     DateTime?  // Lần cuối refresh AI analysis
+  parentLinks       ParentStudentLink[] @relation("ParentLinks")
+  studentLinks      ParentStudentLink[] @relation("StudentLinks")
 
   @@map("avab_users")
 }
@@ -365,6 +367,19 @@ model AIAnalysisCache {
 
   @@unique([userId, analysisType])
   @@map("avab_ai_analysis_cache")
+}
+
+model ParentStudentLink {
+  id        String   @id @default(cuid())
+  parentId  String
+  studentId String
+  createdAt DateTime @default(now())
+
+  parent  User @relation("ParentLinks", fields: [parentId], references: [id], onDelete: Cascade)
+  student User @relation("StudentLinks", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([parentId, studentId])
+  @@map("avab_parent_student_links")
 }
 
 model Registration {
