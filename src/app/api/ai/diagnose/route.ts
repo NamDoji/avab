@@ -24,12 +24,14 @@ export async function GET(req: NextRequest) {
       // Không có cache, không phải force → trả empty, KHÔNG gọi OpenAI
       return NextResponse.json({ success: true, data: null })
     }
-    // force=1: kiểm tra giới hạn 14 ngày
-    const check = await canRefresh(userId)
-    if (!check.allowed) {
-      return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+    // init=1: bỏ qua giới hạn 14 ngày
+    const isInit = req.nextUrl.searchParams.get('init') === '1'
+    if (!isInit) {
+      const check = await canRefresh(userId)
+      if (!check.allowed) {
+        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+      }
     }
-
     // Lấy A2PLM context (P_i, G_i, C_t^i, SRL_t^i)
     const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
 
@@ -43,7 +45,9 @@ export async function GET(req: NextRequest) {
     ])
 
     if (answers.length === 0) {
-      return NextResponse.json({ success: true, data: { empty: true, message: 'Chưa có dữ liệu học tập. Hãy làm thử một số bài để AI có thể phân tích!', profile, srl } })
+      const emptyData = { empty: true, message: 'Học viên đang bắt đầu hành trình. Hãy làm thử một số bài để AI có thể phân tích sâu hơn!', profile, srl }
+      await saveAICache(userId, 'diagnose', emptyData) // lưu để không re-generate mãi
+      return NextResponse.json({ success: true, data: emptyData })
     }
 
     // BKT-inspired knowledge profiling

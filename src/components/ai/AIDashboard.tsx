@@ -682,11 +682,13 @@ export function AIDashboard({ userId }: Props) {
   }
 
   // Force refresh 1 tab, gọi OpenAI
-  const forceRefreshTab = async (tabId: TabId) => {
+  // init=true: bypass giới hạn 14 ngày (chỉ dùng lúc khởi tạo lần đầu)
+  const forceRefreshTab = async (tabId: TabId, init = false) => {
     const tab = TABS.find(t => t.id === tabId)
     if (!tab) return
     try {
-      const res = await fetch(`/api/ai/${tab.apiPath}?force=1`)
+      const params = init ? '?force=1&init=1' : '?force=1'
+      const res = await fetch(`/api/ai/${tab.apiPath}${params}`)
       const json = await res.json()
       if (res.status === 429 && json.error === 'refresh_limit') {
         setRefreshError({ nextAt: new Date(json.nextAt), daysLeft: json.daysLeft })
@@ -705,11 +707,11 @@ export function AIDashboard({ userId }: Props) {
   useEffect(() => {
     const init = async () => {
       const results = await Promise.all(TABS.map(t => loadCache(t.id)))
-      // Nếu tất cả đều null (user mới, chưa có cache) → tự generate
+      // Nếu tất cả đều null (user mới, chưa có cache) → tự generate với init=true
       if (results.every(r => !r)) {
         setInitializing(true)
         for (const t of TABS) {
-          await forceRefreshTab(t.id)
+          await forceRefreshTab(t.id, true) // init=true: bypass 14-day check
         }
         setInitializing(false)
       }

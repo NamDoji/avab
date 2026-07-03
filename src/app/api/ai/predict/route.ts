@@ -22,11 +22,13 @@ export async function GET(req: NextRequest) {
       }
       return NextResponse.json({ success: true, data: null })
     }
-    const check = await canRefresh(userId)
-    if (!check.allowed) {
-      return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+    const isInit = req.nextUrl.searchParams.get('init') === '1'
+    if (!isInit) {
+      const check = await canRefresh(userId)
+      if (!check.allowed) {
+        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+      }
     }
-
     const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
 
     const [answers, totalSubjects] = await Promise.all([
