@@ -117,6 +117,13 @@ export default async function AdminPage() {
                 <h3 className="font-black text-sm">Question Bank</h3>
                 <p className="text-teal-100 text-xs mt-0.5">Ngân hàng câu hỏi</p>
               </Link>
+              <Link href="/admin/gamification"
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 p-4 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg col-span-2">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">🎮</div>
+                <h3 className="font-black text-sm">Gamification</h3>
+                <p className="text-yellow-100 text-xs mt-0.5">XP · Badge · Mission · Leaderboard</p>
+              </Link>
             </div>
           </div>
         </div>
@@ -158,7 +165,7 @@ export default async function AdminPage() {
           <div className="grid grid-cols-3 gap-3 mb-5">
             {[
               { href: '/giao-vien', icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Nhận xét · Lớp học · BTVN',        color: 'from-cyan-500 to-teal-600'     },
-              { href: '/hoc-vien',  icon: '👦',   label: 'Học sinh',   desc: 'Bài tập · AI Tutor · Tiến độ',     color: 'from-blue-500 to-indigo-600'   },
+              { href: '/hoc-vien',  icon: '👦',   label: 'Học sinh',   desc: 'Bài tập · AI Tutor · Thành tích · Tiến độ',     color: 'from-blue-500 to-indigo-600'   },
               { href: '/phu-huynh',icon: '👨‍👩‍👧‍👦', label: 'Phụ huynh', desc: 'Theo dõi con · Báo cáo học tập',   color: 'from-orange-400 to-amber-500'  },
             ].map(p => (
               <Link key={p.href} href={p.href}

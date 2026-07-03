@@ -31,6 +31,9 @@ model User {
   aiProjects        AIProject[]
   userRoles         UserRole[]
   auditLogs         AuditLog[]
+  userBadges        UserBadge[]
+  userMissions      UserMission[]
+  userStats         UserStats?
 
   @@map("avab_users")
 }
@@ -529,6 +532,106 @@ model AuditLog {
   @@index([entityType, entityId])
   @@index([createdAt])
   @@map("avab_audit_logs")
+}
+
+// ── Gamification (mục 13) ────────────────────────────────────────
+
+model Badge {
+  id          String   @id @default(cuid())
+  key         String   @unique  // "first-login" | "perfect-score" | "10-lessons" ...
+  name        String
+  description String?
+  icon        String            // emoji or icon key
+  color       String   @default("yellow")  // for UI
+  xpReward    Int      @default(0)
+  coinReward  Int      @default(0)
+  condition   Json?             // { type: 'lessons_done', count: 10 } etc.
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  userBadges UserBadge[]
+
+  @@map("avab_badges")
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("avab_user_badges")
+}
+
+model Mission {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?
+  icon        String
+  type        String   @default("daily") // daily | weekly | achievement
+  target      Int      @default(1)       // e.g. answer 5 questions
+  metric      String                     // "questions_answered" | "lessons_viewed" | "login" ...
+  xpReward    Int      @default(0)
+  coinReward  Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  userMissions UserMission[]
+
+  @@map("avab_missions")
+}
+
+model UserMission {
+  id        String    @id @default(cuid())
+  userId    String
+  missionId String
+  progress  Int       @default(0)   // current progress toward target
+  completed Boolean   @default(false)
+  claimedAt DateTime?
+  resetAt   DateTime?              // for daily/weekly resets
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, missionId])
+  @@map("avab_user_missions")
+}
+
+model UserStats {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  xp         Int      @default(0)
+  coin       Int      @default(0)
+  level      Int      @default(1)
+  streak     Int      @default(0)    // consecutive login days
+  lastLoginAt DateTime?
+  totalAnswers  Int   @default(0)
+  correctAnswers Int  @default(0)
+  lessonsViewed  Int  @default(0)
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("avab_user_stats")
+}
+
+model XPLog {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    String   // "answer_correct" | "lesson_complete" | "badge_earned" | "mission_complete" ...
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("avab_xp_logs")
 }
 
 // ── Job Queue (mục 9) ──────────────────────────────────────────────────

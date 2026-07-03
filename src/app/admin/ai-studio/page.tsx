@@ -182,6 +182,32 @@ export default async function AIStudioPage() {
       {/* ── Content ───────────────────────────────────────────────────────── */}
       <div className="container-custom py-8 space-y-8">
 
+        {/* Course Generator — hero entry point */}
+        <div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🚀 Khởi động nhanh</p>
+          <Link href="/admin/ai-studio/course-generator"
+            className="block relative overflow-hidden rounded-3xl p-6 text-white hover:scale-[1.005] transition-transform shadow-lg hover:shadow-xl"
+            style={{ background: 'linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%)' }}>
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%, -50%)' }} />
+            <div className="relative flex items-center gap-5">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                🚀
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h2 className="text-2xl font-black text-white">Course Generator</h2>
+                  <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.25)' }}>AI</span>
+                </div>
+                <p className="text-white/80 text-sm">Nhập chủ đề → AI tự sinh toàn bộ: Lý thuyết · Bài tập · Đáp án · Quiz · GV Guide · Video Script</p>
+                <div className="mt-3 flex items-center gap-2 text-sm font-bold text-white/90">
+                  <span>Tạo khóa học ngay</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+
         {projects.length === 0 && (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">✨</div>
