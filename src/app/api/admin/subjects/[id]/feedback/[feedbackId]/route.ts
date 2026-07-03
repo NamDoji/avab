@@ -58,11 +58,19 @@ export async function PATCH(
 
   const { feedbackId } = await params
   const body = await req.json()
-  const { recordId, userId, ...rawData } = body
+  const { userId } = body
 
-  // Lọc bỏ các giá trị undefined để tránh overwrite vô ý
+  // Chỉ lấy các field hợp lệ để tránh gửi relation object vào Prisma
+  const ALLOWED_FIELDS = new Set([
+    'attendance', 'focusLevel', 'participationLevel', 'speakingCount',
+    'answerQuality', 'comprehension', 'discipline',
+    'observation', 'comparison', 'classification', 'patternRecognition', 'expression',
+    'emotionState', 'teacherNote', 'aiComment', 'aiCommentAt',
+    'hwScore', 'hwCorrect', 'hwTotal',
+  ])
   const updateData = Object.fromEntries(
-    Object.entries(rawData).filter(([, v]) => v !== undefined)
+    Object.entries(body)
+      .filter(([k, v]) => ALLOWED_FIELDS.has(k) && v !== undefined)
   )
 
   // Upsert record

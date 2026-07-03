@@ -64,8 +64,20 @@ function StudentDrawer({
   onAI: (userId: string) => Promise<void>
   aiLoading: boolean
 }) {
-  const [form, setForm] = useState<Partial<SessionRecord>>(record)
+  // Chỉ lưu các field được phép (tránh gửi relation object lên API)
+  const SAVEABLE_FIELDS: (keyof SessionRecord)[] = [
+    'attendance', 'focusLevel', 'participationLevel', 'speakingCount',
+    'answerQuality', 'comprehension', 'discipline',
+    'observation', 'comparison', 'classification', 'patternRecognition', 'expression',
+    'emotionState', 'teacherNote', 'aiComment',
+  ]
+  const initForm = () => Object.fromEntries(
+    SAVEABLE_FIELDS.map(k => [k, (record as any)[k] ?? null])
+  ) as Partial<SessionRecord>
+
+  const [form, setForm] = useState<Partial<SessionRecord>>(initForm)
   const [saving, setSaving] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'ok' | 'error'>('idle')
   const [aiComment, setAiComment] = useState(record.aiComment ?? '')
 
   const set = (key: keyof SessionRecord, val: any) => setForm(f => ({ ...f, [key]: val }))
@@ -79,8 +91,15 @@ function StudentDrawer({
 
   const save = async () => {
     setSaving(true)
-    // Luôn dùng giá trị mới nhất của aiComment (tránh stale form)
-    await onSave(record.userId, { ...form, aiComment: aiComment || form.aiComment || null })
+    setSaveStatus('idle')
+    try {
+      await onSave(record.userId, { ...form, aiComment: aiComment || form.aiComment || null })
+      setSaveStatus('ok')
+      setTimeout(() => setSaveStatus('idle'), 2000)
+    } catch {
+      setSaveStatus('error')
+      setTimeout(() => setSaveStatus('idle'), 3000)
+    }
     setSaving(false)
   }
 
@@ -102,9 +121,16 @@ function StudentDrawer({
             <p className="text-white/70 text-xs">{record.user.phone}</p>
           </div>
           <button onClick={save} disabled={saving}
-            className="flex items-center gap-1.5 bg-white text-purple-700 font-bold px-3 py-1.5 rounded-xl text-sm hover:bg-purple-50 transition disabled:opacity-60">
-            {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
-            Lưu
+            className={`flex items-center gap-1.5 font-bold px-3 py-1.5 rounded-xl text-sm transition disabled:opacity-60 ${
+              saveStatus === 'ok' ? 'bg-green-500 text-white' :
+              saveStatus === 'error' ? 'bg-red-500 text-white' :
+              'bg-white text-purple-700 hover:bg-purple-50'
+            }`}>
+            {saving ? <Loader2 size={14} className="animate-spin" /> :
+             saveStatus === 'ok' ? <Check size={14} /> :
+             saveStatus === 'error' ? <X size={14} /> :
+             <Check size={14} />}
+            {saving ? 'Đang lưu...' : saveStatus === 'ok' ? 'Đã lưu!' : saveStatus === 'error' ? 'Lỗi!' : 'Lưu'}
           </button>
         </div>
 
@@ -339,11 +365,9 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
       body: JSON.stringify({ userId, ...updateData }),
     })
     const data = await res.json()
-    if (data.success) {
-      setRecords(prev => prev.map(r => r.userId === userId ? { ...r, ...data.data } : r))
-      // Update drawer record too
-      if (drawerRecord?.userId === userId) setDrawerRecord(prev => prev ? { ...prev, ...data.data } : null)
-    }
+    if (!data.success) throw new Error(data.error || 'Lưu thất bại')
+    setRecords(prev => prev.map(r => r.userId === userId ? { ...r, ...data.data } : r))
+    if (drawerRecord?.userId === userId) setDrawerRecord(prev => prev ? { ...prev, ...data.data } : null)
   }
 
   const handleAIGenerate = async (userId: string | null) => {
