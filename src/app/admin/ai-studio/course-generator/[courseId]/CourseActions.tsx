@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 interface CourseActionsProps {
   courseId: string
   isActive: boolean
+  isPublic: boolean
 }
 
 type ContentType = 'lessons' | 'homework' | 'answers' | 'quiz' | 'teacher-guide' | 'video-script'
@@ -77,10 +78,12 @@ const EXPORT_TYPES: { type: string; label: string }[] = [
   { type: 'all',           label: '📦 Full' },
 ]
 
-export default function CourseActions({ courseId, isActive }: CourseActionsProps) {
+export default function CourseActions({ courseId, isActive, isPublic: initialIsPublic }: CourseActionsProps) {
   const router  = useRouter()
   const [busy,  setBusy]  = useState(false)
   const [error, setError] = useState('')
+  const [isPublic, setIsPublic] = useState(initialIsPublic)
+  const [togglingPublic, setTogglingPublic] = useState(false)
 
   const [states, setStates] = useState<Record<ContentType, GenState>>(
     Object.fromEntries(
@@ -196,6 +199,21 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
     }
   }
 
+  const togglePublic = async () => {
+    setTogglingPublic(true)
+    try {
+      const res  = await fetch(`/api/admin/ai-studio/course-generator/${courseId}`, {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ action: isPublic ? 'make-private' : 'make-public' }),
+      })
+      const data = await res.json() as { success: boolean; error?: string }
+      if (data.success) { setIsPublic(p => !p); router.refresh() }
+      else setError(data.error ?? 'Lỗi')
+    } catch { setError('Lỗi kết nối') }
+    finally { setTogglingPublic(false) }
+  }
+
   const toggle = async () => {
     setError('')
     setBusy(true)
@@ -250,6 +268,23 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
           🔗 Quản lý khóa học
         </a>
       </div>
+
+      {/* ── isPublic toggle ──────────────────────────────────────────────── */}
+      <button
+        onClick={togglePublic}
+        disabled={togglingPublic || anyLoading}
+        className={`w-full py-2.5 rounded-xl font-semibold text-sm transition-all border-2 disabled:opacity-60 ${
+          isPublic
+            ? 'bg-green-50 border-green-300 text-green-700 hover:bg-green-100'
+            : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'
+        }`}
+      >
+        {togglingPublic
+          ? '⏳ Đang cập nhật...'
+          : isPublic
+          ? '🌐 Public — Hiển thị trên avab.vn/khoa-hoc (click để ẩn)'
+          : '🔒 Private — Chỉ trường này thấy (click để public)'}
+      </button>
 
 {/* ── Pipeline label ─────────────────────────────────────────────── */}
       <div className="pt-3 border-t border-gray-100">

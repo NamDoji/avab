@@ -51,18 +51,20 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
     }
 
     const { courseId }                   = await context.params
-    const { action } = await req.json() as { action: 'publish' | 'unpublish' }
+    const { action } = await req.json() as { action: 'publish' | 'unpublish' | 'make-public' | 'make-private' }
 
-    if (action !== 'publish' && action !== 'unpublish') {
-      return NextResponse.json({ error: 'Invalid action. Use publish or unpublish.' }, { status: 400 })
+    if (!['publish','unpublish','make-public','make-private'].includes(action)) {
+      return NextResponse.json({ error: 'Invalid action.' }, { status: 400 })
     }
 
     const course = await prisma.course.update({
       where: { id: courseId },
-      data:  { isActive: action === 'publish' },
+      data:  action === 'publish' || action === 'unpublish'
+        ? { isActive: action === 'publish' }
+        : { isPublic: action === 'make-public' },
     })
 
-    return NextResponse.json({ success: true, isActive: course.isActive })
+    return NextResponse.json({ success: true, isActive: course.isActive, isPublic: course.isPublic })
   } catch (err) {
     console.error('[Course Generator] PATCH error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

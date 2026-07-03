@@ -153,7 +153,7 @@ export default async function CourseGeneratorResultPage({
           )}
 
           {/* Actions */}
-          <CourseActions courseId={courseId} isActive={course.isActive} />
+          <CourseActions courseId={courseId} isActive={course.isActive} isPublic={course.isPublic} />
 
           {/* Job Queue Panel */}
           <JobQueuePanel courseId={courseId} />
