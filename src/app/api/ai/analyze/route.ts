@@ -65,7 +65,7 @@ Phân tích và trả về JSON (không markdown):
   "strengths": ["Điểm mạnh 1"],
   "errorPatterns": ["Lỗi phổ biến 1 (giải thích ngắn)"],
   "recommendation": "Lời khuyên cụ thể tiếp theo",
-  "encouragement": "Câu động viên phù hợp với trẻ 5-6 tuổi"
+  "encouragement": "Câu động viên cá nhân hoá, phù hợp với lứa tuổi và môn học"
 }`
 
     const completion = await openai.chat.completions.create({

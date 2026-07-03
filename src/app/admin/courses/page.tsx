@@ -4,29 +4,59 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BookOpen, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 
+// Legacy CourseType kept for backward compat with existing courses
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 
-const COURSE_TYPE_OPTIONS: { value: CourseType; label: string; emoji: string; color: string }[] = [
-  { value: 'TOAN',                 label: 'Toán',                    emoji: '📐', color: 'bg-blue-50 text-blue-700' },
-  { value: 'TIENG_ANH',            label: 'Tiếng Anh',               emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
-  { value: 'LAP_TRINH_THUAT_TOAN', label: 'Lập trình thuật toán',    emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
-  { value: 'LAP_TRINH_SCRATCH',    label: 'Lập trình Scratch',       emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
-  { value: 'LAP_TRINH_PYTHON',     label: 'Lập trình Python',        emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
-  { value: 'LAP_TRINH_CPP',        label: 'Lập trình C++',           emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+// K12 generic subject codes — extensible, no longer a closed enum
+const SUBJECT_CODE_OPTIONS: { value: string; label: string; emoji: string; color: string }[] = [
+  { value: 'THINKING_MATH', label: 'Toán Tư Duy',         emoji: '🧠', color: 'bg-blue-50 text-blue-700' },
+  { value: 'MATH',          label: 'Toán',                  emoji: '📐', color: 'bg-indigo-50 text-indigo-700' },
+  { value: 'ENGLISH',       label: 'Tiếng Anh',            emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
+  { value: 'ALGO',          label: 'Thuật Toán',           emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
+  { value: 'SCRATCH',       label: 'Scratch',               emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
+  { value: 'PYTHON',        label: 'Python',                emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
+  { value: 'CPP',           label: 'C++',                   emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+  { value: 'SCIENCE',       label: 'Khoa học',             emoji: '🔬', color: 'bg-cyan-50 text-cyan-700' },
+  { value: 'HISTORY',       label: 'Lịch sử',              emoji: '🏰', color: 'bg-amber-50 text-amber-700' },
+  { value: 'IELTS',         label: 'IELTS',                 emoji: '🇸🇦', color: 'bg-sky-50 text-sky-700' },
+  { value: 'CAMBRIDGE',     label: 'Cambridge',             emoji: '🇨🇦', color: 'bg-rose-50 text-rose-700' },
+  { value: 'GENERAL',       label: 'Tổng hợp',             emoji: '📚', color: 'bg-gray-50 text-gray-700' },
 ]
 
-function CourseTypeBadge({ type }: { type: CourseType }) {
-  const opt = COURSE_TYPE_OPTIONS.find(o => o.value === type) ?? COURSE_TYPE_OPTIONS[0]
+function SubjectCodeBadge({ code, name }: { code?: string; name?: string | null }) {
+  const opt = SUBJECT_CODE_OPTIONS.find(o => o.value === (code ?? '')) ?? SUBJECT_CODE_OPTIONS[SUBJECT_CODE_OPTIONS.length - 1]
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${opt.color}`}>
-      {opt.emoji} {opt.label}
+      {opt.emoji} {name || opt.label}
+    </span>
+  )
+}
+
+// Legacy badge for existing courses that only have courseType
+function CourseTypeBadge({ type }: { type: string }) {
+  const legacyMap: Record<string, { emoji: string; label: string; color: string }> = {
+    TOAN: { emoji: '📐', label: 'Toán', color: 'bg-blue-50 text-blue-700' },
+    TIENG_ANH: { emoji: '🇬🇧', label: 'Tiếng Anh', color: 'bg-green-50 text-green-700' },
+    LAP_TRINH_THUAT_TOAN: { emoji: '🤖', label: 'Thuật toán', color: 'bg-yellow-50 text-yellow-700' },
+    LAP_TRINH_SCRATCH: { emoji: '🐱', label: 'Scratch', color: 'bg-orange-50 text-orange-700' },
+    LAP_TRINH_PYTHON: { emoji: '🐍', label: 'Python', color: 'bg-teal-50 text-teal-700' },
+    LAP_TRINH_CPP: { emoji: '⚡', label: 'C++', color: 'bg-purple-50 text-purple-700' },
+  }
+  const meta = legacyMap[type] ?? { emoji: '📚', label: type || 'Khác', color: 'bg-gray-50 text-gray-700' }
+  return (
+    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${meta.color}`}>
+      {meta.emoji} {meta.label}
     </span>
   )
 }
 
 type PaymentType = 'PER_COURSE' | 'PER_SESSION'
 
-const GRADE_OPTIONS = Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` }))
+// K12 expanded grade options: preschool + Lớp 1-12 + all
+const GRADE_OPTIONS = [
+  { value: 'preschool', label: 'Mầm non' },
+  ...Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
+]
 
 function GradeBadges({ grade }: { grade: string | null }) {
   if (!grade) return <span className="text-xs text-gray-400">Tất cả lớp</span>
@@ -49,7 +79,11 @@ interface Course {
   pricePerSession: number | null
   paymentType: PaymentType
   grade: string | null
-  courseType: CourseType
+  courseType: string          // Legacy field (preserved as string)
+  subjectCode: string        // K12 generic: THINKING_MATH, ENGLISH, MATH...
+  subjectName: string | null // Display name override
+  gradeMin: number | null
+  gradeMax: number | null
   isActive: boolean
   createdAt: string
   _count: { subjects: number; enrollments: number }
@@ -67,7 +101,8 @@ export default function AdminCoursesPage() {
     pricePerSession: '200000',
     paymentType: 'PER_COURSE' as PaymentType,
     grades: [] as string[],
-    courseType: 'TOAN' as CourseType,
+    subjectCode: 'THINKING_MATH',
+    subjectName: '',
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -94,12 +129,13 @@ export default function AdminCoursesPage() {
         price: form.paymentType === 'PER_COURSE' ? Number(form.price) : null,
         pricePerSession: form.paymentType === 'PER_SESSION' ? Number(form.pricePerSession) : null,
         grade: form.grades.length > 0 ? form.grades.join(',') : null,
+        subjectName: form.subjectName || null,
       }),
     })
     const data = await res.json()
     if (data.success) {
       setShowForm(false)
-      setForm({ code: '', name: '', description: '', price: '1500000', pricePerSession: '200000', paymentType: 'PER_COURSE', grades: [], courseType: 'TOAN' })
+      setForm({ code: '', name: '', description: '', price: '1500000', pricePerSession: '200000', paymentType: 'PER_COURSE', grades: [], subjectCode: 'THINKING_MATH', subjectName: '' })
       load()
     } else {
       setError(data.error)

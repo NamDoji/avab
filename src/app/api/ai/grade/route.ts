@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
           { role: 'system', content: AVAB_SYSTEM },
           {
             role: 'user',
-            content: `Bạn là AI chấm bài toán tư duy cho học sinh tiểu học Việt Nam (luyện thi học bổng vào lớp 1).
-Chuyên đề: ${subjectName || 'Toán Tư Duy'}
+            content: `Bạn là AI chấm bài của AvaB — nền tảng giáo dục K12 thông minh tại Việt Nam.
+Chuyên đề: ${subjectName || 'Học tập'}
 Bài làm của học sinh:
 ${studentText}
 
@@ -36,7 +36,7 @@ Hãy chấm và trả về JSON (không thêm markdown):
   "score": <điểm từ 0-10>,
   "feedback": "<nhận xét chi tiết về bài làm, điểm mạnh yếu>",
   "pathway": "<lộ trình học tập cá nhân hoá tiếp theo>",
-  "prediction": "<dự đoán khả năng đỗ vào trường CLC và học bổng>"
+  "prediction": "<đánh giá tiếm năng và hướng phát triển phù hợp>"
 }`,
           },
         ],
@@ -62,7 +62,7 @@ Hãy chấm và trả về JSON (không thêm markdown):
         { role: 'system', content: AVAB_SYSTEM },
         {
           role: 'user',
-          content: `Chuyên đề: ${subjectName || 'Toán Tư Duy'}
+          content: `Chuyên đề: ${subjectName || 'Học tập'}
 
 Câu hỏi: ${question}
 Đáp án đúng: ${correctAnswer}

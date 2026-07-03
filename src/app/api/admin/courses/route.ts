@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseType, courseDurationMonths } = body
+    const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseType, subjectCode, subjectName, gradeMin, gradeMax, curriculumId, courseDurationMonths } = body
 
     if (!code || !name) {
       return NextResponse.json(
@@ -57,8 +57,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Legacy courseType kept for backward compat; new code should use subjectCode
     const validCourseTypes = ['TOAN', 'TIENG_ANH', 'LAP_TRINH_THUAT_TOAN', 'LAP_TRINH_SCRATCH', 'LAP_TRINH_PYTHON', 'LAP_TRINH_CPP']
-    const finalCourseType = courseType && validCourseTypes.includes(courseType) ? courseType : 'TOAN'
+    const finalCourseType = courseType && validCourseTypes.includes(courseType) ? courseType : (courseType || 'TOAN')
     const validPaymentTypes = ['PER_COURSE', 'PER_SESSION']
     const finalPaymentType = paymentType && validPaymentTypes.includes(paymentType) ? paymentType : 'PER_COURSE'
 
@@ -73,7 +74,13 @@ export async function POST(request: NextRequest) {
         paymentType: finalPaymentType as any,
         grade: grade || null,
         courseDurationMonths: courseDurationMonths ?? 18,
-        courseType: finalCourseType as any,
+        courseType: finalCourseType,
+        // K12 generic fields
+        subjectCode: subjectCode || 'GENERAL',
+        subjectName: subjectName || null,
+        gradeMin: gradeMin ?? null,
+        gradeMax: gradeMax ?? null,
+        curriculumId: curriculumId || null,
       },
     })
 

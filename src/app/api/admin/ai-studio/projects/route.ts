@@ -1,0 +1,99 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+
+// ─── GET — list projects for current user ──────────────────────────────────
+
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth()
+    if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const userId = (session.user as { id?: string })?.id
+    if (!userId) return NextResponse.json({ error: 'No user id' }, { status: 401 })
+
+    const { searchParams } = new URL(req.url)
+    const status  = searchParams.get('status') ?? undefined
+    const grade   = searchParams.get('grade') ?? undefined
+    const subject = searchParams.get('subject') ?? undefined
+    const q       = searchParams.get('q') ?? undefined
+
+    const projects = await prisma.aIProject.findMany({
+      where: {
+        createdBy: userId,
+        ...(status  ? { status }  : {}),
+        ...(grade   ? { grade }   : {}),
+        ...(subject ? { subject } : {}),
+        ...(q       ? { OR: [
+          { title:   { contains: q, mode: 'insensitive' } },
+          { topic:   { contains: q, mode: 'insensitive' } },
+          { chapter: { contains: q, mode: 'insensitive' } },
+        ]} : {}),
+      },
+      include: {
+        steps: { orderBy: { stepNum: 'asc' } },
+      },
+      orderBy: { updatedAt: 'desc' },
+    })
+
+    return NextResponse.json({ success: true, projects })
+  } catch (err) {
+    console.error('[AI Studio] GET projects error:', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+// ─── POST — create new project ────────────────────────────────────────────
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await auth()
+    if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const userId = (session.user as { id?: string })?.id
+    if (!userId) return NextResponse.json({ error: 'No user id' }, { status: 401 })
+
+    const body = await req.json()
+    const { title, curriculum, grade, subject, subjectName, chapter, topic, objective, difficulty } = body
+
+    if (!title?.trim() || !grade || !subject || !topic?.trim()) {
+      return NextResponse.json({ error: 'Missing required fields: title, grade, subject, topic' }, { status: 400 })
+    }
+
+    const project = await prisma.aIProject.create({
+      data: {
+        title:       title.trim(),
+        curriculum:  curriculum  ?? 'K12-VN',
+        grade,
+        subject,
+        subjectName: subjectName ?? null,
+        chapter:     chapter?.trim()   ?? null,
+        topic:       topic.trim(),
+        objective:   objective?.trim() ?? null,
+        difficulty:  difficulty ?? 'medium',
+        status:      'draft',
+        createdBy:   userId,
+        // Create step 1 (Setup) as already done
+        steps: {
+          create: {
+            stepNum:  1,
+            stepType: 'setup',
+            status:   'done',
+            content:  `Project: ${title}\nGrade: ${grade}\nSubject: ${subjectName ?? subject}\nTopic: ${topic}`,
+            doneAt:   new Date(),
+          },
+        },
+      },
+      include: { steps: true },
+    })
+
+    return NextResponse.json({ success: true, project }, { status: 201 })
+  } catch (err) {
+    console.error('[AI Studio] POST project error:', err)
+    return NextResponse.json({ error: 'Internal server error', details: String(err) }, { status: 500 })
+  }
+}

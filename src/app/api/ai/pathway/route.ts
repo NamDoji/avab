@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
   "nextStep": "Chuyên đề nên học ngay bây giờ và lý do (1-2 câu)",
   "weekPlan": ["Ngày 1-2: ...", "Ngày 3-4: ...", "Ngày 5-7: ..."],
   "priority": ["Tên chuyên đề ưu tiên 1", "Tên chuyên đề ưu tiên 2", "Tên chuyên đề ưu tiên 3"],
-  "tip": "Mẹo học tập cụ thể cho tuần này (phù hợp trẻ 5-6 tuổi)",
+  "tip": "Mẹo học tập cụ thể cho tuần này, phù hợp với lứa tuổi và môn học",
   "milestone": "Mục tiêu ngắn hạn (1-2 tuần)"
 }`
 

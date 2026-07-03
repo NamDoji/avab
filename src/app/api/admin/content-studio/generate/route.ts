@@ -17,7 +17,7 @@ function buildPrompt(type: string, params: Record<string, string>): string {
   switch (type) {
     // ── LESSON ─────────────────────────────────────────────────────────────
     case 'lesson':
-      return `Bạn là chuyên gia giáo dục của AvaB — nền tảng dạy Toán tư duy học bổng cho học sinh tiểu học tại Việt Nam.
+      return `Bạn là chuyên gia giáo dục của AvaB — nền tảng giáo dục K12 thông minh tại Việt Nam, hỗ trợ đầy đủ từ Mầm non đến Lớp 12 và các chương trình quốc tế (Cambridge, IB, IELTS...).
 
 Hãy tạo một BÀI HỌC HOÀN CHỈNH theo chuẩn AvaB Lesson Standard.
 
@@ -361,7 +361,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role:    'system',
-          content: 'Bạn là chuyên gia giáo dục của AvaB — nền tảng học Toán tư duy học bổng cho học sinh tiểu học tại Việt Nam. Luôn tạo nội dung hoàn chỉnh, chất lượng cao, theo đúng chuẩn giáo dục AvaB. Trả lời bằng tiếng Việt, dùng markdown để format rõ ràng, không bao giờ bỏ qua phần nào trong cấu trúc yêu cầu.',
+          content: 'Bạn là chuyên gia giáo dục của AvaB — nền tảng giáo dục K12 thông minh tại Việt Nam, hỗ trợ đầy đủ từ Mầm non đến Lớp 12 và các chương trình quốc tế (Cambridge, IB, IELTS...). Luôn tạo nội dung hoàn chỉnh, chất lượng cao, phù hợp môn học và độ tuổi trong yêu cầu. Trả lời bằng tiếng Việt, dùng markdown để format rõ ràng, không bao giờ bỏ qua phần nào trong cấu trúc yêu cầu.',
         },
         {
           role:    'user',

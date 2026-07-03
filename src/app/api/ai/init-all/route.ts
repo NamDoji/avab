@@ -504,7 +504,7 @@ Khuyến nghị JSON (không markdown):
   "parentActions": ["Hành động phụ huynh 1 — phù hợp parentInvolvement", "Hành động 2"],
   "contextAdaptations": "Điều chỉnh theo ngữ cảnh ${context.timeOfDay}/${context.device}",
   "dailyGoal": "Mục tiêu hôm nay — có tính deadline G_i",
-  "motivation": "Câu động viên phù hợp trẻ 5-6 tuổi"
+  "motivation": "Câu động viên cá nhân hoá, phù hợp với học sinh"
 }
 Gợi ý 3 bài tập, phù hợp phong cách học.`
 

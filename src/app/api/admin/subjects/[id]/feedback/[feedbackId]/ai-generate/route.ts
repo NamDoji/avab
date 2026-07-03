@@ -111,7 +111,7 @@ export async function POST(
 
     const highlightText = highlights.length > 0 ? `Điểm nổi bật: ${highlights.join(', ')}` : ''
 
-    const prompt = `Bạn là giáo viên dạy Toán Tư Duy cho trẻ 5-6 tuổi tại AvaB. Viết nhận xét buổi học cho: ${record.user.name ?? 'học sinh'} — Buổi ${sessionNumber} — Chuyên đề: ${feedback.subject.name}.
+    const prompt = `Bạn là giáo viên của AvaB — nền tảng giáo dục K12 thông minh. Viết nhận xét buổi học phù hợp với môn học cho: ${record.user.name ?? 'học sinh'} — Buổi ${sessionNumber} — Chuyên đề: ${feedback.subject.name}.
 
 PHONG CÁCH VIẾT LẦN NÀY: ${styleVariant}
 ${prevOpeningLine ? `TRÁNH bắt đầu tương tự: "${prevOpeningLine}..."` : ''}

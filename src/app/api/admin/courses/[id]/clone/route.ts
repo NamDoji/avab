@@ -70,6 +70,12 @@ export async function POST(
         courseDurationMonths: original.courseDurationMonths,
         grade: grade || null,
         courseType: original.courseType,
+        // K12 generic fields
+        subjectCode: original.subjectCode ?? 'GENERAL',
+        subjectName: original.subjectName,
+        gradeMin: original.gradeMin,
+        gradeMax: original.gradeMax,
+        curriculumId: original.curriculumId,
         isActive: false, // Ẩn cho đến khi admin kích hoạt
       },
     })

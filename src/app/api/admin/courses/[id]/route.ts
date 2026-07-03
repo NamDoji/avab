@@ -73,14 +73,19 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseDurationMonths, isActive, courseType } = body
+    const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseDurationMonths, isActive, courseType, subjectCode, subjectName, gradeMin, gradeMax, curriculumId } = body
 
     const validCourseTypes = ['TOAN', 'TIENG_ANH', 'LAP_TRINH_THUAT_TOAN', 'LAP_TRINH_SCRATCH', 'LAP_TRINH_PYTHON', 'LAP_TRINH_CPP']
     const validPaymentTypes = ['PER_COURSE', 'PER_SESSION']
     const updateData: any = { code, name, description, thumbnail, price, isActive }
-    if (courseType && validCourseTypes.includes(courseType)) {
-      updateData.courseType = courseType
-    }
+    // Legacy courseType kept for backward compat
+    if (courseType) updateData.courseType = courseType
+    // K12 generic fields
+    if (subjectCode !== undefined) updateData.subjectCode = subjectCode || 'GENERAL'
+    if (subjectName !== undefined) updateData.subjectName = subjectName || null
+    if (gradeMin !== undefined) updateData.gradeMin = gradeMin ?? null
+    if (gradeMax !== undefined) updateData.gradeMax = gradeMax ?? null
+    if (curriculumId !== undefined) updateData.curriculumId = curriculumId || null
     if (paymentType && validPaymentTypes.includes(paymentType)) {
       updateData.paymentType = paymentType
     }
