@@ -103,11 +103,24 @@ export async function POST(
       return { userId, hwScore: total > 0 ? Math.round(correct / total * 100) : null, hwCorrect: correct, hwTotal: total }
     }))
 
+    // Mặc định tất cả = tốt (4/5) — GV chỉ sửa những bạn chưa tốt
     await prisma.studentSessionRecord.createMany({
       data: hwData.map(d => ({
         feedbackId: feedback.id,
         userId: d.userId,
         attendance: true,
+        focusLevel: 4,
+        participationLevel: 4,
+        speakingCount: 3,
+        answerQuality: 4,
+        comprehension: 4,
+        discipline: 4,
+        observation: 4,
+        comparison: 4,
+        classification: 4,
+        patternRecognition: 4,
+        expression: 4,
+        emotionState: 'good',
         hwScore: d.hwScore,
         hwCorrect: d.hwCorrect,
         hwTotal: d.hwTotal,

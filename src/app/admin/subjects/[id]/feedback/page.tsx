@@ -470,8 +470,11 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
           <div className="flex gap-2 shrink-0">
             {currentFeedback && (
               <button onClick={() => handleAIGenerate(null)} disabled={aiAllLoading}
-                className="flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 disabled:opacity-50 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition">
-                {aiAllLoading ? <><Loader2 size={14} className="animate-spin" /> Đang sinh...</> : <><Brain size={14} /> Sinh AI (tất cả)</>}
+                title="Sinh nhận xét AI cá nhân hóa cho toàn bộ học sinh trong buổi này"
+                className="flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 disabled:opacity-50 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-md">
+                {aiAllLoading
+                  ? <><Loader2 size={14} className="animate-spin" /> Đang sinh cả lớp...</>
+                  : <><Brain size={14} /> 🤖 Sinh nhận xét cả lớp</>}
               </button>
             )}
             <button onClick={() => setShowNewSession(true)}
@@ -644,7 +647,12 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                   value={newNote} onChange={e => setNewNote(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none" />
               </div>
-              <p className="text-xs text-gray-400">Sẽ tự động thêm {students.length} học sinh vào buổi này và load điểm BTVN gần nhất.</p>
+              <p className="text-xs text-gray-400">
+                Tự động thêm {students.length} học sinh và load điểm BTVN.
+              </p>
+              <div className="bg-blue-50 rounded-xl px-3 py-2 text-xs text-blue-700">
+                💡 Mặc định tất cả = tốt (4/5). Thầy/cô chỉ cần sửa những bạn cần điều chỉnh.
+              </div>
               <div className="flex gap-3">
                 <button onClick={handleCreateSession} disabled={creating}
                   className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl text-sm transition">
