@@ -34,6 +34,8 @@ model User {
   userBadges        UserBadge[]
   userMissions      UserMission[]
   userStats         UserStats?
+  organizationUsers OrganizationUser[]
+  campusUsers       CampusUser[]
   schoolUsers       SchoolUser[]
 
   @@map("avab_users")
@@ -93,6 +95,8 @@ model Course {
   grade                String?     // null = dành cho mọi lớp; "1".."9"
   homeworkCount        Int         @default(30)        // Số bài tập / chuyên đề
   quizCount            Int         @default(20)        // Số câu trong đề kiểm tra
+  organizationId       String?                        // null = AvaB demo / legacy
+  campusId             String?                        // null = shared across campuses
   isActive             Boolean     @default(true)
   approvalStatus       String      @default("draft") // draft | review | approved | published | archived
   createdAt            DateTime    @default(now())
@@ -101,7 +105,8 @@ model Course {
   subjects            Subject[]
   enrollments         Enrollment[]
   tuitionCollections  TuitionCollection[]
-  curriculum          Curriculum? @relation(fields: [curriculumId], references: [id], onDelete: SetNull)
+  curriculum          Curriculum?  @relation(fields: [curriculumId], references: [id], onDelete: SetNull)
+  organization        Organization? @relation("OrgCourses", fields: [organizationId], references: [id], onDelete: SetNull)
   schoolCourses       SchoolCourse[]
 
   @@map("avab_courses")
@@ -426,12 +431,15 @@ model AIProject {
   objective   String?  // Mục tiêu học tập
   difficulty  String   @default("medium") // easy/medium/hard
   status      String   @default("draft") // draft/in-progress/review/published
+  organizationId String?
+  campusId       String?
   createdBy   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   steps         AIProjectStep[]
-  createdByUser User @relation(fields: [createdBy], references: [id])
+  createdByUser User         @relation(fields: [createdBy], references: [id])
+  organization  Organization? @relation("OrgAIProjects", fields: [organizationId], references: [id], onDelete: SetNull)
 
   @@map("avab_ai_projects")
 }
@@ -451,6 +459,101 @@ model AIProjectStep {
   project AIProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("avab_ai_project_steps")
+}
+
+// ── Organization & Campus Foundation ──────────────────────────────
+
+model Organization {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique  // avab.vn/org/[slug]
+  logo        String?
+  domain      String?            // custom domain: abc.avab.vn
+  type        String    @default("CENTER") // SCHOOL | CENTER | CHAIN
+  country     String    @default("VN")
+  timezone    String    @default("Asia/Ho_Chi_Minh")
+  currency    String    @default("VND")
+  // Modules enabled for this org (JSON array)
+  modules     Json?     // ["erp","finance","crm","hrm","collab"]
+  settings    Json?     // branding, theme, custom fields
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  campuses         Campus[]
+  organizationUsers OrganizationUser[]
+  courses          Course[]     @relation("OrgCourses")
+  aiProjects       AIProject[]  @relation("OrgAIProjects")
+
+  @@map("avab_organizations")
+}
+
+model Campus {
+  id             String    @id @default(cuid())
+  organizationId String
+  name           String
+  code           String?   // short code: "Q1", "BD", "HN"
+  address        String?
+  phone          String?
+  email          String?
+  principalId    String?   // FK → User (set manually)
+  settings       Json?     // campus-specific overrides
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campusUsers  CampusUser[]
+
+  @@index([organizationId])
+  @@map("avab_campuses")
+}
+
+// User ↔ Organization (M:M — user có thể thuộc nhiều org)
+model OrganizationUser {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  orgRole        String   @default("MEMBER") // OWNER | ADMIN | MEMBER
+  isDefault      Boolean  @default(true)     // tổ chức chính của user
+  joinedAt       DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("avab_organization_users")
+}
+
+// User ↔ Campus (M:M — giáo viên có thể dạy nhiều cơ sở)
+model CampusUser {
+  id        String   @id @default(cuid())
+  campusId  String
+  userId    String
+  campusRole String? // override role tại campus này
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  campus Campus @relation(fields: [campusId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([campusId, userId])
+  @@map("avab_campus_users")
+}
+
+// Academic Year — scoped to Organization
+model AcademicYear {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String   // "Năm học 2025-2026"
+  startDate      DateTime
+  endDate        DateTime
+  isCurrent      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId])
+  @@map("avab_academic_years")
 }
 
 // ── RBAC — Role & Permission (mục 10 + yêu cầu RBAC) ─────────────────────────
