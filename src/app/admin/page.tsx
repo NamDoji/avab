@@ -174,10 +174,10 @@ export default async function AdminPage() {
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🔐 Hệ thống &amp; Bảo mật</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { href: '/admin/roles', icon: '🛡️', label: 'Roles', desc: 'Quản lý vai trò', color: 'hover:border-violet-300' },
+              { href: '/admin/roles', icon: '🛡️', label: 'Role Management', desc: 'Tạo và cấu hình roles', color: 'hover:border-violet-300' },
               { href: '/admin/roles/matrix', icon: '📊', label: 'Permission Matrix', desc: 'Ma trận phân quyền', color: 'hover:border-indigo-300' },
+              { href: '/admin/permissions', icon: '🔑', label: 'Permissions', desc: 'Danh mục quyền hạn', color: 'hover:border-slate-300' },
               { href: '/admin/audit', icon: '📋', label: 'Audit Log', desc: 'Lịch sử thay đổi', color: 'hover:border-slate-300' },
-              { href: '/admin/analytics', icon: '📈', label: 'Analytics', desc: 'Phân tích học tập', color: 'hover:border-orange-300' },
             ].map(item => (
               <Link key={item.href} href={item.href}
                 className={`bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all ${item.color}`}>
@@ -189,11 +189,24 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* ── Standards (small, tucked away) ───────────────────────────── */}
-        <div className="flex gap-3 flex-wrap">
+        {/* ── Standards ─────────────────────────────────────────────────── */}
+        <div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">📖 Chương trình & Tiêu chuẩn</p>
           <Link href="/admin/education-standards"
-            className="flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 border border-gray-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all text-sm font-semibold text-gray-700">
-            📖 AvaB Standards
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-700 to-slate-900 p-6 text-white hover:scale-[1.01] transition-transform shadow-lg hover:shadow-xl group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">📖</div>
+                <div>
+                  <h3 className="font-black text-xl">AvaB Standards</h3>
+                  <p className="text-slate-300 text-sm mt-0.5">Tiêu chuẩn giáo dục K12 · Lesson · QA · Publishing · Curriculum</p>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-2 flex-wrap">
+                {['K12 Vietnam', 'Cambridge', 'IB', 'IELTS', 'SAT'].map(t => (
+                  <span key={t} className="bg-white/10 text-white/80 text-xs font-semibold px-2.5 py-1 rounded-lg">{t}</span>
+                ))}
+              </div>
           </Link>
         </div>
 
