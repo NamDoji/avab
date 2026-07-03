@@ -70,17 +70,23 @@ function StudentDrawer({
 
   const set = (key: keyof SessionRecord, val: any) => setForm(f => ({ ...f, [key]: val }))
 
+  // Khi AI sinh xong, cập nhật cả local state VÀ form (fix bug: Lưu overwrite aiComment = null)
+  useEffect(() => {
+    const comment = record.aiComment ?? ''
+    setAiComment(comment)
+    setForm(f => ({ ...f, aiComment: record.aiComment ?? f.aiComment ?? null }))
+  }, [record.aiComment])
+
   const save = async () => {
     setSaving(true)
-    await onSave(record.userId, form)
+    // Luôn dùng giá trị mới nhất của aiComment (tránh stale form)
+    await onSave(record.userId, { ...form, aiComment: aiComment || form.aiComment || null })
     setSaving(false)
   }
 
   const handleAI = async () => {
     await onAI(record.userId)
   }
-
-  useEffect(() => { setAiComment(record.aiComment ?? '') }, [record.aiComment])
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -233,8 +239,10 @@ function StudentDrawer({
                   <textarea
                     rows={10}
                     value={aiComment}
-                    onChange={e => setAiComment(e.target.value)}
-                    onBlur={() => set('aiComment', aiComment)}
+                    onChange={e => {
+                      setAiComment(e.target.value)
+                      set('aiComment', e.target.value) // cập nhật form ngay khi gõ
+                    }}
                     className="w-full border border-purple-200 bg-purple-50 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
                   />
                   <p className="text-xs text-gray-400">Giáo viên có thể chỉnh sửa trước khi gửi phụ huynh</p>

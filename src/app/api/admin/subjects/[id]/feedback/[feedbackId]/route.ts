@@ -58,7 +58,12 @@ export async function PATCH(
 
   const { feedbackId } = await params
   const body = await req.json()
-  const { recordId, userId, ...updateData } = body
+  const { recordId, userId, ...rawData } = body
+
+  // Lọc bỏ các giá trị undefined để tránh overwrite vô ý
+  const updateData = Object.fromEntries(
+    Object.entries(rawData).filter(([, v]) => v !== undefined)
+  )
 
   // Upsert record
   const record = await prisma.studentSessionRecord.upsert({
