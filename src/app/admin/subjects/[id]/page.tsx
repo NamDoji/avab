@@ -7,6 +7,7 @@ import { ArrowLeft, Upload, Plus, Trash2, FileText, BookOpen, Video, CheckSquare
 // ── Types ──────────────────────────────────────────────────────────────────
 
 type QuestionType = 'OPEN' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'MATCHING' | 'ORDERING'
+  | 'MULTI_SELECT' | 'FILL_BLANK' | 'SHORT_ANSWER' | 'NUMBER_INPUT' | 'SORT_WORDS' | 'GROUP_CLASSIFY' | 'MULTI_BLANK'
 
 interface QuestionForm {
   questionType: QuestionType
@@ -24,6 +25,21 @@ interface QuestionForm {
   matchPairs: Array<{ left: string; right: string }>
   // ORDERING
   orderItems: string[]
+  // MULTI_SELECT
+  multiSelectOptions: Array<{ key: string; text: string }>
+  multiSelectCorrectKeys: string[]
+  // SHORT_ANSWER
+  caseSensitive: boolean
+  // NUMBER_INPUT
+  numberUnit: string
+  numberTolerance: string
+  // SORT_WORDS
+  sortWords: string[]
+  // GROUP_CLASSIFY
+  gcGroups: string[]
+  gcItems: Array<{ id: string; text: string; group: string }>
+  // MULTI_BLANK
+  multiBlanks: string[]
 }
 
 interface Question {
@@ -87,6 +103,13 @@ const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   TRUE_FALSE: '✅ Đúng/Sai',
   MATCHING: '🔗 Nối đáp án',
   ORDERING: '📋 Sắp xếp',
+  MULTI_SELECT: '☑️ Nhiều đáp án',
+  FILL_BLANK: '✏️ Điền từ',
+  SHORT_ANSWER: '💬 Trả lời ngắn',
+  NUMBER_INPUT: '🔢 Điền số',
+  SORT_WORDS: '🔀 Sắp xếp câu',
+  GROUP_CLASSIFY: '🗂️ Phân nhóm',
+  MULTI_BLANK: '📝 Nhiều chỗ trống',
 }
 
 const QUESTION_TYPE_BADGE: Record<string, string> = {
@@ -95,6 +118,13 @@ const QUESTION_TYPE_BADGE: Record<string, string> = {
   TRUE_FALSE: 'bg-green-100 text-green-700',
   MATCHING: 'bg-orange-100 text-orange-700',
   ORDERING: 'bg-violet-100 text-violet-700',
+  MULTI_SELECT: 'bg-indigo-100 text-indigo-700',
+  FILL_BLANK: 'bg-teal-100 text-teal-700',
+  SHORT_ANSWER: 'bg-cyan-100 text-cyan-700',
+  NUMBER_INPUT: 'bg-sky-100 text-sky-700',
+  SORT_WORDS: 'bg-pink-100 text-pink-700',
+  GROUP_CLASSIFY: 'bg-lime-100 text-lime-700',
+  MULTI_BLANK: 'bg-rose-100 text-rose-700',
 }
 
 const DEFAULT_FORM: QuestionForm = {
@@ -110,6 +140,15 @@ const DEFAULT_FORM: QuestionForm = {
   optionD: '',
   matchPairs: [{ left: '', right: '' }],
   orderItems: [''],
+  multiSelectOptions: [{ key: 'A', text: '' }, { key: 'B', text: '' }, { key: 'C', text: '' }, { key: 'D', text: '' }],
+  multiSelectCorrectKeys: [],
+  caseSensitive: false,
+  numberUnit: '',
+  numberTolerance: '0',
+  sortWords: [''],
+  gcGroups: ['Nhóm A', 'Nhóm B'],
+  gcItems: [{ id: '1', text: '', group: 'Nhóm A' }],
+  multiBlanks: [''],
 }
 
 // ── Component ──────────────────────────────────────────────────────────────
@@ -265,7 +304,26 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
     } else if (questionType === 'ORDERING') {
       options = qForm.orderItems
       correctAnswer = JSON.stringify(qForm.orderItems)
+    } else if (questionType === 'MULTI_SELECT') {
+      options = qForm.multiSelectOptions
+      correctAnswer = qForm.multiSelectCorrectKeys.slice().sort().join(',')
+    } else if (questionType === 'SHORT_ANSWER') {
+      options = { caseSensitive: qForm.caseSensitive }
+    } else if (questionType === 'NUMBER_INPUT') {
+      options = { unit: qForm.numberUnit, tolerance: Number(qForm.numberTolerance) }
+    } else if (questionType === 'SORT_WORDS') {
+      const validWords = qForm.sortWords.filter(w => w.trim())
+      options = validWords.map((word, i) => ({ id: String(i), word }))
+      correctAnswer = validWords.map((_, i) => String(i)).join(',')
+    } else if (questionType === 'GROUP_CLASSIFY') {
+      options = { groups: qForm.gcGroups, items: qForm.gcItems }
+      const correctMap: Record<string, string> = {}
+      qForm.gcItems.forEach(item => { correctMap[item.id] = item.group })
+      correctAnswer = JSON.stringify(correctMap)
+    } else if (questionType === 'MULTI_BLANK') {
+      correctAnswer = qForm.multiBlanks.filter(b => b.trim()).join('|')
     }
+    // FILL_BLANK: correctAnswer is already set from qForm.correctAnswer
 
     const body = {
       subjectId: id,
@@ -457,6 +515,43 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const removeOrderItem = (i: number) => setQForm(f => ({ ...f, orderItems: f.orderItems.filter((_, idx) => idx !== i) }))
   const updateOrderItem = (i: number, val: string) =>
     setQForm(f => ({ ...f, orderItems: f.orderItems.map((item, idx) => idx === i ? val : item) }))
+
+  // ── MULTI_SELECT helpers ──
+  const toggleMultiCorrect = (key: string) =>
+    setQForm(f => ({
+      ...f,
+      multiSelectCorrectKeys: f.multiSelectCorrectKeys.includes(key)
+        ? f.multiSelectCorrectKeys.filter(k => k !== key)
+        : [...f.multiSelectCorrectKeys, key]
+    }))
+  const updateMultiSelectOption = (i: number, val: string) =>
+    setQForm(f => ({ ...f, multiSelectOptions: f.multiSelectOptions.map((o, idx) => idx === i ? { ...o, text: val } : o) }))
+
+  // ── SORT_WORDS helpers ──
+  const addSortWord = () => setQForm(f => ({ ...f, sortWords: [...f.sortWords, ''] }))
+  const removeSortWord = (i: number) => setQForm(f => ({ ...f, sortWords: f.sortWords.filter((_, idx) => idx !== i) }))
+  const updateSortWord = (i: number, val: string) =>
+    setQForm(f => ({ ...f, sortWords: f.sortWords.map((w, idx) => idx === i ? val : w) }))
+
+  // ── GROUP_CLASSIFY helpers ──
+  const addGcGroup = () => setQForm(f => ({
+    ...f,
+    gcGroups: [...f.gcGroups, `Nhóm ${String.fromCharCode(65 + f.gcGroups.length)}`]
+  }))
+  const removeGcGroup = (i: number) => setQForm(f => ({ ...f, gcGroups: f.gcGroups.filter((_, idx) => idx !== i) }))
+  const addGcItem = () => setQForm(f => ({
+    ...f,
+    gcItems: [...f.gcItems, { id: String(Date.now()), text: '', group: f.gcGroups[0] || '' }]
+  }))
+  const removeGcItem = (i: number) => setQForm(f => ({ ...f, gcItems: f.gcItems.filter((_, idx) => idx !== i) }))
+  const updateGcItem = (i: number, field: 'text' | 'group', val: string) =>
+    setQForm(f => ({ ...f, gcItems: f.gcItems.map((item, idx) => idx === i ? { ...item, [field]: val } : item) }))
+
+  // ── MULTI_BLANK helpers ──
+  const addMultiBlank = () => setQForm(f => ({ ...f, multiBlanks: [...f.multiBlanks, ''] }))
+  const removeMultiBlank = (i: number) => setQForm(f => ({ ...f, multiBlanks: f.multiBlanks.filter((_, idx) => idx !== i) }))
+  const updateMultiBlank = (i: number, val: string) =>
+    setQForm(f => ({ ...f, multiBlanks: f.multiBlanks.map((b, idx) => idx === i ? val : b) }))
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Đang tải...</div>
   if (!subject) return <div className="min-h-screen flex items-center justify-center text-red-500">Không tìm thấy chuyên đề</div>
@@ -1149,6 +1244,254 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       ))}
                     </div>
                     <p className="text-xs text-gray-400 mt-2">💡 Thứ tự nhập vào ở đây chính là thứ tự đúng</p>
+                  </div>
+                )}
+
+                {/* ── MULTI_SELECT ── */}
+                {qForm.questionType === 'MULTI_SELECT' && (
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Các lựa chọn & Đáp án đúng (chọn nhiều) *</label>
+                    <div className="space-y-2">
+                      {qForm.multiSelectOptions.map((opt, i) => (
+                        <div key={opt.key} className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={qForm.multiSelectCorrectKeys.includes(opt.key)}
+                            onChange={() => toggleMultiCorrect(opt.key)}
+                            className="w-4 h-4 accent-purple-600 flex-shrink-0"
+                          />
+                          <span className="w-6 text-sm font-bold text-gray-600">{opt.key}.</span>
+                          <input
+                            required
+                            placeholder={`Lựa chọn ${opt.key}`}
+                            value={opt.text}
+                            onChange={e => updateMultiSelectOption(i, e.target.value)}
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    {qForm.multiSelectCorrectKeys.length === 0 && (
+                      <p className="text-xs text-orange-500 mt-1">⚠️ Chọn ít nhất 1 đáp án đúng bằng checkbox</p>
+                    )}
+                    <p className="text-xs text-gray-400 mt-1">💡 Đị nhớm chọn chỉ đúng khi chọn đúng tất cả</p>
+                  </div>
+                )}
+
+                {/* ── FILL_BLANK ── */}
+                {qForm.questionType === 'FILL_BLANK' && (
+                  <div>
+                    <p className="text-xs text-blue-600 bg-blue-50 rounded-lg px-3 py-2 mb-2">💡 Dùng <code className="font-mono font-bold">___</code> trong nội dung câu hỏi để đánh dấu chỗ trống. Đối với nhiều chỗ trống, cách nhau bằng <code className="font-mono font-bold">|</code></p>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Đáp án đúng *</label>
+                    <input
+                      required
+                      placeholder="VD: hà nội | việt nam (nếu nhiều chỗ)"
+                      value={qForm.correctAnswer}
+                      onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    />
+                  </div>
+                )}
+
+                {/* ── SHORT_ANSWER ── */}
+                {qForm.questionType === 'SHORT_ANSWER' && (
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Đáp án đúng *</label>
+                    <input
+                      required
+                      placeholder="Nhập đáp án..."
+                      value={qForm.correctAnswer}
+                      onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 mb-2"
+                    />
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={qForm.caseSensitive}
+                        onChange={e => setQForm(f => ({ ...f, caseSensitive: e.target.checked }))}
+                        className="w-4 h-4 accent-purple-600"
+                      />
+                      <span className="text-sm text-gray-600">Phân biệt chữ hoa/thường (case sensitive)</span>
+                    </label>
+                  </div>
+                )}
+
+                {/* ── NUMBER_INPUT ── */}
+                {qForm.questionType === 'NUMBER_INPUT' && (
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Đáp án số *</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <input
+                        required
+                        type="number"
+                        step="any"
+                        placeholder="42"
+                        value={qForm.correctAnswer}
+                        onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      />
+                      <input
+                        placeholder="Đơn vị (VD: cm, kg)"
+                        value={qForm.numberUnit}
+                        onChange={e => setQForm(f => ({ ...f, numberUnit: e.target.value }))}
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        placeholder="Sai số cho phép"
+                        value={qForm.numberTolerance}
+                        onChange={e => setQForm(f => ({ ...f, numberTolerance: e.target.value }))}
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      />
+                    </div>
+                    <div className="flex gap-2 mt-1">
+                      <p className="text-xs text-gray-400 flex-1">Số chính xác | Đơn vị (để trống nếu không có) | Sai số (0 = chính xác tuyệt đối)</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── SORT_WORDS ── */}
+                {qForm.questionType === 'SORT_WORDS' && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các từ (theo thứ tự đúng) *</label>
+                      <button type="button" onClick={addSortWord}
+                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        <Plus className="w-3.5 h-3.5" /> Thêm từ
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {qForm.sortWords.map((word, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400 w-5 text-center flex-shrink-0">{i + 1}</span>
+                          <input
+                            required
+                            placeholder={`Từ thứ ${i + 1}`}
+                            value={word}
+                            onChange={e => updateSortWord(i, e.target.value)}
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          />
+                          {qForm.sortWords.length > 1 && (
+                            <button type="button" onClick={() => removeSortWord(i)}
+                              className="text-gray-400 hover:text-red-500 flex-shrink-0">
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">💡 Nhập từng từ theo thứ tự đúng. Học sinh sẽ thấy các từ bị xáo trộn và cần sắp xếp lại.</p>
+                    <div className="mt-2 p-2 bg-purple-50 rounded-lg">
+                      <p className="text-xs font-semibold text-purple-700">Preview câu: <span className="font-normal">{qForm.sortWords.filter(w=>w.trim()).join(' ')}</span></p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── GROUP_CLASSIFY ── */}
+                {qForm.questionType === 'GROUP_CLASSIFY' && (
+                  <div>
+                    {/* Nhóm */}
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các nhóm *</label>
+                        <button type="button" onClick={addGcGroup}
+                          className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                          <Plus className="w-3.5 h-3.5" /> Thêm nhóm
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {qForm.gcGroups.map((g, i) => (
+                          <div key={i} className="flex items-center gap-1">
+                            <input
+                              value={g}
+                              onChange={e => setQForm(f => ({
+                                ...f,
+                                gcGroups: f.gcGroups.map((grp, idx) => idx === i ? e.target.value : grp)
+                              }))}
+                              className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 w-28"
+                            />
+                            {qForm.gcGroups.length > 2 && (
+                              <button type="button" onClick={() => removeGcGroup(i)}
+                                className="text-gray-400 hover:text-red-500">
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Items */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các mục cần phân loại *</label>
+                        <button type="button" onClick={addGcItem}
+                          className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                          <Plus className="w-3.5 h-3.5" /> Thêm mục
+                        </button>
+                      </div>
+                      <div className="space-y-2">
+                        {qForm.gcItems.map((item, i) => (
+                          <div key={item.id} className="flex items-center gap-2">
+                            <input
+                              required
+                              placeholder={`Mục ${i + 1}`}
+                              value={item.text}
+                              onChange={e => updateGcItem(i, 'text', e.target.value)}
+                              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            />
+                            <select
+                              value={item.group}
+                              onChange={e => updateGcItem(i, 'group', e.target.value)}
+                              className="border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
+                            >
+                              {qForm.gcGroups.map(g => <option key={g} value={g}>{g}</option>)}
+                            </select>
+                            {qForm.gcItems.length > 1 && (
+                              <button type="button" onClick={() => removeGcItem(i)}
+                                className="text-gray-400 hover:text-red-500 flex-shrink-0">
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── MULTI_BLANK ── */}
+                {qForm.questionType === 'MULTI_BLANK' && (
+                  <div>
+                    <p className="text-xs text-blue-600 bg-blue-50 rounded-lg px-3 py-2 mb-2">💡 Dùng <code className="font-mono font-bold">___1___</code>, <code className="font-mono font-bold">___2___</code>... trong nội dung câu hỏi để đánh dấu các chỗ trống.</p>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Đáp án cho từng chỗ trống *</label>
+                      <button type="button" onClick={addMultiBlank}
+                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        <Plus className="w-3.5 h-3.5" /> Thêm chỗ trống
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {qForm.multiBlanks.map((blank, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-xs bg-purple-100 text-purple-700 font-bold px-2 py-1 rounded-full w-16 text-center flex-shrink-0">Chỗ {i + 1}</span>
+                          <input
+                            required
+                            placeholder={`Đáp án chỗ ${i + 1}`}
+                            value={blank}
+                            onChange={e => updateMultiBlank(i, e.target.value)}
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          />
+                          {qForm.multiBlanks.length > 1 && (
+                            <button type="button" onClick={() => removeMultiBlank(i)}
+                              className="text-gray-400 hover:text-red-500 flex-shrink-0">
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 

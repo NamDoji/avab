@@ -134,6 +134,54 @@ function checkAnswerByType(answer: string, q: Question): boolean {
     }
   }
 
+  if (qType === 'MULTI_SELECT') {
+    const studentKeys = answer.split(',').map(s => s.trim()).filter(Boolean).sort()
+    const correctKeys = q.correctAnswer.split(',').map(s => s.trim()).filter(Boolean).sort()
+    return studentKeys.length === correctKeys.length &&
+      studentKeys.every((k, i) => k.toLowerCase() === correctKeys[i].toLowerCase())
+  }
+
+  if (qType === 'FILL_BLANK') {
+    const stuParts = answer.split('|').map(s => s.trim().toLowerCase())
+    const corrParts = q.correctAnswer.split('|').map(s => s.trim().toLowerCase())
+    return stuParts.length === corrParts.length && stuParts.every((p, i) => p === corrParts[i])
+  }
+
+  if (qType === 'SHORT_ANSWER') {
+    const caseSens = (q.options as any)?.caseSensitive === true
+    const a = caseSens ? answer.trim() : answer.trim().toLowerCase()
+    const b = caseSens ? q.correctAnswer.trim() : q.correctAnswer.trim().toLowerCase()
+    return a === b
+  }
+
+  if (qType === 'NUMBER_INPUT') {
+    const tolerance = Number((q.options as any)?.tolerance ?? 0)
+    const studentNum = parseFloat(String(answer).replace(',', '.'))
+    const correctNum = parseFloat(String(q.correctAnswer).replace(',', '.'))
+    return !isNaN(studentNum) && !isNaN(correctNum) && Math.abs(studentNum - correctNum) <= tolerance
+  }
+
+  if (qType === 'SORT_WORDS') {
+    const studentIds = answer.split(',').map(s => s.trim())
+    const correctIds = q.correctAnswer.split(',').map(s => s.trim())
+    return studentIds.length === correctIds.length && studentIds.every((id, i) => id === correctIds[i])
+  }
+
+  if (qType === 'GROUP_CLASSIFY') {
+    try {
+      const studentMap = JSON.parse(answer)
+      const correctMap = JSON.parse(q.correctAnswer)
+      const keys = Object.keys(correctMap)
+      return keys.length > 0 && keys.every(k => studentMap[k] === correctMap[k])
+    } catch { return false }
+  }
+
+  if (qType === 'MULTI_BLANK') {
+    const stuParts = answer.split('|').map(s => s.trim().toLowerCase())
+    const corrParts = q.correctAnswer.split('|').map(s => s.trim().toLowerCase())
+    return stuParts.length === corrParts.length && stuParts.every((p, i) => p === corrParts[i])
+  }
+
   return smartMatch(answer, q.correctAnswer)
 }
 
@@ -501,6 +549,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   const [activeAnswerIdx, setActiveAnswerIdx] = useState(0)
   const [activeAnswerSetIdx, setActiveAnswerSetIdx] = useState(0)
 
+  // ── State for new question types ──
+  const [multiSelectState, setMultiSelectState] = useState<Record<string, string[]>>({})
+  // SORT_WORDS: ids of words placed in order by student
+  const [sortWordsOrder, setSortWordsOrder] = useState<Record<string, string[]>>({})
+  const [groupClassifyState, setGroupClassifyState] = useState<Record<string, Record<string, string>>>({})
+  const [multiBlankState, setMultiBlankState] = useState<Record<string, string[]>>({})
+
   // Fetch AI quiz gen count on mount
   useEffect(() => {
     fetch(`/api/ai/generate-quiz?subjectId=${subject.id}`)
@@ -532,6 +587,18 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
   // ── Compute the final answer string for any question type ─────────────────
   const computeAnswer = (q: Question): string => {
     const qType = (q.questionType || 'OPEN').toUpperCase()
+    if (qType === 'MULTI_SELECT') {
+      return (multiSelectState[q.id] || []).slice().sort().join(',')
+    }
+    if (qType === 'SORT_WORDS') {
+      return (sortWordsOrder[q.id] || []).join(',')
+    }
+    if (qType === 'GROUP_CLASSIFY') {
+      return JSON.stringify(groupClassifyState[q.id] || {})
+    }
+    if (qType === 'MULTI_BLANK') {
+      return (multiBlankState[q.id] || []).join('|')
+    }
     if (qType === 'MATCHING') {
       // Extract left keys via regex — works even when options is null/undefined
       const getLeftKeys = (src: string) =>
@@ -586,9 +653,15 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       setShowHint(p      => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
       setHintPeeked(p    => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
       setMatchingInputs(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setMultiSelectState(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setSortWordsOrder(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setGroupClassifyState(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
+      setMultiBlankState(p => { const n = { ...p }; wrongIds.forEach(id => delete n[id]); return n })
     } else {
       setSubmitted({}); setResults({}); setUserAnswers({})
       setShowHint({}); setHintPeeked({}); setMatchingInputs({})
+      setMultiSelectState({}); setSortWordsOrder({})
+      setGroupClassifyState({}); setMultiBlankState({})
     }
   }
 
@@ -876,6 +949,371 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       )
     }
 
+    // ── MULTI_SELECT ───────────────────────────────────────────────────────────
+    if (qType === 'MULTI_SELECT') {
+      const opts = (q.options || []) as QuestionOption[]
+      const selected = multiSelectState[q.id] || []
+      const toggleSel = (key: string) => {
+        if (isDone) return
+        setMultiSelectState(prev => {
+          const cur = prev[q.id] || []
+          const next = cur.includes(key) ? cur.filter(k => k !== key) : [...cur, key]
+          return { ...prev, [q.id]: next }
+        })
+      }
+      const correctKeys = q.correctAnswer.split(',').map(s => s.trim().toLowerCase())
+      return (
+        <div className="mb-3">
+          <p className="text-sm text-indigo-700 font-bold mb-2">☑️ Chọn tất cả các đáp án đúng:</p>
+          <div className="space-y-2 mb-4">
+            {opts.map((opt, i) => {
+              const key = opt.key || String(i)
+              const text = opt.text || ''
+              const isSelected = selected.includes(key)
+              const isThisCorrect = isDone && correctKeys.includes(key.toLowerCase())
+              const isThisWrong = isDone && isSelected && !correctKeys.includes(key.toLowerCase())
+              const palette = MC_COLORS[i] || MC_COLORS[0]
+              let cls = 'flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all text-left font-semibold text-base w-full shadow-sm '
+              if (isDone) {
+                if (isThisCorrect) cls += 'bg-teal-100 border-teal-500 text-teal-800 border-4'
+                else if (isThisWrong) cls += 'bg-orange-100 border-orange-400 text-orange-800'
+                else cls += 'bg-gray-50 border-gray-200 text-gray-400'
+              } else {
+                cls += isSelected ? palette.sel : palette.base
+              }
+              return (
+                <button key={key} disabled={isDone} onClick={() => toggleSel(key)} className={cls}>
+                  <span className={`w-6 h-6 rounded border-2 flex items-center justify-center shrink-0 ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-gray-400 bg-white'}`}>
+                    {isSelected && <span className="text-white text-xs font-black">✓</span>}
+                  </span>
+                  <span className="w-6 text-sm font-bold">{key}.</span>
+                  <span className="flex-1 leading-snug">{text}</span>
+                  {isDone && isThisCorrect && <span className="text-xl shrink-0">✅</span>}
+                  {isDone && isThisWrong && <span className="text-xl shrink-0">💡</span>}
+                </button>
+              )
+            })}
+          </div>
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={selected.length === 0}
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
+            </button>
+          )}
+          {isDone && !isCorrect && (
+            <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
+              <p className="font-bold text-orange-700 mb-1">💡 Đáp án đúng: <span className="text-teal-700">{q.correctAnswer}</span></p>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ── FILL_BLANK ─────────────────────────────────────────────────────────────
+    if (qType === 'FILL_BLANK') {
+      return (
+        <div className="mb-3">
+          <p className="text-sm text-teal-700 font-bold mb-2">✏️ Điền từ vào chỗ trống:</p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={selectedAns}
+              onChange={e => { if (!isDone) setUserAnswers(p => ({ ...p, [q.id]: e.target.value })) }}
+              onKeyDown={e => e.key === 'Enter' && !isDone && handleAnswerQ(q)}
+              disabled={isDone}
+              placeholder="Điền vào chỗ trống... (dùng | nếu nhiều chỗ)"
+              autoFocus
+              className={`flex-1 px-4 py-3 rounded-2xl border-2 font-semibold text-base focus:outline-none transition-all shadow-sm ${
+                isDone
+                  ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
+                  : 'border-teal-300 bg-white focus:border-teal-500'
+              }`}
+            />
+            {!isDone && (
+              <button onClick={() => handleAnswerQ(q)} disabled={!selectedAns.trim()}
+                className="btn-primary !py-3 !px-5 !text-lg font-black disabled:opacity-40 shrink-0 rounded-2xl">
+                →
+              </button>
+            )}
+          </div>
+          {isDone && !isCorrect && (
+            <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
+              <p className="font-bold text-orange-700">💡 Đáp án: <span className="text-teal-700">{q.correctAnswer}</span></p>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ── SHORT_ANSWER ───────────────────────────────────────────────────────────
+    if (qType === 'SHORT_ANSWER') {
+      const caseSens = (q.options as any)?.caseSensitive === true
+      return (
+        <div className="mb-3">
+          <p className="text-sm text-cyan-700 font-bold mb-2">💬 Trả lời ngắn{caseSens ? ' (phân biệt hoa/thường)' : ''}:</p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={selectedAns}
+              onChange={e => { if (!isDone) setUserAnswers(p => ({ ...p, [q.id]: e.target.value })) }}
+              onKeyDown={e => e.key === 'Enter' && !isDone && handleAnswerQ(q)}
+              disabled={isDone}
+              placeholder="Nhập câu trả lời..."
+              autoFocus
+              className={`flex-1 px-4 py-3 rounded-2xl border-2 font-semibold text-base focus:outline-none transition-all shadow-sm ${
+                isDone
+                  ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
+                  : 'border-cyan-300 bg-white focus:border-cyan-500'
+              }`}
+            />
+            {!isDone && (
+              <button onClick={() => handleAnswerQ(q)} disabled={!selectedAns.trim()}
+                className="btn-primary !py-3 !px-5 !text-lg font-black disabled:opacity-40 shrink-0 rounded-2xl">
+                →
+              </button>
+            )}
+          </div>
+          {isDone && !isCorrect && (
+            <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
+              <p className="font-bold text-orange-700">💡 Đáp án: <span className="text-teal-700">{q.correctAnswer}</span></p>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ── NUMBER_INPUT ───────────────────────────────────────────────────────────
+    if (qType === 'NUMBER_INPUT') {
+      const unit = (q.options as any)?.unit || ''
+      const tolerance = Number((q.options as any)?.tolerance ?? 0)
+      return (
+        <div className="mb-3">
+          <p className="text-sm text-sky-700 font-bold mb-2">🔢 Điền số{unit ? ` (${unit})` : ''}{tolerance > 0 ? ` ±${tolerance}` : ''}:</p>
+          <div className="flex gap-2 items-center">
+            <input
+              type="number"
+              step="any"
+              value={selectedAns}
+              onChange={e => { if (!isDone) setUserAnswers(p => ({ ...p, [q.id]: e.target.value })) }}
+              onKeyDown={e => e.key === 'Enter' && !isDone && handleAnswerQ(q)}
+              disabled={isDone}
+              placeholder="Nhập số..."
+              autoFocus
+              className={`flex-1 px-4 py-3 rounded-2xl border-2 font-black text-center text-xl focus:outline-none transition-all shadow-sm ${
+                isDone
+                  ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
+                  : 'border-sky-300 bg-white focus:border-sky-500'
+              }`}
+            />
+            {unit && <span className="text-gray-600 font-bold text-lg shrink-0">{unit}</span>}
+            {!isDone && (
+              <button onClick={() => handleAnswerQ(q)} disabled={!selectedAns.trim()}
+                className="btn-primary !py-4 !px-5 !text-lg font-black disabled:opacity-40 shrink-0 rounded-2xl">
+                →
+              </button>
+            )}
+          </div>
+          {isDone && !isCorrect && (
+            <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
+              <p className="font-bold text-orange-700">💡 Đáp án: <span className="text-teal-700">{q.correctAnswer}{unit ? ` ${unit}` : ''}</span></p>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ── SORT_WORDS ─────────────────────────────────────────────────────────────
+    if (qType === 'SORT_WORDS') {
+      const wordOpts = (q.options || []) as Array<{ id: string; word: string }>
+      const placed = sortWordsOrder[q.id] || []
+      const allIds = wordOpts.map(w => w.id)
+      // Deterministic shuffle using q.id as seed
+      const hashSeed = q.id.split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 0)
+      const shuffled = [...allIds].sort((a, b) => {
+        const ha = (hashSeed + parseInt(a, 10)) % 97
+        const hb = (hashSeed + parseInt(b, 10)) % 97
+        return ha - hb
+      })
+      const remaining = shuffled.filter(id => !placed.includes(id))
+      const getWord = (id: string) => wordOpts.find(w => w.id === id)?.word || id
+
+      const placeWord = (id: string) => {
+        if (isDone) return
+        setSortWordsOrder(prev => ({ ...prev, [q.id]: [...(prev[q.id] || []), id] }))
+      }
+      const removeWord = (id: string) => {
+        if (isDone) return
+        setSortWordsOrder(prev => ({ ...prev, [q.id]: (prev[q.id] || []).filter(x => x !== id) }))
+      }
+
+      const correctIds = q.correctAnswer.split(',').map(s => s.trim())
+      return (
+        <div className="mb-3">
+          <p className="text-sm text-pink-700 font-bold mb-2">🔀 Nhấp các từ theo đúng thứ tự để tạo thành câu:</p>
+          {/* Sentence being built */}
+          <div className="min-h-[56px] p-3 mb-3 bg-purple-50 border-2 border-purple-300 rounded-2xl flex flex-wrap gap-2 items-center">
+            {placed.length === 0 && <span className="text-purple-300 text-sm">Nhấp vào từ ở dưới để xếp vào đây...</span>}
+            {placed.map(id => (
+              <button key={id} onClick={() => removeWord(id)} disabled={isDone}
+                className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${
+                  isDone
+                    ? isCorrect ? 'bg-teal-100 border-teal-400 text-teal-800' : 'bg-orange-100 border-orange-400 text-orange-800'
+                    : 'bg-purple-200 border-purple-400 text-purple-900 hover:bg-red-100 hover:border-red-400'
+                }`}>
+                {getWord(id)}
+              </button>
+            ))}
+          </div>
+          {/* Remaining words */}
+          <div className="flex flex-wrap gap-2 p-3 bg-amber-50 border-2 border-amber-200 rounded-2xl mb-4">
+            <span className="w-full text-xs text-amber-700 font-bold">Ô từ hỗn hợp:</span>
+            {remaining.map(id => (
+              <button key={id} onClick={() => placeWord(id)} disabled={isDone}
+                className="px-3 py-1.5 rounded-xl text-sm font-bold border-2 bg-white border-amber-400 text-amber-900 hover:bg-amber-100 transition-all">
+                {getWord(id)}
+              </button>
+            ))}
+            {remaining.length === 0 && !isDone && <span className="text-amber-300 text-xs">✅ Đã sắp xếp hết!</span>}
+          </div>
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={placed.length !== allIds.length}
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
+            </button>
+          )}
+          {isDone && !isCorrect && (
+            <div className="mt-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-4 py-3">
+              <p className="font-bold text-orange-700 mb-1">💡 Câu đúng:</p>
+              <p className="text-teal-700 font-semibold">{correctIds.map(id => getWord(id)).join(' ')}</p>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    // ── GROUP_CLASSIFY ─────────────────────────────────────────────────────────
+    if (qType === 'GROUP_CLASSIFY') {
+      const gcOpts = q.options as unknown as { groups: string[]; items: Array<{ id: string; text: string; group: string }> } | null
+      if (!gcOpts || !gcOpts.groups || !gcOpts.items) {
+        return <div className="text-orange-500 text-sm">Dữ liệu câu hỏi không hợp lệ</div>
+      }
+      const { groups, items } = gcOpts
+      const assignments = groupClassifyState[q.id] || {}
+      let correctMap: Record<string, string> = {}
+      try { correctMap = JSON.parse(q.correctAnswer) } catch {}
+
+      const assignItem = (itemId: string, group: string) => {
+        if (isDone) return
+        setGroupClassifyState(prev => ({ ...prev, [q.id]: { ...(prev[q.id] || {}), [itemId]: group } }))
+      }
+
+      const allAssigned = items.every(item => assignments[item.id])
+      return (
+        <div className="mb-3">
+          <p className="text-sm text-lime-700 font-bold mb-3">🗂️ Phân loại mỗi mục vào đúng nhóm:</p>
+          <div className="space-y-2 mb-4">
+            {items.map(item => {
+              const assigned = assignments[item.id] || ''
+              const isItemCorrect = isDone && correctMap[item.id] === assigned
+              const isItemWrong = isDone && Boolean(assigned) && correctMap[item.id] !== assigned
+              return (
+                <div key={item.id} className="flex items-center gap-2 flex-wrap">
+                  <span className={`flex-1 min-w-[120px] text-sm font-bold px-3 py-2 rounded-xl border-2 ${
+                    isDone
+                      ? isItemCorrect ? 'bg-teal-50 border-teal-300 text-teal-800'
+                        : isItemWrong ? 'bg-orange-50 border-orange-300 text-orange-800'
+                        : 'bg-gray-50 border-gray-200'
+                      : 'bg-white border-gray-200'
+                  }`}>{item.text}</span>
+                  <div className="flex gap-1 flex-wrap">
+                    {groups.map(g => (
+                      <button key={g} onClick={() => assignItem(item.id, g)} disabled={isDone}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${
+                          assigned === g
+                            ? isDone
+                              ? isItemCorrect ? 'bg-teal-500 border-teal-500 text-white'
+                                : 'bg-orange-400 border-orange-400 text-white'
+                              : 'bg-lime-500 border-lime-500 text-white'
+                            : isDone && correctMap[item.id] === g
+                            ? 'bg-teal-100 border-teal-400 text-teal-800 border-2'
+                            : 'bg-gray-100 border-gray-300 text-gray-600 hover:bg-lime-50 hover:border-lime-300'
+                        }`}>
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+                  {isDone && isItemWrong && (
+                    <span className="text-xs text-teal-600 font-semibold">→ {correctMap[item.id]}</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={!allAssigned}
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
+            </button>
+          )}
+        </div>
+      )
+    }
+
+    // ── MULTI_BLANK ────────────────────────────────────────────────────────────
+    if (qType === 'MULTI_BLANK') {
+      const correctParts = q.correctAnswer.split('|').map(s => s.trim())
+      const currentBlanks = multiBlankState[q.id] || correctParts.map(() => '')
+      const updateBlank = (i: number, val: string) => {
+        if (isDone) return
+        setMultiBlankState(prev => {
+          const cur = prev[q.id] || correctParts.map(() => '')
+          const next = [...cur]
+          next[i] = val
+          return { ...prev, [q.id]: next }
+        })
+      }
+      const allFilled = currentBlanks.every(b => b.trim())
+      return (
+        <div className="mb-3">
+          <p className="text-sm text-rose-700 font-bold mb-2">📝 Điền vào từng chỗ trống:</p>
+          <div className="space-y-2 mb-4">
+            {correctParts.map((_, i) => {
+              const val = currentBlanks[i] || ''
+              const partCorrect = isDone && val.trim().toLowerCase() === correctParts[i].toLowerCase()
+              return (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-xs bg-rose-100 text-rose-700 font-bold px-2 py-1 rounded-full w-16 text-center shrink-0">Chỗ {i + 1}</span>
+                  <input
+                    type="text"
+                    value={val}
+                    onChange={e => updateBlank(i, e.target.value)}
+                    disabled={isDone}
+                    placeholder={`Đáp án chỗ ${i + 1}...`}
+                    className={`flex-1 px-3 py-2.5 rounded-2xl border-2 font-semibold text-sm focus:outline-none transition-all ${
+                      isDone
+                        ? partCorrect ? 'border-teal-400 bg-teal-50 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
+                        : 'border-rose-300 bg-white focus:border-rose-500'
+                    }`}
+                  />
+                  {isDone && (partCorrect ? <span>✅</span> : <span className="text-xs text-orange-600">→ <b>{correctParts[i]}</b></span>)}
+                </div>
+              )
+            })}
+          </div>
+          {!isDone && (
+            <button onClick={() => handleAnswerQ(q)}
+              disabled={!allFilled}
+              className="btn-primary !py-4 !px-6 !text-lg font-black disabled:opacity-40 w-full rounded-2xl shadow-md">
+              ✅ Xác nhận →
+            </button>
+          )}
+        </div>
+      )
+    }
+
     // ── OPEN (default) ────────────────────────────────────────────────────────
     return (
       <div className="flex gap-2 mb-3">
@@ -1100,12 +1538,26 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                                 : q.questionType === 'TRUE_FALSE'   ? 'bg-green-100 text-green-700'
                                 : q.questionType === 'MATCHING'     ? 'bg-purple-100 text-purple-700'
                                 : q.questionType === 'ORDERING'     ? 'bg-amber-100 text-amber-700'
+                                : q.questionType === 'MULTI_SELECT' ? 'bg-indigo-100 text-indigo-700'
+                                : q.questionType === 'FILL_BLANK'   ? 'bg-teal-100 text-teal-700'
+                                : q.questionType === 'SHORT_ANSWER' ? 'bg-cyan-100 text-cyan-700'
+                                : q.questionType === 'NUMBER_INPUT' ? 'bg-sky-100 text-sky-700'
+                                : q.questionType === 'SORT_WORDS'   ? 'bg-pink-100 text-pink-700'
+                                : q.questionType === 'GROUP_CLASSIFY' ? 'bg-lime-100 text-lime-700'
+                                : q.questionType === 'MULTI_BLANK'  ? 'bg-rose-100 text-rose-700'
                                 : 'bg-gray-100 text-gray-600'
                               }`}>
                                 {q.questionType === 'MULTIPLE_CHOICE' && '🔘 Trắc nghiệm'}
                                 {q.questionType === 'TRUE_FALSE'      && '⚖️ Đúng / Sai'}
                                 {q.questionType === 'MATCHING'        && '🔗 Nối đôi'}
                                 {q.questionType === 'ORDERING'        && '🔢 Sắp xếp'}
+                                {q.questionType === 'MULTI_SELECT'    && '☑️ Nhiều đáp án'}
+                                {q.questionType === 'FILL_BLANK'      && '✏️ Điền từ'}
+                                {q.questionType === 'SHORT_ANSWER'    && '💬 Trả lời ngắn'}
+                                {q.questionType === 'NUMBER_INPUT'    && '🔢 Điền số'}
+                                {q.questionType === 'SORT_WORDS'      && '🔀 Sắp xếp câu'}
+                                {q.questionType === 'GROUP_CLASSIFY'  && '🗂️ Phân nhóm'}
+                                {q.questionType === 'MULTI_BLANK'     && '📝 Nhiều chỗ trống'}
                               </span>
                             )}
                           </div>
