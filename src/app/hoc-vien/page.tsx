@@ -48,16 +48,21 @@ async function getStudentData(userId: string) {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const config = {
+  const config: Record<string, { icon: any; label: string; classes: string }> = {
+    ACTIVE:   { icon: CheckCircle,   label: 'Đang học',   classes: 'bg-green-50 text-green-700 border-green-200' },
+    APPROVED: { icon: CheckCircle,   label: 'Đang học',   classes: 'bg-green-50 text-green-700 border-green-200' },
     PENDING:  { icon: AlertCircle,   label: 'Chờ duyệt', classes: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    APPROVED: { icon: CheckCircle,   label: 'Đã duyệt',  classes: 'bg-green-50 text-green-700 border-green-200' },
+    PAUSED:   { icon: AlertCircle,   label: 'Tạm nghỉ',  classes: 'bg-orange-50 text-orange-600 border-orange-200' },
+    EXPIRED:  { icon: XCircle,       label: 'Hết hạn',   classes: 'bg-gray-100 text-gray-500 border-gray-200' },
     REJECTED: { icon: XCircle,       label: 'Từ chối',   classes: 'bg-red-50 text-red-700 border-red-200' },
+    REMOVED:  { icon: XCircle,       label: 'Đã xóa',     classes: 'bg-gray-100 text-gray-400 border-gray-200' },
   }
-  const { icon: Icon, label, classes } = config[status as keyof typeof config] ?? config.PENDING
+  const cfg = config[status] ?? config.PENDING
+  const Icon = cfg.icon
   return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${classes}`}>
+    <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${cfg.classes}`}>
       <Icon className="w-3.5 h-3.5" />
-      {label}
+      {cfg.label}
     </span>
   )
 }
