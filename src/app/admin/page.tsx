@@ -87,21 +87,35 @@ export default async function AdminPage() {
               </div>
             </Link>
 
-            {/* AI Studio projects */}
-            <div className="flex flex-col gap-4">
+            {/* Right column: 4 small cards */}
+            <div className="grid grid-cols-2 gap-3">
               <Link href="/admin/ai-studio"
-                className="flex-1 relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-500 to-rose-600 p-5 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg group">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                <div className="text-3xl mb-2">✨</div>
-                <h3 className="font-black text-lg">AI Studio</h3>
-                <p className="text-pink-100 text-xs mt-1">Projects workspace · {aiProjectsCount} projects</p>
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 p-4 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">✨</div>
+                <h3 className="font-black text-sm">AI Studio</h3>
+                <p className="text-pink-100 text-xs mt-0.5">{aiProjectsCount} projects</p>
+              </Link>
+              <Link href="/admin/ai-generator"
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 p-4 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">🤖</div>
+                <h3 className="font-black text-sm">AI Generator</h3>
+                <p className="text-purple-100 text-xs mt-0.5">Engine modules</p>
+              </Link>
+              <Link href="/admin/content-studio"
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-fuchsia-500 to-pink-600 p-4 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">🎨</div>
+                <h3 className="font-black text-sm">Content Studio</h3>
+                <p className="text-fuchsia-100 text-xs mt-0.5">Tạo học liệu A–Z</p>
               </Link>
               <Link href="/admin/question-bank"
-                className="flex-1 relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-500 to-emerald-600 p-5 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg group">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                <div className="text-3xl mb-2">🗃️</div>
-                <h3 className="font-black text-lg">Question Bank</h3>
-                <p className="text-teal-100 text-xs mt-1">Ngân hàng câu hỏi trung tâm</p>
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 p-4 text-white hover:scale-[1.01] transition-transform shadow-md hover:shadow-lg">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">🗃️</div>
+                <h3 className="font-black text-sm">Question Bank</h3>
+                <p className="text-teal-100 text-xs mt-0.5">Ngân hàng câu hỏi</p>
               </Link>
             </div>
           </div>
@@ -150,6 +164,26 @@ export default async function AdminPage() {
                 <div className="text-3xl mb-2">{p.icon}</div>
                 <h3 className="font-black">{p.label}</h3>
                 <p className="text-white/70 text-xs mt-1">{p.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Hệ thống & Bảo mật ────────────────────────────────────────── */}
+        <div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🔐 Hệ thống &amp; Bảo mật</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { href: '/admin/roles', icon: '🛡️', label: 'Roles', desc: 'Quản lý vai trò', color: 'hover:border-violet-300' },
+              { href: '/admin/roles/matrix', icon: '📊', label: 'Permission Matrix', desc: 'Ma trận phân quyền', color: 'hover:border-indigo-300' },
+              { href: '/admin/audit', icon: '📋', label: 'Audit Log', desc: 'Lịch sử thay đổi', color: 'hover:border-slate-300' },
+              { href: '/admin/analytics', icon: '📈', label: 'Analytics', desc: 'Phân tích học tập', color: 'hover:border-orange-300' },
+            ].map(item => (
+              <Link key={item.href} href={item.href}
+                className={`bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all ${item.color}`}>
+                <div className="text-2xl mb-2">{item.icon}</div>
+                <h3 className="font-black text-gray-900 text-sm">{item.label}</h3>
+                <p className="text-gray-400 text-xs mt-0.5">{item.desc}</p>
               </Link>
             ))}
           </div>
