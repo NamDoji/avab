@@ -210,42 +210,42 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* ── Hệ thống & Bảo mật ────────────────────────────────────────── */}
+        {/* ── Hệ thống & Bảo mật + Standards ───────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🔐 Hệ thống &amp; Bảo mật</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🔐 Hệ thống & Bảo mật</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             {[
-              { href: '/admin/roles', icon: '🛡️', label: 'Role Management', desc: 'Tạo và cấu hình roles', color: 'hover:border-violet-300' },
-              { href: '/admin/roles/matrix', icon: '📊', label: 'Permission Matrix', desc: 'Ma trận phân quyền', color: 'hover:border-indigo-300' },
-              { href: '/admin/permissions', icon: '🔑', label: 'Permissions', desc: 'Danh mục quyền hạn', color: 'hover:border-slate-300' },
-              { href: '/admin/audit', icon: '📋', label: 'Audit Log', desc: 'Lịch sử thay đổi', color: 'hover:border-slate-300' },
+              { href: '/admin/roles',        icon: '🛡️', label: 'Role Management',  desc: 'Tạo và cấu hình roles',  color: 'from-violet-500 to-purple-600'  },
+              { href: '/admin/roles/matrix', icon: '📊', label: 'Permission Matrix', desc: 'Ma trận phân quyền',    color: 'from-indigo-500 to-blue-600'    },
+              { href: '/admin/permissions',  icon: '🔑', label: 'Permissions',       desc: 'Danh mục quyền hạn',   color: 'from-cyan-600 to-teal-700'      },
+              { href: '/admin/audit',        icon: '📋', label: 'Audit Log',         desc: 'Lịch sử thay đổi',     color: 'from-gray-600 to-gray-800'      },
             ].map(item => (
               <Link key={item.href} href={item.href}
-                className={`bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all ${item.color}`}>
-                <div className="text-2xl mb-2">{item.icon}</div>
-                <h3 className="font-black text-gray-900 text-sm">{item.label}</h3>
-                <p className="text-gray-400 text-xs mt-0.5">{item.desc}</p>
+                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${item.color} p-4 text-white hover:scale-[1.01] transition-transform shadow-sm hover:shadow-md`}>
+                <div className="absolute top-0 right-0 w-14 h-14 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-2xl mb-1.5">{item.icon}</div>
+                <h3 className="font-black text-white text-sm">{item.label}</h3>
+                <p className="text-white/70 text-xs mt-0.5">{item.desc}</p>
               </Link>
             ))}
           </div>
-        </div>
 
-        {/* ── Standards ─────────────────────────────────────────────────── */}
-        <div>
+          {/* AvaB Standards — full-width dark card */}
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">📖 Chương trình & Tiêu chuẩn</p>
           <Link href="/admin/education-standards"
-            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-700 to-slate-900 p-6 text-white hover:scale-[1.01] transition-transform shadow-lg hover:shadow-xl group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+            className="block relative overflow-hidden rounded-3xl p-6 text-white hover:scale-[1.01] transition-transform shadow-lg hover:shadow-xl"
+            style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.05)', transform: 'translate(25%, -50%)' }} />
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">📖</div>
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }}>📖</div>
                 <div>
-                  <h3 className="font-black text-xl">AvaB Standards</h3>
-                  <p className="text-slate-300 text-sm mt-0.5">Tiêu chuẩn giáo dục K12 · Lesson · QA · Publishing · Curriculum</p>
+                  <h3 className="font-black text-xl text-white">AvaB Standards</h3>
+                  <p className="text-sm mt-0.5" style={{ color: 'rgba(203,213,225,1)' }}>Tiêu chuẩn giáo dục K12 · Lesson · QA · Publishing · Curriculum</p>
                 </div>
               </div>
               <div className="mt-4 flex gap-2 flex-wrap">
-                {['K12 Vietnam', 'Cambridge', 'IB', 'IELTS', 'SAT'].map(t => (
-                  <span key={t} className="bg-white/10 text-white/80 text-xs font-semibold px-2.5 py-1 rounded-lg">{t}</span>
+               {['K12 Vietnam', 'Cambridge', 'IB', 'IELTS', 'SAT'].map(t => (
+                  <span key={t} className="text-xs font-semibold px-2.5 py-1 rounded-lg text-white" style={{ background: 'rgba(255,255,255,0.15)' }}>{t}</span>
                 ))}
               </div>
           </Link>
