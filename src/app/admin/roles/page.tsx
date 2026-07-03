@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import RoleDeleteButton from './RoleDeleteButton'
 
 export const metadata = { title: 'Role Management — AvaB Admin' }
 
@@ -14,7 +15,6 @@ const LEVEL_LABELS: Record<string, string> = {
   END_USER:     '👥 End User',
 }
 
-// Tailwind color map for role badges
 const COLOR_CLASS: Record<string, string> = {
   red:     'bg-red-100 text-red-700 border-red-200',
   orange:  'bg-orange-100 text-orange-700 border-orange-200',
@@ -47,7 +47,6 @@ export default async function RolesPage() {
     orderBy: [{ level: 'asc' }, { name: 'asc' }],
   })
 
-  // Group by level
   const grouped = LEVEL_ORDER.reduce<Record<string, typeof roles>>((acc, level) => {
     acc[level] = roles.filter(r => r.level === level)
     return acc
@@ -65,22 +64,35 @@ export default async function RolesPage() {
               <h1 className="text-3xl font-black mb-1">🛡️ Role Management</h1>
               <p className="text-violet-200 text-sm">{roles.length} vai trò · {LEVEL_ORDER.length} cấp độ</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
+              <Link href="/admin/permissions"
+                className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold px-4 py-2 rounded-xl text-sm transition-all backdrop-blur-sm">
+                🔑 Permissions
+              </Link>
               <Link href="/admin/roles/matrix"
                 className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold px-4 py-2 rounded-xl text-sm transition-all backdrop-blur-sm">
-                📊 Permission Matrix
+                📊 Matrix
               </Link>
               <Link href="/admin/roles/new"
                 className="bg-white text-violet-700 hover:bg-violet-50 font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm">
-                + Tạo Role
+                + Tạo Role Mới
               </Link>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Breadcrumb */}
+      <div className="container-custom py-3">
+        <p className="text-xs text-gray-400">
+          <Link href="/admin" className="hover:text-gray-600">Admin</Link>
+          {' / '}
+          <span className="text-gray-600 font-semibold">Roles</span>
+        </p>
+      </div>
+
       {/* Content */}
-      <div className="container-custom py-8 space-y-8">
+      <div className="container-custom pb-8 space-y-8">
         {LEVEL_ORDER.map(level => {
           const levelRoles = grouped[level]
           if (!levelRoles || levelRoles.length === 0) return null
@@ -123,11 +135,24 @@ export default async function RolesPage() {
                         </div>
                       </div>
 
-                      {/* Action */}
-                      <Link href={`/admin/roles/${role.id}`}
-                        className="mt-auto text-center bg-violet-50 hover:bg-violet-100 text-violet-700 font-semibold text-xs py-2 rounded-xl transition-all">
-                        Xem chi tiết →
-                      </Link>
+                      {/* Actions */}
+                      <div className="mt-auto flex gap-2 flex-wrap">
+                        <Link href={`/admin/roles/${role.id}`}
+                          className="flex-1 text-center bg-violet-50 hover:bg-violet-100 text-violet-700 font-semibold text-xs py-2 rounded-xl transition-all">
+                          Xem →
+                        </Link>
+                        <Link href={`/admin/roles/${role.id}/edit`}
+                          className="text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded-lg transition-all">
+                          ✏️ Sửa
+                        </Link>
+                        <Link href={`/admin/roles/new?clone=${role.id}`}
+                          className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded-lg transition-all">
+                          📋 Clone
+                        </Link>
+                        {!role.isSystem && (
+                          <RoleDeleteButton roleId={role.id} roleName={role.name} />
+                        )}
+                      </div>
                     </div>
                   )
                 })}
