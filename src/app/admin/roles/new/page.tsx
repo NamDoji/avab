@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
@@ -41,7 +41,7 @@ const COLOR_BG: Record<string, string> = {
   pink: 'bg-pink-500', rose: 'bg-rose-500',
 }
 
-export default function CreateRolePage() {
+function CreateRolePageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const cloneId = searchParams.get('clone')
@@ -355,5 +355,14 @@ export default function CreateRolePage() {
         </div>
       </form>
     </div>
+  )
+}
+
+
+export default function CreateRolePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-20 flex items-center justify-center"><span className="text-gray-400">Đang tải...</span></div>}>
+      <CreateRolePageInner />
+    </Suspense>
   )
 }
