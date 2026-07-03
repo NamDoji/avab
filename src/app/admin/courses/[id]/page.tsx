@@ -4,19 +4,36 @@ import { useState, useEffect, use, useRef } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff, Key, PauseCircle, PlayCircle, MessageSquare } from 'lucide-react'
 
-type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
+// Legacy CourseType kept as string (no longer enum in DB)
+type CourseType = string
 type PaymentType = 'PER_COURSE' | 'PER_SESSION'
 
-const COURSE_TYPE_OPTIONS: { value: CourseType; label: string; emoji: string; color: string }[] = [
+// Legacy options for editing existing courses
+const COURSE_TYPE_OPTIONS: { value: string; label: string; emoji: string; color: string }[] = [
   { value: 'TOAN',                 label: 'Toán',                 emoji: '📐', color: 'bg-blue-50 text-blue-700' },
   { value: 'TIENG_ANH',            label: 'Tiếng Anh',            emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
   { value: 'LAP_TRINH_THUAT_TOAN', label: 'Lập trình thuật toán', emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
   { value: 'LAP_TRINH_SCRATCH',    label: 'Lập trình Scratch',    emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
   { value: 'LAP_TRINH_PYTHON',     label: 'Lập trình Python',     emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
   { value: 'LAP_TRINH_CPP',        label: 'Lập trình C++',        emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+  // K12 generic codes
+  { value: 'THINKING_MATH', label: 'Toán Tư Duy',  emoji: '🧠', color: 'bg-indigo-50 text-indigo-700' },
+  { value: 'ENGLISH',       label: 'Tiếng Anh',    emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
+  { value: 'MATH',          label: 'Toán',          emoji: '📐', color: 'bg-blue-50 text-blue-700' },
+  { value: 'ALGO',          label: 'Thuật toán',   emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
+  { value: 'SCRATCH',       label: 'Scratch',       emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
+  { value: 'PYTHON',        label: 'Python',        emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
+  { value: 'CPP',           label: 'C++',           emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+  { value: 'SCIENCE',       label: 'Khoa học',     emoji: '🔬', color: 'bg-cyan-50 text-cyan-700' },
+  { value: 'IELTS',         label: 'IELTS',         emoji: '🇸🇦', color: 'bg-sky-50 text-sky-700' },
+  { value: 'GENERAL',       label: 'Tổng hợp',     emoji: '📚', color: 'bg-gray-50 text-gray-700' },
 ]
 
-const GRADE_OPTIONS = Array.from({ length: 9 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` }))
+// K12 expanded grade options
+const GRADE_OPTIONS = [
+  { value: 'preschool', label: 'Mầm non' },
+  ...Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: `Lớp ${i + 1}` })),
+]
 
 function GradeBadges({ grade }: { grade: string | null }) {
   if (!grade) return <span className="text-xs text-gray-400">Tất cả lớp</span>
@@ -30,8 +47,8 @@ function GradeBadges({ grade }: { grade: string | null }) {
   )
 }
 
-function CourseTypeBadge({ type }: { type: CourseType }) {
-  const opt = COURSE_TYPE_OPTIONS.find(o => o.value === type) ?? COURSE_TYPE_OPTIONS[0]
+function CourseTypeBadge({ type }: { type: string }) {
+  const opt = COURSE_TYPE_OPTIONS.find(o => o.value === type) ?? { emoji: '📚', label: type || 'Khác', color: 'bg-gray-50 text-gray-700' }
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${opt.color}`}>
       {opt.emoji} {opt.label}
@@ -75,7 +92,11 @@ interface CourseDetail {
   paymentType: PaymentType
   grade: string | null
   courseDurationMonths: number
-  courseType: CourseType
+  courseType: string           // Legacy (kept as plain string)
+  subjectCode: string          // K12 generic subject code
+  subjectName: string | null
+  gradeMin: number | null
+  gradeMax: number | null
   isActive: boolean
   subjects: Subject[]
 }
@@ -99,7 +120,8 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
   const [editCourseForm, setEditCourseForm] = useState({
     name: '',
     description: '',
-    courseType: 'TOAN' as CourseType,
+    courseType: 'TOAN',
+    subjectCode: 'GENERAL',
     price: '1500000',
     pricePerSession: '200000',
     paymentType: 'PER_COURSE' as PaymentType,
@@ -257,6 +279,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
       name: course.name,
       description: course.description ?? '',
       courseType: course.courseType ?? 'TOAN',
+      subjectCode: course.subjectCode ?? 'GENERAL',
       price: String(course.price ?? 1500000),
       pricePerSession: String(course.pricePerSession ?? 200000),
       paymentType: course.paymentType ?? 'PER_COURSE',
@@ -275,6 +298,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
         name: editCourseForm.name,
         description: editCourseForm.description,
         courseType: editCourseForm.courseType,
+        subjectCode: editCourseForm.subjectCode,
         paymentType: editCourseForm.paymentType,
         price: editCourseForm.paymentType === 'PER_COURSE' ? Number(editCourseForm.price) || 1500000 : null,
         pricePerSession: editCourseForm.paymentType === 'PER_SESSION' ? Number(editCourseForm.pricePerSession) || 200000 : null,

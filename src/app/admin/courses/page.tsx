@@ -197,26 +197,32 @@ export default function AdminCoursesPage() {
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
-              {/* Course Type Combo Box */}
+              {/* K12 Subject Code — generic, extensible */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Loại khoá học</label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {COURSE_TYPE_OPTIONS.map(opt => (
+                <label className="block text-sm font-medium text-gray-700 mb-2">Môn học (subjectCode)</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+                  {SUBJECT_CODE_OPTIONS.map(opt => (
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => setForm(f => ({ ...f, courseType: opt.value }))}
-                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border-2 text-sm font-semibold transition ${
-                        form.courseType === opt.value
+                      onClick={() => setForm(f => ({ ...f, subjectCode: opt.value }))}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm font-semibold transition ${
+                        form.subjectCode === opt.value
                           ? 'border-purple-500 bg-purple-50 text-purple-700'
                           : 'border-gray-200 text-gray-600 hover:border-purple-300'
                       }`}
                     >
-                      <span className="text-lg">{opt.emoji}</span>
+                      <span className="text-base">{opt.emoji}</span>
                       {opt.label}
                     </button>
                   ))}
                 </div>
+                <input
+                  placeholder="Tên môn hiển thị (tùy chọn — để trống = dùng tên mặc định)"
+                  value={form.subjectName}
+                  onChange={(e) => setForm(f => ({ ...f, subjectName: e.target.value }))}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                />
               </div>
               <textarea
                 placeholder="Mô tả (tuỳ chọn)"
@@ -327,7 +333,9 @@ export default function AdminCoursesPage() {
                         <p className="font-mono text-xs text-gray-400">{course.code}</p>
                         <p className="font-semibold text-gray-800 leading-snug">{course.name}</p>
                         <div className="mt-1">
-                          <CourseTypeBadge type={course.courseType ?? 'TOAN'} />
+                          {course.subjectCode && course.subjectCode !== 'GENERAL'
+                            ? <SubjectCodeBadge code={course.subjectCode} name={course.subjectName} />
+                            : <CourseTypeBadge type={course.courseType ?? 'TOAN'} />}
                         </div>
                       </div>
                       <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${
@@ -392,7 +400,9 @@ export default function AdminCoursesPage() {
                           <p className="font-semibold text-gray-800">{course.name}</p>
                         </td>
                         <td className="p-4">
-                          <CourseTypeBadge type={course.courseType ?? 'TOAN'} />
+                          {course.subjectCode && course.subjectCode !== 'GENERAL'
+                            ? <SubjectCodeBadge code={course.subjectCode} name={course.subjectName} />
+                            : <CourseTypeBadge type={course.courseType ?? 'TOAN'} />}
                         </td>
                         <td className="p-4 text-gray-600">{course._count.subjects}</td>
                         <td className="p-4 text-gray-600">{course._count.enrollments}</td>
