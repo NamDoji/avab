@@ -141,7 +141,7 @@ export default async function AnalyticsPage() {
 
               {/* Type breakdown */}
               <div className="space-y-2">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Chia theo loại</p>
+                <p className="text-sm font-bold text-gray-700 mb-2">Chia theo loại</p>
                 {materialsByType.length === 0 ? (
                   <p className="text-gray-400 text-sm">Chưa có dữ liệu</p>
                 ) : (

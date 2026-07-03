@@ -161,7 +161,7 @@ export default async function AdminPage() {
           <p className="text-sm font-bold text-gray-700 mb-3">🎓 Portals người dùng</p>
 
           {/* Học thuật */}
-          <p className="text-xs font-semibold text-gray-500 mb-2 ml-0.5">Học thuật</p>
+          <p className="text-sm font-semibold text-gray-600 mb-2 ml-0.5">Học thuật</p>
           <div className="grid grid-cols-3 gap-3 mb-5">
             {[
               { href: '/giao-vien', icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Nhận xét · Lớp học · BTVN',        color: 'from-cyan-500 to-teal-600'     },
@@ -179,7 +179,7 @@ export default async function AdminPage() {
           </div>
 
           {/* Quản lý tổ chức */}
-          <p className="text-xs font-semibold text-gray-500 mb-2 ml-0.5">Quản lý tổ chức</p>
+          <p className="text-sm font-semibold text-gray-600 mb-2 ml-0.5">Quản lý tổ chức</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
               { href: '/admin/analytics',   icon: '🏫', label: 'Ban Giám Hiệu',  desc: 'Tổng quan · KPIs · Reports',       color: 'from-rose-500 to-pink-600'     },
@@ -198,7 +198,7 @@ export default async function AdminPage() {
           </div>
 
           {/* Vận hành */}
-          <p className="text-xs font-semibold text-gray-500 mb-2 ml-0.5">Vận hành</p>
+          <p className="text-sm font-semibold text-gray-600 mb-2 ml-0.5">Vận hành</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { href: '/admin/contacts',    icon: '📞', label: 'Sales / CSKH',  desc: 'Leads · CRM · Chăm sóc',          color: 'from-yellow-500 to-orange-500' },

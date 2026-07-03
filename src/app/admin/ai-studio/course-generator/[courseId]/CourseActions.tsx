@@ -307,7 +307,7 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
 
       {/* ── Export section ──────────────────────────────────────────────── */}
       <div className="pt-3 border-t border-gray-100">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
+        <p className="text-sm font-semibold text-gray-600 mb-2 px-1">
           📤 Xuất bản
         </p>
         <div className="flex flex-wrap gap-2">

@@ -163,7 +163,7 @@ export default async function CourseGeneratorResultPage({
             courseId={courseId}
             structureTab={
               <div>
-                <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">
+                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">
                   🗂️ Cấu trúc khóa học — {course.subjects.length} chuyên đề
                 </h2>
 
@@ -180,7 +180,7 @@ export default async function CourseGeneratorResultPage({
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-bold text-gray-400 uppercase">Chuyên đề {idx + 1}</span>
+                            <span className="text-xs font-bold text-gray-500 uppercase">Chuyên đề {idx + 1}</span>
                             <h3 className="font-black text-gray-900 text-sm">{subject.name}</h3>
                           </div>
                           {subject.description && (
@@ -203,7 +203,7 @@ export default async function CourseGeneratorResultPage({
                       {/* Lesson list */}
                       {subject.materials.length > 0 && (
                         <div className="p-4">
-                          <p className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">
+                          <p className="text-sm font-bold text-gray-600 mb-2">
                             📝 {subject.materials.length} bài học
                           </p>
                           <ol className="space-y-1.5">
@@ -232,11 +232,11 @@ export default async function CourseGeneratorResultPage({
                   🚀 Xuất bản & Phê duyệt
                 </h2>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Trạng thái phê duyệt</p>
+                  <p className="text-sm font-semibold text-gray-600 mb-3">Trạng thái phê duyệt</p>
                   <ApprovalBadge courseId={courseId} approvalStatus={approvalStatus} />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Xuất file DOCX</p>
+                  <p className="text-sm font-semibold text-gray-600 mb-3">Xuất file DOCX</p>
                   <div className="flex flex-wrap gap-2">
                     {[
                       { type: 'lessons',        label: '📖 Lý thuyết' },

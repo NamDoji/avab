@@ -306,7 +306,7 @@ export default function GamificationPage() {
           {/* Locked badges */}
           {allBadges.length > 0 && (
             <>
-              <p className="text-xs font-bold text-gray-400 mb-2 mt-2">Chưa đạt được:</p>
+              <p className="text-sm font-bold text-gray-600 mb-2 mt-2">Chưa đạt được:</p>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 {allBadges
                   .filter((b) => !earnedBadgeIds.has(b.id))
