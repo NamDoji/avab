@@ -142,13 +142,37 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
         </div>
       )}
 
+      {/* SRL — Năng lực tự học (SRL_t^i) */}
+      {data.srl && (
+        <div className="bg-indigo-50 rounded-2xl px-4 py-3 border border-indigo-100">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-bold text-indigo-600">📚 Năng lực tự học (SRL_t^i)</p>
+            <span className={`text-sm font-black ${
+              data.srl.srlScore >= 60 ? 'text-green-600' : data.srl.srlScore >= 30 ? 'text-orange-500' : 'text-red-500'
+            }`}>{data.srl.srlScore}/100</span>
+          </div>
+          <div className="h-1.5 bg-white rounded-full mb-2">
+            <div className={`h-full rounded-full ${
+              data.srl.srlScore >= 60 ? 'bg-green-400' : data.srl.srlScore >= 30 ? 'bg-orange-400' : 'bg-red-400'
+            }`} style={{ width: `${data.srl.srlScore}%` }} />
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center text-xs text-gray-500">
+            <div><div className="font-semibold text-gray-700">{data.srl.breadthScore}</div>Đa dạng CĐ</div>
+            <div><div className="font-semibold text-gray-700">{data.srl.consistencyScore}</div>Đều đặn</div>
+            <div><div className="font-semibold text-gray-700">{data.srl.initiativeScore}</div>Chủ động</div>
+          </div>
+          {data.srlInsight && <p className="text-xs text-indigo-700 mt-2 italic">{data.srlInsight}</p>}
+        </div>
+      )}
+
       {/* Nhận xét AI chẩn đoán */}
       <div className="space-y-2">
         {[
           { label: '📚 Tri thức', value: data.knowledgeSummary },
           { label: '🎭 Hành vi học tập', value: data.behaviorInsight },
           { label: '💡 Nhận thức', value: data.cognitiveProfile },
-          { label: '🔗 Ngữ cảnh', value: data.contextualFactors },
+          { label: '🔗 Ngữ cảnh (C_t^i)', value: data.contextualFactors },
+          { label: '🎯 Phù hợp mục tiêu (G_i)', value: data.profileAlignment },
         ].filter(i => i.value).map(item => (
           <div key={item.label} className="bg-gray-50 rounded-2xl px-4 py-3">
             <p className="text-xs font-bold text-gray-500 mb-0.5">{item.label}</p>
@@ -156,6 +180,31 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
           </div>
         ))}
       </div>
+
+      {/* C_t^i + G_i context bar */}
+      {(data.context || data.daysToExam !== undefined) && (
+        <div className="flex flex-wrap gap-2">
+          {data.context?.device && (
+            <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full">
+              {data.context.device === 'mobile' ? '📱 Di động' : data.context.device === 'tablet' ? '💻 Máy tính bảng' : '🖥️ Máy tính'} | {data.context.timeOfDay}
+            </span>
+          )}
+          {data.daysToExam !== null && data.daysToExam !== undefined && (
+            <span className={`text-xs border px-2.5 py-1 rounded-full font-semibold ${
+              data.daysToExam < 30 ? 'bg-red-50 text-red-600 border-red-200' :
+              data.daysToExam < 60 ? 'bg-orange-50 text-orange-600 border-orange-200' :
+              'bg-green-50 text-green-700 border-green-200'
+            }`}>
+              ⏰ {data.daysToExam} ngày đến kỳ thi (G_i)
+            </span>
+          )}
+          {data.context?.note && (
+            <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full">
+              {data.context.note}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Kết luận chẩn đoán */}
       {data.diagnosticConclusion && (
@@ -266,6 +315,18 @@ function PredictPanel({ data, loading }: { data?: any; loading?: boolean }) {
           <div className="bg-blue-50 rounded-2xl px-4 py-3">
             <p className="text-xs font-bold text-blue-600 mb-0.5">🧠 Dự báo tải nhận thức</p>
             <p className="text-sm text-gray-700">{data.cognitiveLoadForecast}</p>
+          </div>
+        )}
+        {data.srlForecast && (
+          <div className="bg-indigo-50 rounded-2xl px-4 py-3">
+            <p className="text-xs font-bold text-indigo-600 mb-0.5">📚 Dự báo phát triển SRL_t^i</p>
+            <p className="text-sm text-gray-700">{data.srlForecast}</p>
+          </div>
+        )}
+        {data.retentionForecast && (
+          <div className="bg-purple-50 rounded-2xl px-4 py-3">
+            <p className="text-xs font-bold text-purple-600 mb-0.5">🔄 Dự báo duy trì tiến trình (RET)</p>
+            <p className="text-sm text-gray-700">{data.retentionForecast}</p>
           </div>
         )}
       </div>
@@ -419,6 +480,12 @@ function IntervenePanel({ data, loading }: { data?: any; loading?: boolean }) {
           <p className="text-sm text-gray-700">{data.successCriteria}</p>
         </div>
       )}
+      {data.srlDevelopmentPlan && (
+        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-4 py-3">
+          <p className="text-xs font-bold text-indigo-600 mb-0.5">📚 Kế hoạch tăng SRL trong gói này</p>
+          <p className="text-sm text-gray-700">{data.srlDevelopmentPlan}</p>
+        </div>
+      )}
 
       {/* Hướng dẫn phụ huynh */}
       {data.parentGuidance && (
@@ -487,6 +554,26 @@ function RecommendPanel({ data, loading }: { data?: any; loading?: boolean }) {
         <div className="bg-teal-50 rounded-2xl px-4 py-3">
           <p className="text-xs font-bold text-teal-600 mb-0.5">🏠 Chiến lược tự học tại nhà</p>
           <p className="text-sm text-gray-700">{data.selfStudyStrategy}</p>
+        </div>
+      )}
+      {/* SRL development actions */}
+      {data.srlDevelopmentActions?.length > 0 && (
+        <div className="bg-indigo-50 rounded-2xl px-4 py-3">
+          <p className="text-xs font-bold text-indigo-600 mb-2">📚 Phát triển SRL (tự học chủ động)</p>
+          <ul className="space-y-1">
+            {data.srlDevelopmentActions.map((a: string, i: number) => (
+              <li key={i} className="text-xs text-gray-700 flex items-start gap-1.5">
+                <ChevronRight size={12} className="text-indigo-400 mt-0.5 shrink-0" />{a}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {/* Adapt theo ngữ cảnh */}
+      {data.contextAdaptations && (
+        <div className="bg-gray-50 rounded-2xl px-4 py-2.5">
+          <p className="text-xs font-bold text-gray-500 mb-0.5">📡 Điều chỉnh theo ngữ cảnh (C_t^i)</p>
+          <p className="text-xs text-gray-600">{data.contextAdaptations}</p>
         </div>
       )}
 
