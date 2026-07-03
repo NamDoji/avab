@@ -655,6 +655,7 @@ export function AIDashboard({ userId }: Props) {
   const [refreshedAt, setRefreshedAt] = useState<Date | null>(null)
   const [refreshError, setRefreshError] = useState<{ nextAt: Date; daysLeft: number } | null>(null)
   const [forceLoading, setForceLoading] = useState(false) // chỉ spin khi bấm nút
+  const [initializing, setInitializing] = useState(false)  // lần đầu tự sinh dữ liệu
 
   const nextRefreshDate = refreshedAt
     ? new Date(refreshedAt.getTime() + AI_REFRESH_DAYS * 24 * 60 * 60 * 1000)
@@ -664,18 +665,20 @@ export function AIDashboard({ userId }: Props) {
     : 0
   const canRefreshNow = !refreshedAt || daysUntilRefresh <= 0
 
-  // Load từng tab từ cache (không gọi OpenAI)
-  const loadCache = async (tabId: TabId) => {
+  // Load từng tab từ cache, trả về true nếu có dữ liệu
+  const loadCache = async (tabId: TabId): Promise<boolean> => {
     const tab = TABS.find(t => t.id === tabId)
-    if (!tab) return
+    if (!tab) return false
     try {
       const res = await fetch(`/api/ai/${tab.apiPath}`)
       const json = await res.json()
-      if (json.success) {
+      if (json.success && json.data !== null) {
         setData(prev => ({ ...prev, [tabId]: json.data }))
         if (json.refreshedAt) setRefreshedAt(new Date(json.refreshedAt))
+        return true
       }
     } catch (e) { console.error(`AI cache load ${tabId}:`, e) }
+    return false
   }
 
   // Force refresh 1 tab, gọi OpenAI
@@ -698,9 +701,20 @@ export function AIDashboard({ userId }: Props) {
     } catch (e) { console.error(`AI force ${tabId}:`, e); return false }
   }
 
-  // Mount: load cả 4 tab từ cache song song
+  // Mount: load cả 4 tab từ cache. Nếu chưa có cache → tự sinh lần đầu
   useEffect(() => {
-    Promise.all(TABS.map(t => loadCache(t.id)))
+    const init = async () => {
+      const results = await Promise.all(TABS.map(t => loadCache(t.id)))
+      // Nếu tất cả đều null (user mới, chưa có cache) → tự generate
+      if (results.every(r => !r)) {
+        setInitializing(true)
+        for (const t of TABS) {
+          await forceRefreshTab(t.id)
+        }
+        setInitializing(false)
+      }
+    }
+    init()
   }, [])
 
   return (
@@ -727,15 +741,15 @@ export function AIDashboard({ userId }: Props) {
               }
               setForceLoading(false)
             }}
-            disabled={!canRefreshNow || forceLoading}
+            disabled={!canRefreshNow || forceLoading || initializing}
             className={`p-2 rounded-xl transition-all shrink-0 ${
-              canRefreshNow && !forceLoading
+              canRefreshNow && !forceLoading && !initializing
                 ? 'bg-white/10 hover:bg-white/20 cursor-pointer'
                 : 'bg-white/5 opacity-40 cursor-not-allowed'
             }`}
             title={canRefreshNow ? 'Phân tích mới (2 tuần/lần)' : `Có thể cập nhật sau ${daysUntilRefresh} ngày nữa`}
           >
-            <RefreshCw size={16} className={forceLoading ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={(forceLoading || initializing) ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
@@ -761,7 +775,9 @@ export function AIDashboard({ userId }: Props) {
       {/* Thông báo giới hạn refresh — luôn hiện */}
       <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-700">
         <Clock size={12} className="shrink-0" />
-        {!refreshedAt && !refreshError ? (
+        {initializing ? (
+          <span>⏳ Đang tạo phân tích ban đầu, vui lòng đợi...</span>
+        ) : !refreshedAt && !refreshError ? (
           <span>Dữ liệu tổng hợp <strong>2 tuần/lần</strong> · Bấm 🔄 để phân tích lần đầu</span>
         ) : canRefreshNow ? (
           <span>Dữ liệu tổng hợp <strong>2 tuần/lần</strong> · Bấm 🔄 để cập nhật ngay</span>
@@ -798,10 +814,10 @@ export function AIDashboard({ userId }: Props) {
 
       {/* Panel content */}
       <div className="p-4 sm:p-5">
-        {activeTab === 'diagnose'  && <DiagnosePanel  data={data.diagnose}  loading={forceLoading} />}
-        {activeTab === 'predict'   && <PredictPanel   data={data.predict}   loading={forceLoading} />}
-        {activeTab === 'intervene' && <IntervenePanel data={data.intervene} loading={forceLoading} />}
-        {activeTab === 'recommend' && <RecommendPanel data={data.recommend} loading={forceLoading} />}
+        {activeTab === 'diagnose'  && <DiagnosePanel  data={data.diagnose}  loading={forceLoading || initializing} />}
+        {activeTab === 'predict'   && <PredictPanel   data={data.predict}   loading={forceLoading || initializing} />}
+        {activeTab === 'intervene' && <IntervenePanel data={data.intervene} loading={forceLoading || initializing} />}
+        {activeTab === 'recommend' && <RecommendPanel data={data.recommend} loading={forceLoading || initializing} />}
       </div>
     </div>
   )
