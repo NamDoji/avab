@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { BookOpen, Users, CheckSquare, Newspaper, DollarSign, BarChart3, MessageSquare } from 'lucide-react'
+import { BookOpen, Users, CheckSquare, Newspaper, DollarSign, MessageSquare, GraduationCap, Brain, FileText } from 'lucide-react'
 
 export const metadata = { title: 'Admin Dashboard' }
 
@@ -50,22 +50,45 @@ export default async function AdminPage() {
           ))}
         </div>
 
-        {/* Quick nav */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { href: '/admin/courses', icon: '📚', label: 'Quản lý khoá học', desc: 'Thêm, sửa, xoá khoá học và chuyên đề' },
-            { href: '/admin/enrollments', icon: '✅', label: 'Duyệt đăng ký', desc: 'Xem và phê duyệt học sinh đăng ký mua khoá học' },
-            { href: '/admin/users', icon: '👥', label: 'Quản lý người dùng', desc: 'Xem danh sách học sinh, phụ huynh' },
-            { href: '/admin/news', icon: '📰', label: 'Quản lý tin tức', desc: 'Đăng bài viết, tin tức, thông báo' },
-            { href: '/admin/finance', icon: '💰', label: 'Tài chính', desc: 'Doanh thu, đợt thu học phí, xuất Excel' },
-          ].map((item) => (
-            <Link key={item.href} href={item.href}
-              className="bg-white rounded-3xl p-5 border-2 border-purple-50 card-hover">
-              <div className="text-4xl mb-3">{item.icon}</div>
-              <h3 className="font-black text-gray-900 mb-1">{item.label}</h3>
-              <p className="text-gray-500 text-sm">{item.desc}</p>
-            </Link>
-          ))}
+        {/* Quick nav - Management */}
+        <div className="mb-3">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">⚙️ Quản lý hệ thống</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { href: '/admin/courses', icon: '📚', label: 'Khoá học', desc: 'Thêm, sửa, xoá' },
+              { href: '/admin/enrollments', icon: '✅', label: 'Duyệt đăng ký', desc: 'Phê duyệt HS' },
+              { href: '/admin/users', icon: '👥', label: 'Người dùng', desc: 'HS + PH + GV' },
+              { href: '/admin/news', icon: '📰', label: 'Tin tức', desc: 'Đăng bài viết' },
+              { href: '/admin/finance', icon: '💰', label: 'Tài chính', desc: 'Doanh thu' },
+            ].map((item) => (
+              <Link key={item.href} href={item.href}
+                className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all">
+                <div className="text-3xl mb-2">{item.icon}</div>
+                <h3 className="font-black text-gray-900 text-sm">{item.label}</h3>
+                <p className="text-gray-400 text-xs mt-0.5">{item.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* AI & Education */}
+        <div className="mb-3">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🧠 AI & Giáo dục</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {[
+              { href: '/admin/education-standards', icon: '📖', label: 'AvaB Standards', desc: '10 tài liệu chuẩn giáo dục', color: 'border-purple-200 hover:border-purple-400' },
+              { href: '/admin/courses', icon: '🎓', label: 'Khóa Tóan TD Lớp 2', desc: '35 chuyên đề, 855 câu hỏi', color: 'border-teal-200 hover:border-teal-400' },
+              { href: '/giao-vien', icon: '👨‍🏫', label: 'Portal Giáo viên', desc: 'Nhận xét buổi học', color: 'border-teal-200 hover:border-teal-400' },
+              { href: '/hoc-vien', icon: '👦', label: 'Portal Học sinh', desc: 'Xem như học sinh', color: 'border-blue-200 hover:border-blue-400' },
+            ].map((item) => (
+              <Link key={item.href} href={item.href}
+                className={`bg-white rounded-2xl p-4 border shadow-sm hover:shadow-md transition-all ${item.color}`}>
+                <div className="text-3xl mb-2">{item.icon}</div>
+                <h3 className="font-black text-gray-900 text-sm">{item.label}</h3>
+                <p className="text-gray-400 text-xs mt-0.5">{item.desc}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>
