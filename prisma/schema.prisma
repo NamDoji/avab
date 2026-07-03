@@ -20,9 +20,10 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  enrollments     Enrollment[]
-  answers         StudentAnswer[]
-  learnerProfile  LearnerProfile?
+  enrollments       Enrollment[]
+  answers           StudentAnswer[]
+  learnerProfile    LearnerProfile?
+  sessionRecords    StudentSessionRecord[]
 
   @@map("avab_users")
 }
@@ -126,10 +127,11 @@ model Subject {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  course       Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  materials    SubjectMaterial[]
-  questions    Question[]
-  homeworkSets HomeworkSet[]
+  course           Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  materials        SubjectMaterial[]
+  questions        Question[]
+  homeworkSets     HomeworkSet[]
+  sessionFeedbacks SessionFeedback[]
 
   @@map("avab_subjects")
 }
@@ -276,6 +278,63 @@ model TuitionPayment {
 
   @@unique([collectionId, enrollmentId])
   @@map("avab_tuition_payments")
+}
+
+// ── Nhận xét buổi học (PER_SESSION) ────────────────────────────────────────
+
+// Một buổi học cụ thể (admin/GV tạo sau mỗi buổi dạy)
+model SessionFeedback {
+  id          String   @id @default(cuid())
+  subjectId   String
+  sessionDate DateTime @default(now())
+  sessionNote String?  // Ghi chú chung về buổi học
+  createdBy   String   // userId của GV/admin
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subject Subject              @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  records StudentSessionRecord[]
+
+  @@map("avab_session_feedbacks")
+}
+
+// Nhận xét từng học sinh trong 1 buổi học
+model StudentSessionRecord {
+  id                 String    @id @default(cuid())
+  feedbackId         String
+  userId             String
+  // Ma trận tiêu chí nhanh
+  attendance         Boolean   @default(true)   // Có mặt
+  focusLevel         Int?                        // Tập trung 1–5
+  participationLevel Int?                        // Tham gia 1–5
+  speakingCount      Int?                        // Số lần phát biểu
+  answerQuality      Int?                        // Kết quả trả lời 1–5
+  comprehension      Int?                        // Hiểu bài 1–5
+  discipline         Int?                        // Ý thức học tập 1–5
+  // Kỹ năng tư duy
+  observation        Int?                        // Quan sát 1–5
+  comparison         Int?                        // So sánh 1–5
+  classification     Int?                        // Phân loại 1–5
+  patternRecognition Int?                        // Quy luật 1–5
+  expression         Int?                        // Diễn đạt 1–5
+  // Cảm xúc/thái độ
+  emotionState       String?                     // great/good/neutral/tired/frustrated
+  // Ghi chú GV và AI nhận xét
+  teacherNote        String?
+  aiComment          String?   // AI sinh nhận xét
+  aiCommentAt        DateTime?
+  // Điểm BTVN (tự động cập nhật từ StudentAnswer)
+  hwScore            Int?      // % (điểm trung bình BTVN buổi trước)
+  hwCorrect          Int?      // Số câu đúng
+  hwTotal            Int?      // Tổng câu
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  feedback SessionFeedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  user     User            @relation(fields: [userId], references: [id])
+
+  @@unique([feedbackId, userId])
+  @@map("avab_student_session_records")
 }
 
 // Theo dõi số lần học viên yêu cầu AI sinh bài tập (tối đa 3 lần/chủ đề)

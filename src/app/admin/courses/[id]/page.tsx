@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff, Key, PauseCircle, PlayCircle } from 'lucide-react'
+import { ArrowLeft, Plus, Edit2, Trash2, BookOpen, Users, Check, X, ChevronDown, Download, Upload, Copy, Eye, EyeOff, Key, PauseCircle, PlayCircle, MessageSquare } from 'lucide-react'
 
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 type PaymentType = 'PER_COURSE' | 'PER_SESSION'
@@ -731,6 +731,10 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                         <Link href={`/admin/subjects/${subject.id}`}
                           className="p-1.5 text-gray-400 hover:text-teal-600 transition" title="Quản lý nội dung">
                           <BookOpen className="w-4 h-4" />
+                        </Link>
+                        <Link href={`/admin/subjects/${subject.id}/feedback`}
+                          className="p-1.5 text-gray-400 hover:text-violet-600 transition" title="Nhận xét buổi học">
+                          <MessageSquare className="w-4 h-4" />
                         </Link>
                         <button onClick={() => handleDeleteSubject(subject.id)}
                           className="p-1.5 text-gray-400 hover:text-red-600 transition">
