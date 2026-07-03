@@ -212,11 +212,11 @@ export default function CourseGeneratorPage() {
                   <span className="flex-1 text-center text-2xl font-black text-emerald-600">{form.numTopics}</span>
                   <button
                     type="button"
-                    onClick={() => setForm(f => ({ ...f, numTopics: Math.min(20, f.numTopics + 1) }))}
+                    onClick={() => setForm(f => ({ ...f, numTopics: Math.min(50, f.numTopics + 1) }))}
                     className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
                   >+</button>
                 </div>
-                <p className="text-xs text-gray-400 text-center mt-1">1 – 20 chuyên đề</p>
+                <p className="text-xs text-gray-400 text-center mt-1">1 – 50 chuyên đề</p>
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">
@@ -231,11 +231,11 @@ export default function CourseGeneratorPage() {
                   <span className="flex-1 text-center text-2xl font-black text-emerald-600">{form.lessonsPerTopic}</span>
                   <button
                     type="button"
-                    onClick={() => setForm(f => ({ ...f, lessonsPerTopic: Math.min(10, f.lessonsPerTopic + 1) }))}
+                    onClick={() => setForm(f => ({ ...f, lessonsPerTopic: Math.min(50, f.lessonsPerTopic + 1) }))}
                     className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
                   >+</button>
                 </div>
-                <p className="text-xs text-gray-400 text-center mt-1">1 – 10 bài/chuyên đề</p>
+                <p className="text-xs text-gray-400 text-center mt-1">1 – 50 bài/chuyên đề</p>
               </div>
             </div>
 
