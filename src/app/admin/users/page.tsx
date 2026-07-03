@@ -371,6 +371,7 @@ export default function AdminUsersPage() {
                   className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white">
                   <option value="STUDENT">Học viên</option>
                   <option value="TEACHER">Giáo viên</option>
+                  <option value="PARENT">Phụ huynh</option>
                   <option value="ADMIN">Admin</option>
                 </select>
               </div>
@@ -462,6 +463,7 @@ export default function AdminUsersPage() {
                 >
                   <option value="STUDENT">Học viên</option>
                   <option value="TEACHER">Giáo viên</option>
+                  <option value="PARENT">Phụ huynh</option>
                   <option value="ADMIN">Admin</option>
                 </select>
               </div>
