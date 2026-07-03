@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth'
 export async function GET() {
   try {
     const courses = await prisma.course.findMany({
-      where: { isActive: true },
+      where: { isActive: true, isPublic: true },
       include: {
         _count: { select: { subjects: true, enrollments: true } },
       },

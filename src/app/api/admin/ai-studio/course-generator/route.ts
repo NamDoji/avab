@@ -158,6 +158,7 @@ export async function POST(req: NextRequest) {
           homeworkCount: nHomework,
           quizCount:     nQuiz,
           isActive:      false,
+          isPublic:      false, // org-private until explicitly published to platform
         },
       })
 

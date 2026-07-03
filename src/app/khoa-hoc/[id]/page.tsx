@@ -108,8 +108,8 @@ export default async function CourseDetailPage({
     subjectDateFilter = { lte: pausedAt }
   }
 
-  const course = await prisma.course.findUnique({
-    where: { id, isActive: true },
+const course = await prisma.course.findUnique({
+    where: { id, isActive: true, isPublic: true },
     include: {
       subjects: {
         where: { isActive: true, ...(Object.keys(subjectDateFilter).length ? { createdAt: subjectDateFilter } : {}) },

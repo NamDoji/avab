@@ -16,7 +16,7 @@ export async function POST(
 
   // Check course exists
   const course = await prisma.course.findUnique({
-    where: { id: courseId, isActive: true },
+    where: { id: courseId, isActive: true, isPublic: true },
   }).catch(() => null)
 
   if (!course) {

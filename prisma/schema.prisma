@@ -95,8 +95,9 @@ model Course {
   grade                String?     // null = dành cho mọi lớp; "1".."9"
   homeworkCount        Int         @default(30)        // Số bài tập / chuyên đề
   quizCount            Int         @default(20)        // Số câu trong đề kiểm tra
-  organizationId       String?                        // null = AvaB demo / legacy
+  organizationId       String?                        // null = AvaB platform course
   campusId             String?                        // null = shared across campuses
+  isPublic             Boolean     @default(false)    // true = hiển thị trên public frontend (avab.vn/khoa-hoc)
   isActive             Boolean     @default(true)
   approvalStatus       String      @default("draft") // draft | review | approved | published | archived
   createdAt            DateTime    @default(now())

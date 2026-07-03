@@ -7,7 +7,7 @@ async function requireAdmin() {
   if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
   if ((session.user as any).role !== 'ADMIN')
     return { error: 'Không có quyền truy cập', status: 403 }
-  return { session }
+  return { session, userId: (session.user as any).id as string }
 }
 
 export async function GET() {
@@ -20,7 +20,19 @@ export async function GET() {
   }
 
   try {
+    // Get admin's organization(s)
+    const orgUser = await prisma.organizationUser.findFirst({
+      where: { userId: check.userId },
+      select: { organizationId: true },
+    })
+    // If admin has an org → show only that org's courses + AvaB public courses
+    // If super admin (no org) → show all
+    const whereClause = orgUser
+      ? { OR: [{ organizationId: orgUser.organizationId }, { isPublic: true }] }
+      : {}
+
     const courses = await prisma.course.findMany({
+      where: whereClause,
       orderBy: { createdAt: 'desc' },
       include: {
         _count: { select: { subjects: true, enrollments: true } },

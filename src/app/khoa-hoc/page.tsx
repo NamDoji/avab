@@ -36,7 +36,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 export default async function KhoaHocPage() {
   const courses = await prisma.course.findMany({
-    where: { isActive: true },
+    where: { isActive: true, isPublic: true },
     select: {
       id: true, code: true, name: true, description: true,
       price: true, courseType: true, isActive: true, grade: true,

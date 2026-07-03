@@ -91,6 +91,7 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
   const courses = await prisma.course.findMany({
     where: {
       isActive: true,
+      isPublic: false, // only org-specific classes in ERP view
       ...(gradeFilter !== undefined && gradeFilter !== ''
         ? { grade: gradeFilter === '0' ? '0' : gradeFilter }
         : {}),
