@@ -17,7 +17,7 @@ const COURSE_TYPE_META: Record<CourseType, { emoji: string; label: string; gradi
 }
 
 async function getStudentData(userId: string) {
-  const [enrollments, answers] = await Promise.all([
+  const [enrollments, answers, sessionRecords] = await Promise.all([
     prisma.enrollment.findMany({
       where: { userId },
       include: {
@@ -38,13 +38,33 @@ async function getStudentData(userId: string) {
       where: { userId },
       select: { score: true, isCorrect: true, subjectId: true },
     }),
+    // Nhận xét buổi học từ giáo viên
+    prisma.studentSessionRecord.findMany({
+      where: { userId, aiComment: { not: null } },
+      include: {
+        feedback: {
+          include: {
+            subject: {
+              select: {
+                id: true,
+                name: true,
+                icon: true,
+                course: { select: { id: true, name: true } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { feedback: { sessionDate: 'desc' } },
+      take: 20,
+    }),
   ])
 
   const totalScore = answers.reduce((sum, a) => sum + a.score, 0)
   const correctAnswers = answers.filter((a) => a.isCorrect).length
   const totalAnswers = answers.length
 
-  return { enrollments, totalScore, correctAnswers, totalAnswers }
+  return { enrollments, totalScore, correctAnswers, totalAnswers, sessionRecords }
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -84,9 +104,9 @@ export default async function HocVienPage() {
   if (!session?.user) redirect('/dang-nhap')
 
   const userId = (session.user as any).id as string
-  const { enrollments, totalScore, correctAnswers, totalAnswers } = await getStudentData(userId)
+  const { enrollments, totalScore, correctAnswers, totalAnswers, sessionRecords } = await getStudentData(userId)
 
-  const approvedEnrollments = enrollments.filter((e) => e.status === 'APPROVED')
+  const approvedEnrollments = enrollments.filter((e) => ['ACTIVE', 'APPROVED'].includes(e.status))
   const accuracy = totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0
 
   // Star rating for overall accuracy
@@ -192,13 +212,13 @@ export default async function HocVienPage() {
 
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-400">{enrollment.course._count.subjects} chuyên đề</span>
-                        {enrollment.status === 'APPROVED' ? (
+                        {['ACTIVE', 'APPROVED'].includes(enrollment.status) ? (
                           <Link href={`/khoa-hoc/${enrollment.course.id}`}
                             className={`text-xs font-black px-3 py-1.5 rounded-full bg-gradient-to-r ${meta.gradient} text-white hover:opacity-90 transition`}>
                             Vào học →
                           </Link>
                         ) : enrollment.status === 'PENDING' ? (
-                          <span className="text-xs text-amber-600 font-semibold">⏳ Đang xét duyệt</span>
+                          <span className="text-xs text-amber-600 font-semibold">⏳ Chờ duyệt</span>
                         ) : null}
                       </div>
                     </div>
@@ -208,6 +228,110 @@ export default async function HocVienPage() {
             </div>
           )}
         </div>
+
+        {/* Nhận xét của giáo viên theo từng buổi học */}
+        {sessionRecords.length > 0 && (
+          <div className="bg-white rounded-3xl shadow-sm p-6 mb-6 border border-gray-100">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="text-2xl">📋</span>
+              <div>
+                <h2 className="text-xl font-black text-gray-900">Nhận xét của giáo viên</h2>
+                <p className="text-xs text-gray-400">Cập nhật sau mỗi buổi học — {sessionRecords.length} nhận xét</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {sessionRecords.map((record) => {
+                const sessionDate = new Date(record.feedback.sessionDate)
+                const subject = record.feedback.subject
+                // Parse aiComment sections
+                const lines = (record.aiComment ?? '').split('\n\n').filter(Boolean)
+                const overview = lines.find(l => l.includes('Tổng quan'))?.replace(/\*\*/g, '').replace('📋 Tổng quan:', '').trim()
+                const strengths = lines.find(l => l.includes('Điểm mạnh'))?.replace(/\*\*/g, '').replace('✨ Điểm mạnh:', '').trim()
+                const parentNote = lines.find(l => l.includes('Gửi phụ huynh'))?.replace(/\*\*/g, '').replace('👨‍👩‍👧 Gửi phụ huynh:', '').trim()
+
+                return (
+                  <div key={record.id} className="border border-gray-100 rounded-2xl overflow-hidden">
+                    {/* Session header */}
+                    <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-gray-100">
+                      <span className="text-xl shrink-0">{subject.icon ?? '📚'}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-gray-800 text-sm truncate">{subject.name}</p>
+                        <p className="text-xs text-gray-400">{subject.course.name}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-semibold text-purple-600">
+                          {sessionDate.toLocaleDateString('vi-VN', { weekday: 'short', day: 'numeric', month: 'numeric' })}
+                        </p>
+                        {record.hwScore !== null && (
+                          <p className="text-xs text-gray-400">BTVN: {record.hwScore}%</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Comment content */}
+                    <div className="px-4 py-4 space-y-3">
+                      {/* Có mặt + Điểm nhanh */}
+                      <div className="flex flex-wrap gap-2">
+                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                          record.attendance ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+                        }`}>
+                          {record.attendance ? '✅ Có mặt' : '❌ Vắng'}
+                        </span>
+                        {record.comprehension && (
+                          <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-semibold">
+                            📚 Hiểu bài: {['', '🔴', '🟠', '🟡', '🟢', '🌟'][record.comprehension]}/5
+                          </span>
+                        )}
+                        {record.focusLevel && (
+                          <span className="text-xs bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full font-semibold">
+                            🧠 Tập trung: {record.focusLevel}/5
+                          </span>
+                        )}
+                        {record.emotionState && (
+                          <span className="text-xs bg-yellow-50 text-yellow-700 px-2.5 py-1 rounded-full font-semibold">
+                            {record.emotionState === 'great' ? '🤩' : record.emotionState === 'good' ? '😊' : record.emotionState === 'neutral' ? '😐' : record.emotionState === 'tired' ? '😴' : '😤'}
+                            {record.emotionState === 'great' ? ' Hứng khởi' : record.emotionState === 'good' ? ' Vui vẻ' : record.emotionState === 'neutral' ? ' Bình thường' : record.emotionState === 'tired' ? ' Mệt mỏi' : ' Chán'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* AI comment sections */}
+                      {overview && (
+                        <div className="bg-gray-50 rounded-xl px-3 py-2.5">
+                          <p className="text-xs font-bold text-gray-500 mb-0.5">📋 Tổng quan</p>
+                          <p className="text-sm text-gray-700 leading-relaxed">{overview}</p>
+                        </div>
+                      )}
+                      {strengths && (
+                        <div className="bg-teal-50 rounded-xl px-3 py-2.5">
+                          <p className="text-xs font-bold text-teal-600 mb-0.5">✨ Điểm mạnh</p>
+                          <p className="text-sm text-gray-700 leading-relaxed">{strengths}</p>
+                        </div>
+                      )}
+                      {parentNote && (
+                        <div className="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5">
+                          <p className="text-xs font-bold text-amber-600 mb-0.5">👨‍👩‍👧 Giáo viên gửi phụ huynh</p>
+                          <p className="text-sm text-gray-700 leading-relaxed">{parentNote}</p>
+                        </div>
+                      )}
+                      {/* Link xem đầy đủ */}
+                      <details className="group">
+                        <summary className="text-xs text-purple-600 font-semibold cursor-pointer hover:text-purple-700 list-none flex items-center gap-1">
+                          <span className="group-open:hidden">▶ Xem nhận xét đầy đủ</span>
+                          <span className="hidden group-open:inline">▼ Ẩn bớt</span>
+                        </summary>
+                        <div className="mt-2 bg-purple-50 rounded-xl px-3 py-3 text-xs text-gray-700 leading-relaxed whitespace-pre-line">
+                          {record.aiComment}
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* AI Dashboard */}
         <AIDashboard userId={userId} />
