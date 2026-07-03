@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { ChevronLeft, BookOpen, Plus } from 'lucide-react'
 import CourseActions from './CourseActions'
+import AIChatPanel from './AIChatPanel'
 
 export const metadata = { title: 'Course Preview — AI Studio' }
 
@@ -206,6 +207,9 @@ export default async function CourseGeneratorResultPage({
 
         </div>
       </div>
+
+      {/* ── AI Chat (floating) ───────────────────────────────────────── */}
+      <AIChatPanel courseId={courseId} />
 
     </div>
   )
