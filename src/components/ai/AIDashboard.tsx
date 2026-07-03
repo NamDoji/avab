@@ -678,7 +678,9 @@ export function AIDashboard({ userId }: Props) {
         setRefreshError({ nextAt: new Date(json.nextAt), daysLeft: json.daysLeft })
       } else if (json.success) {
         setData(prev => ({ ...prev, [tabId]: json.data }))
+        // Cập nhật thời điểm refresh: từ server hoặc đặt now() khi force thành công
         if (json.refreshedAt) setRefreshedAt(new Date(json.refreshedAt))
+        else if (force) setRefreshedAt(new Date())
       }
     } catch (e) {
       console.error(`AI ${tabId} error:`, e)
@@ -738,24 +740,24 @@ export function AIDashboard({ userId }: Props) {
         )
       })()}
 
-      {/* Thông báo giới hạn refresh */}
-      {(refreshedAt || refreshError) && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-700">
-          <Clock size={12} className="shrink-0" />
-          {canRefreshNow ? (
-            <span>Dữ liệu tổng hợp <strong>2 tuần/lần</strong> · Bấm 🔄 để cập nhật ngay</span>
-          ) : (
-            <span>
-              Dữ liệu tổng hợp <strong>2 tuần/lần</strong> ·
-              Cập nhật tiếp:{' '}
-              <strong>
-                {(refreshError?.nextAt ?? nextRefreshDate)?.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-              </strong>{' '}
-              ({refreshError?.daysLeft ?? daysUntilRefresh} ngày nữa)
-            </span>
-          )}
-        </div>
-      )}
+      {/* Thông báo giới hạn refresh — luôn hiện */}
+      <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-700">
+        <Clock size={12} className="shrink-0" />
+        {!refreshedAt && !refreshError ? (
+          <span>Dữ liệu tổng hợp <strong>2 tuần/lần</strong> · Bấm 🔄 để phân tích lần đầu</span>
+        ) : canRefreshNow ? (
+          <span>Dữ liệu tổng hợp <strong>2 tuần/lần</strong> · Bấm 🔄 để cập nhật ngay</span>
+        ) : (
+          <span>
+            Dữ liệu tổng hợp <strong>2 tuần/lần</strong> ·
+            Cập nhật tiếp:{' '}
+            <strong>
+              {(refreshError?.nextAt ?? nextRefreshDate)?.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+            </strong>{' '}
+            ({refreshError?.daysLeft ?? daysUntilRefresh} ngày nữa)
+          </span>
+        )}
+      </div>
 
       {/* Tabs */}
       <div className="flex overflow-x-auto border-b border-gray-100">
