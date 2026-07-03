@@ -10,14 +10,14 @@ export default async function AdminPage() {
   const session = await auth()
   if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const [coursesCount, usersCount, pendingEnrollments, newsCount, newContacts, aiProjectsCount, schoolsCount] = await Promise.all([
+  const [coursesCount, usersCount, pendingEnrollments, newsCount, newContacts, aiProjectsCount, orgsCount] = await Promise.all([
     prisma.course.count(),
     prisma.user.count(),
     prisma.enrollment.count({ where: { status: 'PENDING' } }),
     prisma.news.count(),
     prisma.registration.count({ where: { status: 'NEW' } }),
     prisma.aIProject.count(),
-    prisma.school.count(),
+    prisma.organization.count({ where: { deletedAt: null } }),
   ])
 
   return (
@@ -51,6 +51,25 @@ export default async function AdminPage() {
       </div>
 
       <div className="container-custom py-8 space-y-8">
+
+        {/* ── Organization Management ─────────────────────────────────── */}
+        <div>
+          <p className="text-sm font-bold text-gray-700 mb-3">🏢 Tổ chức</p>
+          <Link href="/admin/organizations"
+            className="flex items-center gap-4 rounded-2xl p-5 text-white hover:scale-[1.01] transition-transform shadow-md"
+            style={{ background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }}>🏢</div>
+            <div className="flex-1">
+              <h3 className="font-black text-white">Organization Management</h3>
+              <p className="text-sm mt-0.5" style={{ color: 'rgba(148,163,184,1)' }}>Quản lý trường học, cơ sở, năm học · Multi-Campus · RBAC</p>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {['Multi-Campus', 'RBAC', 'Academic Year'].map(t => (
+                <span key={t} className="text-xs font-semibold px-2 py-0.5 rounded-lg text-white" style={{ background: 'rgba(255,255,255,0.15)' }}>{t}</span>
+              ))}
+            </div>
+          </Link>
+        </div>
 
         {/* ── School ERP ────────────────────────────────────────────────── */}
         <div>
@@ -183,7 +202,7 @@ export default async function AdminPage() {
               { href: '/admin/news',        icon: '📰', label: 'Tin tức',       desc: 'Đăng bài viết',    color: 'hover:border-pink-300',   count: newsCount },
               { href: '/admin/finance',     icon: '💰', label: 'Tài chính',     desc: 'Doanh thu',        color: 'hover:border-emerald-300' },
               { href: '/admin/contacts',    icon: '📩', label: 'Liên hệ',       desc: 'CRM / leads',      color: 'hover:border-blue-300',   count: newContacts, alert: newContacts > 0 },
-              { href: '/admin/schools',    icon: '🏫', label: 'Trường & TT',   desc: 'Multi-school',     color: 'hover:border-indigo-300', count: schoolsCount },
+              { href: '/admin/organizations', icon: '🏢', label: 'Tổ chức',    desc: 'Multi-campus',     color: 'hover:border-indigo-300', count: orgsCount },
             ].map((item) => (
               <Link key={item.href} href={item.href}
                 className={`relative bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all ${item.color} ${(item as any).alert ? 'ring-2 ring-orange-400' : ''}`}>

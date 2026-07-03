@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
           const last4 = rawPhone.slice(-4)
           const hashedPassword = await bcrypt.hash(last4, 10)
 
-          await prisma.user.create({
+          const newUser = await prisma.user.create({
             data: {
               name: name || phone,
               phone: rawPhone,
@@ -85,15 +85,27 @@ export async function POST(req: NextRequest) {
             },
           })
 
+          // Assign to default organization
+          const defaultOrg = await prisma.organization.findFirst({
+            where: { deletedAt: null, isActive: true },
+            orderBy: { createdAt: 'asc' },
+          })
+          if (defaultOrg) {
+            await prisma.organizationUser.upsert({
+              where: { organizationId_userId: { organizationId: defaultOrg.id, userId: newUser.id } },
+              create: { organizationId: defaultOrg.id, userId: newUser.id, orgRole: 'MEMBER' },
+              update: {},
+            })
+          }
+
           // If student has courseCode, try to enroll
           if (module === 'students' && courseCode) {
             try {
               const course = await prisma.course.findUnique({ where: { code: courseCode } })
-              const user = await prisma.user.findUnique({ where: { phone: rawPhone } })
-              if (course && user) {
+              if (course) {
                 await prisma.enrollment.create({
                   data: {
-                    userId: user.id,
+                    userId: newUser.id,
                     courseId: course.id,
                     status: 'ACTIVE',
                   },
