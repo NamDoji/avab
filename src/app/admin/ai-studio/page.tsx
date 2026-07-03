@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, Rocket } from 'lucide-react'
 
 export const metadata = { title: 'AI Studio — AvaB Admin' }
 
@@ -145,11 +145,18 @@ export default async function AIStudioPage() {
               </div>
             </div>
 
-            <Link href="/admin/ai-studio/new"
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-5 py-3 rounded-xl font-bold shadow hover:from-purple-600 hover:to-indigo-600 transition-all min-h-[44px]">
-              <Plus size={18} />
-              Dự án mới
-            </Link>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Link href="/admin/ai-studio/course-generator"
+                className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-5 py-3 rounded-xl font-bold shadow hover:from-emerald-600 hover:to-teal-600 transition-all min-h-[44px]">
+                <Rocket size={18} />
+                Generate Full Course
+              </Link>
+              <Link href="/admin/ai-studio/new"
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-5 py-3 rounded-xl font-bold shadow hover:from-purple-600 hover:to-indigo-600 transition-all min-h-[44px]">
+                <Plus size={18} />
+                Dự án mới
+              </Link>
+            </div>
           </div>
 
           {/* Stats */}

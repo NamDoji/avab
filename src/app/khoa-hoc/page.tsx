@@ -4,11 +4,11 @@ import { KhoaHocHero } from '@/components/courses/KhoaHocHero'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Khoá học — AvaB',
-  description: 'Các khoá học Toán, Tiếng Anh, Lập trình dành cho trẻ em tại AvaB',
+  title: 'Khoá học K12 — AvaB',
+  description: 'Các khoá học K12 đầy đủ: Toán, Tiếng Việt, Tiếng Anh, Lập trình, Khoa học và nhiều môn khác từ Mầm non đến Lớp 12 tại AvaB',
   openGraph: {
-    title: 'Khoá học — AvaB',
-    description: 'Các khoá học Toán, Tiếng Anh, Lập trình dành cho trẻ em tại AvaB',
+    title: 'Khoá học K12 — AvaB',
+    description: 'Các khoá học K12 đầy đủ: Toán, Tiếng Việt, Tiếng Anh, Lập trình, Khoa học và nhiều môn khác từ Mầm non đến Lớp 12 tại AvaB',
     url: 'https://www.avab.vn/khoa-hoc',
   }
 }
@@ -40,6 +40,7 @@ export default async function KhoaHocPage() {
     select: {
       id: true, code: true, name: true, description: true,
       price: true, courseType: true, isActive: true, grade: true,
+      subjectCode: true, subjectName: true, gradeMin: true, gradeMax: true,
       _count: { select: { subjects: true, enrollments: true } },
     },
     orderBy: { createdAt: 'asc' },

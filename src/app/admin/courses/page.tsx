@@ -7,20 +7,30 @@ import { BookOpen, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 // Legacy CourseType kept for backward compat with existing courses
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 
-// K12 generic subject codes — extensible, no longer a closed enum
+// K12 generic subject codes — full K12 list
 const SUBJECT_CODE_OPTIONS: { value: string; label: string; emoji: string; color: string }[] = [
-  { value: 'THINKING_MATH', label: 'Toán Tư Duy',         emoji: '🧠', color: 'bg-blue-50 text-blue-700' },
-  { value: 'MATH',          label: 'Toán',                  emoji: '📐', color: 'bg-indigo-50 text-indigo-700' },
-  { value: 'ENGLISH',       label: 'Tiếng Anh',            emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
-  { value: 'ALGO',          label: 'Thuật Toán',           emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
-  { value: 'SCRATCH',       label: 'Scratch',               emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
-  { value: 'PYTHON',        label: 'Python',                emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
-  { value: 'CPP',           label: 'C++',                   emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
-  { value: 'SCIENCE',       label: 'Khoa học',             emoji: '🔬', color: 'bg-cyan-50 text-cyan-700' },
-  { value: 'HISTORY',       label: 'Lịch sử',              emoji: '🏰', color: 'bg-amber-50 text-amber-700' },
-  { value: 'IELTS',         label: 'IELTS',                 emoji: '🇸🇦', color: 'bg-sky-50 text-sky-700' },
-  { value: 'CAMBRIDGE',     label: 'Cambridge',             emoji: '🇨🇦', color: 'bg-rose-50 text-rose-700' },
-  { value: 'GENERAL',       label: 'Tổng hợp',             emoji: '📚', color: 'bg-gray-50 text-gray-700' },
+  { value: 'THINKING_MATH', label: 'Toán Tư Duy',           emoji: '🧠', color: 'bg-purple-50 text-purple-700' },
+  { value: 'MATH',          label: 'Toán',                    emoji: '📐', color: 'bg-blue-50 text-blue-700' },
+  { value: 'VIETNAMESE',    label: 'Tiếng Việt',            emoji: '📖', color: 'bg-red-50 text-red-700' },
+  { value: 'ENGLISH',       label: 'Tiếng Anh',              emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
+  { value: 'SCIENCE',       label: 'Khoa học',               emoji: '🔬', color: 'bg-cyan-50 text-cyan-700' },
+  { value: 'HISTORY',       label: 'Lịch sử',                emoji: '🏰', color: 'bg-amber-50 text-amber-700' },
+  { value: 'GEOGRAPHY',     label: 'Địa lý',                emoji: '🌍', color: 'bg-emerald-50 text-emerald-700' },
+  { value: 'PHYSICS',       label: 'Vật lý',                emoji: '⚛️', color: 'bg-violet-50 text-violet-700' },
+  { value: 'CHEMISTRY',     label: 'Hóa học',               emoji: '🧪', color: 'bg-lime-50 text-lime-700' },
+  { value: 'BIOLOGY',       label: 'Sinh học',               emoji: '🧬', color: 'bg-teal-50 text-teal-700' },
+  { value: 'INFORMATICS',   label: 'Tin học',                emoji: '💻', color: 'bg-sky-50 text-sky-700' },
+  { value: 'CIVIC',         label: 'GDCD',                   emoji: '⚖️', color: 'bg-indigo-50 text-indigo-700' },
+  { value: 'PE',            label: 'Thể dục',                emoji: '⚽', color: 'bg-orange-50 text-orange-700' },
+  { value: 'MUSIC',         label: 'Âm nhạc',                emoji: '🎵', color: 'bg-pink-50 text-pink-700' },
+  { value: 'ART',           label: 'Mỹ thuật',               emoji: '🎨', color: 'bg-yellow-50 text-yellow-700' },
+  { value: 'ALGO',          label: 'Thuật Toán',             emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
+  { value: 'SCRATCH',       label: 'Scratch',                 emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
+  { value: 'PYTHON',        label: 'Python',                  emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
+  { value: 'CPP',           label: 'C++',                     emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+  { value: 'IELTS',         label: 'IELTS',                   emoji: '📝', color: 'bg-sky-50 text-sky-700' },
+  { value: 'CAMBRIDGE',     label: 'Cambridge',               emoji: '🎓', color: 'bg-rose-50 text-rose-700' },
+  { value: 'GENERAL',       label: 'Tổng hợp',               emoji: '📚', color: 'bg-gray-50 text-gray-700' },
 ]
 
 function SubjectCodeBadge({ code, name }: { code?: string; name?: string | null }) {
@@ -103,6 +113,8 @@ export default function AdminCoursesPage() {
     grades: [] as string[],
     subjectCode: 'THINKING_MATH',
     subjectName: '',
+    gradeMin: '' as string,
+    gradeMax: '' as string,
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -130,12 +142,14 @@ export default function AdminCoursesPage() {
         pricePerSession: form.paymentType === 'PER_SESSION' ? Number(form.pricePerSession) : null,
         grade: form.grades.length > 0 ? form.grades.join(',') : null,
         subjectName: form.subjectName || null,
+        gradeMin: form.gradeMin !== '' ? Number(form.gradeMin) : null,
+        gradeMax: form.gradeMax !== '' ? Number(form.gradeMax) : null,
       }),
     })
     const data = await res.json()
     if (data.success) {
       setShowForm(false)
-      setForm({ code: '', name: '', description: '', price: '1500000', pricePerSession: '200000', paymentType: 'PER_COURSE', grades: [], subjectCode: 'THINKING_MATH', subjectName: '' })
+      setForm({ code: '', name: '', description: '', price: '1500000', pricePerSession: '200000', paymentType: 'PER_COURSE', grades: [], subjectCode: 'THINKING_MATH', subjectName: '', gradeMin: '', gradeMax: '' })
       load()
     } else {
       setError(data.error)
