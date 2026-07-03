@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { openai, AVAB_SYSTEM } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
 import { getA2PLMContext, formatA2PLMContext } from '@/lib/a2plm'
+import { getAICache, canRefresh, saveAICache } from '@/lib/ai-cache'
 
 // Bài toán 1: Chẩn đoán trạng thái người học — A2PLM đầy đủ
 // I_t = Π_θ(K_t, B_t, E_t, P, G, C_t, R, T, M)
@@ -12,6 +13,21 @@ export async function GET(req: NextRequest) {
 
   try {
     const userId = (session.user as any).id
+
+    // Cache check: không có force=1 → trả cache nếu có
+    const force = req.nextUrl.searchParams.get('force') === '1'
+    if (!force) {
+      const cached = await getAICache(userId, 'diagnose')
+      if (cached.cached) {
+        return NextResponse.json({ success: true, data: cached.data, fromCache: true, refreshedAt: cached.refreshedAt })
+      }
+    } else {
+      // Kiểm tra giới hạn 14 ngày
+      const check = await canRefresh(userId)
+      if (!check.allowed) {
+        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+      }
+    }
 
     // Lấy A2PLM context (P_i, G_i, C_t^i, SRL_t^i)
     const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
@@ -110,20 +126,18 @@ Chẩn đoán tích hợp A2PLM theo JSON (không markdown):
     const raw = completion.choices[0].message.content || '{}'
     const aiDiagnosis = JSON.parse(raw.replace(/```json|```/g, '').trim())
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        knowledgeProfile, masteredCount: mastered.length, developingCount: developing.length,
-        strugglingCount: struggling.length, totalSubjects: allSubjects.length,
-        behavior: { totalAnswered, avgPerDay, learningTrend, learningTrendLabel: learningTrend > 5 ? 'Đang tiến bộ tốt' : learningTrend < -5 ? 'Có dấu hiệu chững lại' : 'Ổn định' },
-        cognitive: { load: cognitiveLoadLevel, maxConsecutiveWrong },
-        engagement: { level: engagementLevel, score: engagementScore, subjectsCovered },
-        // A2PLM additions
-        srl, profile, context: { device: context.device, timeOfDay: context.timeOfDay, note: context.contextNote },
-        daysToExam,
-        ...aiDiagnosis,
-      },
-    })
+    const responseData = {
+      knowledgeProfile, masteredCount: mastered.length, developingCount: developing.length,
+      strugglingCount: struggling.length, totalSubjects: allSubjects.length,
+      behavior: { totalAnswered, avgPerDay, learningTrend, learningTrendLabel: learningTrend > 5 ? 'Đang tiến bộ tốt' : learningTrend < -5 ? 'Có dấu hiệu chững lại' : 'Ổn định' },
+      cognitive: { load: cognitiveLoadLevel, maxConsecutiveWrong },
+      engagement: { level: engagementLevel, score: engagementScore, subjectsCovered },
+      srl, profile, context: { device: context.device, timeOfDay: context.timeOfDay, note: context.contextNote },
+      daysToExam,
+      ...aiDiagnosis,
+    }
+    await saveAICache(userId, 'diagnose', responseData)
+    return NextResponse.json({ success: true, data: responseData })
   } catch (err) {
     console.error('AI diagnose error:', err)
     return NextResponse.json({ success: false, error: 'AI không khả dụng' }, { status: 500 })

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Brain, Loader2, RefreshCw, ChevronRight } from 'lucide-react'
+import { Brain, Loader2, RefreshCw, ChevronRight, Clock } from 'lucide-react'
 
 interface Props {
   userId: string
@@ -647,28 +647,46 @@ const TABS: { id: TabId; label: string; emoji: string; apiPath: string; method: 
   { id: 'recommend', label: 'Khuyến nghị',  emoji: '💡', apiPath: 'recommend', method: 'GET',  desc: 'Chiến lược sư phạm tổng hợp' },
 ]
 
+const AI_REFRESH_DAYS = 14
+
 export function AIDashboard({ userId }: Props) {
   const [data, setData] = useState<Partial<Record<TabId, any>>>({})
   const [loading, setLoading] = useState<Partial<Record<TabId, boolean>>>({})
   const [activeTab, setActiveTab] = useState<TabId>('diagnose')
+  const [refreshedAt, setRefreshedAt] = useState<Date | null>(null)
+  const [refreshError, setRefreshError] = useState<{ nextAt: Date; daysLeft: number } | null>(null)
 
-  const fetchTab = async (tabId: TabId) => {
+  // Tính ngày có thể refresh tiếp theo
+  const nextRefreshDate = refreshedAt
+    ? new Date(refreshedAt.getTime() + AI_REFRESH_DAYS * 24 * 60 * 60 * 1000)
+    : null
+  const daysUntilRefresh = nextRefreshDate
+    ? Math.ceil((nextRefreshDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : 0
+  const canRefreshNow = !refreshedAt || daysUntilRefresh <= 0
+
+  const fetchTab = async (tabId: TabId, force = false) => {
     const tab = TABS.find(t => t.id === tabId)
     if (!tab) return
     setLoading(prev => ({ ...prev, [tabId]: true }))
+    setRefreshError(null)
     try {
-      const res = await fetch(`/api/ai/${tab.apiPath}`, {
-        method: tab.method,
-        ...(tab.method === 'POST' ? { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) } : {}),
-      })
+      const url = `/api/ai/${tab.apiPath}${force ? '?force=1' : ''}`
+      const res = await fetch(url, { method: tab.method })
       const json = await res.json()
-      if (json.success) setData(prev => ({ ...prev, [tabId]: json.data }))
+      if (res.status === 429 && json.error === 'refresh_limit') {
+        setRefreshError({ nextAt: new Date(json.nextAt), daysLeft: json.daysLeft })
+      } else if (json.success) {
+        setData(prev => ({ ...prev, [tabId]: json.data }))
+        if (json.refreshedAt) setRefreshedAt(new Date(json.refreshedAt))
+      }
     } catch (e) {
       console.error(`AI ${tabId} error:`, e)
     }
     setLoading(prev => ({ ...prev, [tabId]: false }))
   }
 
+  // Load cache khi mount (không gọi OpenAI)
   useEffect(() => { fetchTab('diagnose') }, [])
 
   return (
@@ -684,11 +702,20 @@ export function AIDashboard({ userId }: Props) {
             <p className="text-white/70 text-xs">K_t · B_t · E_t · P_i · G_i · C_t · SRL_t</p>
           </div>
           <button
-            onClick={() => fetchTab(activeTab)}
-            className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-all shrink-0"
-            title="Làm mới phân tích"
+            onClick={() => {
+              if (canRefreshNow) {
+                TABS.forEach(t => fetchTab(t.id, true))
+              }
+            }}
+            disabled={!canRefreshNow || Object.values(loading).some(Boolean)}
+            className={`p-2 rounded-xl transition-all shrink-0 ${
+              canRefreshNow
+                ? 'bg-white/10 hover:bg-white/20 cursor-pointer'
+                : 'bg-white/5 opacity-40 cursor-not-allowed'
+            }`}
+            title={canRefreshNow ? 'Phân tích mới (2 tuần/lần)' : `Có thể cập nhật sau ${daysUntilRefresh} ngày nữa`}
           >
-            <RefreshCw size={16} className={loading[activeTab] ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={Object.values(loading).some(Boolean) ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
@@ -711,6 +738,25 @@ export function AIDashboard({ userId }: Props) {
         )
       })()}
 
+      {/* Thông báo giới hạn refresh */}
+      {(refreshedAt || refreshError) && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-700">
+          <Clock size={12} className="shrink-0" />
+          {canRefreshNow ? (
+            <span>Dữ liệu tổng hợp <strong>2 tuần/lần</strong> · Bấm 🔄 để cập nhật ngay</span>
+          ) : (
+            <span>
+              Dữ liệu tổng hợp <strong>2 tuần/lần</strong> ·
+              Cập nhật tiếp:{' '}
+              <strong>
+                {(refreshError?.nextAt ?? nextRefreshDate)?.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+              </strong>{' '}
+              ({refreshError?.daysLeft ?? daysUntilRefresh} ngày nữa)
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex overflow-x-auto border-b border-gray-100">
         {TABS.map(tab => (
@@ -718,7 +764,7 @@ export function AIDashboard({ userId }: Props) {
             key={tab.id}
             onClick={() => {
               setActiveTab(tab.id)
-              if (!data[tab.id]) fetchTab(tab.id)
+              if (!data[tab.id]) fetchTab(tab.id) // load từ cache nếu chưa có
             }}
             className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 px-2 py-3 text-xs font-bold transition-all border-b-2 whitespace-nowrap ${
               activeTab === tab.id

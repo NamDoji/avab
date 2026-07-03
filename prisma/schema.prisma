@@ -24,6 +24,8 @@ model User {
   answers           StudentAnswer[]
   learnerProfile    LearnerProfile?
   sessionRecords    StudentSessionRecord[]
+  aiCaches          AIAnalysisCache[]
+  aiRefreshedAt     DateTime?  // Lần cuối refresh AI analysis
 
   @@map("avab_users")
 }
@@ -349,6 +351,20 @@ model AIQuizGenLog {
 
   @@unique([userId, subjectId])
   @@map("avab_ai_quiz_gen_log")
+}
+
+// Cache kết quả phân tích AI — 1 lần/2 tuần mỗi học viên
+model AIAnalysisCache {
+  id           String   @id @default(cuid())
+  userId       String
+  analysisType String   // diagnose | predict | intervene | recommend
+  data         Json
+  refreshedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, analysisType])
+  @@map("avab_ai_analysis_cache")
 }
 
 model Registration {

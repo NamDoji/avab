@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { openai, AVAB_SYSTEM } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
 import { getA2PLMContext, formatA2PLMContext } from '@/lib/a2plm'
+import { getAICache, canRefresh, saveAICache } from '@/lib/ai-cache'
 
 // Bài toán 2: Dự báo tiến trình học tập — A2PLM đầy đủ
 // π* = argmax_π E[Σ γᵗ(μ₁ΔK + μ₂SRL + μ₃ENG + μ₄RET - μ₅CL - μ₆COST)]
@@ -12,6 +13,20 @@ export async function GET(req: NextRequest) {
 
   try {
     const userId = (session.user as any).id
+
+    const force = req.nextUrl.searchParams.get('force') === '1'
+    if (!force) {
+      const cached = await getAICache(userId, 'predict')
+      if (cached.cached) {
+        return NextResponse.json({ success: true, data: cached.data, fromCache: true, refreshedAt: cached.refreshedAt })
+      }
+    } else {
+      const check = await canRefresh(userId)
+      if (!check.allowed) {
+        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+      }
+    }
+
     const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
 
     const [answers, totalSubjects] = await Promise.all([
@@ -106,17 +121,15 @@ Dự báo đa chiều JSON — có xem xét P_i, G_i, SRL (không markdown):
     const raw = completion.choices[0].message.content || '{}'
     const prediction = JSON.parse(raw.replace(/```json|```/g, '').trim())
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        stats: { totalScore, overallAccuracy, subjectsDone, totalSubjects, coveragePct, totalAnswered, improvement, recentAccuracy },
-        multiDimension: { engagementRisk, cognitiveLoad, readinessToAdvance },
-        // A2PLM
-        srl, profile: profile ? { targetSchool: profile.targetSchool, targetGoal: profile.targetGoal, backgroundLevel: profile.backgroundLevel } : null,
-        daysToExam,
-        ...prediction, probability: prediction.probability ?? probability,
-      },
-    })
+    const responseData = {
+      stats: { totalScore, overallAccuracy, subjectsDone, totalSubjects, coveragePct, totalAnswered, improvement, recentAccuracy },
+      multiDimension: { engagementRisk, cognitiveLoad, readinessToAdvance },
+      srl, profile: profile ? { targetSchool: profile.targetSchool, targetGoal: profile.targetGoal, backgroundLevel: profile.backgroundLevel } : null,
+      daysToExam,
+      ...prediction, probability: prediction.probability ?? probability,
+    }
+    await saveAICache(userId, 'predict', responseData)
+    return NextResponse.json({ success: true, data: responseData })
   } catch (err) {
     console.error('AI predict error:', err)
     return NextResponse.json({ success: false, error: 'AI không khả dụng' }, { status: 500 })

@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { openai, AVAB_SYSTEM } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
 import { getA2PLMContext, formatA2PLMContext } from '@/lib/a2plm'
+import { getAICache, canRefresh, saveAICache } from '@/lib/ai-cache'
 
 // Bài toán 4: Khuyến nghị can thiệp sư phạm — A2PLM đầy đủ
 // Aware recommendation: context × profile × goals × SRL
@@ -12,8 +13,22 @@ export async function GET(req: NextRequest) {
 
   try {
     const userId = (session.user as any).id
-    const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
     const subjectId = new URL(req.url).searchParams.get('subjectId')
+
+    const force = req.nextUrl.searchParams.get('force') === '1'
+    if (!force) {
+      const cached = await getAICache(userId, 'recommend')
+      if (cached.cached) {
+        return NextResponse.json({ success: true, data: cached.data, fromCache: true, refreshedAt: cached.refreshedAt })
+      }
+    } else {
+      const check = await canRefresh(userId)
+      if (!check.allowed) {
+        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+      }
+    }
+
+    const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
 
     const wrongAnswers = await prisma.studentAnswer.findMany({
       where: { userId, isCorrect: false, ...(subjectId ? { subjectId } : {}) },
@@ -89,14 +104,13 @@ Gợi ý 3 bài tập, phù hợp phong cách học.`
     const raw = completion.choices[0].message.content || '{}'
     const recommendations = JSON.parse(raw.replace(/```json|```/g, '').trim())
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        ...recommendations, supportLevel,
-        srl, profile: profile ? { learningStyle: profile.learningStyle, parentInvolvement: profile.parentInvolvement, targetGoal: profile.targetGoal } : null,
-        daysToExam,
-      },
-    })
+    const responseData = {
+      ...recommendations, supportLevel,
+      srl, profile: profile ? { learningStyle: profile.learningStyle, parentInvolvement: profile.parentInvolvement, targetGoal: profile.targetGoal } : null,
+      daysToExam,
+    }
+    await saveAICache(userId, 'recommend', responseData)
+    return NextResponse.json({ success: true, data: responseData })
   } catch (err) {
     console.error('AI recommend error:', err)
     return NextResponse.json({ success: false, error: 'AI không khả dụng' }, { status: 500 })

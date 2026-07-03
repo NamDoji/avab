@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth'
 import { openai, AVAB_SYSTEM } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
 import { getA2PLMContext, formatA2PLMContext } from '@/lib/a2plm'
+import { getAICache, canRefresh, saveAICache } from '@/lib/ai-cache'
 
 // Bài toán 3: Lựa chọn gói can thiệp sư phạm — A2PLM đầy đủ
 // Recommender systems — context-aware decision making
@@ -12,6 +13,20 @@ export async function GET(req: NextRequest) {
 
   try {
     const userId = (session.user as any).id
+
+    const force = req.nextUrl.searchParams.get('force') === '1'
+    if (!force) {
+      const cached = await getAICache(userId, 'intervene')
+      if (cached.cached) {
+        return NextResponse.json({ success: true, data: cached.data, fromCache: true, refreshedAt: cached.refreshedAt })
+      }
+    } else {
+      const check = await canRefresh(userId)
+      if (!check.allowed) {
+        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
+      }
+    }
+
     const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
 
     const [answers, allSubjects] = await Promise.all([
@@ -89,15 +104,14 @@ Lựa chọn gói can thiệp A2PLM — context-aware recommendation JSON (khôn
     const raw = completion.choices[0].message.content || '{}'
     const intervention = JSON.parse(raw.replace(/```json|```/g, '').trim())
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        stats: { overall, masteredCount: masteredSubjects.length, strugglingCount: strugglingSubjects.length, notStartedCount: notStarted.length, recentAccuracy: recentAcc, urgencyScore },
-        srl, profile: profile ? { targetSchool: profile.targetSchool, targetGoal: profile.targetGoal, weeklyHours: profile.weeklyHours } : null,
-        daysToExam,
-        ...intervention, packageType: intervention.packageType ?? packageType,
-      },
-    })
+    const responseData = {
+      stats: { overall, masteredCount: masteredSubjects.length, strugglingCount: strugglingSubjects.length, notStartedCount: notStarted.length, recentAccuracy: recentAcc, urgencyScore },
+      srl, profile: profile ? { targetSchool: profile.targetSchool, targetGoal: profile.targetGoal, weeklyHours: profile.weeklyHours } : null,
+      daysToExam,
+      ...intervention, packageType: intervention.packageType ?? packageType,
+    }
+    await saveAICache(userId, 'intervene', responseData)
+    return NextResponse.json({ success: true, data: responseData })
   } catch (err) {
     console.error('AI intervene error:', err)
     return NextResponse.json({ success: false, error: 'AI không khả dụng' }, { status: 500 })
