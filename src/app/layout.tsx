@@ -23,10 +23,10 @@ export const metadata: Metadata = {
     template: '%s | AvaB',
   },
   description:
-    'AvaB - Nền tảng luyện thi học bổng vào lớp 1 các trường chất lượng cao hàng đầu. Chương trình toán tư duy đỉnh cao, được nghiên cứu và phát triển bởi các học sinh xuất sắc đạt giải quốc tế.',
+    'AvaB - Nền tảng AI Giáo dục K12 thông minh. Hỗ trợ học sinh từ Mầm non đến Lớp 12 học tập cá nhân hóa với AI.',
   keywords: [
-    'luyện thi lớp 1',
-    'học bổng lớp 1',
+    'AI giáo dục K12',
+    'học tập thông minh',
     'toán tư duy',
     'trường chất lượng cao',
     'AvaB',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     siteName: 'AvaB',
     title: 'AvaB - Luyện Thi Học Bổng Vào Lớp 1',
     description:
-      'Nền tảng toán tư duy đỉnh cao cho trẻ 5-6 tuổi, chuẩn bị vào lớp 1 các trường chất lượng cao.',
+      'Nền tảng AI Giáo dục K12 — Cá nhân hóa học tập cho mọi học sinh từ Mầm non đến Lớp 12.',
     images: [
       {
         url: '/og-image.png',
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'AvaB - Luyện Thi Học Bổng Vào Lớp 1',
-    description: 'Nền tảng toán tư duy đỉnh cao cho trẻ 5-6 tuổi',
+    description: 'Nền tảng AI Giáo dục K12 thông minh',
   },
 }
 

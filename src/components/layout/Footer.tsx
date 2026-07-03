@@ -39,7 +39,7 @@ export function Footer() {
           </div>
           <p className="text-gray-400 text-sm leading-relaxed mb-4">
             {vi
-              ? 'Nền tảng luyện thi học bổng vào lớp 1 các trường chất lượng cao hàng đầu. Phương pháp toán tư duy đỉnh cao.'
+              ? 'Nền tảng AI giáo dục K12 thông minh — Từ Mầm non đến Lớp 12. Công nghệ AI hỗ trợ học sinh học tập cá nhân hóa.'
               : 'Premier Grade 1 scholarship exam prep platform. Top-tier logical thinking math methodology.'}
           </p>
           <div className="flex gap-3">
