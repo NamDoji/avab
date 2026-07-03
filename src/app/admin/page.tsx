@@ -76,6 +76,7 @@ export default async function AdminPage() {
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🧠 AI & Giáo dục</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
+              { href: '/admin/ai-studio', icon: '✨', label: 'AI Studio', desc: 'Project workspace tạo học liệu tự động', color: 'border-indigo-300 hover:border-indigo-500 bg-gradient-to-br from-indigo-50 to-white', badge: 'NEW' },
               { href: '/admin/content-studio', icon: '🎨', label: 'Content Studio', desc: 'Workspace tạo học liệu A–Z', color: 'border-pink-300 hover:border-pink-500 bg-gradient-to-br from-pink-50 to-white' },
               { href: '/admin/ai-generator', icon: '🤖', label: 'AI Generator', desc: 'AI Workspace — tạo giáo án, bài tập', color: 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-purple-50 to-white' },
               { href: '/admin/question-bank', icon: '🗃️', label: 'Question Bank', desc: 'Ngân hàng câu hỏi trung tâm', color: 'border-indigo-300 hover:border-indigo-500 bg-gradient-to-br from-indigo-50 to-white' },
@@ -85,7 +86,12 @@ export default async function AdminPage() {
               { href: '/phu-huynh', icon: '👨‍👩‍👧‍👦', label: 'Portal Phụ huynh', desc: 'Theo dõi con học tập', color: 'border-sky-200 hover:border-sky-400' },
             ].map((item) => (
               <Link key={item.href} href={item.href}
-                className={`bg-white rounded-2xl p-4 border shadow-sm hover:shadow-md transition-all ${item.color}`}>
+                className={`relative bg-white rounded-2xl p-4 border shadow-sm hover:shadow-md transition-all ${item.color}`}>
+                {(item as { badge?: string }).badge && (
+                  <span className="absolute top-3 right-3 bg-indigo-500 text-white text-xs font-black px-1.5 py-0.5 rounded-full leading-none">
+                    {(item as { badge?: string }).badge}
+                  </span>
+                )}
                 <div className="text-3xl mb-2">{item.icon}</div>
                 <h3 className="font-black text-gray-900 text-sm">{item.label}</h3>
                 <p className="text-gray-400 text-xs mt-0.5">{item.desc}</p>
