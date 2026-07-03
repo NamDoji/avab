@@ -298,6 +298,23 @@ export default async function AdminPage() {
             ))}
           </div>
 
+          {/* Workflow Engine */}
+          <div className="mb-4">
+            <p className="text-sm font-bold text-gray-700 mb-3">⚙️ Workflow Engine</p>
+            <Link href="/admin/workflow"
+              className="block relative overflow-hidden rounded-2xl p-5 text-white hover:scale-[1.01] transition-transform shadow-md"
+              style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.15)' }}>⚙️</div>
+                <div className="flex-1">
+                  <h3 className="font-black text-base text-white">Workflow Engine</h3>
+                  <p className="text-xs mt-0.5" style={{ color: 'rgba(221,214,254,1)' }}>10 templates · Approval flow · Tuyển sinh · QA · Thu học phí · Nhân sự</p>
+                </div>
+                <span className="flex-shrink-0 text-xs font-black px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.2)' }}>BPM</span>
+              </div>
+            </Link>
+          </div>
+
           {/* AvaB Standards — full-width dark card */}
           <p className="text-sm font-bold text-gray-700 mb-3">📖 Chương trình & Tiêu chuẩn</p>
           <Link href="/admin/education-standards"
