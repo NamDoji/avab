@@ -146,6 +146,31 @@ export default async function AdminPage() {
           </div>
         </div>
 
+        {/* ── Import & Migration ────────────────────────────────────────── */}
+        <div>
+          <p className="text-sm font-bold text-gray-700 mb-3">📥 Import & Migration</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Link href="/admin/material-import"
+              className="relative overflow-hidden rounded-2xl p-5 text-white hover:scale-[1.01] transition-transform shadow-md"
+              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}>
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.1)', transform: 'translate(25%, -50%)' }} />
+              <div className="text-2xl mb-2">📚</div>
+              <h3 className="font-black text-sm text-white">Teaching Material Import</h3>
+              <p className="text-xs mt-1" style={{ color: 'rgba(221,214,254,1)' }}>Word · PDF · Quizizz · Google Forms · Kahoot</p>
+              <span className="absolute top-3 right-3 text-xs font-black px-2 py-0.5 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.2)' }}>AI</span>
+            </Link>
+            <Link href="/admin/data-migration"
+              className="relative overflow-hidden rounded-2xl p-5 text-white hover:scale-[1.01] transition-transform shadow-md"
+              style={{ background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)' }}>
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.1)', transform: 'translate(25%, -50%)' }} />
+              <div className="text-2xl mb-2">📦</div>
+              <h3 className="font-black text-sm text-white">Data Migration Center</h3>
+              <p className="text-xs mt-1" style={{ color: 'rgba(186,230,253,1)' }}>Excel · CSV · học sinh · giáo viên · khóa học</p>
+              <span className="absolute top-3 right-3 text-xs font-black px-2 py-0.5 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.2)' }}>AI</span>
+            </Link>
+          </div>
+        </div>
+
         {/* ── Quản lý hệ thống ──────────────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">⚙️ Quản lý hệ thống</p>
