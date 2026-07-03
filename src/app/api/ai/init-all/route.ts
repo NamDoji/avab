@@ -21,6 +21,9 @@ import { openai, AVAB_SYSTEM } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
 import { getA2PLMContext, formatA2PLMContext } from '@/lib/a2plm'
 
+// Tăng timeout lên 60s (Vercel Pro) — 4 OpenAI calls song song có thể tốn 10-30s
+export const maxDuration = 60
+
 export async function POST(req: NextRequest) {
   // ── Auth ──────────────────────────────────────────────────────────────────
   const session = await auth()
@@ -529,12 +532,12 @@ Gợi ý 3 bài tập, phù hợp phong cách học.`
       }
     }
 
-    // ── Chạy 4 generator song song ────────────────────────────────────────────
+    // ── Chạy 4 generator song song — mỗi cái fail riêng ──────────────────────
     const [diagnose, predict, intervene, recommend] = await Promise.all([
-      generateDiagnose(),
-      generatePredict(),
-      generateIntervene(),
-      generateRecommend(),
+      generateDiagnose().catch((e: unknown) => { console.error('diagnose fail:', e); return { error: true } }),
+      generatePredict().catch((e: unknown) => { console.error('predict fail:', e); return { error: true } }),
+      generateIntervene().catch((e: unknown) => { console.error('intervene fail:', e); return { error: true } }),
+      generateRecommend().catch((e: unknown) => { console.error('recommend fail:', e); return { error: true } }),
     ])
 
     // ── Upsert 4 cache records song song (không update aiRefreshedAt ở đây) ───
