@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     const userId = (session.user as { id: string }).id
 
     // ── Lấy A2PLM context 1 lần (P_i, G_i, C_t^i, SRL_t^i) ─────────────────
-    const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
+    const { profile, srl, context, daysToExam, bt, et } = await getA2PLMContext(userId, req)
 
     // ── Lấy toàn bộ dữ liệu cần thiết 1 lần (batch) ─────────────────────────
     const [answers, allSubjects, wrongAnswers, subjectScores] = await Promise.all([
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     ])
 
     // Format A2PLM context 1 lần dùng chung cho cả 4 prompt
-    const a2plmText = formatA2PLMContext(profile, srl, context, daysToExam)
+    const a2plmText = formatA2PLMContext(profile, srl, context, daysToExam, bt, et)
 
     // ── Generator 1: Diagnose ─────────────────────────────────────────────────
     // Bài toán 1: Chẩn đoán trạng thái người học — A2PLM đầy đủ
