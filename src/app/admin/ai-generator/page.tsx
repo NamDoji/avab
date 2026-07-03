@@ -177,7 +177,7 @@ export default function AIGeneratorPage() {
 
         {/* Module Grid */}
         <div className="mb-4">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-5">🧩 AI Modules — Click to open workspace</p>
+          <p className="text-sm font-bold text-gray-700 mb-5">🧩 AI Modules — Click to open workspace</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {MODULES.map((mod) => {
               const statusCfg = STATUS_CONFIG[mod.status]

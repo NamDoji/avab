@@ -317,7 +317,7 @@ function ContentPanel({
             {/* Lesson preview */}
             {lessonStep?.content && (
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">📖 Bài học</p>
+                <p className="text-sm font-bold text-gray-700 mb-2">📖 Bài học</p>
                 <div className="bg-white border border-gray-200 rounded-2xl p-5 max-h-72 overflow-y-auto">
                   <MarkdownRenderer content={lessonStep.content} />
                 </div>
@@ -327,7 +327,7 @@ function ContentPanel({
             {/* Homework preview */}
             {homeworkStep?.content && (
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">📝 BTVN (30 câu)</p>
+                <p className="text-sm font-bold text-gray-700 mb-2">📝 BTVN (30 câu)</p>
                 <div className="bg-white border border-gray-200 rounded-2xl p-5 max-h-72 overflow-y-auto">
                   <MarkdownRenderer content={homeworkStep.content} />
                 </div>
@@ -660,7 +660,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
         {sidebarOpen && (
           <aside className="hidden md:flex flex-col w-48 sm:w-56 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
             <div className="p-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">STEPS</p>
+              <p className="text-sm font-bold text-gray-700 mb-3">STEPS</p>
               <div className="space-y-1">
                 {STEPS.map(s => {
                   const status   = getStepStatus(s.type)

@@ -184,7 +184,7 @@ export default async function AIStudioPage() {
 
         {/* Course Generator — hero entry point */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🚀 Khởi động nhanh</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🚀 Khởi động nhanh</p>
           <Link href="/admin/ai-studio/course-generator"
             className="block relative overflow-hidden rounded-3xl p-6 text-white hover:scale-[1.005] transition-transform shadow-lg hover:shadow-xl"
             style={{ background: 'linear-gradient(135deg, #059669 0%, #0d9488 50%, #0891b2 100%)' }}>
@@ -224,7 +224,7 @@ export default async function AIStudioPage() {
         {/* Active projects */}
         {active.length > 0 && (
           <section>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🔄 Đang làm ({active.length})</p>
+            <p className="text-sm font-bold text-gray-700 mb-3">🔄 Đang làm ({active.length})</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {active.map(p => <ProjectCard key={p.id} project={p as Parameters<typeof ProjectCard>[0]['project']} />)}
               {/* New project card */}
@@ -243,7 +243,7 @@ export default async function AIStudioPage() {
         {/* Review */}
         {review.length > 0 && (
           <section>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">⏳ Chờ xét duyệt ({review.length})</p>
+            <p className="text-sm font-bold text-gray-700 mb-3">⏳ Chờ xét duyệt ({review.length})</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {review.map(p => <ProjectCard key={p.id} project={p as Parameters<typeof ProjectCard>[0]['project']} />)}
             </div>
@@ -253,7 +253,7 @@ export default async function AIStudioPage() {
         {/* Published */}
         {published.length > 0 && (
           <section>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">✅ Đã xuất bản ({published.length})</p>
+            <p className="text-sm font-bold text-gray-700 mb-3">✅ Đã xuất bản ({published.length})</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {published.map(p => <ProjectCard key={p.id} project={p as Parameters<typeof ProjectCard>[0]['project']} />)}
             </div>

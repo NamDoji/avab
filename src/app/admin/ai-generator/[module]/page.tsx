@@ -607,7 +607,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
       <div className="container-custom py-6">
         {/* ── Action Panel ───────────────────────────────────────────────────── */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 mb-6">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+          <p className="text-sm font-bold text-gray-700 mb-4 flex items-center gap-1.5">
             <Zap size={12} className="text-purple-500" /> Quick Actions
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">

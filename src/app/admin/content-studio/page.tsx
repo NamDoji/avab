@@ -584,7 +584,7 @@ export default function ContentStudioPage() {
           {/* Sidebar — Workflow */}
           <div className="w-44 flex-shrink-0 hidden md:block">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sticky top-24">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">WORKFLOW</p>
+              <p className="text-sm font-bold text-gray-700 mb-4">WORKFLOW</p>
               <div className="space-y-1">
                 {WORKFLOW_STEPS.map(s => {
                   const isActive = step === s.id
@@ -680,7 +680,7 @@ export default function ContentStudioPage() {
         {/* Mobile workflow steps (shown on mobile only) */}
         <div className="md:hidden mt-5">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">WORKFLOW</p>
+            <p className="text-sm font-bold text-gray-700 mb-3">WORKFLOW</p>
             <div className="flex overflow-x-auto gap-2 pb-1">
               {WORKFLOW_STEPS.map(s => {
                 const isActive = step === s.id

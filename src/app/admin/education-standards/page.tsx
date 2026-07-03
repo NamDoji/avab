@@ -564,7 +564,7 @@ function DocsTab({ std, files }: { std: StandardConfig; files: FileInfo[] }) {
     <div className="space-y-3">
       {!selected ? (
         <>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{stdFiles.length} file</p>
+          <p className="text-sm font-bold text-gray-700">{stdFiles.length} file</p>
           {stdFiles.map(f => (
             <button
               key={f.name}

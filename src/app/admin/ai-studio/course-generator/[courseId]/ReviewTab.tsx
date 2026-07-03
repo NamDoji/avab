@@ -43,7 +43,7 @@ export default function ReviewTab({ subjects }: ReviewTabProps) {
     <div className="flex gap-4 min-h-[500px]">
       {/* ── Left sidebar: subject list ─────────────────────────────────── */}
       <div className="w-56 flex-shrink-0">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+        <p className="text-sm font-bold text-gray-700 mb-2 px-1">
           Chuyên đề
         </p>
         <div className="flex flex-col gap-1">

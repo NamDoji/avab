@@ -53,7 +53,7 @@ export default async function AdminPage() {
 
         {/* ── AI Studio — Hero card ──────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🤖 AI Platform</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🤖 AI Platform</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
             {/* AI Studio — big card */}
@@ -130,7 +130,7 @@ export default async function AdminPage() {
 
         {/* ── Quản lý hệ thống ──────────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">⚙️ Quản lý hệ thống</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">⚙️ Quản lý hệ thống</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
             {[
               { href: '/admin/analytics',  icon: '📊', label: 'Analytics',     desc: 'Phân tích học tập', color: 'hover:border-orange-300' },
@@ -158,10 +158,10 @@ export default async function AdminPage() {
 
         {/* ── Portals ───────────────────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🎓 Portals người dùng</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🎓 Portals người dùng</p>
 
           {/* Học thuật */}
-          <p className="text-xs font-semibold text-gray-400 mb-2 ml-0.5">Học thuật</p>
+          <p className="text-xs font-semibold text-gray-500 mb-2 ml-0.5">Học thuật</p>
           <div className="grid grid-cols-3 gap-3 mb-5">
             {[
               { href: '/giao-vien', icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Nhận xét · Lớp học · BTVN',        color: 'from-cyan-500 to-teal-600'     },
@@ -179,7 +179,7 @@ export default async function AdminPage() {
           </div>
 
           {/* Quản lý tổ chức */}
-          <p className="text-xs font-semibold text-gray-400 mb-2 ml-0.5">Quản lý tổ chức</p>
+          <p className="text-xs font-semibold text-gray-500 mb-2 ml-0.5">Quản lý tổ chức</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
               { href: '/admin/analytics',   icon: '🏫', label: 'Ban Giám Hiệu',  desc: 'Tổng quan · KPIs · Reports',       color: 'from-rose-500 to-pink-600'     },
@@ -198,7 +198,7 @@ export default async function AdminPage() {
           </div>
 
           {/* Vận hành */}
-          <p className="text-xs font-semibold text-gray-400 mb-2 ml-0.5">Vận hành</p>
+          <p className="text-xs font-semibold text-gray-500 mb-2 ml-0.5">Vận hành</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { href: '/admin/contacts',    icon: '📞', label: 'Sales / CSKH',  desc: 'Leads · CRM · Chăm sóc',          color: 'from-yellow-500 to-orange-500' },
@@ -219,7 +219,7 @@ export default async function AdminPage() {
 
         {/* ── Hệ thống & Bảo mật + Standards ───────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🔐 Hệ thống & Bảo mật</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🔐 Hệ thống & Bảo mật</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             {[
               { href: '/admin/roles',        icon: '🛡️', label: 'Role Management',  desc: 'Tạo và cấu hình roles',  color: 'from-violet-500 to-purple-600'  },
@@ -238,7 +238,7 @@ export default async function AdminPage() {
           </div>
 
           {/* AvaB Standards — full-width dark card */}
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">📖 Chương trình & Tiêu chuẩn</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">📖 Chương trình & Tiêu chuẩn</p>
           <Link href="/admin/education-standards"
             className="block relative overflow-hidden rounded-3xl p-6 text-white hover:scale-[1.01] transition-transform shadow-lg hover:shadow-xl"
             style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>

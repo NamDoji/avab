@@ -77,7 +77,7 @@ export default async function AnalyticsPage() {
 
         {/* ── 1. Stats row ───────────────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">📈 Tổng quan</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">📈 Tổng quan</p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
@@ -125,7 +125,7 @@ export default async function AnalyticsPage() {
 
         {/* ── 2. AI Usage ───────────────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🤖 AI Usage</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🤖 AI Usage</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             {/* Total AI materials */}
@@ -211,7 +211,7 @@ export default async function AnalyticsPage() {
 
         {/* ── 3. Top Courses ─────────────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🏆 Top Khóa học (by enrollment)</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🏆 Top Khóa học (by enrollment)</p>
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
             {topCourses.length === 0 ? (
               <div className="p-8 text-center text-gray-400">
@@ -262,7 +262,7 @@ export default async function AnalyticsPage() {
 
         {/* ── 4. Learning Activity ───────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">⚡ Hoạt động gần đây</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">⚡ Hoạt động gần đây</p>
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
             {recentAnswers.length === 0 ? (
               <div className="p-8 text-center text-gray-400">
@@ -307,7 +307,7 @@ export default async function AnalyticsPage() {
 
         {/* ── 5. Quick links ─────────────────────────────────────────────── */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🔗 Truy cập nhanh</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🔗 Truy cập nhanh</p>
           <div className="flex flex-wrap gap-3">
             {[
               { href: '/admin/users',      icon: '👥', label: 'Xem chi tiết học sinh',   color: 'hover:border-blue-300 hover:bg-blue-50' },

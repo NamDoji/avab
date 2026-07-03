@@ -120,7 +120,7 @@ export default async function AdminGamificationPage() {
 
         {/* Section 1 — Overview Stats */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">📊 Tổng quan</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">📊 Tổng quan</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               { icon: <Zap className="w-5 h-5 text-yellow-500" />,   label: 'Tổng XP phát ra',   value: totalXP.toLocaleString(),          sub: 'XP' },
@@ -140,7 +140,7 @@ export default async function AdminGamificationPage() {
 
         {/* Section 2 — Badge Management */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🏅 Quản lý Huy hiệu ({badges.length})</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🏅 Quản lý Huy hiệu ({badges.length})</p>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -193,7 +193,7 @@ export default async function AdminGamificationPage() {
 
         {/* Section 3 — Mission Management */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🎯 Quản lý Nhiệm vụ ({missions.length})</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">🎯 Quản lý Nhiệm vụ ({missions.length})</p>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -256,7 +256,7 @@ export default async function AdminGamificationPage() {
 
         {/* Section 4 — Top 10 Users by XP */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">👑 Top 10 học viên theo XP</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">👑 Top 10 học viên theo XP</p>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="divide-y divide-gray-50">
               {topUsers.length === 0 ? (
@@ -325,7 +325,7 @@ export default async function AdminGamificationPage() {
 
         {/* Quick Actions */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">⚡ Thao tác nhanh</p>
+          <p className="text-sm font-bold text-gray-700 mb-3">⚡ Thao tác nhanh</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <Link href="/bang-vang" target="_blank"
               className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white rounded-2xl p-4 hover:scale-[1.01] transition-transform shadow-sm">

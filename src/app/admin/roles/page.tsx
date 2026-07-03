@@ -98,7 +98,7 @@ export default async function RolesPage() {
           if (!levelRoles || levelRoles.length === 0) return null
           return (
             <div key={level}>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+              <p className="text-sm font-bold text-gray-700 mb-3">
                 {LEVEL_LABELS[level] ?? level}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
