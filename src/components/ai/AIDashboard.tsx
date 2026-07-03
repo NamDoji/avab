@@ -872,10 +872,10 @@ export function AIDashboard({ userId }: Props) {
 
       {/* Panel content */}
       <div className="p-4 sm:p-5">
-        {activeTab === 'diagnose'  && <DiagnosePanel  data={data.diagnose}  loading={forceLoading || initializing} />}
-        {activeTab === 'predict'   && <PredictPanel   data={data.predict}   loading={forceLoading || initializing} />}
-        {activeTab === 'intervene' && <IntervenePanel data={data.intervene} loading={forceLoading || initializing} />}
-        {activeTab === 'recommend' && <RecommendPanel data={data.recommend} loading={forceLoading || initializing} />}
+        {activeTab === 'diagnose'  && <DiagnosePanel  data={data.diagnose  ?? DEFAULT_DATA.diagnose}  loading={forceLoading || initializing} />}
+        {activeTab === 'predict'   && <PredictPanel   data={data.predict   ?? DEFAULT_DATA.predict}   loading={forceLoading || initializing} />}
+        {activeTab === 'intervene' && <IntervenePanel data={data.intervene ?? DEFAULT_DATA.intervene} loading={forceLoading || initializing} />}
+        {activeTab === 'recommend' && <RecommendPanel data={data.recommend ?? DEFAULT_DATA.recommend} loading={forceLoading || initializing} />}
       </div>
     </div>
   )
