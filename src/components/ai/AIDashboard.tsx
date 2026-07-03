@@ -727,7 +727,7 @@ export function AIDashboard({ userId }: Props) {
     try {
       const res = await fetch(`/api/ai/${tab.apiPath}`)
       const json = await res.json()
-      if (json.success && json.data !== null) {
+      if (json.success && json.data && !json.data.empty) {
         setData(prev => ({ ...prev, [tabId]: json.data }))
         if (json.refreshedAt) setRefreshedAt(new Date(json.refreshedAt))
         return true
@@ -749,8 +749,12 @@ export function AIDashboard({ userId }: Props) {
         setRefreshError({ nextAt: new Date(json.nextAt), daysLeft: json.daysLeft })
         return false
       }
-      if (json.success) {
+      if (json.success && json.data && !json.data.empty) {
         setData(prev => ({ ...prev, [tabId]: json.data }))
+        if (json.refreshedAt) setRefreshedAt(new Date(json.refreshedAt))
+        else setRefreshedAt(new Date())
+      } else if (json.success) {
+        // AI trả empty/null → giữ default, vẫn set refreshedAt để khóa 14 ngày
         if (json.refreshedAt) setRefreshedAt(new Date(json.refreshedAt))
         else setRefreshedAt(new Date())
       }
