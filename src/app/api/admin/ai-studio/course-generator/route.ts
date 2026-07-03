@@ -83,9 +83,11 @@ export async function POST(req: NextRequest) {
       objective?: string
       numTopics: number
       lessonsPerTopic: number
+      homeworkCount?: number
+      quizCount?: number
     }
 
-    const { courseName, curriculum, grade, subject, subjectName, objective, numTopics, lessonsPerTopic } = body
+    const { courseName, curriculum, grade, subject, subjectName, objective, numTopics, lessonsPerTopic, homeworkCount, quizCount } = body
 
     if (!courseName?.trim() || !grade || !subject) {
       return NextResponse.json(
@@ -94,8 +96,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const nTopics  = Math.min(Math.max(Number(numTopics)      || 5, 1), 20)
-    const nLessons = Math.min(Math.max(Number(lessonsPerTopic) || 4, 1), 10)
+    const nTopics   = Math.min(Math.max(Number(numTopics)       || 5,  1), 50)
+    const nLessons  = Math.min(Math.max(Number(lessonsPerTopic) || 4,  1), 50)
+    const nHomework = Math.min(Math.max(Number(homeworkCount)   || 30, 1), 50)
+    const nQuiz     = Math.min(Math.max(Number(quizCount)       || 20, 1), 50)
     const subjName = subjectName?.trim() || subject
 
     // ── Step 1: Generate course structure with AI ─────────────────────────
@@ -151,7 +155,9 @@ export async function POST(req: NextRequest) {
           gradeMin:    gradeNum,
           gradeMax:    gradeNum,
           courseType:  subject, // legacy compat
-          isActive:    false,
+          homeworkCount: nHomework,
+          quizCount:     nQuiz,
+          isActive:      false,
         },
       })
 

@@ -19,7 +19,7 @@ const MATERIAL_TYPE: Record<ContentType, string> = {
 
 function buildHomeworkPrompt(p: {
   courseName: string; subjectName: string; grade: string; subject: string
-  lessonTitles: string[]
+  lessonTitles: string[]; homeworkCount: number
 }): string {
   const gradeLabel = p.grade === 'preschool' ? 'Mầm non' : `Lớp ${p.grade}`
   const lessonList = p.lessonTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')
@@ -30,20 +30,20 @@ function buildHomeworkPrompt(p: {
 - Môn: ${p.subject}
 - Các bài học: ${lessonList}
 
-Tạo đúng 30 câu bài tập về nhà chia đều cho các bài học. Định dạng:
+Tạo đúng ${p.homeworkCount} câu bài tập về nhà chia đều cho các bài học. Định dạng:
 
 # 📝 Bài Tập Về Nhà — ${p.subjectName}
 
-## Phần 1: Trắc nghiệm (10 câu)
+## Phần 1: Trắc nghiệm (${Math.ceil(p.homeworkCount / 3)} câu)
 **Câu 1.** [Nội dung câu hỏi]
 A. ... B. ... C. ... D. ...
 
-## Phần 2: Điền vào chỗ trống (10 câu)
-**Câu 11.** [Nội dung]
+## Phần 2: Điền vào chỗ trống (${Math.ceil(p.homeworkCount / 3)} câu)
+**Câu ${Math.ceil(p.homeworkCount / 3) + 1}.** [Nội dung]
 Đáp án: ___________
 
-## Phần 3: Tự luận (10 câu)
-**Câu 21.** [Nội dung bài toán/câu hỏi]
+## Phần 3: Tự luận (${p.homeworkCount - Math.ceil(p.homeworkCount / 3) * 2} câu)
+**Câu ${Math.ceil(p.homeworkCount / 3) * 2 + 1}.** [Nội dung bài toán/câu hỏi]
 
 ---
 Yêu cầu: đa dạng mức độ (nhớ/hiểu/vận dụng/nâng cao), bằng tiếng Việt, phù hợp ${gradeLabel}.`
@@ -81,7 +81,7 @@ Phù hợp ${gradeLabel}, tiếng Việt, rõ ràng để giáo viên chấm bà
 
 function buildQuizPrompt(p: {
   courseName: string; subjectName: string; grade: string; subject: string
-  lessonTitles: string[]
+  lessonTitles: string[]; quizCount: number
 }): string {
   const gradeLabel = p.grade === 'preschool' ? 'Mầm non' : `Lớp ${p.grade}`
   const lessonList = p.lessonTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')
@@ -92,24 +92,22 @@ function buildQuizPrompt(p: {
 - Môn: ${p.subject}
 - Nội dung đã học: ${lessonList}
 
-Tạo đề kiểm tra 45 phút (20 câu), định dạng:
+Tạo đề kiểm tra 45 phút (${p.quizCount} câu), định dạng:
 
 # 📊 Đề Kiểm Tra — ${p.subjectName}
 **Thời gian:** 45 phút | **Lớp:** ${gradeLabel} | **Điểm:** 10
 
 ---
 
-## I. TRẮC NGHIỆM (5 điểm — 10 câu × 0.5đ)
+## I. TRẮC NGHIỆM (${Math.ceil(p.quizCount * 0.5)} câu)
 **Câu 1.** ...
 A. ... B. ... C. ... D. ...
 
-## II. ĐIỀN KHUYẾT (2 điểm — 4 câu × 0.5đ)
-**Câu 11.** ...
+## II. ĐIỀN KHUYẾT (${Math.ceil(p.quizCount * 0.2)} câu)
+**Câu ${Math.ceil(p.quizCount * 0.5) + 1}.** ...
 
-## III. TỰ LUẬN (3 điểm — 3 bài)
-**Bài 1. (1đ)** ...
-**Bài 2. (1đ)** ...
-**Bài 3. (1đ)** ...
+## III. TỰ LUẬN (${p.quizCount - Math.ceil(p.quizCount * 0.5) - Math.ceil(p.quizCount * 0.2)} câu)
+**Bài 1.** ...
 
 ---
 
@@ -305,7 +303,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
 
         switch (contentType) {
           case 'homework':
-            prompt = buildHomeworkPrompt(base)
+            prompt = buildHomeworkPrompt({ ...base, homeworkCount: course.homeworkCount ?? 30 })
             break
           case 'answers': {
             const hwMat = sub.materials.find(m => m.type === 'HOMEWORK')
@@ -313,7 +311,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
             break
           }
           case 'quiz':
-            prompt = buildQuizPrompt(base)
+            prompt = buildQuizPrompt({ ...base, quizCount: course.quizCount ?? 20 })
             break
           case 'teacher-guide':
             prompt = buildTeacherGuidePrompt({ ...base, theoryContent })

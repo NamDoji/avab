@@ -34,6 +34,8 @@ export default function CourseGeneratorPage() {
     objective:       '',
     numTopics:       5,
     lessonsPerTopic: 4,
+    homeworkCount:   30,
+    quizCount:       20,
   })
 
   const [generating, setGenerating] = useState(false)
@@ -63,6 +65,8 @@ export default function CourseGeneratorPage() {
           objective:       form.objective.trim() || undefined,
           numTopics:       form.numTopics,
           lessonsPerTopic: form.lessonsPerTopic,
+          homeworkCount:   form.homeworkCount,
+          quizCount:       form.quizCount,
         }),
       })
       const data = await res.json()
@@ -197,45 +201,82 @@ export default function CourseGeneratorPage() {
               />
             </div>
 
-            {/* numTopics + lessonsPerTopic */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">
-                  🗂️ Số chuyên đề
-                </label>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setForm(f => ({ ...f, numTopics: Math.max(1, f.numTopics - 1) }))}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
-                  >−</button>
-                  <span className="flex-1 text-center text-2xl font-black text-emerald-600">{form.numTopics}</span>
-                  <button
-                    type="button"
-                    onClick={() => setForm(f => ({ ...f, numTopics: Math.min(50, f.numTopics + 1) }))}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
-                  >+</button>
-                </div>
-                <p className="text-xs text-gray-400 text-center mt-1">1 – 50 chuyên đề</p>
+            {/* numTopics + 3 counters */}
+            <div>
+              <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">
+                🗂️ Số chuyên đề
+              </label>
+              <div className="flex items-center gap-3">
+                <button type="button"
+                  onClick={() => setForm(f => ({ ...f, numTopics: Math.max(1, f.numTopics - 1) }))}
+                  className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
+                >−</button>
+                <span className="flex-1 text-center text-2xl font-black text-emerald-600">{form.numTopics}</span>
+                <button type="button"
+                  onClick={() => setForm(f => ({ ...f, numTopics: Math.min(50, f.numTopics + 1) }))}
+                  className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
+                >+</button>
               </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">
-                  📝 Số bài / chuyên đề
+              <p className="text-xs text-gray-400 text-center mt-1">1 – 50 chuyên đề</p>
+            </div>
+
+            {/* 3 separate counters */}
+            <div className="grid grid-cols-3 gap-3">
+              {/* Bài giảng */}
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-3">
+                <label className="block text-xs font-bold text-blue-700 mb-2 text-center">
+                  📖 Bài trong bài giảng
                 </label>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
+                <div className="flex items-center gap-2">
+                  <button type="button"
                     onClick={() => setForm(f => ({ ...f, lessonsPerTopic: Math.max(1, f.lessonsPerTopic - 1) }))}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-blue-200 text-blue-600 hover:border-blue-400 font-bold transition-all text-sm"
                   >−</button>
-                  <span className="flex-1 text-center text-2xl font-black text-emerald-600">{form.lessonsPerTopic}</span>
-                  <button
-                    type="button"
+                  <span className="flex-1 text-center text-xl font-black text-blue-700">{form.lessonsPerTopic}</span>
+                  <button type="button"
                     onClick={() => setForm(f => ({ ...f, lessonsPerTopic: Math.min(50, f.lessonsPerTopic + 1) }))}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-lg transition-all"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-blue-200 text-blue-600 hover:border-blue-400 font-bold transition-all text-sm"
                   >+</button>
                 </div>
-                <p className="text-xs text-gray-400 text-center mt-1">1 – 50 bài/chuyên đề</p>
+                <p className="text-xs text-blue-400 text-center mt-1">bài/chuyên đề</p>
+              </div>
+
+              {/* Bài tập về nhà */}
+              <div className="bg-violet-50 border border-violet-100 rounded-2xl p-3">
+                <label className="block text-xs font-bold text-violet-700 mb-2 text-center">
+                  📝 Bài trong BTVN
+                </label>
+                <div className="flex items-center gap-2">
+                  <button type="button"
+                    onClick={() => setForm(f => ({ ...f, homeworkCount: Math.max(1, f.homeworkCount - 1) }))}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-violet-200 text-violet-600 hover:border-violet-400 font-bold transition-all text-sm"
+                  >−</button>
+                  <span className="flex-1 text-center text-xl font-black text-violet-700">{form.homeworkCount}</span>
+                  <button type="button"
+                    onClick={() => setForm(f => ({ ...f, homeworkCount: Math.min(50, f.homeworkCount + 1) }))}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-violet-200 text-violet-600 hover:border-violet-400 font-bold transition-all text-sm"
+                  >+</button>
+                </div>
+                <p className="text-xs text-violet-400 text-center mt-1">câu/chuyên đề</p>
+              </div>
+
+              {/* Đề kiểm tra */}
+              <div className="bg-orange-50 border border-orange-100 rounded-2xl p-3">
+                <label className="block text-xs font-bold text-orange-700 mb-2 text-center">
+                  📊 Câu kiểm tra
+                </label>
+                <div className="flex items-center gap-2">
+                  <button type="button"
+                    onClick={() => setForm(f => ({ ...f, quizCount: Math.max(1, f.quizCount - 1) }))}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-orange-200 text-orange-600 hover:border-orange-400 font-bold transition-all text-sm"
+                  >−</button>
+                  <span className="flex-1 text-center text-xl font-black text-orange-700">{form.quizCount}</span>
+                  <button type="button"
+                    onClick={() => setForm(f => ({ ...f, quizCount: Math.min(50, f.quizCount + 1) }))}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-orange-200 text-orange-600 hover:border-orange-400 font-bold transition-all text-sm"
+                  >+</button>
+                </div>
+                <p className="text-xs text-orange-400 text-center mt-1">câu/đề</p>
               </div>
             </div>
 
@@ -258,8 +299,13 @@ export default function CourseGeneratorPage() {
                   <span className="font-semibold">Chuyên đề:</span> {form.numTopics}
                 </div>
                 <div>
-                  <span className="font-semibold">Tổng bài:</span>{' '}
-                  {form.numTopics * form.lessonsPerTopic} bài học
+                  <span className="font-semibold">Tổng bài:</span> {form.numTopics * form.lessonsPerTopic} bài
+                </div>
+                <div>
+                  <span className="font-semibold">📝 BTVN:</span> {form.homeworkCount} câu/chuyên đề
+                </div>
+                <div>
+                  <span className="font-semibold">📊 Kiểm tra:</span> {form.quizCount} câu/đề
                 </div>
               </div>
               <p className="text-emerald-500 text-xs mt-2">

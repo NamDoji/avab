@@ -16,13 +16,14 @@ interface GenState {
   error: string
 }
 
-const PIPELINE: { type: ContentType; label: string; icon: string; description: string; color: string }[] = [
+const PIPELINE: { type: ContentType; label: string; icon: string; description: string; color: string; jobType: string }[] = [
   {
     type: 'lessons',
     label: 'Lý thuyết',
     icon: '📖',
     description: 'Nội dung bài giảng + ví dụ',
     color: 'from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600',
+    jobType: 'generate-lessons',
   },
   {
     type: 'homework',
@@ -30,6 +31,7 @@ const PIPELINE: { type: ContentType; label: string; icon: string; description: s
     icon: '📝',
     description: '30 câu / chuyên đề',
     color: 'from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600',
+    jobType: 'generate-homework',
   },
   {
     type: 'answers',
@@ -37,6 +39,7 @@ const PIPELINE: { type: ContentType; label: string; icon: string; description: s
     icon: '✅',
     description: 'Đáp án + hướng dẫn giải',
     color: 'from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600',
+    jobType: 'generate-answers',
   },
   {
     type: 'quiz',
@@ -44,6 +47,7 @@ const PIPELINE: { type: ContentType; label: string; icon: string; description: s
     icon: '📊',
     description: '20 câu 45 phút + biểu điểm',
     color: 'from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600',
+    jobType: 'generate-quiz',
   },
   {
     type: 'teacher-guide',
@@ -51,6 +55,7 @@ const PIPELINE: { type: ContentType; label: string; icon: string; description: s
     icon: '👩‍🏫',
     description: 'Giáo án + tiến trình dạy',
     color: 'from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600',
+    jobType: 'generate-teacher-guide',
   },
   {
     type: 'video-script',
@@ -58,7 +63,18 @@ const PIPELINE: { type: ContentType; label: string; icon: string; description: s
     icon: '🎬',
     description: 'Script + slide + lời thoại',
     color: 'from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600',
+    jobType: 'generate-video-script',
   },
+]
+
+const EXPORT_TYPES: { type: string; label: string }[] = [
+  { type: 'lessons',       label: '📖 Lý thuyết' },
+  { type: 'homework',      label: '📝 Bài tập' },
+  { type: 'answers',       label: '✅ Đáp án' },
+  { type: 'quiz',          label: '📊 Đề kiểm tra' },
+  { type: 'teacher-guide', label: '👩‍🏫 Hướng dẫn GV' },
+  { type: 'video-script',  label: '🎬 Kịch bản' },
+  { type: 'all',           label: '📦 Full' },
 ]
 
 export default function CourseActions({ courseId, isActive }: CourseActionsProps) {
@@ -81,9 +97,48 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
   const setGenError = (type: ContentType, msg: string) =>
     setStates(s => ({ ...s, [type]: { ...s[type], error: msg, loading: false } }))
 
+  const createJob = async (jobType: string): Promise<string | null> => {
+    try {
+      const res = await fetch(`/api/admin/ai-studio/course-generator/${courseId}/jobs`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ jobType }),
+      })
+      const data = await res.json() as { success: boolean; job?: { id: string } }
+      return data.success && data.job ? data.job.id : null
+    } catch {
+      return null
+    }
+  }
+
+  const updateJob = async (jobId: string, update: {
+    status: string
+    done?: number
+    total?: number
+    error?: string
+    progress?: number
+  }) => {
+    try {
+      await fetch(`/api/admin/ai-studio/course-generator/${courseId}/jobs`, {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ jobId, ...update }),
+      })
+    } catch {
+      // silent fail — don't break generate flow
+    }
+  }
+
   const generate = async (type: ContentType) => {
+    const step = PIPELINE.find(p => p.type === type)
+    if (!step) return
+
     setLoading(type, true)
     setStates(s => ({ ...s, [type]: { ...s[type], error: '' } }))
+
+    // 1. Create job record
+    const jobId = await createJob(step.jobType)
+
     try {
       let res: Response
 
@@ -101,19 +156,41 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
         })
       }
 
-      const data = await res.json()
+      const data = await res.json() as {
+        success: boolean
+        generated?: number
+        skipped?: number
+        total?: number
+        error?: string
+      }
+
       if (data.success) {
         setResult(type, {
           generated: data.generated ?? 0,
           skipped:   data.skipped   ?? 0,
           total:     data.total     ?? 0,
         })
+        // 3. Update job: completed
+        if (jobId) {
+          await updateJob(jobId, {
+            status: 'completed',
+            done:   data.generated ?? 0,
+            total:  data.total     ?? 0,
+            progress: 100,
+          })
+        }
         router.refresh()
       } else {
         setGenError(type, data.error ?? 'Generate thất bại')
+        if (jobId) {
+          await updateJob(jobId, { status: 'failed', error: data.error ?? 'Generate thất bại' })
+        }
       }
-    } catch {
+    } catch (err) {
       setGenError(type, 'Lỗi kết nối')
+      if (jobId) {
+        await updateJob(jobId, { status: 'failed', error: 'Lỗi kết nối' })
+      }
     } finally {
       setLoading(type, false)
     }
@@ -129,7 +206,7 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ action }),
       })
-      const data = await res.json()
+      const data = await res.json() as { success: boolean; error?: string }
       if (data.success) {
         router.refresh()
       } else {
@@ -189,7 +266,7 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400 w-4 text-center font-mono">{idx + 1}</span>
                   <button
-                    onClick={() => generate(step.type)}
+                    onClick={() => void generate(step.type)}
                     disabled={anyLoading}
                     className={`flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm bg-gradient-to-r ${step.color} text-white transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between`}
                   >
@@ -218,6 +295,25 @@ export default function CourseActions({ courseId, isActive }: CourseActionsProps
               </div>
             )
           })}
+        </div>
+      </div>
+
+      {/* ── Export section ──────────────────────────────────────────────── */}
+      <div className="pt-3 border-t border-gray-100">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
+          📤 Xuất bản
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {EXPORT_TYPES.map(exp => (
+            <a
+              key={exp.type}
+              href={`/api/admin/ai-studio/course-generator/${courseId}/export?format=docx&type=${exp.type}`}
+              download
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors"
+            >
+              ⬇️ {exp.label}
+            </a>
+          ))}
         </div>
       </div>
 

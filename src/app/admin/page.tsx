@@ -110,8 +110,9 @@ export default async function AdminPage() {
         {/* ── Quản lý hệ thống ──────────────────────────────────────────── */}
         <div>
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">⚙️ Quản lý hệ thống</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
             {[
+              { href: '/admin/analytics',  icon: '📊', label: 'Analytics',     desc: 'Phân tích học tập', color: 'hover:border-orange-300' },
               { href: '/admin/courses',     icon: '📚', label: 'Khoá học',      desc: 'Thêm, sửa, xoá',   color: 'hover:border-purple-300', count: coursesCount },
               { href: '/admin/enrollments', icon: '✅', label: 'Đăng ký',       desc: 'Phê duyệt HS',     color: 'hover:border-orange-300', count: pendingEnrollments, alert: pendingEnrollments > 0 },
               { href: '/admin/users',       icon: '👥', label: 'Người dùng',    desc: 'HS · PH · GV',     color: 'hover:border-teal-300',   count: usersCount },

@@ -29,6 +29,8 @@ model User {
   parentLinks       ParentStudentLink[] @relation("ParentLinks")
   studentLinks      ParentStudentLink[] @relation("StudentLinks")
   aiProjects        AIProject[]
+  userRoles         UserRole[]
+  auditLogs         AuditLog[]
 
   @@map("avab_users")
 }
@@ -85,7 +87,10 @@ model Course {
   courseDurationMonths Int         @default(18) // Số tháng hiệu lực khi PER_COURSE
   // Lớp (Grades 1–9)
   grade                String?     // null = dành cho mọi lớp; "1".."9"
+  homeworkCount        Int         @default(30)        // Số bài tập / chuyên đề
+  quizCount            Int         @default(20)        // Số câu trong đề kiểm tra
   isActive             Boolean     @default(true)
+  approvalStatus       String      @default("draft") // draft | review | approved | published | archived
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
 
@@ -441,6 +446,127 @@ model AIProjectStep {
   project AIProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("avab_ai_project_steps")
+}
+
+// ── RBAC — Role & Permission (mục 10 + yêu cầu RBAC) ─────────────────────────
+
+model Permission {
+  id          String   @id @default(cuid())
+  key         String   @unique // e.g. 'course.create'
+  module      String           // course | lesson | homework | student | ai | finance ...
+  action      String           // view | create | edit | delete | publish | generate | approve | export
+  name        String           // Human-readable
+  description String?
+  createdAt   DateTime @default(now())
+
+  rolePermissions RolePermission[]
+
+  @@map("avab_permissions")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique // super-admin | org-owner | teacher | student ...
+  description String?
+  level       String           // SYSTEM | ORGANIZATION | ACADEMIC | OPERATION | END_USER
+  color       String   @default("gray") // for UI badge
+  isSystem    Boolean  @default(false)  // cannot be deleted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+
+  @@map("avab_roles")
+}
+
+model RolePermission {
+  id           String @id @default(cuid())
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("avab_role_permissions")
+}
+
+model UserRole {
+  id        String    @id @default(cuid())
+  userId    String
+  roleId    String
+  scopeType String?   // platform | organization | campus | department | class | course
+  scopeId   String?   // ID of the scoped entity (null = all)
+  grantedBy String?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([roleId])
+  @@map("avab_user_roles")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String           // created | updated | deleted | approved | published | login ...
+  entityType String           // role | permission | user | course | lesson ...
+  entityId   String?
+  summary    String?          // short human-readable summary
+  before     Json?
+  after      Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("avab_audit_logs")
+}
+
+// ── Job Queue (mục 9) ──────────────────────────────────────────────────
+model JobQueue {
+  id          String    @id @default(cuid())
+  courseId    String?
+  subjectId   String?
+  jobType     String    // generate-lessons | generate-homework | generate-answers | generate-quiz | generate-teacher-guide | generate-video-script | generate-all
+  status      String    @default("pending") // pending | running | completed | failed | retrying
+  progress    Int       @default(0)         // 0–100
+  total       Int       @default(0)
+  done        Int       @default(0)
+  result      Json?
+  error       String?
+  createdBy   String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([courseId])
+  @@index([status])
+  @@map("avab_job_queue")
+}
+
+// ── Content Version (mục 11) ────────────────────────────────────────
+model ContentVersion {
+  id         String   @id @default(cuid())
+  entityType String   // course | lesson | homework | quiz | teacher-guide | video-script
+  entityId   String   // subjectMaterial.id
+  version    Int      @default(1)
+  content    String   @db.Text
+  label      String?  // "v1", "sau QA", "approved"...
+  createdBy  String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityId])
+  @@map("avab_content_versions")
 }
 
 model Registration {
