@@ -600,6 +600,136 @@ model SchoolCourse {
   @@map("avab_school_courses")
 }
 
+// ── Workflow Engine (BPM) ─────────────────────────────────────────────
+
+// Workflow Definition (blueprint)
+model WorkflowDef {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  module      String   @default("general") // enrollment | content | finance | hr | general
+  isTemplate  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  version     Int      @default(1)
+  steps       Json     // [{ id, type, name, config, nextSteps[], conditions[] }]
+  formSchema  Json?    // form fields per step
+  settings    Json?    // SLA, notifications, permissions
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  instances WorkflowInstance[]
+
+  @@map("avab_workflow_defs")
+}
+
+// Running workflow instance
+model WorkflowInstance {
+  id           String    @id @default(cuid())
+  workflowId   String
+  title        String
+  entityType   String?   // course | content | enrollment | leave | purchase
+  entityId     String?   // ID of the related entity
+  status       String    @default("running") // running | completed | rejected | cancelled | on_hold
+  currentStep  String    // step ID in workflowDef.steps
+  data         Json?     // form data collected through steps
+  startedBy    String?
+  assignedTo   String?   // current assignee
+  dueAt        DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  workflow     WorkflowDef      @relation(fields: [workflowId], references: [id])
+  history      WorkflowHistory[]
+
+  @@index([workflowId])
+  @@index([status])
+  @@index([entityType, entityId])
+  @@map("avab_workflow_instances")
+}
+
+// Step execution history per instance
+model WorkflowHistory {
+  id          String   @id @default(cuid())
+  instanceId  String
+  stepId      String
+  stepName    String
+  action      String   // approve | reject | submit | reassign | comment | auto
+  actorId     String?
+  note        String?
+  data        Json?    // form data at this step
+  duration    Int?     // seconds taken
+  createdAt   DateTime @default(now())
+
+  instance WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@index([instanceId])
+  @@map("avab_workflow_history")
+}
+
+// ── Data Migration Center ───────────────────────────────────────
+
+model MigrationLog {
+  id           String    @id @default(cuid())
+  module       String    // students | teachers | courses | classes | rooms | finance | questions | all
+  format       String    // excel | csv | json | xml
+  fileName     String
+  fileSize     Int       @default(0)
+  totalRows    Int       @default(0)
+  successRows  Int       @default(0)
+  failedRows   Int       @default(0)
+  status       String    @default("pending") // pending | analyzing | mapping | validating | importing | done | failed | rolled_back
+  mapping      Json?     // { sourceCol: targetField, ... }
+  errors       Json?     // [{ row, field, message }]
+  summary      Json?     // { created, updated, skipped }
+  importedBy   String?
+  canRollback  Boolean   @default(true)
+  rolledBackAt DateTime?
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime?
+
+  @@index([status])
+  @@index([module])
+  @@map("avab_migration_logs")
+}
+
+// ── Teaching Material Import ─────────────────────────────────────
+
+model MaterialImportLog {
+  id              String    @id @default(cuid())
+  // Source info
+  sourceType      String    // docx | pdf | pptx | xlsx | csv | url | zip | google_drive
+  sourceName      String    // original filename or URL
+  sourceSize      Int       @default(0)
+  // AI detection
+  detectedType    String?   // lesson | homework | quiz | answer_key | slide | reference
+  detectedSubject String?   // MATH | ENGLISH | SCIENCE...
+  detectedGrade   String?   // 1-12 | preschool
+  // Mapping result
+  targetModule    String?   // subject_material | question | homework_set | ai_project
+  targetId        String?   // ID of created/updated entity
+  mappingData     Json?     // full mapping decisions
+  // Processing
+  status          String    @default("pending") // pending | analyzing | mapping | importing | qa | done | failed
+  questionsFound  Int       @default(0)
+  questionsImported Int     @default(0)
+  errorsJson      Json?
+  aiAnalysis      String?   @db.Text  // full AI analysis result
+  // Ownership
+  importedBy      String?
+  subjectId       String?   // target subject
+  canRollback     Boolean   @default(true)
+  rolledBackAt    DateTime?
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@index([importedBy])
+  @@index([status])
+  @@map("avab_material_import_logs")
+}
+
 // ── Gamification (mục 13) ────────────────────────────────────────
 
 model Badge {
@@ -736,6 +866,65 @@ model ContentVersion {
 
   @@index([entityId])
   @@map("avab_content_versions")
+}
+
+// ── School ERP ──────────────────────────────────────────────────────────────
+
+model ClassRoom {
+  id          String   @id @default(cuid())
+  schoolId    String?
+  name        String
+  capacity    Int      @default(30)
+  type        String   @default("standard") // standard | lab | computer | music | gym
+  floor       Int?
+  building    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@map("avab_classrooms")
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  courseId    String
+  userId      String
+  date        DateTime @db.Date
+  status      String   @default("present") // present | absent | late | excused
+  note        String?
+  markedBy    String?
+  createdAt   DateTime @default(now())
+  @@unique([courseId, userId, date])
+  @@index([courseId, date])
+  @@map("avab_attendance")
+}
+
+model RewardDiscipline {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // reward | discipline
+  category    String   // attendance | behavior | academic | achievement
+  title       String
+  description String?
+  date        DateTime @default(now())
+  issuedBy    String?
+  createdAt   DateTime @default(now())
+  @@map("avab_reward_discipline")
+}
+
+model HealthRecord {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  bloodType   String?
+  allergies   String?
+  conditions  String?
+  medications String?
+  emergencyContact String?
+  emergencyPhone   String?
+  insuranceNo String?
+  insuranceProvider String?
+  insuranceExpiry DateTime?
+  lastUpdated DateTime @default(now())
+  @@map("avab_health_records")
 }
 
 model Registration {

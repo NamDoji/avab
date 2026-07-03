@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -646,34 +646,31 @@ function CourseSelectModal({ schoolId, primaryColor, existingCourseIds, onClose,
   const [results, setResults] = useState<CourseSearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const [addingId, setAddingId] = useState<string | null>(null)
-  const [initialized, setInitialized] = useState(false)
 
   const search = useCallback(async (q: string) => {
     setLoading(true)
     try {
-      const url = q.trim()
-        ? `/api/admin/schools/${schoolId}/courses?search=${encodeURIComponent(q)}`
-        : `/api/admin/schools/${schoolId}/courses`
-      // Fetch ALL courses (not just school courses) — use admin courses API
-      const res = await fetch(q.trim()
-        ? `/api/admin/courses?search=${encodeURIComponent(q)}&limit=30`
-        : `/api/admin/courses?limit=30`)
+      // Fetch ALL courses from admin API, then filter client-side
+      const res = await fetch('/api/admin/courses')
       const data = await res.json() as { success: boolean; data?: Array<CourseSearchResult> }
       if (data.success && data.data) {
-        setResults(data.data.filter(c => !existingCourseIds.includes(c.id)))
+        const lower = q.toLowerCase()
+        const filtered = data.data.filter(c =>
+          !existingCourseIds.includes(c.id) &&
+          (q.trim() === '' || c.name.toLowerCase().includes(lower) || c.code.toLowerCase().includes(lower))
+        )
+        setResults(filtered)
       }
     } finally {
       setLoading(false)
     }
-  }, [schoolId, existingCourseIds])
+  }, [existingCourseIds])
 
   // Load on first open
-  useState(() => {
-    if (!initialized) {
-      setInitialized(true)
-      void search('')
-    }
-  })
+  useEffect(() => {
+    void search('')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function handleAdd(courseId: string) {
     setAddingId(courseId)

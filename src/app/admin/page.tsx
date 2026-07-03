@@ -10,13 +10,14 @@ export default async function AdminPage() {
   const session = await auth()
   if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const [coursesCount, usersCount, pendingEnrollments, newsCount, newContacts, aiProjectsCount] = await Promise.all([
+  const [coursesCount, usersCount, pendingEnrollments, newsCount, newContacts, aiProjectsCount, schoolsCount] = await Promise.all([
     prisma.course.count(),
     prisma.user.count(),
     prisma.enrollment.count({ where: { status: 'PENDING' } }),
     prisma.news.count(),
     prisma.registration.count({ where: { status: 'NEW' } }),
     prisma.aIProject.count(),
+    prisma.school.count(),
   ])
 
   return (
@@ -50,6 +51,23 @@ export default async function AdminPage() {
       </div>
 
       <div className="container-custom py-8 space-y-8">
+
+        {/* ── School ERP ────────────────────────────────────────────────── */}
+        <div>
+          <p className="text-sm font-bold text-gray-700 mb-3">🏫 School ERP</p>
+          <Link href="/admin/erp"
+            className="block relative overflow-hidden rounded-3xl p-6 text-white hover:scale-[1.01] transition-transform shadow-lg"
+            style={{ background: 'linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%)' }}>
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%, -50%)' }} />
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style={{ background: 'rgba(255,255,255,0.15)' }}>🏫</div>
+              <div>
+                <h3 className="font-black text-xl text-white">School ERP</h3>
+                <p className="text-sm mt-0.5" style={{ color: 'rgba(199,210,254,1)' }}>Điểm danh · Phòng học · Sức khỏe · TKB AI · Khen thưởng · Alumni</p>
+              </div>
+            </div>
+          </Link>
+        </div>
 
         {/* ── AI Studio — Hero card ──────────────────────────────────────── */}
         <div>
@@ -140,6 +158,7 @@ export default async function AdminPage() {
               { href: '/admin/news',        icon: '📰', label: 'Tin tức',       desc: 'Đăng bài viết',    color: 'hover:border-pink-300',   count: newsCount },
               { href: '/admin/finance',     icon: '💰', label: 'Tài chính',     desc: 'Doanh thu',        color: 'hover:border-emerald-300' },
               { href: '/admin/contacts',    icon: '📩', label: 'Liên hệ',       desc: 'CRM / leads',      color: 'hover:border-blue-300',   count: newContacts, alert: newContacts > 0 },
+              { href: '/admin/schools',    icon: '🏫', label: 'Trường & TT',   desc: 'Multi-school',     color: 'hover:border-indigo-300', count: schoolsCount },
             ].map((item) => (
               <Link key={item.href} href={item.href}
                 className={`relative bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all ${item.color} ${(item as any).alert ? 'ring-2 ring-orange-400' : ''}`}>
@@ -164,7 +183,7 @@ export default async function AdminPage() {
           <p className="text-sm font-semibold text-gray-600 mb-2 ml-0.5">Học thuật</p>
           <div className="grid grid-cols-3 gap-3 mb-5">
             {[
-              { href: '/giao-vien', icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Nhận xét · Lớp học · BTVN',        color: 'from-cyan-500 to-teal-600'     },
+              { href: '/giao-vien', icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Nhận xét · Điểm danh · Lịch dạy · BTVN',        color: 'from-cyan-500 to-teal-600'     },
               { href: '/hoc-vien',  icon: '👦',   label: 'Học sinh',   desc: 'Bài tập · AI Tutor · Thành tích · Tiến độ',     color: 'from-blue-500 to-indigo-600'   },
               { href: '/phu-huynh',icon: '👨‍👩‍👧‍👦', label: 'Phụ huynh', desc: 'Theo dõi con · Báo cáo học tập',   color: 'from-orange-400 to-amber-500'  },
             ].map(p => (
@@ -215,6 +234,23 @@ export default async function AdminPage() {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* ── Data Migration ────────────────────────────────────────────── */}
+        <div>
+          <p className="text-sm font-bold text-gray-700 mb-3">📦 Data Migration</p>
+          <Link href="/admin/data-migration"
+            className="block relative overflow-hidden rounded-2xl p-5 text-white hover:scale-[1.01] transition-transform shadow-md"
+            style={{ background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)' }}>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.15)' }}>📦</div>
+              <div>
+                <h3 className="font-black text-lg text-white">Data Migration Center</h3>
+                <p className="text-sm" style={{ color: 'rgba(186,230,253,1)' }}>Import học sinh · giáo viên · khóa học từ Excel/CSV với AI mapping</p>
+              </div>
+              <span className="ml-auto flex-shrink-0 text-xs font-black px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.2)' }}>AI</span>
+            </div>
+          </Link>
         </div>
 
         {/* ── Hệ thống & Bảo mật + Standards ───────────────────────────── */}
