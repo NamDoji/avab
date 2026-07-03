@@ -3,6 +3,7 @@
 import { Brain, Sparkles } from 'lucide-react'
 import { useLang } from '@/contexts/LanguageContext'
 import { AIDashboard } from './AIDashboard'
+import { LearnerProfileCard } from './LearnerProfileCard'
 
 interface Props {
   userId: string
@@ -76,6 +77,7 @@ export function AIPageContent({ userId, userName }: Props) {
           ))}
         </div>
 
+        <LearnerProfileCard />
         <AIDashboard userId={userId} />
 
         <div className="mt-6 text-center text-gray-400 text-xs">{t.note}</div>

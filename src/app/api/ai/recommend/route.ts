@@ -2,112 +2,101 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { openai, AVAB_SYSTEM } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
+import { getA2PLMContext, formatA2PLMContext } from '@/lib/a2plm'
 
-// AI gợi ý bài tập phù hợp với trình độ hiện tại
+// Bài toán 4: Khuyến nghị can thiệp sư phạm — A2PLM đầy đủ
+// Aware recommendation: context × profile × goals × SRL
 export async function GET(req: NextRequest) {
   const session = await auth()
-  if (!session) {
-    return NextResponse.json({ success: false, error: 'Chưa đăng nhập' }, { status: 401 })
-  }
+  if (!session) return NextResponse.json({ success: false, error: 'Chưa đăng nhập' }, { status: 401 })
 
   try {
     const userId = (session.user as any).id
-    const { searchParams } = new URL(req.url)
-    const subjectId = searchParams.get('subjectId')
+    const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
+    const subjectId = new URL(req.url).searchParams.get('subjectId')
 
-    // Lấy lịch sử câu trả lời sai
     const wrongAnswers = await prisma.studentAnswer.findMany({
-      where: {
-        userId,
-        isCorrect: false,
-        ...(subjectId ? { subjectId } : {}),
-      },
-      include: {
-        question: {
-          select: { content: true, correctAnswer: true, order: true },
-        },
-      },
+      where: { userId, isCorrect: false, ...(subjectId ? { subjectId } : {}) },
+      include: { question: { select: { content: true, correctAnswer: true, order: true } } },
       orderBy: { createdAt: 'desc' },
       take: 10,
     })
 
-    // Lấy chuyên đề chưa làm hoặc làm kém
     const subjectScores = await prisma.studentAnswer.groupBy({
-      by: ['subjectId'],
-      where: { userId },
-      _avg: { score: true },
-      _count: { score: true },
+      by: ['subjectId'], where: { userId }, _avg: { score: true }, _count: { score: true },
     })
-
-    const weakSubjects = subjectScores
-      .filter((s) => (s._avg.score || 0) < 0.6)
-      .map((s) => s.subjectId)
-
+    const weakSubjects = subjectScores.filter(s => (s._avg.score || 0) < 0.6).map(s => s.subjectId)
     const subjects = await prisma.subject.findMany({
       where: weakSubjects.length > 0 ? { id: { in: weakSubjects } } : {},
-      take: 3,
-      select: { name: true, icon: true },
+      take: 3, select: { name: true, icon: true },
     })
 
-    // Thêm context về độ chính xác tổng thể
     const allAnswers = await prisma.studentAnswer.findMany({
-      where: { userId },
-      select: { isCorrect: true, createdAt: true },
-      orderBy: { createdAt: 'desc' },
+      where: { userId }, select: { isCorrect: true, createdAt: true }, orderBy: { createdAt: 'desc' },
     })
-    const totalAcc = allAnswers.length > 0
-      ? Math.round(allAnswers.filter(a => a.isCorrect).length / allAnswers.length * 100)
-      : 0
+    const totalAcc = allAnswers.length > 0 ? Math.round(allAnswers.filter(a => a.isCorrect).length / allAnswers.length * 100) : 0
     const supportLevel = totalAcc < 50 ? 'high' : totalAcc < 70 ? 'medium' : 'low'
 
-    const prompt = `Học sinh luyện thi học bổng lớp 1. Nhiệm vụ: Khuyến nghị can thiệp sư phạm toàn diện theo hướng aware recommendation.
+    const a2plmText = formatA2PLMContext(profile, srl, context, daysToExam)
 
-BỐI CẢNH HỌC TẬP:
-- Độ chính xác tổng: ${totalAcc}%
-- Mức hỗ trợ cần thiết: ${supportLevel}
-- Số câu sai gần đây: ${wrongAnswers.length}
+    const prompt = `${a2plmText}
 
-${wrongAnswers.length > 0 ? `Câu sai điển hình:\n${wrongAnswers.slice(0, 5).map((a) => `- "${a.question.content}" (đáp án đúng: ${a.question.correctAnswer})`).join('\n')}` : ''}
+BỐI CẢNH HỌC TẬP HIỆN TẠI:
+- Độ chính xác: ${totalAcc}% | Mức hỗ trợ cần: ${supportLevel}
+- Câu sai gần đây: ${wrongAnswers.length}
+${wrongAnswers.length > 0 ? `Câu sai điển hình:\n${wrongAnswers.slice(0, 5).map(a => `- "${a.question.content}" (đúng: ${a.question.correctAnswer})`).join('\n')}` : ''}
+- Chuyên đề còn yếu: ${subjects.map(s => s.name).join(', ') || 'Chưa xác định'}
 
-Chuyên đề còn yếu: ${subjects.map((s) => s.name).join(', ') || 'Chưa xác định'}
+NHIỆM VỤ: Khuyến nghị can thiệp sư phạm TỔNG HỢP — aware recommendation, tính đến:
+- Phong cách học P_i: ${profile?.learningStyle ?? 'MIXED'}
+- Mức gắn kết phụ huynh: ${profile?.parentInvolvement ?? 'MEDIUM'}
+- SRL hiện tại: ${srl.srlLevel} (${srl.srlScore}/100)
+- Mục tiêu G_i: ${profile?.targetGoal ?? 'SCHOLARSHIP'} ${profile?.targetSchool ? `→ ${profile.targetSchool}` : ''}
+- Ngữ cảnh C_t: ${context.timeOfDay} trên ${context.device}
 
-Khuyến nghị can thiệp JSON (không markdown):
+Khuyến nghị JSON (không markdown):
 {
-  "teachingStrategy": "Chiến lược sư phạm phù hợp nhất với tình trạng hiện tại",
+  "teachingStrategy": "Chiến lược sư phạm — phù hợp learningStyle và SRL level",
   "supportLevel": "${supportLevel}",
-  "supportGuidance": "Hướng dẫn thực hiện mức hỗ trợ này cụ thể",
+  "supportGuidance": "Hướng dẫn thực hiện mức hỗ trợ này",
   "exercises": [
     {
       "type": "Loại bài tập",
-      "description": "Mô tả cụ thể",
+      "description": "Mô tả cụ thể — phù hợp learningStyle",
       "difficulty": "Dễ/Trung bình/Khó",
       "example": "Ví dụ mẫu",
-      "pedagogicalReason": "Lý do sư phạm cụ thể"
+      "pedagogicalReason": "Lý do sư phạm — liên quan đến lỗi sai cụ thể"
     }
   ],
-  "selfStudyStrategy": "Chiến lược tự học phù hợp cho trẻ 5-6 tuổi",
-  "resourceRecommendations": ["Nguồn tài nguyên 1", "Nguồn tài nguyên 2"],
-  "teacherActions": ["Hành động của giáo viên 1", "Hành động 2"],
-  "parentActions": ["Hành động của phụ huynh tại nhà 1", "Hành động 2"],
-  "dailyGoal": "Mục tiêu cụ thể mỗi ngày",
+  "srlDevelopmentActions": ["Hành động phát triển SRL 1", "Hành động phát triển SRL 2"],
+  "selfStudyStrategy": "Chiến lược tự học — phù hợp SRL level và selfStudyCapacity",
+  "resourceRecommendations": ["Tài nguyên 1 — phù hợp learningStyle", "Tài nguyên 2"],
+  "teacherActions": ["Hành động giáo viên 1", "Hành động 2"],
+  "parentActions": ["Hành động phụ huynh 1 — phù hợp parentInvolvement", "Hành động 2"],
+  "contextAdaptations": "Điều chỉnh theo ngữ cảnh ${context.timeOfDay}/${context.device}",
+  "dailyGoal": "Mục tiêu hôm nay — có tính deadline G_i",
   "motivation": "Câu động viên phù hợp trẻ 5-6 tuổi"
 }
-Gợi ý 3 bài tập phù hợp.`
+Gợi ý 3 bài tập, phù hợp phong cách học.`
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: AVAB_SYSTEM },
-        { role: 'user', content: prompt },
-      ],
-      max_tokens: 400,
-      temperature: 0.6,
+      messages: [{ role: 'system', content: AVAB_SYSTEM }, { role: 'user', content: prompt }],
+      max_tokens: 600,
+      temperature: 0.5,
     })
 
     const raw = completion.choices[0].message.content || '{}'
     const recommendations = JSON.parse(raw.replace(/```json|```/g, '').trim())
 
-    return NextResponse.json({ success: true, data: { ...recommendations, supportLevel } })
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...recommendations, supportLevel,
+        srl, profile: profile ? { learningStyle: profile.learningStyle, parentInvolvement: profile.parentInvolvement, targetGoal: profile.targetGoal } : null,
+        daysToExam,
+      },
+    })
   } catch (err) {
     console.error('AI recommend error:', err)
     return NextResponse.json({ success: false, error: 'AI không khả dụng' }, { status: 500 })

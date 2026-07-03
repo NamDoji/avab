@@ -593,8 +593,8 @@ export function AIDashboard({ userId }: Props) {
             <Brain size={22} />
           </div>
           <div className="flex-1">
-            <h2 className="text-base font-black">AI Hỗ Trợ Học Tập</h2>
-            <p className="text-white/70 text-xs">BKT · DKT · Recommender Systems · Aware Recommendation</p>
+            <h2 className="text-base font-black">AI Hỗ Trợ Học Tập — A2PLM</h2>
+            <p className="text-white/70 text-xs">K_t · B_t · E_t · P_i · G_i · C_t · SRL_t</p>
           </div>
           <button
             onClick={() => fetchTab(activeTab)}
@@ -605,6 +605,24 @@ export function AIDashboard({ userId }: Props) {
           </button>
         </div>
       </div>
+
+      {/* A2PLM context bar */}
+      {(data.diagnose?.srl || data.predict?.srl) && (() => {
+        const srl = data.diagnose?.srl ?? data.predict?.srl
+        const daysToExam = data.diagnose?.daysToExam ?? data.predict?.daysToExam
+        return (
+          <div className="flex items-center gap-3 px-4 py-2 bg-white/10 border-t border-white/10 flex-wrap">
+            <span className="text-white/80 text-xs font-semibold">
+              SRL: <span className={srl.srlScore >= 60 ? 'text-green-300' : srl.srlScore >= 30 ? 'text-yellow-300' : 'text-red-300'}>{srl.srlScore}/100</span>
+            </span>
+            {daysToExam !== null && (
+              <span className={`text-xs font-semibold ${daysToExam < 30 ? 'text-red-300' : daysToExam < 60 ? 'text-yellow-300' : 'text-green-300'}`}>
+                ⏰ {daysToExam} ngày đến kỳ thi
+              </span>
+            )}
+          </div>
+        )
+      })()}
 
       {/* Tabs */}
       <div className="flex overflow-x-auto border-b border-gray-100">

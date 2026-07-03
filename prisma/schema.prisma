@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -19,10 +20,35 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  enrollments   Enrollment[]
-  answers       StudentAnswer[]
+  enrollments     Enrollment[]
+  answers         StudentAnswer[]
+  learnerProfile  LearnerProfile?
 
   @@map("avab_users")
+}
+
+// A2PLM — Hồ sơ người học (P_i) + Mục tiêu (G_i)
+model LearnerProfile {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  // P_i — Hồ sơ người học
+  backgroundLevel   String    @default("BEGINNER")   // BEGINNER | INTERMEDIATE | ADVANCED
+  learningStyle     String    @default("MIXED")       // VISUAL | READING | KINESTHETIC | MIXED
+  selfStudyCapacity String    @default("MEDIUM")      // LOW | MEDIUM | HIGH
+  parentInvolvement String    @default("MEDIUM")      // LOW | MEDIUM | HIGH
+  weeklyHours       Int       @default(5)              // Số giờ học mỗi tuần
+  // G_i — Mục tiêu học tập
+  targetSchool      String?                           // Trường mục tiêu (VD: Nguyễn Siêu)
+  targetDate        DateTime?                         // Deadline kỳ thi
+  targetGoal        String    @default("SCHOLARSHIP") // SCHOLARSHIP | FOUNDATION | ADVANCED
+  additionalNotes   String?                           // Ghi chú thêm từ phụ huynh
+  // Metadata
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("avab_learner_profiles")
 }
 
 enum CourseType {

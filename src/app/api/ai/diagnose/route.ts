@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { openai, AVAB_SYSTEM } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
+import { getA2PLMContext, formatA2PLMContext } from '@/lib/a2plm'
 
-// Bài toán 1: Chẩn đoán trạng thái người học
-// Mô hình hóa trạng thái tri thức theo hướng BKT/DKT
-// Đầu ra: Hồ sơ trạng thái học tập hợp nhất
+// Bài toán 1: Chẩn đoán trạng thái người học — A2PLM đầy đủ
+// I_t = Π_θ(K_t, B_t, E_t, P, G, C_t, R, T, M)
 export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ success: false, error: 'Chưa đăng nhập' }, { status: 401 })
@@ -13,87 +13,54 @@ export async function GET(req: NextRequest) {
   try {
     const userId = (session.user as any).id
 
-    // Thu thập dữ liệu đa chiều theo hướng learner modeling
+    // Lấy A2PLM context (P_i, G_i, C_t^i, SRL_t^i)
+    const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)
+
     const [answers, allSubjects] = await Promise.all([
       prisma.studentAnswer.findMany({
         where: { userId },
-        include: {
-          question: { select: { content: true, subjectId: true, points: true } },
-        },
+        include: { question: { select: { content: true, subjectId: true, points: true } } },
         orderBy: { createdAt: 'asc' },
       }),
-      prisma.subject.findMany({
-        orderBy: { order: 'asc' },
-        select: { id: true, name: true, order: true, icon: true },
-      }),
+      prisma.subject.findMany({ orderBy: { order: 'asc' }, select: { id: true, name: true, order: true, icon: true } }),
     ])
 
     if (answers.length === 0) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          empty: true,
-          message: 'Chưa có dữ liệu học tập. Hãy làm thử một số bài để AI có thể phân tích!',
-        },
-      })
+      return NextResponse.json({ success: true, data: { empty: true, message: 'Chưa có dữ liệu học tập. Hãy làm thử một số bài để AI có thể phân tích!', profile, srl } })
     }
 
-    // ── Mô hình hóa tri thức theo từng chuyên đề (BKT-inspired) ──
+    // BKT-inspired knowledge profiling
     const subjectMap: Record<string, { name: string; icon: string | null; answers: typeof answers }> = {}
-    for (const s of allSubjects) {
-      subjectMap[s.id] = { name: s.name, icon: s.icon, answers: [] }
-    }
-    for (const a of answers) {
-      if (subjectMap[a.subjectId]) subjectMap[a.subjectId].answers.push(a)
-    }
+    for (const s of allSubjects) subjectMap[s.id] = { name: s.name, icon: s.icon, answers: [] }
+    for (const a of answers) { if (subjectMap[a.subjectId]) subjectMap[a.subjectId].answers.push(a) }
 
-    const knowledgeProfile = allSubjects
-      .filter(s => subjectMap[s.id].answers.length > 0)
-      .map(s => {
-        const sa = subjectMap[s.id].answers
-        const correct = sa.filter(a => a.isCorrect).length
-        const accuracy = Math.round((correct / sa.length) * 100)
-        // Chuỗi đúng/sai gần đây (5 câu cuối) — tín hiệu "hiểu bền vững"
-        const recent5 = sa.slice(-5).map(a => a.isCorrect ? 1 : 0) as number[]
-        const recentAcc = recent5.length > 0 ? Math.round(recent5.reduce((a: number, b: number) => a + b, 0) / recent5.length * 100) : 0
-        // Phân loại theo BKT threshold
-        const masteryLevel =
-          accuracy >= 80 && recentAcc >= 70 ? 'mastered' :
-          accuracy >= 60 ? 'developing' :
-          accuracy >= 30 ? 'struggling' : 'at_risk'
-        return {
-          subjectId: s.id,
-          name: s.name,
-          icon: s.icon,
-          attempted: sa.length,
-          accuracy,
-          recentAccuracy: recentAcc,
-          masteryLevel,
-        }
-      })
+    const knowledgeProfile = allSubjects.filter(s => subjectMap[s.id].answers.length > 0).map(s => {
+      const sa = subjectMap[s.id].answers
+      const correct = sa.filter(a => a.isCorrect).length
+      const accuracy = Math.round((correct / sa.length) * 100)
+      const recent5 = sa.slice(-5).map(a => a.isCorrect ? 1 : 0) as number[]
+      const recentAcc = recent5.length > 0 ? Math.round(recent5.reduce((a, b) => a + b, 0) / recent5.length * 100) : 0
+      const masteryLevel = accuracy >= 80 && recentAcc >= 70 ? 'mastered' : accuracy >= 60 ? 'developing' : accuracy >= 30 ? 'struggling' : 'at_risk'
+      return { subjectId: s.id, name: s.name, icon: s.icon, attempted: sa.length, accuracy, recentAccuracy: recentAcc, masteryLevel }
+    })
 
-    // ── Phân tích hành vi học tập ──
     const totalAnswered = answers.length
     const timeSpread = answers.length >= 2
-      ? (new Date(answers[answers.length - 1].createdAt).getTime() - new Date(answers[0].createdAt).getTime()) / (1000 * 3600 * 24)
-      : 0
+      ? (new Date(answers[answers.length - 1].createdAt).getTime() - new Date(answers[0].createdAt).getTime()) / (1000 * 3600 * 24) : 0
     const avgPerDay = timeSpread > 0 ? (totalAnswered / timeSpread).toFixed(1) : totalAnswered.toString()
 
-    // Xu hướng cải thiện (BKT: learning rate)
     const half = Math.floor(answers.length / 2)
     const earlyAcc = half > 0 ? Math.round(answers.slice(0, half).filter(a => a.isCorrect).length / half * 100) : 0
     const lateAcc = half > 0 ? Math.round(answers.slice(half).filter(a => a.isCorrect).length / (answers.length - half) * 100) : 0
-    const learningTrend = lateAcc - earlyAcc // dương = đang tiến bộ, âm = đang chững lại
+    const learningTrend = lateAcc - earlyAcc
 
-    // Tải nhận thức (cognitive load proxy): tỷ lệ câu sai liên tiếp
-    let consecutiveWrong = 0, maxConsecutiveWrong = 0, currentStreak = 0
+    let currentStreak = 0, maxConsecutiveWrong = 0
     for (const a of answers) {
       if (!a.isCorrect) { currentStreak++; maxConsecutiveWrong = Math.max(maxConsecutiveWrong, currentStreak) }
       else currentStreak = 0
     }
     const cognitiveLoadLevel = maxConsecutiveWrong >= 6 ? 'high' : maxConsecutiveWrong >= 3 ? 'medium' : 'low'
 
-    // Mức độ gắn kết (engagement): độ đa dạng chuyên đề đã làm
     const subjectsCovered = new Set(answers.map(a => a.subjectId)).size
     const engagementScore = Math.min(100, Math.round((subjectsCovered / allSubjects.length) * 60 + (totalAnswered / 100) * 40))
     const engagementLevel = engagementScore >= 60 ? 'high' : engagementScore >= 30 ? 'medium' : 'low'
@@ -102,38 +69,41 @@ export async function GET(req: NextRequest) {
     const developing = knowledgeProfile.filter(k => k.masteryLevel === 'developing')
     const struggling = knowledgeProfile.filter(k => ['struggling', 'at_risk'].includes(k.masteryLevel))
 
-    const prompt = `Dữ liệu học sinh luyện thi học bổng lớp 1:
+    // Format A2PLM context cho GPT
+    const a2plmText = formatA2PLMContext(profile, srl, context, daysToExam)
 
+    const prompt = `${a2plmText}
+
+DỮ LIỆU HỌC TẬP THỰC TẾ (K_t^i, B_t^i, E_t^i):
 TRI THỨC (BKT-inspired):
 - Nắm vững (≥80%): ${mastered.map(k => k.name).join(', ') || 'Chưa có'}
 - Đang phát triển (60-79%): ${developing.map(k => k.name).join(', ') || 'Chưa có'}
 - Cần hỗ trợ (<60%): ${struggling.map(k => k.name).join(', ') || 'Chưa có'}
 
-HÀNH VI HỌC TẬP:
-- Tổng câu đã làm: ${totalAnswered}
-- Trung bình ${avgPerDay} câu/ngày
-- Xu hướng cải thiện: ${learningTrend > 0 ? '+' : ''}${learningTrend}% (${learningTrend > 5 ? 'đang tiến bộ tốt' : learningTrend < -5 ? 'có dấu hiệu chững lại' : 'ổn định'})
-- Chuỗi sai dài nhất: ${maxConsecutiveWrong} câu → Tải nhận thức: ${cognitiveLoadLevel}
-- Mức độ gắn kết: ${engagementLevel} (${subjectsCovered}/${allSubjects.length} chuyên đề)
+HÀNH VI HỌC TẬP (B_t^i):
+- Tổng câu: ${totalAnswered} | Trung bình ${avgPerDay} câu/ngày
+- Xu hướng: ${learningTrend > 0 ? '+' : ''}${learningTrend}% | Tải nhận thức: ${cognitiveLoadLevel}
+- Gắn kết: ${engagementLevel} (${subjectsCovered}/${allSubjects.length} chuyên đề)
 
-Chẩn đoán trạng thái học tập theo JSON (không markdown):
+NĂNG LỰC TỰ HỌC (SRL_t^i): ${srl.srlScore}/100 — ${srl.srlLabel}
+
+Chẩn đoán tích hợp A2PLM theo JSON (không markdown):
 {
-  "overallState": "Trạng thái tổng quan 1 câu súc tích (ngôn ngữ sư phạm)",
-  "knowledgeSummary": "Nhận xét về bản đồ tri thức 1-2 câu",
-  "behaviorInsight": "Nhận xét về hành vi học tập 1-2 câu",
-  "engagementAnalysis": "Đánh giá mức độ gắn kết và động lực",
-  "cognitiveProfile": "Nhận xét về khả năng nhận thức (phù hợp lứa tuổi 5-6)",
-  "contextualFactors": "Yếu tố ngữ cảnh cần lưu ý (theo hướng multimodal learning analytics)",
-  "diagnosticConclusion": "Kết luận chẩn đoán tổng hợp — cơ sở để ra quyết định dạy học"
+  "overallState": "Trạng thái tổng quan (ngôn ngữ sư phạm, có xem xét P_i và G_i)",
+  "knowledgeSummary": "Nhận xét bản đồ tri thức",
+  "behaviorInsight": "Nhận xét hành vi — có xem xét SRL và ngữ cảnh học",
+  "engagementAnalysis": "Đánh giá gắn kết — phù hợp với profile phụ huynh",
+  "cognitiveProfile": "Nhận xét nhận thức — phù hợp lứa tuổi và phong cách học",
+  "contextualFactors": "Yếu tố ngữ cảnh cần lưu ý (thiết bị, thời gian, điều kiện)",
+  "srlInsight": "Đánh giá năng lực tự học và hướng phát triển SRL",
+  "profileAlignment": "Mức độ phù hợp giữa năng lực hiện tại và mục tiêu (G_i)",
+  "diagnosticConclusion": "Kết luận chẩn đoán tổng hợp — cơ sở ra quyết định dạy học"
 }`
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: AVAB_SYSTEM },
-        { role: 'user', content: prompt },
-      ],
-      max_tokens: 500,
+      messages: [{ role: 'system', content: AVAB_SYSTEM }, { role: 'user', content: prompt }],
+      max_tokens: 600,
       temperature: 0.3,
     })
 
@@ -143,30 +113,14 @@ Chẩn đoán trạng thái học tập theo JSON (không markdown):
     return NextResponse.json({
       success: true,
       data: {
-        knowledgeProfile,
-        masteredCount: mastered.length,
-        developingCount: developing.length,
-        strugglingCount: struggling.length,
-        totalSubjects: allSubjects.length,
-        // Chỉ số hành vi
-        behavior: {
-          totalAnswered,
-          avgPerDay,
-          learningTrend,
-          learningTrendLabel: learningTrend > 5 ? 'Đang tiến bộ tốt' : learningTrend < -5 ? 'Có dấu hiệu chững lại' : 'Ổn định',
-        },
-        // Chỉ số nhận thức
-        cognitive: {
-          load: cognitiveLoadLevel,
-          maxConsecutiveWrong,
-        },
-        // Chỉ số gắn kết
-        engagement: {
-          level: engagementLevel,
-          score: engagementScore,
-          subjectsCovered,
-        },
-        // AI chẩn đoán
+        knowledgeProfile, masteredCount: mastered.length, developingCount: developing.length,
+        strugglingCount: struggling.length, totalSubjects: allSubjects.length,
+        behavior: { totalAnswered, avgPerDay, learningTrend, learningTrendLabel: learningTrend > 5 ? 'Đang tiến bộ tốt' : learningTrend < -5 ? 'Có dấu hiệu chững lại' : 'Ổn định' },
+        cognitive: { load: cognitiveLoadLevel, maxConsecutiveWrong },
+        engagement: { level: engagementLevel, score: engagementScore, subjectsCovered },
+        // A2PLM additions
+        srl, profile, context: { device: context.device, timeOfDay: context.timeOfDay, note: context.contextNote },
+        daysToExam,
         ...aiDiagnosis,
       },
     })
