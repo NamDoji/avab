@@ -186,7 +186,7 @@ export default async function HocVienPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               {enrollments.map((enrollment) => {
                 const cType = ((enrollment.course as any).courseType as CourseType) ?? 'TOAN'
                 const meta = COURSE_TYPE_META[cType] ?? COURSE_TYPE_META.TOAN

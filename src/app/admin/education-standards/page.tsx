@@ -36,7 +36,7 @@ function MarkdownView({ content }: { content: string }) {
   return (
     <div className="prose prose-sm max-w-none font-sans text-gray-800">
       {lines.map((line, i) => {
-        if (line.startsWith('# ')) return <h1 key={i} className="text-2xl font-black text-purple-800 mt-6 mb-3 pb-2 border-b-2 border-purple-200">{line.slice(2)}</h1>
+        if (line.startsWith('# ')) return <h1 key={i} className="text-xl sm:text-2xl font-black text-purple-800 mt-6 mb-3 pb-2 border-b-2 border-purple-200">{line.slice(2)}</h1>
         if (line.startsWith('## ')) return <h2 key={i} className="text-xl font-bold text-purple-700 mt-5 mb-2">{line.slice(3)}</h2>
         if (line.startsWith('### ')) return <h3 key={i} className="text-lg font-bold text-gray-800 mt-4 mb-1">{line.slice(4)}</h3>
         if (line.startsWith('#### ')) return <h4 key={i} className="text-base font-bold text-gray-700 mt-3 mb-1">{line.slice(5)}</h4>
@@ -181,7 +181,7 @@ export default function EducationStandardsPage() {
               <Loader2 className="animate-spin mr-2" size={24} /> Đang tải nội dung...
             </div>
           ) : (
-            <div className="p-6 max-w-4xl mx-auto">
+            <div className="p-4 sm:p-6 max-w-4xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-bold text-gray-800">
                   {selected.replace('AvaB-', '').replace('-v1.0', '').replace('.md', '').replace(/-/g, ' ')}

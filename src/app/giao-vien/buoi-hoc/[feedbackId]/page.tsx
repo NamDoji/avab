@@ -32,11 +32,11 @@ const RATING_COLORS = ['', 'bg-red-50 text-red-600 border-red-200', 'bg-orange-5
 
 function RatingButtons({ value, onChange }: { value: number | null; onChange: (v: number | null) => void }) {
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map(n => (
         <button key={n} type="button"
           onClick={() => onChange(value === n ? null : n)}
-          className={`w-7 h-7 rounded-lg border text-sm flex items-center justify-center transition-all ${
+          className={`w-9 h-9 sm:w-8 sm:h-8 rounded-lg border text-sm flex items-center justify-center transition-all ${
             value === n ? RATING_COLORS[n] + ' border font-bold scale-110' : 'bg-gray-50 border-gray-200 hover:border-gray-300 text-gray-400'
           }`}
           title={`${n}/5`}
@@ -107,10 +107,10 @@ function StudentDrawer({
   return (
     <div className="fixed inset-0 z-50 flex">
       <div className="flex-1 bg-black/40" onClick={onClose} />
-      <div className="w-full max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-hidden">
+      <div className="w-full sm:max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-hidden">
         {/* Header */}
         <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-gradient-to-r from-teal-500 to-teal-600 text-white shrink-0">
-          <button onClick={onClose} className="p-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition">
+          <button onClick={onClose} className="p-2.5 bg-white/20 rounded-lg hover:bg-white/30 transition min-w-[40px] min-h-[40px] flex items-center justify-center">
             <X size={16} />
           </button>
           <div className="flex-1">
@@ -118,7 +118,7 @@ function StudentDrawer({
             <p className="text-white/70 text-xs">{record.user.phone}</p>
           </div>
           <button onClick={save} disabled={saving}
-            className={`flex items-center gap-1.5 font-bold px-3 py-1.5 rounded-xl text-sm transition disabled:opacity-60 ${
+            className={`flex items-center gap-1.5 font-bold px-4 py-2.5 rounded-xl text-sm transition disabled:opacity-60 min-h-[44px] ${
               saveStatus === 'ok' ? 'bg-green-500 text-white' :
               saveStatus === 'error' ? 'bg-red-500 text-white' :
               'bg-white text-teal-700 hover:bg-teal-50'
@@ -149,11 +149,11 @@ function StudentDrawer({
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">👤 Chuyên cần</p>
               <div className="flex gap-2">
                 <button type="button" onClick={() => set('attendance', true)}
-                  className={`flex-1 py-2.5 rounded-xl font-bold text-sm border-2 transition ${form.attendance ? 'bg-green-50 border-green-400 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                  className={`flex-1 py-3 rounded-xl font-bold text-sm border-2 transition min-h-[48px] ${form.attendance ? 'bg-green-50 border-green-400 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
                   ✅ Có mặt
                 </button>
                 <button type="button" onClick={() => set('attendance', false)}
-                  className={`flex-1 py-2.5 rounded-xl font-bold text-sm border-2 transition ${!form.attendance ? 'bg-red-50 border-red-400 text-red-600' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+                  className={`flex-1 py-3 rounded-xl font-bold text-sm border-2 transition min-h-[48px] ${!form.attendance ? 'bg-red-50 border-red-400 text-red-600' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
                   ❌ Vắng
                 </button>
               </div>
@@ -187,7 +187,7 @@ function StudentDrawer({
                     {[0, 1, 2, 3, 4, 5, 6, 7, '8+'].map(n => (
                       <button key={n} type="button"
                         onClick={() => set('speakingCount', n === '8+' ? 8 : Number(n))}
-                        className={`w-10 h-10 rounded-xl border-2 font-bold text-sm transition ${
+                        className={`w-11 h-11 rounded-xl border-2 font-bold text-sm transition ${
                           form.speakingCount === (n === '8+' ? 8 : Number(n))
                             ? 'bg-teal-100 border-teal-400 text-teal-700'
                             : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-teal-200'
@@ -223,7 +223,7 @@ function StudentDrawer({
                     {EMOTION_OPTIONS.map(e => (
                       <button key={e.value} type="button"
                         onClick={() => set('emotionState', form.emotionState === e.value ? null : e.value)}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm font-semibold transition ${
+                        className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl border-2 text-sm font-semibold transition min-h-[44px] ${
                           form.emotionState === e.value
                             ? 'bg-teal-50 border-teal-400 text-teal-700'
                             : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-teal-200'
@@ -242,7 +242,7 @@ function StudentDrawer({
                   <textarea rows={3} placeholder="Quan sát thêm về học sinh trong buổi này..."
                     value={form.teacherNote ?? ''}
                     onChange={e => set('teacherNote', e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
                   />
                 </div>
               </>
@@ -255,7 +255,7 @@ function StudentDrawer({
                   <span className="ml-2 font-normal text-gray-400 normal-case">(GV sửa trước khi gửi PH)</span>
                 </p>
                 <button onClick={() => onAI(record.userId)} disabled={aiLoading}
-                  className="flex items-center gap-1.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 disabled:opacity-50 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                  className="flex items-center gap-1.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition min-h-[40px]">
                   {aiLoading ? <><Loader2 size={12} className="animate-spin" /> Đang sinh...</> : <><Brain size={12} /> Sinh AI</>}
                 </button>
               </div>
@@ -268,7 +268,7 @@ function StudentDrawer({
                       setAiComment(e.target.value)
                       set('aiComment', e.target.value)
                     }}
-                    className="w-full border border-teal-200 bg-teal-50 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
+                    className="w-full border border-teal-200 bg-teal-50 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
                   />
                   <p className="text-xs text-gray-400">Giáo viên có thể chỉnh sửa trước khi gửi phụ huynh</p>
                 </div>

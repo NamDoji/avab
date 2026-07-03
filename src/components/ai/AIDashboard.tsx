@@ -103,24 +103,24 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
       </div>
 
       {/* 3 chỉ số hành vi */}
-      <div className="grid grid-cols-3 gap-2">
-        <div className="bg-white border border-gray-100 rounded-2xl p-3 text-center">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+        <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center">
           <div className="text-xl mb-1">📊</div>
           <Badge label={data.engagement?.level === 'high' ? 'Cao' : data.engagement?.level === 'medium' ? 'Trung bình' : 'Thấp'}
             color={engagementColors[data.engagement?.level as keyof typeof engagementColors] ?? 'gray'} />
-          <div className="text-xs text-gray-400 mt-1">Gắn kết</div>
+          <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Gắn kết</div>
         </div>
-        <div className="bg-white border border-gray-100 rounded-2xl p-3 text-center">
+        <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center">
           <div className="text-xl mb-1">🧠</div>
           <Badge label={data.cognitive?.load === 'high' ? 'Cao' : data.cognitive?.load === 'medium' ? 'Vừa' : 'Thấp'}
             color={loadColors[data.cognitive?.load as keyof typeof loadColors] ?? 'gray'} />
-          <div className="text-xs text-gray-400 mt-1">Tải nhận thức</div>
+          <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Tải nhận thức</div>
         </div>
-        <div className="bg-white border border-gray-100 rounded-2xl p-3 text-center">
+        <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center">
           <div className="text-xl mb-1">📈</div>
           <Badge label={data.behavior?.learningTrend > 5 ? 'Tốt lên' : data.behavior?.learningTrend < -5 ? 'Chững lại' : 'Ổn định'}
             color={data.behavior?.learningTrend > 5 ? 'green' : data.behavior?.learningTrend < -5 ? 'red' : 'yellow'} />
-          <div className="text-xs text-gray-400 mt-1">Xu hướng</div>
+          <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Xu hướng</div>
         </div>
       </div>
 
@@ -156,7 +156,7 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
               data.srl.srlScore >= 60 ? 'bg-green-400' : data.srl.srlScore >= 30 ? 'bg-orange-400' : 'bg-red-400'
             }`} style={{ width: `${data.srl.srlScore}%` }} />
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center text-xs text-gray-500">
+          <div className="grid grid-cols-3 gap-1 sm:gap-2 text-center text-[10px] sm:text-xs text-gray-500">
             <div><div className="font-semibold text-gray-700">{data.srl.breadthScore}</div>Đa dạng CĐ</div>
             <div><div className="font-semibold text-gray-700">{data.srl.consistencyScore}</div>Đều đặn</div>
             <div><div className="font-semibold text-gray-700">{data.srl.initiativeScore}</div>Chủ động</div>
@@ -256,24 +256,24 @@ function PredictPanel({ data, loading }: { data?: any; loading?: boolean }) {
       {mdim && (
         <div>
           <h4 className="font-bold text-gray-900 text-sm mb-2">📡 Dự báo đa chiều (DKT/multi-task)</h4>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="bg-white border border-gray-100 rounded-2xl p-3 text-center">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+            <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center">
               <div className="text-lg mb-1">⚠️</div>
               <Badge label={mdim.engagementRisk === 'low' ? 'Thấp' : mdim.engagementRisk === 'medium' ? 'Vừa' : 'Cao'}
                 color={riskColors[mdim.engagementRisk as keyof typeof riskColors] ?? 'gray'} />
-              <div className="text-xs text-gray-400 mt-1">Rủi ro gắn kết</div>
+              <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Rủi ro gắn kết</div>
             </div>
-            <div className="bg-white border border-gray-100 rounded-2xl p-3 text-center">
+            <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center">
               <div className="text-lg mb-1">🧩</div>
               <Badge label={mdim.cognitiveLoad === 'low' ? 'Thấp' : mdim.cognitiveLoad === 'medium' ? 'Vừa' : 'Cao'}
                 color={loadColors[mdim.cognitiveLoad as keyof typeof loadColors] ?? 'gray'} />
-              <div className="text-xs text-gray-400 mt-1">Tải nhận thức</div>
+              <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Tải nhận thức</div>
             </div>
-            <div className="bg-white border border-gray-100 rounded-2xl p-3 text-center">
+            <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center">
               <div className="text-lg mb-1">🚀</div>
               <Badge label={readinessLabels[mdim.readinessToAdvance as keyof typeof readinessLabels] ?? mdim.readinessToAdvance}
                 color={readinessColors[mdim.readinessToAdvance as keyof typeof readinessColors] ?? 'gray'} />
-              <div className="text-xs text-gray-400 mt-1">Sẵn sàng tiếp</div>
+              <div className="text-[10px] sm:text-xs text-gray-400 mt-1">Sẵn sàng tiếp</div>
             </div>
           </div>
         </div>
