@@ -16,6 +16,27 @@ const COURSE_TYPE_HEADER: Record<CourseType, { gradient: string; mascot: string 
   LAP_TRINH_CPP:        { gradient: 'from-violet-600 via-purple-700 to-indigo-800', mascot: '⚡' },
 }
 
+const K12_SUBJECT_HEADER: Record<string, { gradient: string; mascot: string }> = {
+  THINKING_MATH: { gradient: 'from-purple-600 via-indigo-600 to-blue-600',   mascot: '🧠' },
+  MATH:          { gradient: 'from-blue-600 via-indigo-600 to-blue-700',     mascot: '📐' },
+  VIETNAMESE:    { gradient: 'from-red-500 via-orange-500 to-yellow-500',    mascot: '✏️' },
+  ENGLISH:       { gradient: 'from-green-500 via-teal-500 to-cyan-600',      mascot: '🦜' },
+  SCIENCE:       { gradient: 'from-cyan-500 via-teal-500 to-blue-600',       mascot: '🔬' },
+  PHYSICS:       { gradient: 'from-violet-600 via-purple-600 to-indigo-700', mascot: '⚛️' },
+  CHEMISTRY:     { gradient: 'from-lime-500 via-green-500 to-teal-600',      mascot: '🧪' },
+  BIOLOGY:       { gradient: 'from-emerald-500 via-green-500 to-teal-600',   mascot: '🌿' },
+  HISTORY:       { gradient: 'from-amber-500 via-orange-500 to-red-500',     mascot: '📜' },
+  GEOGRAPHY:     { gradient: 'from-emerald-500 via-teal-500 to-cyan-600',    mascot: '🌍' },
+  INFORMATICS:   { gradient: 'from-sky-500 via-blue-500 to-indigo-600',      mascot: '💻' },
+  CIVIC:         { gradient: 'from-indigo-500 via-blue-500 to-cyan-600',     mascot: '⚖️' },
+  ALGO:          { gradient: 'from-yellow-400 via-orange-500 to-red-500',    mascot: '🤖' },
+  SCRATCH:       { gradient: 'from-orange-400 via-pink-500 to-rose-600',     mascot: '🐱' },
+  PYTHON:        { gradient: 'from-teal-500 via-cyan-500 to-blue-600',       mascot: '🐍' },
+  CPP:           { gradient: 'from-violet-600 via-purple-700 to-indigo-800', mascot: '⚡' },
+  IELTS:         { gradient: 'from-sky-500 via-blue-500 to-indigo-600',      mascot: '📝' },
+  CAMBRIDGE:     { gradient: 'from-rose-500 via-pink-500 to-fuchsia-600',    mascot: '🎓' },
+}
+
 export default async function SubjectDetailPage({
   params,
 }: {
@@ -42,14 +63,16 @@ export default async function SubjectDetailPage({
     }).catch(() => null),
     prisma.course.findUnique({
       where: { id: courseId },
-      select: { id: true, name: true, courseType: true },
+      select: { id: true, name: true, courseType: true, subjectCode: true },
     }).catch(() => null),
   ])
 
   if (!subject || !course) notFound()
 
+  // Resolve header: K12 subjectCode first, then legacy courseType
+  const subjectCode = (course as any).subjectCode as string | null
   const cType = ((course as any).courseType as CourseType) ?? 'TOAN'
-  const header = COURSE_TYPE_HEADER[cType] ?? COURSE_TYPE_HEADER.TOAN
+  const header = (subjectCode && K12_SUBJECT_HEADER[subjectCode]) ? K12_SUBJECT_HEADER[subjectCode] : (COURSE_TYPE_HEADER[cType] ?? COURSE_TYPE_HEADER.TOAN)
 
   const userId = (session.user as any).id
   const isAdmin = (session.user as any).role === 'ADMIN'

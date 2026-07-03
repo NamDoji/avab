@@ -7,13 +7,34 @@ import { AIDashboard } from '@/components/ai/AIDashboard'
 
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 
-const COURSE_TYPE_META: Record<CourseType, { emoji: string; label: string; gradient: string }> = {
+const COURSE_TYPE_META: Record<string, { emoji: string; label: string; gradient: string }> = {
+  // Legacy
   TOAN:                 { emoji: '📐', label: 'Toán',             gradient: 'from-purple-500 to-indigo-600' },
   TIENG_ANH:            { emoji: '🇬🇧', label: 'Tiếng Anh',       gradient: 'from-green-400 to-teal-600' },
   LAP_TRINH_THUAT_TOAN: { emoji: '🤖', label: 'Lập trình tư duy', gradient: 'from-yellow-400 to-orange-500' },
   LAP_TRINH_SCRATCH:    { emoji: '🐱', label: 'Scratch',          gradient: 'from-orange-400 to-pink-500' },
   LAP_TRINH_PYTHON:     { emoji: '🐍', label: 'Python',           gradient: 'from-teal-400 to-cyan-600' },
   LAP_TRINH_CPP:        { emoji: '⚡', label: 'C++',              gradient: 'from-violet-500 to-purple-700' },
+  // K12 generic
+  THINKING_MATH: { emoji: '🧠', label: 'Toán Tư Duy',  gradient: 'from-purple-500 to-indigo-600' },
+  MATH:          { emoji: '📐', label: 'Toán',          gradient: 'from-blue-500 to-indigo-600' },
+  VIETNAMESE:    { emoji: '📖', label: 'Tiếng Việt',   gradient: 'from-red-500 to-orange-500' },
+  ENGLISH:       { emoji: '🇬🇧', label: 'Tiếng Anh',   gradient: 'from-green-400 to-teal-600' },
+  SCIENCE:       { emoji: '🔬', label: 'Khoa học',     gradient: 'from-cyan-500 to-teal-600' },
+  PHYSICS:       { emoji: '⚛️', label: 'Vật lý',       gradient: 'from-violet-500 to-indigo-700' },
+  CHEMISTRY:     { emoji: '🧪', label: 'Hóa học',      gradient: 'from-lime-500 to-green-600' },
+  BIOLOGY:       { emoji: '🧬', label: 'Sinh học',     gradient: 'from-emerald-500 to-teal-600' },
+  HISTORY:       { emoji: '🏰', label: 'Lịch sử',      gradient: 'from-amber-500 to-orange-600' },
+  GEOGRAPHY:     { emoji: '🌍', label: 'Địa lý',       gradient: 'from-emerald-400 to-cyan-600' },
+  INFORMATICS:   { emoji: '💻', label: 'Tin học',      gradient: 'from-sky-500 to-blue-600' },
+  CIVIC:         { emoji: '⚖️', label: 'GDCD',         gradient: 'from-indigo-500 to-blue-600' },
+  ALGO:          { emoji: '🤖', label: 'Thuật toán',   gradient: 'from-yellow-400 to-orange-500' },
+  SCRATCH:       { emoji: '🐱', label: 'Scratch',      gradient: 'from-orange-400 to-pink-500' },
+  PYTHON:        { emoji: '🐍', label: 'Python',       gradient: 'from-teal-400 to-cyan-600' },
+  CPP:           { emoji: '⚡', label: 'C++',           gradient: 'from-violet-500 to-purple-700' },
+  IELTS:         { emoji: '📝', label: 'IELTS',        gradient: 'from-sky-500 to-blue-600' },
+  CAMBRIDGE:     { emoji: '🎓', label: 'Cambridge',    gradient: 'from-rose-500 to-pink-600' },
+  GENERAL:       { emoji: '📚', label: 'Tổng hợp',     gradient: 'from-gray-500 to-slate-600' },
 }
 
 async function getStudentData(userId: string) {
@@ -27,6 +48,7 @@ async function getStudentData(userId: string) {
             name: true,
             code: true,
             courseType: true,
+            subjectCode: true,
             thumbnail: true,
             _count: { select: { subjects: true } },
           },
@@ -188,8 +210,9 @@ export default async function HocVienPage() {
           ) : (
             <div className="grid sm:grid-cols-2 gap-4">
               {enrollments.map((enrollment) => {
+                const subjectCode = (enrollment.course as any).subjectCode as string | null
                 const cType = ((enrollment.course as any).courseType as CourseType) ?? 'TOAN'
-                const meta = COURSE_TYPE_META[cType] ?? COURSE_TYPE_META.TOAN
+                const meta = (subjectCode && COURSE_TYPE_META[subjectCode]) ? COURSE_TYPE_META[subjectCode] : (COURSE_TYPE_META[cType] ?? COURSE_TYPE_META.TOAN)
                 return (
                   <div key={enrollment.id} className="relative rounded-2xl border-2 border-gray-100 overflow-hidden hover:border-purple-200 transition group">
                     {/* Color strip top */}
