@@ -76,12 +76,13 @@ export default async function AdminPage() {
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🧠 AI & Giáo dục</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
+              { href: '/admin/content-studio', icon: '🎨', label: 'Content Studio', desc: 'Workspace tạo học liệu A–Z', color: 'border-pink-300 hover:border-pink-500 bg-gradient-to-br from-pink-50 to-white' },
               { href: '/admin/ai-generator', icon: '🤖', label: 'AI Generator', desc: 'AI Workspace — tạo giáo án, bài tập', color: 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-purple-50 to-white' },
               { href: '/admin/question-bank', icon: '🗃️', label: 'Question Bank', desc: 'Ngân hàng câu hỏi trung tâm', color: 'border-indigo-300 hover:border-indigo-500 bg-gradient-to-br from-indigo-50 to-white' },
               { href: '/admin/education-standards', icon: '📖', label: 'AvaB Standards', desc: '10 tài liệu chuẩn giáo dục', color: 'border-purple-200 hover:border-purple-400' },
-              { href: '/admin/courses', icon: '🎓', label: 'Khóa Tóan TD Lớp 2', desc: '35 chuyên đề, 855 câu hỏi', color: 'border-teal-200 hover:border-teal-400' },
               { href: '/giao-vien', icon: '👨‍🏫', label: 'Portal Giáo viên', desc: 'Nhận xét buổi học', color: 'border-teal-200 hover:border-teal-400' },
               { href: '/hoc-vien', icon: '👦', label: 'Portal Học sinh', desc: 'Xem như học sinh', color: 'border-blue-200 hover:border-blue-400' },
+              { href: '/phu-huynh', icon: '👨‍👩‍👧‍👦', label: 'Portal Phụ huynh', desc: 'Theo dõi con học tập', color: 'border-sky-200 hover:border-sky-400' },
             ].map((item) => (
               <Link key={item.href} href={item.href}
                 className={`bg-white rounded-2xl p-4 border shadow-sm hover:shadow-md transition-all ${item.color}`}>
