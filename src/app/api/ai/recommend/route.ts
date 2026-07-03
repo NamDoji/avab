@@ -21,11 +21,11 @@ export async function GET(req: NextRequest) {
       if (cached.cached) {
         return NextResponse.json({ success: true, data: cached.data, fromCache: true, refreshedAt: cached.refreshedAt })
       }
-    } else {
-      const check = await canRefresh(userId)
-      if (!check.allowed) {
-        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
-      }
+      return NextResponse.json({ success: true, data: null })
+    }
+    const check = await canRefresh(userId)
+    if (!check.allowed) {
+      return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
     }
 
     const { profile, srl, context, daysToExam } = await getA2PLMContext(userId, req)

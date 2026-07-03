@@ -21,12 +21,13 @@ export async function GET(req: NextRequest) {
       if (cached.cached) {
         return NextResponse.json({ success: true, data: cached.data, fromCache: true, refreshedAt: cached.refreshedAt })
       }
-    } else {
-      // Kiểm tra giới hạn 14 ngày
-      const check = await canRefresh(userId)
-      if (!check.allowed) {
-        return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
-      }
+      // Không có cache, không phải force → trả empty, KHÔNG gọi OpenAI
+      return NextResponse.json({ success: true, data: null })
+    }
+    // force=1: kiểm tra giới hạn 14 ngày
+    const check = await canRefresh(userId)
+    if (!check.allowed) {
+      return NextResponse.json({ success: false, error: 'refresh_limit', nextAt: check.nextAt, daysLeft: check.daysLeft }, { status: 429 })
     }
 
     // Lấy A2PLM context (P_i, G_i, C_t^i, SRL_t^i)
