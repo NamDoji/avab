@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Users, Search, KeyRound, Plus, X } from 'lucide-react'
+import { Users, Search, KeyRound, Plus, X, Edit2, Trash2 } from 'lucide-react'
 
 interface User {
   id: string
@@ -34,14 +34,24 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
 
-  // Feature 6: Reset password state
+  // Reset password state
   const [resetMsg, setResetMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
-  // Feature 7: Create user modal
+  // Create user modal
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [createForm, setCreateForm] = useState({ name: '', phone: '', email: '', role: 'STUDENT' })
   const [creating, setCreating] = useState(false)
   const [createMsg, setCreateMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  // Edit user modal
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [editForm, setEditForm] = useState({ name: '', phone: '', email: '', role: 'STUDENT', isActive: true })
+  const [editing, setEditing] = useState(false)
+  const [editMsg, setEditMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  // Delete
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const load = async () => {
     setLoading(true)
@@ -74,7 +84,54 @@ export default function AdminUsersPage() {
     setTimeout(() => setResetMsg(null), 4000)
   }
 
-  // Feature 7: Create user
+  // Edit user
+  const openEditModal = (user: User) => {
+    setEditingUser(user)
+    setEditForm({ name: user.name ?? '', phone: user.phone, email: user.email ?? '', role: user.role, isActive: user.isActive })
+    setEditMsg(null)
+    setShowEditModal(true)
+  }
+
+  const handleEditUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingUser) return
+    setEditing(true)
+    setEditMsg(null)
+    const res = await fetch('/api/admin/users', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: editingUser.id, ...editForm }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      setEditMsg({ type: 'success', text: 'Cập nhật thành công!' })
+      setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, ...data.data } : u))
+      setTimeout(() => { setShowEditModal(false); setEditMsg(null) }, 1200)
+    } else {
+      setEditMsg({ type: 'error', text: data.error || 'Không thể cập nhật' })
+    }
+    setEditing(false)
+  }
+
+  // Delete user
+  const handleDeleteUser = async (user: User) => {
+    if (!confirm(`Xóa tài khoản "${user.name ?? user.phone}"? Thành nhà không thể khôi phục!`)) return
+    setDeletingId(user.id)
+    const res = await fetch('/api/admin/users', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      setUsers(prev => prev.filter(u => u.id !== user.id))
+    } else {
+      alert(data.error || 'Không thể xóa')
+    }
+    setDeletingId(null)
+  }
+
+  // Create user
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault()
     setCreating(true)
@@ -188,10 +245,20 @@ export default function AdminUsersPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-400">{new Date(user.createdAt).toLocaleDateString('vi-VN')} · {user._count.enrollments} đăng ký</span>
-                      <button onClick={() => handleResetPassword(user)}
-                        className="flex items-center gap-1 text-xs text-orange-600 px-2.5 py-1.5 rounded-lg border border-orange-200 hover:bg-orange-50 transition">
-                        <KeyRound className="w-3 h-3" /> Reset pass
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button onClick={() => openEditModal(user)}
+                          className="flex items-center gap-1 text-xs text-purple-600 px-2.5 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-50 transition">
+                          <Edit2 className="w-3 h-3" /> Sửa
+                        </button>
+                        <button onClick={() => handleResetPassword(user)}
+                          className="flex items-center gap-1 text-xs text-orange-600 px-2.5 py-1.5 rounded-lg border border-orange-200 hover:bg-orange-50 transition">
+                          <KeyRound className="w-3 h-3" /> Reset
+                        </button>
+                        <button onClick={() => handleDeleteUser(user)} disabled={deletingId === user.id}
+                          className="flex items-center gap-1 text-xs text-red-600 px-2.5 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition disabled:opacity-40">
+                          <Trash2 className="w-3 h-3" /> Xóa
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -232,11 +299,21 @@ export default function AdminUsersPage() {
                         </td>
                         <td className="p-4 text-gray-400 text-sm">{new Date(user.createdAt).toLocaleDateString('vi-VN')}</td>
                         <td className="p-4">
-                          <button onClick={() => handleResetPassword(user)}
-                            title="Reset mật khẩu về 123456"
-                            className="flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50 px-2.5 py-1.5 rounded-lg transition border border-orange-200">
-                            <KeyRound className="w-3.5 h-3.5" /> Reset pass
-                          </button>
+                          <div className="flex items-center gap-1.5">
+                            <button onClick={() => openEditModal(user)}
+                              className="flex items-center gap-1 text-xs text-purple-600 hover:bg-purple-50 px-2.5 py-1.5 rounded-lg transition border border-purple-200">
+                              <Edit2 className="w-3.5 h-3.5" /> Sửa
+                            </button>
+                            <button onClick={() => handleResetPassword(user)}
+                              title="Reset mật khẩu về 123456"
+                              className="flex items-center gap-1 text-xs text-orange-600 hover:bg-orange-50 px-2.5 py-1.5 rounded-lg transition border border-orange-200">
+                              <KeyRound className="w-3.5 h-3.5" /> Reset
+                            </button>
+                            <button onClick={() => handleDeleteUser(user)} disabled={deletingId === user.id}
+                              className="flex items-center gap-1 text-xs text-red-600 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition border border-red-200 disabled:opacity-40">
+                              <Trash2 className="w-3.5 h-3.5" /> Xóa
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -252,7 +329,73 @@ export default function AdminUsersPage() {
         </p>
       </div>
 
-      {/* Feature 7: Create user modal */}
+      {/* Edit user modal */}
+      {showEditModal && editingUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <Edit2 className="w-5 h-5 text-purple-600" /> Sửa thông tin
+              </h2>
+              <button onClick={() => { setShowEditModal(false); setEditMsg(null) }} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleEditUser} className="p-6 space-y-4">
+              {editMsg && (
+                <div className={`text-sm px-4 py-2.5 rounded-lg ${editMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                  {editMsg.text}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Tên</label>
+                <input type="text" value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                  placeholder="Nguyễn Văn A"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">SĐT *</label>
+                <input type="tel" required value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))}
+                  placeholder="0912345678"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                <input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))}
+                  placeholder="email@gmail.com"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Vai trò</label>
+                <select value={editForm.role} onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white">
+                  <option value="STUDENT">Học viên</option>
+                  <option value="TEACHER">Giáo viên</option>
+                  <option value="ADMIN">Admin</option>
+                </select>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={editForm.isActive} onChange={e => setEditForm(f => ({ ...f, isActive: e.target.checked }))} className="rounded" />
+                  <span className="text-sm font-semibold text-gray-700">Tài khoản hoạt động</span>
+                </label>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editing}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition">
+                  {editing ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+                <button type="button" onClick={() => { setShowEditModal(false); setEditMsg(null) }}
+                  className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition">
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create user modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">

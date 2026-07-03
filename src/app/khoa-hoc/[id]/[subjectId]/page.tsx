@@ -52,6 +52,7 @@ export default async function SubjectDetailPage({
   const header = COURSE_TYPE_HEADER[cType] ?? COURSE_TYPE_HEADER.TOAN
 
   const userId = (session.user as any).id
+  const isAdmin = (session.user as any).role === 'ADMIN'
 
   // Lịch sử trả lời của user
   const userAnswers = await prisma.studentAnswer.findMany({
@@ -202,6 +203,7 @@ export default async function SubjectDetailPage({
           mySubjectScore={mySubjectScore}
           myTotalScore={myTotalScore}
           maxScore={maxScore}
+          isAdmin={isAdmin}
         />
       </div>
     </div>

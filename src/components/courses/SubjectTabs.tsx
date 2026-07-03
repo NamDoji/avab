@@ -416,6 +416,7 @@ interface Props {
   mySubjectScore?: number
   myTotalScore?: number
   maxScore?: number
+  isAdmin?: boolean
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
@@ -457,7 +458,7 @@ const MC_COLORS = [
 ]
 
 // ── Main Component ──────────────────────────────────────────────────────────
-export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0, homeworkSets }: Props) {
+export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0, homeworkSets, isAdmin = false }: Props) {
   const hasIDE = courseType && IDE_COURSE_TYPES.includes(courseType)
   const TABS = hasIDE
     ? [...BASE_TABS.slice(0,3), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, BASE_TABS[3]]
@@ -1238,45 +1239,34 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           }
                         </button>
 
-                        {/* Nút Tạo bài AI — cạnh nút nộp bài */}
-                        {genCount < 3 ? (
-                          <div className="relative group">
-                            <button
-                              disabled={!canGenAI || aiQuizLoading}
-                              onClick={async () => {
-                                setAiQuizLoading(true)
-                                try {
-                                  const res = await fetch('/api/ai/generate-quiz', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ subjectId: subject.id, subjectName: subject.name }),
-                                  })
-                                  const data = await res.json()
-                                  if (data.success) { window.location.reload() }
-                                  else { alert(data.error || 'Có lỗi xảy ra khi tạo bài AI') }
-                                } catch { alert('Không thể kết nối server') }
-                                finally { setAiQuizLoading(false) }
-                              }}
-                              className={`w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
-                                canGenAI && !aiQuizLoading
-                                  ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-md'
-                                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                              }`}
-                            >
-                              {aiQuizLoading
-                                ? <><Loader2 className="animate-spin" size={16} /> 🤖 AI đang tạo bài...</>
-                                : <>🤖 Tạo bài AI mới <span className="text-xs opacity-70">({genCount}/3 lần)</span></>}
-                            </button>
-                            {!canGenAI && !aiQuizLoading && (
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-gray-800 text-white text-xs rounded-xl px-3 py-2 text-center opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
-                                {!allDone ? 'Hoàn thành tất cả câu hỏi trước' : 'Cần đạt ≥60% để tạo bài mới'}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <p className="text-center text-xs text-gray-400 bg-gray-50 rounded-2xl px-4 py-2">
-                            ⚠️ Đã đạt giới hạn 3 lần tạo bài AI
-                          </p>
+                        {/* Nút Tạo bài AI — chỉ admin */}
+                        {isAdmin && (
+                          <button
+                            disabled={aiQuizLoading}
+                            onClick={async () => {
+                              setAiQuizLoading(true)
+                              try {
+                                const res = await fetch('/api/ai/generate-quiz', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ subjectId: subject.id, subjectName: subject.name }),
+                                })
+                                const data = await res.json()
+                                if (data.success) { window.location.reload() }
+                                else { alert(data.error || 'Có lỗi xảy ra khi tạo bài AI') }
+                              } catch { alert('Không thể kết nối server') }
+                              finally { setAiQuizLoading(false) }
+                            }}
+                            className={`w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
+                              !aiQuizLoading
+                                ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-md'
+                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            }`}
+                          >
+                            {aiQuizLoading
+                              ? <><Loader2 className="animate-spin" size={16} /> 🤖 AI đang tạo bài...</>
+                              : <>🤖 Tạo bài AI mới <span className="text-xs opacity-70 bg-white/20 px-1.5 py-0.5 rounded-full">Admin</span></>}
+                          </button>
                         )}
                       </div>
                     )
@@ -1318,61 +1308,35 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                         )}
                       </div>
 
-                      {/* AI Quiz Generate Button */}
-                      {(() => {
-                        const allDoneNow = activeQuestions.length > 0 && activeQuestions.every(q => submitted[q.id])
-                        const canGenerate = allDoneNow && accuracy >= 60
-                        const genCount = aiQuizGenCount ?? 0
-                        const maxReached = genCount >= 3
-                        if (maxReached) {
-                          return (
-                            <div className="mt-3 text-center text-xs text-gray-400 bg-gray-50 rounded-2xl px-4 py-2">
-                              ⚠️ Đã đạt giới hạn 3 lần tạo bài AI
-                            </div>
-                          )
-                        }
-                        return (
-                          <div className="mt-3 relative group">
-                            <button
-                              disabled={!canGenerate || aiQuizLoading}
-                              onClick={async () => {
-                                setAiQuizLoading(true)
-                                try {
-                                  const res = await fetch('/api/ai/generate-quiz', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ subjectId: subject.id, subjectName: subject.name }),
-                                  })
-                                  const data = await res.json()
-                                  if (data.success) {
-                                    window.location.reload()
-                                  } else {
-                                    alert(data.error || 'Có lỗi xảy ra khi tạo bài AI')
-                                  }
-                                } catch {
-                                  alert('Không thể kết nối server')
-                                } finally {
-                                  setAiQuizLoading(false)
-                                }
-                              }}
-                              className={`w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
-                                canGenerate && !aiQuizLoading
-                                  ? 'bg-gradient-to-r from-violet-600 to-purple-700 text-white hover:from-violet-700 hover:to-purple-800 shadow-md'
-                                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                              }`}
-                            >
-                              {aiQuizLoading
-                                ? <><Loader2 className="animate-spin" size={16} /> 🤖 AI đang tạo bài...</>
-                                : <>🤖 Tạo bài AI <span className="text-xs opacity-70">({genCount}/3 lần)</span></>}
-                            </button>
-                            {!canGenerate && (
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-gray-800 text-white text-xs rounded-xl px-3 py-2 text-center opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
-                                Hoàn thành và đạt 60% để tạo bài mới
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })()}
+                      {/* AI Quiz Generate Button — chỉ admin */}
+                      {isAdmin && (
+                        <button
+                          disabled={aiQuizLoading}
+                          onClick={async () => {
+                            setAiQuizLoading(true)
+                            try {
+                              const res = await fetch('/api/ai/generate-quiz', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ subjectId: subject.id, subjectName: subject.name }),
+                              })
+                              const data = await res.json()
+                              if (data.success) { window.location.reload() }
+                              else { alert(data.error || 'Có lỗi xảy ra khi tạo bài AI') }
+                            } catch { alert('Không thể kết nối server') }
+                            finally { setAiQuizLoading(false) }
+                          }}
+                          className={`mt-3 w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
+                            !aiQuizLoading
+                              ? 'bg-gradient-to-r from-violet-600 to-purple-700 text-white hover:from-violet-700 hover:to-purple-800 shadow-md'
+                              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          }`}
+                        >
+                          {aiQuizLoading
+                            ? <><Loader2 className="animate-spin" size={16} /> 🤖 AI đang tạo bài...</>
+                            : <>🤖 Tạo bài AI mới <span className="text-xs opacity-70 bg-white/20 px-1.5 py-0.5 rounded-full">Admin</span></>}
+                        </button>
+                      )}
                     </div>
                   )}
                 </>

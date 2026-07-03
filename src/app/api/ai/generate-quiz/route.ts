@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Chưa đăng nhập' }, { status: 401 })
   }
   const userId = (session.user as any).id
+  const userRole = (session.user as any).role
+  const isAdmin = userRole === 'ADMIN'
 
   try {
     const body = await req.json()
@@ -40,11 +42,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Thiếu thông tin' }, { status: 400 })
     }
 
-    // Check gen count
+    // Lấy log hiện tại (dùng cho title và lưu sau)
     const log = await prisma.aIQuizGenLog.findUnique({
       where: { userId_subjectId: { userId, subjectId } },
-    })
-    if (log && log.genCount >= 3) {
+    }).catch(() => null)
+
+    // Check gen count — admin bỏ qua giới hạn
+    if (!isAdmin && log && log.genCount >= 3) {
       return NextResponse.json({ success: false, error: 'Đã đạt giới hạn 3 lần tạo bài AI' }, { status: 403 })
     }
 

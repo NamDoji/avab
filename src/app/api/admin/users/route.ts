@@ -108,6 +108,71 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
+// PUT — cập nhật thông tin user
+export async function PUT(req: NextRequest) {
+  const check = await requireAdmin()
+  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+
+  try {
+    const { userId, name, phone, email, role, isActive } = await req.json()
+    if (!userId) return NextResponse.json({ success: false, error: 'Thiếu userId' }, { status: 400 })
+
+    // Kiểm tra trùng sĐT / email (ngoại trừ chính user đang sửa)
+    if (phone || email) {
+      const conflict = await prisma.user.findFirst({
+        where: {
+          NOT: { id: userId },
+          OR: [
+            ...(phone ? [{ phone }] : []),
+            ...(email ? [{ email }] : []),
+          ],
+        },
+      })
+      if (conflict) {
+        return NextResponse.json({
+          success: false,
+          error: conflict.phone === phone ? 'Số điện thoại đã được dùng.' : 'Email đã được dùng.',
+        }, { status: 409 })
+      }
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(name !== undefined ? { name: name || null } : {}),
+        ...(phone ? { phone } : {}),
+        ...(email !== undefined ? { email: email || null } : {}),
+        ...(role ? { role } : {}),
+        ...(isActive !== undefined ? { isActive } : {}),
+      },
+      select: { id: true, name: true, phone: true, email: true, role: true, isActive: true, createdAt: true, _count: { select: { enrollments: true, answers: true } } },
+    })
+    return NextResponse.json({ success: true, data: updated })
+  } catch (error: any) {
+    if (error.code === 'P2025') return NextResponse.json({ success: false, error: 'Không tìm thấy người dùng' }, { status: 404 })
+    console.error('Admin update user error:', error)
+    return NextResponse.json({ success: false, error: 'Không thể cập nhật' }, { status: 500 })
+  }
+}
+
+// DELETE — xóa user
+export async function DELETE(req: NextRequest) {
+  const check = await requireAdmin()
+  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+
+  try {
+    const { userId } = await req.json()
+    if (!userId) return NextResponse.json({ success: false, error: 'Thiếu userId' }, { status: 400 })
+
+    await prisma.user.delete({ where: { id: userId } })
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    if (error.code === 'P2025') return NextResponse.json({ success: false, error: 'Không tìm thấy người dùng' }, { status: 404 })
+    console.error('Admin delete user error:', error)
+    return NextResponse.json({ success: false, error: 'Không thể xóa người dùng' }, { status: 500 })
+  }
+}
+
 export async function POST(req: NextRequest) {
   const check = await requireAdmin()
   if (check.error) {
