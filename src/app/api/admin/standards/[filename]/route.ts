@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth'
 import fs from 'fs'
 import path from 'path'
 
-const STANDARDS_DIR = path.join(process.cwd(), '..', '..', 'teaching')
+const STANDARDS_DIR = path.join(process.cwd(), 'public', 'standards')
 
 export async function GET(
   _req: NextRequest,

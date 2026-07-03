@@ -3,7 +3,8 @@ import { auth } from '@/lib/auth'
 import fs from 'fs'
 import path from 'path'
 
-const STANDARDS_DIR = path.join(process.cwd(), '..', '..', 'teaching')
+// Vercel: serve from public/standards; local dev: also check workspace/teaching
+const STANDARDS_DIR = path.join(process.cwd(), 'public', 'standards')
 
 export async function GET() {
   const session = await auth()
