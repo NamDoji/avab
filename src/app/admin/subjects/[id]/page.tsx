@@ -8,6 +8,7 @@ import { ArrowLeft, Upload, Plus, Trash2, FileText, BookOpen, Video, CheckSquare
 
 type QuestionType = 'OPEN' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'MATCHING' | 'ORDERING'
   | 'MULTI_SELECT' | 'FILL_BLANK' | 'SHORT_ANSWER' | 'NUMBER_INPUT' | 'SORT_WORDS' | 'GROUP_CLASSIFY' | 'MULTI_BLANK'
+  | 'CODE' | 'OUTPUT_PREDICT'
 
 interface QuestionForm {
   questionType: QuestionType
@@ -40,6 +41,9 @@ interface QuestionForm {
   gcItems: Array<{ id: string; text: string; group: string }>
   // MULTI_BLANK
   multiBlanks: string[]
+  // CODE + OUTPUT_PREDICT
+  codeLanguage: string
+  codeSnippet: string
 }
 
 interface Question {
@@ -110,6 +114,8 @@ const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   SORT_WORDS: '🔀 Sắp xếp câu',
   GROUP_CLASSIFY: '🗂️ Phân nhóm',
   MULTI_BLANK: '📝 Nhiều chỗ trống',
+  CODE: '💻 Viết code',
+  OUTPUT_PREDICT: '🖥️ Dự đoán output',
 }
 
 const QUESTION_TYPE_BADGE: Record<string, string> = {
@@ -125,6 +131,8 @@ const QUESTION_TYPE_BADGE: Record<string, string> = {
   SORT_WORDS: 'bg-pink-100 text-pink-700',
   GROUP_CLASSIFY: 'bg-lime-100 text-lime-700',
   MULTI_BLANK: 'bg-rose-100 text-rose-700',
+  CODE: 'bg-slate-100 text-slate-700',
+  OUTPUT_PREDICT: 'bg-cyan-100 text-cyan-700',
 }
 
 const DEFAULT_FORM: QuestionForm = {
@@ -149,6 +157,8 @@ const DEFAULT_FORM: QuestionForm = {
   gcGroups: ['Nhóm A', 'Nhóm B'],
   gcItems: [{ id: '1', text: '', group: 'Nhóm A' }],
   multiBlanks: [''],
+  codeLanguage: 'python',
+  codeSnippet: '',
 }
 
 // ── Component ──────────────────────────────────────────────────────────────
@@ -322,6 +332,12 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
       correctAnswer = JSON.stringify(correctMap)
     } else if (questionType === 'MULTI_BLANK') {
       correctAnswer = qForm.multiBlanks.filter(b => b.trim()).join('|')
+    } else if (questionType === 'CODE') {
+      // metadata lưu ngôn ngữ, correctAnswer lưu gợi ý đáp án
+      options = { language: qForm.codeLanguage || 'python' }
+    } else if (questionType === 'OUTPUT_PREDICT') {
+      // options lưu đoạn code để học sinh đọc
+      options = { codeSnippet: qForm.codeSnippet || '', language: qForm.codeLanguage || 'python' }
     }
     // FILL_BLANK: correctAnswer is already set from qForm.correctAnswer
 
@@ -1492,6 +1508,53 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* CODE */}
+                {qForm.questionType === 'CODE' && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Ngôn ngữ lập trình</label>
+                      <select value={qForm.codeLanguage} onChange={e => setQForm(f => ({ ...f, codeLanguage: e.target.value }))}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+                        {['python','c++','c','java','javascript','typescript','html','css','sql','pascal','scratch','kotlin','rust','go'].map(l => (
+                          <option key={l} value={l}>{l.toUpperCase()}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <p className="text-xs text-slate-600 bg-slate-50 rounded-lg px-3 py-2">
+                      💻 Học sinh sẽ viết code trong ô văn bản (monospace). Đáp án điền vào ô “Câu trả lời đúng” bên dưới là gợi ý đáp án tham khảo.
+                    </p>
+                  </div>
+                )}
+
+                {/* OUTPUT_PREDICT */}
+                {qForm.questionType === 'OUTPUT_PREDICT' && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Ngôn ngữ</label>
+                      <select value={qForm.codeLanguage} onChange={e => setQForm(f => ({ ...f, codeLanguage: e.target.value }))}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400">
+                        {['python','c++','c','java','javascript','typescript','html','css','sql','pascal','scratch','kotlin','rust','go'].map(l => (
+                          <option key={l} value={l}>{l.toUpperCase()}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Đoạn code cho học sinh đọc *</label>
+                      <textarea
+                        required
+                        rows={6}
+                        placeholder="x = 5&#10;y = 3&#10;print(x + y)"
+                        value={qForm.codeSnippet}
+                        onChange={e => setQForm(f => ({ ...f, codeSnippet: e.target.value }))}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                      />
+                    </div>
+                    <p className="text-xs text-cyan-700 bg-cyan-50 rounded-lg px-3 py-2">
+                      🖥️ Học sinh sẽ đọc code và điền output dự đoán. Câu trả lời đúng = output chính xác.
+                    </p>
                   </div>
                 )}
 
