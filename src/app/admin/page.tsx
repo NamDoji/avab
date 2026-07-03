@@ -76,6 +76,7 @@ export default async function AdminPage() {
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">🧠 AI & Giáo dục</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
+              { href: '/admin/ai-generator', icon: '🤖', label: 'AI Generator', desc: 'AI Workspace — tạo giáo án, bài tập', color: 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-purple-50 to-white' },
               { href: '/admin/education-standards', icon: '📖', label: 'AvaB Standards', desc: '10 tài liệu chuẩn giáo dục', color: 'border-purple-200 hover:border-purple-400' },
               { href: '/admin/courses', icon: '🎓', label: 'Khóa Tóan TD Lớp 2', desc: '35 chuyên đề, 855 câu hỏi', color: 'border-teal-200 hover:border-teal-400' },
               { href: '/giao-vien', icon: '👨‍🏫', label: 'Portal Giáo viên', desc: 'Nhận xét buổi học', color: 'border-teal-200 hover:border-teal-400' },
