@@ -6,22 +6,23 @@ import Link from 'next/link'
 export const metadata = { title: 'HRM — Nhân sự — AvaB Admin' }
 
 const HRM_MODULES = [
-  { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công',    color: '#7c3aed' },
-  { href: '/admin/hrm/contracts',  icon: '📄', label: 'Hợp đồng',  desc: 'HĐLĐ, theo dõi',       color: '#4f46e5' },
-  { href: '/admin/hrm/attendance', icon: '⏰', label: 'Chấm công',  desc: 'Check-in/out',          color: '#0369a1' },
-  { href: '/admin/hrm/kpi',        icon: '📊', label: 'KPI & OKR', desc: 'Mục tiêu, đánh giá',   color: '#059669' },
-  { href: '/admin/hrm/leave',      icon: '🌴', label: 'Nghỉ phép', desc: 'Đơn xin nghỉ',          color: '#d97706' },
-  { href: '/admin/hrm/payroll',    icon: '💰', label: 'Bảng lương',desc: 'Lương, thưởng',         color: '#dc2626' },
+  { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công',    color: '#7c3aed', badge: null },
+  { href: '/admin/hrm/contracts',  icon: '📄', label: 'Hợp đồng',  desc: 'HĐLĐ, theo dõi',       color: '#4f46e5', badge: null },
+  { href: '/admin/hrm/attendance', icon: '⏰', label: 'Chấm công',  desc: 'Check-in/out',          color: '#0369a1', badge: null },
+  { href: '/admin/hrm/kpi',        icon: '📊', label: 'KPI & OKR', desc: 'Mục tiêu, đánh giá',   color: '#059669', badge: null },
+  { href: '/admin/hrm/leave',      icon: '🌴', label: 'Nghỉ phép', desc: 'Đơn xin nghỉ',          color: '#d97706', badge: 'pendingLeave' },
+  { href: '/admin/hrm/payroll',    icon: '💰', label: 'Bảng lương',desc: 'Lương, thưởng',         color: '#dc2626', badge: null },
 ]
 
 export default async function HRMPage() {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const [totalStaff, adminCount, teacherCount] = await Promise.all([
+  const [totalStaff, adminCount, teacherCount, pendingLeave] = await Promise.all([
     prisma.user.count({ where: { role: { in: ['ADMIN', 'TEACHER'] } } }),
     prisma.user.count({ where: { role: 'ADMIN' } }),
     prisma.user.count({ where: { role: 'TEACHER' } }),
+    prisma.leaveRequest.count({ where: { status: 'pending' } }).catch(() => 0),
   ])
 
   return (
@@ -70,27 +71,35 @@ export default async function HRMPage() {
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">🗂️ Phân hệ HRM</p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {HRM_MODULES.map((mod) => (
-              <Link
-                key={mod.href}
-                href={mod.href}
-                className="group bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all flex flex-col gap-3"
-              >
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
-                  style={{ backgroundColor: mod.color + '18' }}
+            {HRM_MODULES.map((mod) => {
+              const badgeCount = mod.badge === 'pendingLeave' ? pendingLeave : 0
+              return (
+                <Link
+                  key={mod.href}
+                  href={mod.href}
+                  className="group bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all flex flex-col gap-3 relative"
                 >
-                  {mod.icon}
-                </div>
-                <div>
-                  <h2 className="font-black text-gray-900 group-hover:text-purple-700 transition-colors">{mod.label}</h2>
-                  <p className="text-gray-400 text-xs mt-0.5">{mod.desc}</p>
-                </div>
-                <div className="mt-auto text-xs font-bold" style={{ color: mod.color }}>
-                  Xem chi tiết →
-                </div>
-              </Link>
-            ))}
+                  {badgeCount > 0 && (
+                    <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-black rounded-full w-5 h-5 flex items-center justify-center">
+                      {badgeCount}
+                    </span>
+                  )}
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+                    style={{ backgroundColor: mod.color + '18' }}
+                  >
+                    {mod.icon}
+                  </div>
+                  <div>
+                    <h2 className="font-black text-gray-900 group-hover:text-purple-700 transition-colors">{mod.label}</h2>
+                    <p className="text-gray-400 text-xs mt-0.5">{mod.desc}</p>
+                  </div>
+                  <div className="mt-auto text-xs font-bold" style={{ color: mod.color }}>
+                    Xem chi tiết →
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
 
