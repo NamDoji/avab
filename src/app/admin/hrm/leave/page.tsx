@@ -83,7 +83,7 @@ export default async function HRMLeafPage() {
           </div>
 
           {/* Stats */}
-          <div className="mt-6 grid grid-cols-3 gap-4 max-w-md">
+          <div className="mt-6 grid grid-cols-3 gap-3 max-w-sm">
             {[
               { label: 'Chờ duyệt', value: pendingCount, icon: '⏳' },
               { label: 'Đã duyệt', value: approvedCount, icon: '✅' },

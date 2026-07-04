@@ -103,7 +103,7 @@ export default async function HRMAttendancePage({
           <p className="text-sky-100 text-sm">Check-in / Check-out, theo dõi giờ làm việc</p>
 
           {/* Stats row */}
-          <div className="mt-6 grid grid-cols-3 gap-4 max-w-md">
+          <div className="mt-6 grid grid-cols-3 gap-3 max-w-sm">
             {[
               { label: 'Bản ghi', value: totalRecords, icon: '📋' },
               { label: 'Hoàn thành', value: doneRecords, icon: '✅' },

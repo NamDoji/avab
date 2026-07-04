@@ -155,7 +155,7 @@ export default async function InstallmentsPage() {
               {upcomingDues.map((due, idx) => {
                 const daysLeft = Math.ceil((new Date(due.dueDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
                 return (
-                  <div key={idx} className="px-6 py-4 flex items-center gap-4">
+                  <div key={idx} className="px-4 sm:px-6 py-4 flex items-center gap-3 flex-wrap">
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black flex-shrink-0"
                       style={{

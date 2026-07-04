@@ -326,7 +326,7 @@ export default async function FinanceDashboardPage() {
                 const courseName  = payment.enrollment.course.name
                 const timeAgo     = relativeTime(payment.paidAt)
                 return (
-                  <div key={payment.id} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50/50 transition">
+                  <div key={payment.id} className="px-4 sm:px-6 py-4 flex items-center gap-3 hover:bg-gray-50/50 transition flex-wrap">
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-sm flex-shrink-0"
                       style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}
