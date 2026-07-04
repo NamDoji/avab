@@ -177,6 +177,64 @@ export default async function DataMigrationPage() {
         {/* Data Migration Import Section (client) */}
         <DataMigrationImportSection />
 
+        {/* Bulk import instructions */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <details>
+            <summary className="px-6 py-4 cursor-pointer list-none flex items-center gap-3 hover:bg-gray-50 transition-colors select-none">
+              <span className="text-xl">📖</span>
+              <span className="font-black text-gray-800">Hướng dẫn import dữ liệu hàng loạt</span>
+              <span className="ml-auto text-xs text-gray-400">Nhấn để xem ▾</span>
+            </summary>
+            <div className="px-6 pb-6 pt-2 space-y-4">
+              {/* Steps */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { step: '1', icon: '📥', title: 'Tải template', desc: 'Tải file mẫu Excel (.xlsx) tương ứng với loại dữ liệu bạn muốn import. Không thay đổi tên cột.' },
+                  { step: '2', icon: '✏️', title: 'Điền dữ liệu', desc: 'Điền dữ liệu vào file theo đúng định dạng. Mỗi hàng là một bản ghi. Xem cột bắt buộc (*) và cột tuỳ chọn.' },
+                  { step: '3', icon: '🚀', title: 'Import', desc: 'Upload file và bấm Import. AI sẽ tự động mapping, kiểm tra lỗi và hiển thị kết quả trước khi xác nhận.' },
+                ].map(s => (
+                  <div key={s.step} className="flex gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <div className="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm font-black flex items-center justify-center flex-shrink-0">{s.step}</div>
+                    <div>
+                      <p className="font-bold text-gray-800 text-sm">{s.icon} {s.title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{s.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Format notes */}
+              <div className="p-4 rounded-xl bg-sky-50 border border-sky-100">
+                <p className="text-sm font-bold text-sky-700 mb-2">📌 Lưu ý định dạng</p>
+                <ul className="text-xs text-sky-600 space-y-1 list-disc pl-4">
+                  <li>Hỗ trợ định dạng: <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong></li>
+                  <li>Kích thước file tối đa: <strong>10 MB</strong> (≈ 50,000 bản ghi)</li>
+                  <li>Ngày tháng định dạng: <strong>DD/MM/YYYY</strong> hoặc <strong>YYYY-MM-DD</strong></li>
+                  <li>Số điện thoại Việt Nam: bắt đầu bằng <strong>0</strong> hoặc <strong>+84</strong></li>
+                  <li>Encoding: <strong>UTF-8</strong> (đảm bảo tiếng Việt hiển thị đúng)</li>
+                  <li>Dòng đầu tiên là <strong>header</strong> — không import vào database</li>
+                </ul>
+              </div>
+
+              {/* AI Migration link */}
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100">
+                <span className="text-2xl">🤖</span>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-indigo-700">Import nâng cao với AI Mapping</p>
+                  <p className="text-xs text-indigo-500">Không khớp cột? AI sẽ tự động phân tích và mapping file của bạn.</p>
+                </div>
+                <a
+                  href="/admin/data-migration/new"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-white flex-shrink-0 hover:opacity-90 transition-opacity"
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                >
+                  🚀 Thử ngay
+                </a>
+              </div>
+            </div>
+          </details>
+        </div>
+
       </div>
     </div>
   )

@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { GlobalAIChat } from '@/components/admin/GlobalAIChat'
 import { OrgSwitcher } from '@/components/admin/OrgSwitcher'
+import { QuickActionDial } from '@/components/admin/QuickActionDial'
 import { cookies } from 'next/headers'
 import { CURRENT_ORG_COOKIE } from '@/lib/current-org'
 
@@ -58,6 +59,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       )}
 
       {children}
+      <QuickActionDial />
       <GlobalAIChat />
     </>
   )

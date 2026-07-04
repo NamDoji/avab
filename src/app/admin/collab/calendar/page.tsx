@@ -2,58 +2,61 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import CalendarGrid, { type HolidayEvent } from '@/components/admin/collab/CalendarGrid'
 
 export const metadata = { title: 'Academic Calendar — AvaB Admin' }
 
 const STATIC_EVENTS = [
-  { date: '2025-09-05', label: 'Khai giảng năm học 2025-2026', icon: '🏫', color: '#4338ca' },
-  { date: '2025-11-20', label: 'Ngày Nhà giáo Việt Nam', icon: '👩‍🏫', color: '#0891b2' },
-  { date: '2025-11-24', label: 'Thi giữa kỳ I', icon: '📝', color: '#dc2626' },
-  { date: '2026-01-15', label: 'Tổng kết học kỳ I', icon: '📊', color: '#7c3aed' },
-  { date: '2026-01-25', label: 'Nghỉ Tết Nguyên Đán', icon: '🎉', color: '#d97706' },
-  { date: '2026-02-09', label: 'Học kỳ II bắt đầu', icon: '📚', color: '#059669' },
-  { date: '2026-04-20', label: 'Thi giữa kỳ II', icon: '📝', color: '#dc2626' },
-  { date: '2026-05-15', label: 'Thi cuối kỳ II', icon: '📝', color: '#be123c' },
-  { date: '2026-05-30', label: 'Lễ bế giảng năm học', icon: '🎓', color: '#4338ca' },
+  { date: '2025-09-05', label: 'Khai giảng năm học 2025-2026', type: 'event' },
+  { date: '2025-11-20', label: 'Ngày Nhà giáo Việt Nam', type: 'event' },
+  { date: '2025-11-24', label: 'Thi giữa kỳ I', type: 'exam' },
+  { date: '2026-01-15', label: 'Tổng kết học kỳ I', type: 'event' },
+  { date: '2026-01-25', label: 'Nghỉ Tết Nguyên Đán', type: 'holiday' },
+  { date: '2026-02-09', label: 'Học kỳ II bắt đầu', type: 'event' },
+  { date: '2026-04-20', label: 'Thi giữa kỳ II', type: 'exam' },
+  { date: '2026-05-15', label: 'Thi cuối kỳ II', type: 'exam' },
+  { date: '2026-05-30', label: 'Lễ bế giảng năm học', type: 'event' },
 ]
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+function daysUntil(dateStr: string) {
+  return Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000)
 }
 
 function isUpcoming(dateStr: string) {
   return new Date(dateStr) >= new Date()
 }
 
-function daysUntil(dateStr: string) {
-  const diff = Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000)
-  return diff
-}
-
 export default async function CollabCalendarPage() {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const [academicYears, timetableVersions] = await Promise.all([
-    prisma.academicYear.findMany({
-      orderBy: { startDate: 'desc' },
-      take: 5,
+  const [academicYears, holidays, timetableVersions] = await Promise.all([
+    prisma.academicYear.findMany({ orderBy: { startDate: 'desc' }, take: 5 }),
+    prisma.holidayCalendar.findMany({
+      orderBy: { startDate: 'asc' },
+      where: { startDate: { gte: new Date() } },
+      take: 20,
     }),
-    prisma.timetableVersion.findMany({
-      where: { status: 'published' },
-      orderBy: { publishedAt: 'desc' },
-      take: 5,
-    }),
+    prisma.timetableVersion.findMany({ where: { status: 'published' }, take: 3 }),
   ])
 
   const currentYear = academicYears.find((y) => y.isCurrent)
-  const upcomingEvents = STATIC_EVENTS.filter((e) => isUpcoming(e.date)).slice(0, 4)
-  const nextEvent = upcomingEvents[0]
+
+  // Build typed HolidayEvent array for CalendarGrid
+  const holidayEvents: HolidayEvent[] = holidays.map((h) => ({
+    id: h.id,
+    name: h.name,
+    startDate: h.startDate.toISOString(),
+    endDate: h.endDate.toISOString(),
+    type: h.type ?? 'holiday',
+  }))
+
+  const upcomingStaticEvents = STATIC_EVENTS.filter((e) => isUpcoming(e.date))
+  const nextEvent = upcomingStaticEvents[0]
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
-      {/* Header */}
+      {/* ── Header ──────────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden text-white py-12"
         style={{ background: 'linear-gradient(135deg, #064e3b 0%, #0f766e 100%)' }}
@@ -75,7 +78,9 @@ export default async function CollabCalendarPage() {
             <span className="text-white">Calendar</span>
           </div>
           <h1 className="text-3xl font-black mb-1">📅 Academic Calendar</h1>
-          <p className="text-teal-100 text-sm">Lịch học, sự kiện trường, kỳ thi, nghỉ lễ</p>
+          <p className="text-teal-100 text-sm">
+            Lịch học, nghỉ lễ, kỳ thi · {holidays.length} sự kiện từ DB
+          </p>
 
           {/* Next event banner */}
           {nextEvent && (
@@ -83,13 +88,17 @@ export default async function CollabCalendarPage() {
               className="mt-5 inline-flex items-center gap-3 rounded-2xl px-5 py-3"
               style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)' }}
             >
-              <span className="text-2xl">{nextEvent.icon}</span>
+              <span className="text-2xl">📌</span>
               <div>
                 <p className="text-xs text-teal-200 font-bold uppercase tracking-wide">
-                  Sự kiện sắp tới — còn {daysUntil(nextEvent.date)} ngày
+                  Sắp tới — còn {daysUntil(nextEvent.date)} ngày
                 </p>
                 <p className="font-black">{nextEvent.label}</p>
-                <p className="text-teal-200 text-xs">{formatDate(nextEvent.date)}</p>
+                <p className="text-teal-200 text-xs">
+                  {new Date(nextEvent.date).toLocaleDateString('vi-VN', {
+                    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+                  })}
+                </p>
               </div>
             </div>
           )}
@@ -98,17 +107,19 @@ export default async function CollabCalendarPage() {
 
       <div className="container-custom py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* ── Left column ─────────────── */}
+          {/* ── Left: Calendar Grid ─────────────────────────────────────── */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Full month calendar grid */}
+            <CalendarGrid
+              holidays={holidayEvents}
+              staticEvents={STATIC_EVENTS}
+            />
 
             {/* Academic Years */}
             <div className="bg-white rounded-3xl shadow-sm p-6">
               <h2 className="text-base font-black text-gray-800 mb-4 flex items-center gap-2">
                 🎓 Năm học
-                <Link
-                  href="/admin/erp"
-                  className="ml-auto text-xs text-teal-600 font-bold hover:text-teal-800"
-                >
+                <Link href="/admin/erp" className="ml-auto text-xs text-teal-600 font-bold hover:text-teal-800">
                   Quản lý →
                 </Link>
               </h2>
@@ -143,10 +154,7 @@ export default async function CollabCalendarPage() {
                         </p>
                       </div>
                       {y.isCurrent && (
-                        <span
-                          className="text-xs font-black px-2.5 py-1 rounded-full"
-                          style={{ background: '#dcfce7', color: '#166534' }}
-                        >
+                        <span className="text-xs font-black px-2.5 py-1 rounded-full" style={{ background: '#dcfce7', color: '#166534' }}>
                           ✅ Hiện tại
                         </span>
                       )}
@@ -155,77 +163,11 @@ export default async function CollabCalendarPage() {
                 </div>
               )}
             </div>
-
-            {/* Event Timeline */}
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-              <h2 className="text-base font-black text-gray-800 mb-4">
-                🗓️ Sự kiện năm học 2025-2026
-              </h2>
-
-              <div className="relative">
-                {/* Timeline line */}
-                <div
-                  className="absolute left-5 top-0 bottom-0 w-0.5"
-                  style={{ background: '#e2e8f0' }}
-                />
-
-                <div className="space-y-4">
-                  {STATIC_EVENTS.map((event, i) => {
-                    const upcoming = isUpcoming(event.date)
-                    const days = daysUntil(event.date)
-                    return (
-                      <div key={i} className="flex items-start gap-4 pl-0 relative">
-                        {/* Dot */}
-                        <div
-                          className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full text-lg shrink-0"
-                          style={{
-                            background: upcoming ? event.color : '#e2e8f0',
-                            opacity: upcoming ? 1 : 0.5,
-                          }}
-                        >
-                          {event.icon}
-                        </div>
-
-                        <div
-                          className="flex-1 p-3 rounded-2xl"
-                          style={{
-                            background: upcoming ? '#f8fafc' : '#f1f5f9',
-                            opacity: upcoming ? 1 : 0.65,
-                          }}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="font-black text-sm text-gray-800">{event.label}</p>
-                              <p className="text-gray-400 text-xs mt-0.5">{formatDate(event.date)}</p>
-                            </div>
-                            {upcoming && (
-                              <span
-                                className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
-                                style={{
-                                  background: days <= 14 ? '#fef2f2' : '#eff6ff',
-                                  color: days <= 14 ? '#dc2626' : '#2563eb',
-                                }}
-                              >
-                                {days <= 0 ? 'Hôm nay' : `${days} ngày`}
-                              </span>
-                            )}
-                            {!upcoming && (
-                              <span className="text-xs text-gray-400 font-semibold">✓ Đã qua</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
           </div>
 
-          {/* ── Right column ─────────────── */}
+          {/* ── Right sidebar ─────────────────────────────────────────── */}
           <div className="space-y-6">
-
-            {/* Quick stats */}
+            {/* Current year stats */}
             {currentYear && (
               <div
                 className="rounded-3xl p-5 text-white shadow-xl"
@@ -246,16 +188,38 @@ export default async function CollabCalendarPage() {
               </div>
             )}
 
+            {/* Upcoming holidays from DB */}
+            {holidays.length > 0 && (
+              <div className="bg-white rounded-3xl shadow-sm p-5">
+                <h3 className="font-black text-sm text-gray-800 mb-3">🔴 Nghỉ lễ sắp tới</h3>
+                <div className="space-y-2">
+                  {holidays.slice(0, 5).map((h) => (
+                    <div
+                      key={h.id}
+                      className="flex items-start gap-3 p-3 rounded-xl"
+                      style={{ background: '#fef2f2' }}
+                    >
+                      <span className="text-lg shrink-0">🔴</span>
+                      <div>
+                        <p className="text-sm font-bold text-red-700">{h.name}</p>
+                        <p className="text-xs text-gray-400">
+                          {new Date(h.startDate).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long' })}
+                          {h.startDate.toISOString().slice(0, 10) !== h.endDate.toISOString().slice(0, 10) &&
+                            ` → ${new Date(h.endDate).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long' })}`
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Published TKB */}
             <div className="bg-white rounded-3xl shadow-sm p-5">
               <h3 className="font-black text-sm text-gray-800 mb-3 flex items-center gap-2">
                 📅 Thời khóa biểu đang áp dụng
-                <Link
-                  href="/admin/erp/timetable"
-                  className="ml-auto text-xs text-indigo-600 font-bold hover:text-indigo-800"
-                >
-                  Xem →
-                </Link>
+                <Link href="/admin/erp/timetable" className="ml-auto text-xs text-indigo-600 font-bold hover:text-indigo-800">Xem →</Link>
               </h3>
 
               {timetableVersions.length === 0 ? (
@@ -281,15 +245,10 @@ export default async function CollabCalendarPage() {
                     >
                       <p className="font-black text-sm text-gray-800 truncate">{v.name}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span
-                          className="text-xs font-bold px-1.5 py-0.5 rounded-full"
-                          style={{ background: '#dcfce7', color: '#166534' }}
-                        >
+                        <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#dcfce7', color: '#166534' }}>
                           ✅ Active
                         </span>
-                        {v.score != null && (
-                          <span className="text-xs text-gray-400">🎯 {v.score}/100</span>
-                        )}
+                        {v.score != null && <span className="text-xs text-gray-400">🎯 {v.score}/100</span>}
                         <span className="text-xs text-gray-400 ml-auto">
                           {v.publishedAt
                             ? new Date(v.publishedAt).toLocaleDateString('vi-VN')
@@ -305,7 +264,7 @@ export default async function CollabCalendarPage() {
             {/* Quick links */}
             <div className="bg-white rounded-3xl shadow-sm p-5">
               <h3 className="font-black text-sm text-gray-800 mb-3">🔗 Liên kết nhanh</h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {[
                   { href: '/admin/erp/timetable', icon: '📅', label: 'AI Timetable Engine' },
                   { href: '/admin/erp/teachers', icon: '👩‍🏫', label: 'Quản lý giáo viên' },
@@ -322,30 +281,6 @@ export default async function CollabCalendarPage() {
                     {link.label}
                     <span className="ml-auto text-gray-300">›</span>
                   </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Features */}
-            <div className="bg-white rounded-3xl shadow-sm p-5">
-              <h3 className="font-black text-sm text-gray-800 mb-3">🚀 Sắp ra mắt</h3>
-              <div className="space-y-2">
-                {[
-                  { icon: '📲', label: 'Google Calendar sync' },
-                  { icon: '📧', label: 'Email nhắc nhở sự kiện' },
-                  { icon: '🔔', label: 'Push notification' },
-                  { icon: '📊', label: 'iCal export' },
-                ].map((f) => (
-                  <div key={f.label} className="flex items-center gap-2 text-sm text-gray-400">
-                    <span>{f.icon}</span>
-                    <span>{f.label}</span>
-                    <span
-                      className="ml-auto text-xs px-1.5 py-0.5 rounded-full font-bold"
-                      style={{ background: '#f1f5f9', color: '#94a3b8' }}
-                    >
-                      Soon
-                    </span>
-                  </div>
                 ))}
               </div>
             </div>

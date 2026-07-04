@@ -1,73 +1,197 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
 export const metadata = { title: 'Bảng lương — HRM — AvaB Admin' }
+
+const MOCK_PAYROLL = [
+  { name: 'Nguyễn Văn An',   role: 'TEACHER', base: 12_000_000, allowance: 1_500_000, deduction: 1_200_000 },
+  { name: 'Trần Thị Bình',   role: 'TEACHER', base: 11_500_000, allowance: 1_500_000, deduction: 1_150_000 },
+  { name: 'Lê Minh Cường',   role: 'ADMIN',   base: 15_000_000, allowance: 2_000_000, deduction: 1_700_000 },
+  { name: 'Phạm Thị Dung',   role: 'TEACHER', base: 10_000_000, allowance: 1_200_000, deduction: 1_000_000 },
+  { name: 'Hoàng Quốc Huy',  role: 'TEACHER', base: 12_500_000, allowance: 1_500_000, deduction: 1_250_000 },
+]
+
+function fmtVND(n: number) {
+  return n.toLocaleString('vi-VN') + ' đ'
+}
 
 export default async function HRMPayrollPage() {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
+  const totalStaff = await prisma.user.count({ where: { role: { in: ['ADMIN', 'TEACHER'] } } })
+
+  const totalBase = MOCK_PAYROLL.reduce((s, r) => s + r.base, 0)
+  const totalAllowance = MOCK_PAYROLL.reduce((s, r) => s + r.allowance, 0)
+  const totalDeduction = MOCK_PAYROLL.reduce((s, r) => s + r.deduction, 0)
+  const totalNet = MOCK_PAYROLL.reduce((s, r) => s + r.base + r.allowance - r.deduction, 0)
+
+  const now = new Date()
+  const monthLabel = `Tháng ${now.getMonth() + 1}/${now.getFullYear()}`
+
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
+      {/* Header */}
       <div
         className="relative overflow-hidden text-white py-12"
-        style={{ background: 'linear-gradient(135deg, #4a044e 0%, #7e22ce 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)' }}
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-400/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-purple-200 text-sm font-semibold mb-3">
+          <div className="flex items-center gap-2 text-red-200 text-sm font-semibold mb-3">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
             <span>›</span>
             <Link href="/admin/hrm" className="hover:text-white transition-colors">HRM</Link>
             <span>›</span>
             <span className="text-white">Bảng lương</span>
           </div>
-          <h1 className="text-3xl font-black mb-1">💰 Bảng lương</h1>
-          <p className="text-purple-100 text-sm">Tính lương, thưởng, phụ cấp và xuất bảng lương hàng tháng</p>
-        </div>
-      </div>
+          <div className="flex items-start justify-between flex-wrap gap-3">
+            <div>
+              <h1 className="text-3xl font-black mb-1">💰 Bảng lương</h1>
+              <p className="text-red-100 text-sm">Tính lương, thưởng, phụ cấp — {monthLabel}</p>
+            </div>
+            <span className="bg-amber-400 text-amber-900 rounded-2xl px-4 py-2 text-xs font-black shadow">
+              🚀 Beta — Dữ liệu mẫu
+            </span>
+          </div>
 
-      <div className="container-custom py-16 flex flex-col items-center text-center">
-        <div className="text-8xl mb-6">💰</div>
-        <h2 className="text-3xl font-black text-gray-800 mb-3">Đang phát triển</h2>
-        <p className="text-gray-500 text-sm max-w-md mb-6">
-          Phân hệ Bảng lương tự động tính lương dựa trên chấm công, hợp đồng và phụ cấp, xuất file Excel &amp; PDF.
-        </p>
-
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 text-left max-w-md w-full mb-8">
-          <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">📌 Lộ trình phát triển</p>
-          <div className="space-y-3">
+          {/* Summary stats */}
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Thiết lập cấu trúc lương cơ bản', eta: 'Q4/2025', done: false },
-              { label: 'Tự động tính lương từ chấm công', eta: 'Q4/2025', done: false },
-              { label: 'Phụ cấp, thưởng, giảm trừ', eta: 'Q1/2026', done: false },
-              { label: 'Xuất bảng lương Excel / PDF', eta: 'Q1/2026', done: false },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className={`w-4 h-4 rounded-full border-2 ${item.done ? 'bg-green-500 border-green-500' : 'border-gray-300'}`} />
-                  <span className="text-sm text-gray-700">{item.label}</span>
-                </div>
-                <span className="text-xs text-gray-400 font-semibold">{item.eta}</span>
+              { label: 'Nhân viên', value: totalStaff, icon: '👤' },
+              { label: 'Lương cơ bản', value: fmtVND(totalBase), icon: '💵' },
+              { label: 'Phụ cấp', value: fmtVND(totalAllowance), icon: '➕' },
+              { label: 'Thực lĩnh', value: fmtVND(totalNet), icon: '💰' },
+            ].map((s) => (
+              <div key={s.label} className="bg-white/15 backdrop-blur rounded-2xl p-3">
+                <div className="text-lg font-black">{s.value}</div>
+                <div className="text-xs text-red-100 mt-0.5">{s.icon} {s.label}</div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        <div className="flex gap-3">
+      <div className="container-custom py-6 space-y-6">
+        {/* Finance link banner */}
+        <div className="bg-gradient-to-r from-red-50 to-rose-50 rounded-3xl border border-red-200 p-5 flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h3 className="font-black text-gray-900 mb-1">🔗 Tích hợp với Finance Center</h3>
+            <p className="text-gray-500 text-sm">
+              Dữ liệu tài chính, ngân sách nhân sự và báo cáo chi phí được quản lý tại Finance Center.
+            </p>
+          </div>
           <Link
             href="/admin/finance"
-            className="inline-flex items-center gap-2 bg-white text-gray-700 rounded-2xl px-5 py-3 text-sm font-bold border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all"
+            className="flex items-center gap-2 bg-red-600 text-white rounded-2xl px-5 py-2.5 text-sm font-bold hover:bg-red-700 transition-colors whitespace-nowrap shadow-sm"
           >
-            💰 Finance Center
+            💰 Finance Center →
           </Link>
-          <Link
-            href="/admin/hrm"
-            className="inline-flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-6 py-3 text-sm font-bold hover:bg-purple-700 transition-colors"
-          >
-            ← Quay lại HRM
-          </Link>
+        </div>
+
+        {/* Payroll calculation overview */}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+          <h2 className="text-lg font-black text-gray-900 mb-4">📐 Công thức tính lương</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { icon: '💵', label: 'Lương cơ bản', desc: 'Theo hợp đồng lao động', color: 'bg-blue-50 border-blue-200' },
+              { icon: '➕', label: 'Phụ cấp & Thưởng', desc: 'Xăng xe, ăn trưa, thưởng KPI', color: 'bg-green-50 border-green-200' },
+              { icon: '➖', label: 'Khấu trừ', desc: 'BHXH 10.5%, thuế TNCN', color: 'bg-red-50 border-red-200' },
+            ].map((item) => (
+              <div key={item.label} className={`rounded-2xl border p-4 ${item.color}`}>
+                <div className="text-2xl mb-2">{item.icon}</div>
+                <div className="font-black text-gray-900 mb-1">{item.label}</div>
+                <p className="text-gray-600 text-xs">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 bg-gray-50 rounded-2xl p-4 font-mono text-sm text-gray-700">
+            <span className="font-black text-gray-900">Thực lĩnh</span>
+            {' = Lương cơ bản + Phụ cấp − Khấu trừ'}
+          </div>
+        </div>
+
+        {/* Payroll table */}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <p className="text-sm font-black text-gray-700">📋 Bảng lương {monthLabel}</p>
+            <span className="bg-amber-100 text-amber-700 rounded-xl px-3 py-1 text-xs font-black">
+              🚧 Dữ liệu mẫu
+            </span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <th className="text-left px-5 py-3 font-bold text-gray-600 text-xs">Nhân viên</th>
+                  <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Lương cơ bản</th>
+                  <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Phụ cấp</th>
+                  <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Khấu trừ</th>
+                  <th className="text-right px-5 py-3 font-bold text-gray-600 text-xs">Thực lĩnh</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MOCK_PAYROLL.map((row) => {
+                  const net = row.base + row.allowance - row.deduction
+                  return (
+                    <tr key={row.name} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center text-red-700 font-black text-sm flex-shrink-0">
+                            {row.name[0]}
+                          </div>
+                          <div>
+                            <div className="font-bold text-gray-900">{row.name}</div>
+                            <div className="text-xs text-gray-400">{row.role}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-gray-700 font-medium">{fmtVND(row.base)}</td>
+                      <td className="px-4 py-3 text-right text-green-700 font-medium">+{fmtVND(row.allowance)}</td>
+                      <td className="px-4 py-3 text-right text-red-600 font-medium">−{fmtVND(row.deduction)}</td>
+                      <td className="px-5 py-3 text-right">
+                        <span className="font-black text-gray-900 text-base">{fmtVND(net)}</span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+              <tfoot>
+                <tr className="border-t-2 border-gray-200 bg-gray-50">
+                  <td className="px-5 py-3 font-black text-gray-900">Tổng cộng</td>
+                  <td className="px-4 py-3 text-right font-black text-gray-900">{fmtVND(totalBase)}</td>
+                  <td className="px-4 py-3 text-right font-black text-green-700">+{fmtVND(totalAllowance)}</td>
+                  <td className="px-4 py-3 text-right font-black text-red-600">−{fmtVND(totalDeduction)}</td>
+                  <td className="px-5 py-3 text-right font-black text-red-700 text-base">{fmtVND(totalNet)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        {/* Coming soon */}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+          <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">🚀 Tính năng sắp ra mắt</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { icon: '🔄', label: 'Tự động tính lương', desc: 'Từ chấm công + HĐ' },
+              { icon: '📊', label: 'Thưởng KPI', desc: 'Liên kết với OKR' },
+              { icon: '📄', label: 'Xuất bảng lương', desc: 'Excel & PDF' },
+              { icon: '🏦', label: 'Chuyển khoản', desc: 'Tích hợp ngân hàng' },
+            ].map((f) => (
+              <div key={f.label} className="relative rounded-2xl border border-dashed border-gray-200 p-4 bg-gray-50">
+                <div className="absolute top-2 right-2">
+                  <span className="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 text-xs font-black">Soon</span>
+                </div>
+                <div className="text-2xl mb-2">{f.icon}</div>
+                <div className="font-black text-gray-700 text-sm">{f.label}</div>
+                <div className="text-gray-400 text-xs mt-0.5">{f.desc}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
