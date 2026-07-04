@@ -2,42 +2,54 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { LeadsImportWrapper } from './LeadsImportWrapper'
+import LeadsTable from './LeadsTable'
 
 export const metadata = { title: 'CRM — AvaB EOS' }
 
-export default async function CRMPage() {
+type SearchParams = Promise<{
+  search?: string
+  page?: string
+  pageSize?: string
+}>
+
+export default async function CRMPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
+  const { search, page, pageSize } = await searchParams
+
+  const currentPage = Math.max(1, parseInt(page ?? '1', 10))
+  const pageSizeNum = parseInt(pageSize ?? '50', 10)
+  const validPageSize = [20, 50, 100, 200].includes(pageSizeNum) ? pageSizeNum : 50
+
   const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
 
-  const [total, newLeads, processing, converted, recentLeads] = await Promise.all([
+  const whereSearch = search
+    ? {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' as const } },
+          { phone: { contains: search } },
+        ],
+      }
+    : {}
+
+  const [total, newLeads, processing, converted, leadsData, leadsTotal] = await Promise.all([
     prisma.registration.count(),
     prisma.registration.count({ where: { status: 'NEW' } }),
     prisma.registration.count({ where: { status: 'FOLLOWUP' } }),
     prisma.registration.count({ where: { status: 'WON', createdAt: { gte: thisMonthStart } } }),
     prisma.registration.findMany({
+      where: whereSearch,
       orderBy: { createdAt: 'desc' },
-      take: 10,
+      skip: (currentPage - 1) * validPageSize,
+      take: validPageSize,
     }),
+    prisma.registration.count({ where: whereSearch }),
   ])
 
   const conversionRate = total > 0 ? Math.round((converted / total) * 100) : 0
-
-  const statusLabel: Record<string, string> = {
-    NEW: 'Mới',
-    FOLLOWUP: 'Đang tư vấn',
-    WON: '✅ Đã đăng ký',
-    LOST: '❌ Không đăng ký',
-  }
-
-  const statusStyle: Record<string, { bg: string; color: string }> = {
-    NEW:      { bg: '#dbeafe', color: '#1d4ed8' },
-    FOLLOWUP: { bg: '#fef9c3', color: '#854d0e' },
-    WON:      { bg: '#dcfce7', color: '#166534' },
-    LOST:     { bg: '#fee2e2', color: '#991b1b' },
-  }
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
@@ -131,71 +143,24 @@ export default async function CRMPage() {
           </Link>
         </div>
 
-        {/* Recent leads */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-bold text-gray-600">🕐 Leads gần nhất</p>
-            <Link
-              href="/admin/crm/pipeline"
-              className="text-xs font-semibold text-orange-600 hover:text-orange-800 transition-colors"
-            >
-              Xem tất cả →
-            </Link>
-          </div>
-
-          {recentLeads.length === 0 ? (
-            <div className="bg-white rounded-2xl p-10 text-center shadow-sm">
-              <div className="text-4xl mb-3">📭</div>
-              <p className="text-gray-500 font-semibold">Chưa có lead nào</p>
-              <p className="text-gray-400 text-sm mt-1">Thêm lead đầu tiên để bắt đầu theo dõi</p>
-            </div>
-          ) : (
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr style={{ background: '#f8fafc' }}>
-                      <th className="text-left px-4 py-3 font-bold text-gray-500 text-xs uppercase">Tên</th>
-                      <th className="text-left px-4 py-3 font-bold text-gray-500 text-xs uppercase">SĐT</th>
-                      <th className="text-left px-4 py-3 font-bold text-gray-500 text-xs uppercase">Trạng thái</th>
-                      <th className="text-left px-4 py-3 font-bold text-gray-500 text-xs uppercase">Ghi chú</th>
-                      <th className="text-left px-4 py-3 font-bold text-gray-500 text-xs uppercase">Thời gian</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentLeads.map((lead, idx) => {
-                      const st = statusStyle[lead.status] ?? statusStyle['NEW']
-                      return (
-                        <tr
-                          key={lead.id}
-                          style={{ borderTop: idx === 0 ? undefined : '1px solid #f1f5f9' }}
-                          className="hover:bg-gray-50 transition-colors"
-                        >
-                          <td className="px-4 py-3 font-semibold text-gray-900">{lead.name ?? '—'}</td>
-                          <td className="px-4 py-3 text-gray-500">{lead.phone}</td>
-                          <td className="px-4 py-3">
-                            <span
-                              className="text-xs font-bold px-2.5 py-1 rounded-full"
-                              style={{ background: st.bg, color: st.color }}
-                            >
-                              {statusLabel[lead.status] ?? lead.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs max-w-xs truncate">
-                            {lead.note ?? '—'}
-                          </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs">
-                            {new Date(lead.createdAt).toLocaleDateString('vi-VN')}
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Leads DataTable */}
+        <Suspense fallback={<div className="bg-white rounded-2xl p-4 shadow-sm h-64 animate-pulse" />}>
+          <LeadsTable
+            data={leadsData.map((l) => ({
+              id: l.id,
+              name: l.name,
+              phone: l.phone,
+              email: null,
+              note: l.note,
+              status: l.status,
+              createdAt: l.createdAt,
+            }))}
+            totalCount={leadsTotal}
+            currentPage={currentPage}
+            pageSize={validPageSize}
+            searchValue={search ?? ''}
+          />
+        </Suspense>
       </div>
     </div>
   )

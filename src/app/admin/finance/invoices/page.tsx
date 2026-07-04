@@ -2,41 +2,81 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { Suspense } from 'react'
+import InvoicesTable from './InvoicesTable'
 
 export const metadata = { title: 'Hóa đơn học phí — AvaB' }
 
-const fmtVND = (n: number) =>
-  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n)
+type SearchParams = Promise<{
+  search?: string
+  page?: string
+  pageSize?: string
+}>
 
-const fmtDate = (d: Date) =>
-  d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
-
-export default async function InvoicesPage() {
+export default async function InvoicesPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const collections = await prisma.tuitionCollection.findMany({
-    include: {
-      course: { select: { id: true, name: true, grade: true, campusId: true } },
-      payments: {
-        include: {
-          enrollment: { include: { user: { select: { name: true, phone: true } } } },
-        },
+  const { search, page, pageSize } = await searchParams
+
+  const currentPage = Math.max(1, parseInt(page ?? '1', 10))
+  const pageSizeNum = parseInt(pageSize ?? '20', 10)
+  const validPageSize = [20, 50, 100, 200].includes(pageSizeNum) ? pageSizeNum : 20
+
+  const whereSearch = search
+    ? { title: { contains: search, mode: 'insensitive' as const } }
+    : {}
+
+  const [collections, totalCount, allCollections] = await Promise.all([
+    prisma.tuitionCollection.findMany({
+      where: whereSearch,
+      include: {
+        course: { select: { id: true, name: true, grade: true } },
+        payments: { select: { isPaid: true, amount: true } },
+        _count: { select: { payments: true } },
       },
-      _count: { select: { payments: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-  })
+      orderBy: { createdAt: 'desc' },
+      skip: (currentPage - 1) * validPageSize,
+      take: validPageSize,
+    }),
+    prisma.tuitionCollection.count({ where: whereSearch }),
+    // Stats: always all data
+    prisma.tuitionCollection.findMany({
+      select: { _count: { select: { payments: true } }, payments: { select: { isPaid: true } } },
+    }),
+  ])
 
-  // Stats
-  const totalCollections = collections.length
-  const totalInvoices = collections.reduce((acc, c) => acc + c._count.payments, 0)
-  const totalPaid = collections.reduce(
-    (acc, c) => acc + c.payments.filter((p) => p.isPaid).length,
-    0,
+  // Global stats (all collections)
+  const totalCollections = await prisma.tuitionCollection.count()
+  const statsAgg = allCollections.reduce(
+    (acc, c) => {
+      const paid = c.payments.filter((p) => p.isPaid).length
+      return {
+        totalInvoices: acc.totalInvoices + c._count.payments,
+        totalPaid: acc.totalPaid + paid,
+      }
+    },
+    { totalInvoices: 0, totalPaid: 0 },
   )
-  const totalUnpaid = totalInvoices - totalPaid
+
+  // Map to row format
+  const rows = collections.map((col) => {
+    const paidCount = col.payments.filter((p) => p.isPaid).length
+    const total = col._count.payments
+    const rate = total > 0 ? Math.round((paidCount / total) * 100) : 0
+    const paidAmount = col.payments.filter((p) => p.isPaid).reduce((s, p) => s + p.amount, 0)
+    return {
+      id: col.id,
+      title: col.title,
+      totalAmount: col.totalAmount,
+      createdAt: col.createdAt,
+      course: { id: col.course.id, name: col.course.name, grade: col.course.grade },
+      paidCount,
+      totalPayments: total,
+      paidAmount,
+      rate,
+    }
+  })
 
   return (
     <main className="min-h-screen bg-gray-50 pt-20">
@@ -48,7 +88,6 @@ export default async function InvoicesPage() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              {/* Breadcrumb */}
               <nav className="flex items-center gap-2 text-emerald-300 text-xs mb-2">
                 <Link href="/admin/finance" className="hover:text-white transition">
                   Finance Dashboard
@@ -96,154 +135,39 @@ export default async function InvoicesPage() {
             style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
           >
             <p className="text-xs font-semibold opacity-75 mb-1">📄 Tổng HĐ</p>
-            <p className="text-3xl font-black">{totalInvoices}</p>
+            <p className="text-3xl font-black">{statsAgg.totalInvoices}</p>
           </div>
           <div
             className="rounded-2xl p-5 text-white shadow-sm"
             style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}
           >
             <p className="text-xs font-semibold opacity-75 mb-1">✅ Đã thu</p>
-            <p className="text-3xl font-black">{totalPaid}</p>
+            <p className="text-3xl font-black">{statsAgg.totalPaid}</p>
           </div>
           <div
             className="rounded-2xl p-5 text-white shadow-sm"
             style={{
               background:
-                totalUnpaid > 0
+                statsAgg.totalInvoices - statsAgg.totalPaid > 0
                   ? 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)'
                   : 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
             }}
           >
             <p className="text-xs font-semibold opacity-75 mb-1">🔴 Chưa thu</p>
-            <p className="text-3xl font-black">{totalUnpaid}</p>
+            <p className="text-3xl font-black">{statsAgg.totalInvoices - statsAgg.totalPaid}</p>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-            <div>
-              <h2 className="font-black text-gray-900 text-lg">📋 Danh sách đợt thu</h2>
-              <p className="text-xs text-gray-500 mt-0.5">50 đợt thu gần nhất</p>
-            </div>
-          </div>
-
-          {collections.length === 0 ? (
-            <div className="px-6 py-16 text-center">
-              <p className="text-4xl mb-3">📋</p>
-              <p className="text-gray-500 font-semibold">Chưa có đợt thu nào</p>
-              <p className="text-sm text-gray-400 mt-1">
-                Chọn một khóa học để tạo đợt thu học phí
-              </p>
-              <Link
-                href="/admin/courses"
-                className="inline-block mt-4 px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:opacity-90 transition"
-                style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}
-              >
-                + Tạo đợt thu mới
-              </Link>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-xs text-gray-500 font-semibold uppercase tracking-wide bg-gray-50">
-                    <th className="text-left px-6 py-3">Tiêu đề đợt thu</th>
-                    <th className="text-left px-4 py-3">Khóa học</th>
-                    <th className="text-center px-4 py-3">Số HĐ</th>
-                    <th className="text-center px-4 py-3">Đã thu / Tổng</th>
-                    <th className="text-left px-4 py-3 min-w-[120px]">Tiến độ</th>
-                    <th className="text-left px-4 py-3">Ngày tạo</th>
-                    <th className="text-center px-6 py-3">Hành động</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {collections.map((col) => {
-                    const paidCount = col.payments.filter((p) => p.isPaid).length
-                    const total = col._count.payments
-                    const rate = total > 0 ? Math.round((paidCount / total) * 100) : 0
-                    const paidAmount = col.payments
-                      .filter((p) => p.isPaid)
-                      .reduce((s, p) => s + p.amount, 0)
-
-                    return (
-                      <tr key={col.id} className="hover:bg-gray-50/50 transition">
-                        <td className="px-6 py-4">
-                          <p className="font-semibold text-gray-800">{col.title}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">
-                            {fmtVND(col.totalAmount)} / học sinh
-                          </p>
-                        </td>
-                        <td className="px-4 py-4">
-                          <Link
-                            href={`/admin/courses/${col.course.id}`}
-                            className="font-medium text-blue-600 hover:text-blue-800 transition"
-                          >
-                            {col.course.name}
-                          </Link>
-                          {col.course.grade && (
-                            <p className="text-xs text-gray-400">Lớp {col.course.grade}</p>
-                          )}
-                        </td>
-                        <td className="px-4 py-4 text-center font-bold text-gray-700">
-                          {total}
-                        </td>
-                        <td className="px-4 py-4 text-center">
-                          <span className="font-bold text-emerald-600">{paidCount}</span>
-                          <span className="text-gray-400"> / {total}</span>
-                          <p className="text-xs text-gray-400 mt-0.5">{fmtVND(paidAmount)}</p>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full rounded-full transition-all"
-                                style={{
-                                  width: `${rate}%`,
-                                  background:
-                                    rate >= 80
-                                      ? '#059669'
-                                      : rate >= 50
-                                      ? '#f59e0b'
-                                      : '#ef4444',
-                                }}
-                              />
-                            </div>
-                            <span
-                              className="text-xs font-bold w-8 text-right"
-                              style={{
-                                color:
-                                  rate >= 80
-                                    ? '#059669'
-                                    : rate >= 50
-                                    ? '#d97706'
-                                    : '#dc2626',
-                              }}
-                            >
-                              {rate}%
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-gray-500 text-xs">
-                          {fmtDate(col.createdAt)}
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <Link
-                            href={`/admin/finance/invoices/${col.id}`}
-                            className="inline-block px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:opacity-90 transition"
-                            style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)' }}
-                          >
-                            Chi tiết
-                          </Link>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        {/* Invoices DataTable */}
+        <Suspense fallback={<div className="bg-white rounded-2xl p-4 shadow-sm h-64 animate-pulse" />}>
+          <InvoicesTable
+            data={rows}
+            totalCount={totalCount}
+            currentPage={currentPage}
+            pageSize={validPageSize}
+            searchValue={search ?? ''}
+          />
+        </Suspense>
       </div>
     </main>
   )
