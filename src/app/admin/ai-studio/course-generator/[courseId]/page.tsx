@@ -230,7 +230,11 @@ export default async function CourseGeneratorResultPage({
               </div>
             }
             reviewTab={
-              <ReviewTab subjects={subjectsForReview} />
+              <ReviewTab
+                subjects={subjectsForReview}
+                courseId={courseId}
+                approvalStatus={approvalStatus}
+              />
             }
             publishTab={
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">

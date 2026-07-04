@@ -143,15 +143,16 @@ export default async function HocVienPage() {
     subjectName: string | null
   }[] = []
 
+  // Published TKB version (shared across schedule + quiz sections)
+  const publishedVersion = await prisma.timetableVersion.findFirst({
+    where: { status: 'published' },
+    orderBy: { publishedAt: 'desc' },
+    select: { id: true },
+  })
+
   if (timetableDay !== null && approvedEnrollments.length > 0) {
     const courseIds = approvedEnrollments.map(e => e.course.id)
 
-    // Find published version
-    const publishedVersion = await prisma.timetableVersion.findFirst({
-      where: { status: 'published' },
-      orderBy: { publishedAt: 'desc' },
-      select: { id: true },
-    })
 
     const rawSlots = await prisma.timetableSlot.findMany({
       where: {
@@ -204,12 +205,17 @@ export default async function HocVienPage() {
   // ── Quick Quiz — find first subject with questions ───────────
   let quizTarget: { courseId: string; subjectId: string; subjectName: string; totalQuestions: number } | null = null
   let todayAnswerCount = 0
+  let todayCorrectCount = 0
+
+  // Upcoming slots with subjectId in next 7 days (for tests badge)
+  let upcomingSubjectSlots: { dayOfWeek: number; period: number; subjectName: string; courseName: string }[] = []
 
   if (approvedEnrollments.length > 0) {
     const d1 = new Date(Date.now() - 86_400_000)
     const firstCourseId = approvedEnrollments[0].course.id
+    const courseIds = approvedEnrollments.map(e => e.course.id)
 
-    const [firstSubject, todayAnswers] = await Promise.all([
+    const [firstSubject, todayAnswers, todayCorrect, weekSubjectSlots] = await Promise.all([
       prisma.subject.findFirst({
         where: { courseId: firstCourseId, isActive: true, questions: { some: {} } },
         orderBy: { order: 'asc' },
@@ -218,6 +224,21 @@ export default async function HocVienPage() {
       prisma.studentAnswer.count({
         where: { userId, createdAt: { gte: d1 } },
       }),
+      prisma.studentAnswer.count({
+        where: { userId, createdAt: { gte: d1 }, isCorrect: true },
+      }),
+      // Upcoming TKB with subjectId (next 7 days — all days)
+      ...(publishedVersion
+        ? [prisma.timetableSlot.findMany({
+            where: {
+              courseId: { in: courseIds },
+              subjectId: { not: null },
+              status: 'active',
+              versionId: publishedVersion.id,
+            },
+            take: 5,
+          })]
+        : [Promise.resolve([] as Awaited<ReturnType<typeof prisma.timetableSlot.findMany>>)]),
     ])
 
     if (firstSubject) {
@@ -229,7 +250,36 @@ export default async function HocVienPage() {
       }
     }
     todayAnswerCount = todayAnswers
+    todayCorrectCount = todayCorrect
+
+    // Enrich upcoming slots with subject names
+    if (weekSubjectSlots.length > 0) {
+      const slotSubjectIds = [...new Set(weekSubjectSlots.map(s => s.subjectId).filter(Boolean) as string[])]
+      const upcomingSubjects = slotSubjectIds.length > 0
+        ? await prisma.subject.findMany({
+            where: { id: { in: slotSubjectIds } },
+            select: { id: true, name: true },
+          })
+        : []
+      const subjectNameMap = new Map(upcomingSubjects.map(s => [s.id, s.name]))
+      const courseNameMap = new Map(approvedEnrollments.map(e => [e.course.id, e.course.name]))
+
+      // Only show slots AFTER today (by dayOfWeek compared to todayDay)
+      upcomingSubjectSlots = weekSubjectSlots
+        .filter(s => s.dayOfWeek > todayDay || (s.dayOfWeek === todayDay && true))
+        .slice(0, 3)
+        .map(s => ({
+          dayOfWeek: s.dayOfWeek,
+          period: s.period,
+          subjectName: s.subjectId ? (subjectNameMap.get(s.subjectId) ?? 'Bài học') : 'Bài học',
+          courseName: courseNameMap.get(s.courseId) ?? 'Lớp học',
+        }))
+    }
   }
+
+  // Progress ring constants
+  const DAILY_TARGET = 20
+  const ringPct = todayAnswerCount > 0 ? Math.min(100, Math.round((todayCorrectCount / Math.max(1, todayAnswerCount)) * 100)) : 0
 
   // ── Mini Leaderboard — top 5 cùng lớp ───────────────────────
   let leaderboard: {
@@ -294,9 +344,33 @@ export default async function HocVienPage() {
                   ? `Bạn đang học ${approvedEnrollments.length} khoá học. Cố lên nào! 💪`
                   : 'Đăng ký khoá học để bắt đầu hành trình học tập nhé!'}
               </p>
+              {todaySlots.length > 0 && (
+                <p className="text-white/70 text-sm mt-1">
+                  📅 Hôm nay bạn có <strong className="text-white">{todaySlots.length} tiết học</strong>
+                </p>
+              )}
             </div>
-            <div className="text-5xl shrink-0 hidden md:block">
-              {accuracy >= 90 ? '🏆' : accuracy >= 70 ? '🌟' : accuracy >= 50 ? '📚' : '🎯'}
+            {/* Progress ring */}
+            <div className="hidden md:flex flex-col items-center gap-1 shrink-0">
+              <div
+                className="relative flex items-center justify-center rounded-full"
+                style={{
+                  width: 80, height: 80,
+                  background: `conic-gradient(from -90deg, #3b82f6 0%, #10b981 ${ringPct}%, rgba(255,255,255,0.15) ${ringPct}%)`,
+                }}
+              >
+                <div
+                  className="rounded-full flex flex-col items-center justify-center"
+                  style={{
+                    width: 62, height: 62,
+                    background: 'rgba(79,46,220,0.55)',
+                  }}
+                >
+                  <span className="text-base font-black text-white leading-none">{ringPct}%</span>
+                  <span className="text-white/60" style={{ fontSize: 9 }}>chính xác</span>
+                </div>
+              </div>
+              <span className="text-white/60" style={{ fontSize: 10 }}>Hôm nay</span>
             </div>
           </div>
           {totalAnswers > 0 && (
@@ -373,6 +447,46 @@ export default async function HocVienPage() {
               <span className="text-4xl mb-2 block">📋</span>
               <p className="text-gray-500 font-semibold">Lịch học đang được cập nhật</p>
               <p className="text-gray-400 text-sm">Liên hệ giáo viên hoặc quản lý để biết lịch học</p>
+            </div>
+          )}
+        </div>
+
+        {/* ── STREAK + UPCOMING TESTS ─────────────────────── */}
+        <div className="flex flex-col gap-3 mb-6">
+          {/* Streak reminder */}
+          {userStats && userStats.streak > 0 ? (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-orange-50 border border-orange-200">
+              <span className="text-2xl">🔥</span>
+              <div className="flex-1">
+                <p className="font-black text-orange-800 text-sm">
+                  Streak <span className="text-orange-600">{userStats.streak} ngày</span> — Đừng bỏ lỡ hôm nay!
+                </p>
+                <p className="text-xs text-orange-500">Tiếp tục học để duy trì streak của bạn</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-purple-50 border border-purple-100">
+              <span className="text-2xl">💪</span>
+              <p className="font-semibold text-purple-700 text-sm">
+                Hãy bắt đầu streak hôm nay — học đều đặn mỗi ngày!
+              </p>
+            </div>
+          )}
+
+          {/* Upcoming tests/sessions badge */}
+          {upcomingSubjectSlots.length > 0 && (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-50 border border-indigo-200">
+              <span className="text-2xl">🎯</span>
+              <div className="flex-1">
+                <p className="font-black text-indigo-800 text-sm">
+                  Bạn có {upcomingSubjectSlots.length} buổi học sắp tới
+                </p>
+                <p className="text-xs text-indigo-500 mt-0.5">
+                  {upcomingSubjectSlots
+                    .map(s => `${s.subjectName}`)
+                    .join(' · ')}
+                </p>
+              </div>
             </div>
           )}
         </div>

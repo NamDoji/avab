@@ -61,8 +61,13 @@ export default async function PipelinePage() {
         </div>
       </div>
 
+      {/* Kanban columns: horizontal scroll on mobile */}
       <div className="container-custom py-6">
-        <PipelineBoard leads={serialized} />
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="min-w-[640px]">
+            <PipelineBoard leads={serialized} />
+          </div>
+        </div>
       </div>
     </div>
   )

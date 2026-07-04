@@ -1,12 +1,16 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { GlobalAIChat } from '@/components/admin/GlobalAIChat'
+import { CommandPalette } from '@/components/admin/CommandPalette'
 import { OrgSwitcher } from '@/components/admin/OrgSwitcher'
 import { QuickActionDial } from '@/components/admin/QuickActionDial'
 import NotificationBell from '@/components/admin/NotificationBell'
 import { cookies } from 'next/headers'
 import { CURRENT_ORG_COOKIE } from '@/lib/current-org'
 import { getOrgTheme } from '@/lib/org-theme'
+import { Suspense } from 'react'
+import AdminErrorBoundary from '@/components/admin/AdminErrorBoundary'
+import LoadingSkeleton from '@/components/common/LoadingSkeleton'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // ── Fetch user's orgs server-side ─────────────────────────────────────────
@@ -85,8 +89,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         )}
       </div>
 
-      {children}
+      <AdminErrorBoundary>
+        <Suspense
+          fallback={
+            <div className="container-custom pt-28 pb-8">
+              <LoadingSkeleton type="list" rows={6} />
+            </div>
+          }
+        >
+          {children}
+        </Suspense>
+      </AdminErrorBoundary>
       <QuickActionDial />
+      <CommandPalette />
       <GlobalAIChat />
     </div>
   )

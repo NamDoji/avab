@@ -158,7 +158,8 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
           </div>
         </div>
 
-        {/* Invoices DataTable */}
+        {/* Invoices DataTable — horizontal scroll on mobile */}
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         <Suspense fallback={<div className="bg-white rounded-2xl p-4 shadow-sm h-64 animate-pulse" />}>
           <InvoicesTable
             data={rows}
@@ -168,6 +169,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
             searchValue={search ?? ''}
           />
         </Suspense>
+        </div>
       </div>
     </main>
   )

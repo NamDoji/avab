@@ -8,7 +8,7 @@ import { getOrganizationContext } from '@/lib/organization'
 export const metadata = { title: 'Admin Dashboard — AvaB' }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Zone C: full module list, grouped for the collapsible accordion
+// Zone C: full module list — matches specification exactly
 // ─────────────────────────────────────────────────────────────────────────────
 const ALL_MODULE_GROUPS: NavGroup[] = [
   {
@@ -16,13 +16,12 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
     icon: '🤖',
     label: 'AI & Nội dung',
     modules: [
-      { href: '/admin/ai-studio',                  icon: '✨',  label: 'AI Studio',        desc: 'AI projects & engine' },
-      { href: '/admin/ai-studio/course-generator', icon: '🚀',  label: 'Course Generator', desc: 'Tạo khóa học AI' },
-      { href: '/admin/material-import',            icon: '📚',  label: 'Material Import',  desc: 'Word/PDF/Quizizz' },
-      { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank',    desc: 'Ngân hàng câu hỏi' },
-      { href: '/admin/education-standards',        icon: '📖',  label: 'AvaB Standards',   desc: 'K12/Cambridge/IB' },
-      { href: '/admin/content-studio',             icon: '🎨',  label: 'Content Studio',   desc: 'Tạo học liệu A–Z' },
-      { href: '/admin/ai-generator',               icon: '🤖',  label: 'AI Generator',     desc: 'Engine modules' },
+      { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio',        desc: 'AI projects & engine' },
+      { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator', desc: 'Tạo khóa học AI' },
+      { href: '/admin/material-import',            icon: '📚', label: 'Material Import',  desc: 'Word/PDF/Quizizz' },
+      { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank',   desc: 'Ngân hàng câu hỏi' },
+      { href: '/admin/education-standards',        icon: '📖', label: 'AvaB Standards',   desc: 'K12/Cambridge/IB' },
+      { href: '/admin/publishing',                 icon: '📤', label: 'Publishing',        desc: 'Xuất Word/PDF/Slide' },
     ],
   },
   {
@@ -30,14 +29,16 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
     icon: '🎓',
     label: 'Học vụ',
     modules: [
-      { href: '/admin/courses',          icon: '📚',  label: 'Khóa học',       desc: 'Thêm, sửa, xoá' },
-      { href: '/admin/enrollments',      icon: '✅',      label: 'Đăng ký',       desc: 'Phê duyệt HS' },
-      { href: '/admin/users',            icon: '👥',  label: 'Học sinh',        desc: 'Quản lý học viên' },
-      { href: '/admin/erp/teachers',     icon: '👨‍🏫',  label: 'Giáo viên ERP',   desc: 'Hồ sơ · lịch dạy · cơ sở' },
-      { href: '/admin/erp/classrooms',   icon: '🏛️',  label: 'Phòng học',       desc: 'Quản lý phòng học' },
-      { href: '/giao-vien',              icon: '👨🏫',  label: 'Portal GV',         desc: 'Portal giáo viên' },
-      { href: '/hoc-vien',               icon: '👦',  label: 'Học viên',        desc: 'Portal học sinh' },
-      { href: '/phu-huynh',         icon: '👨‍👩‍👧‍👦', label: 'Phụ huynh',  desc: 'Theo dõi con' },
+      { href: '/admin/erp',                icon: '🏫', label: 'ERP Hub',      desc: 'Trung tâm học vụ' },
+      { href: '/admin/erp/students',       icon: '👥', label: 'Học sinh',     desc: 'Hồ sơ học viên' },
+      { href: '/admin/erp/teachers',       icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Hồ sơ · lịch dạy' },
+      { href: '/admin/erp/classes',        icon: '📋', label: 'Lớp học',      desc: 'Tạo lớp, gán GV' },
+      { href: '/admin/erp/attendance',     icon: '✅', label: 'Điểm danh',    desc: 'Check-in, vắng mặt' },
+      { href: '/admin/erp/health',         icon: '🏥', label: 'Sức khỏe',     desc: 'Hồ sơ y tế HS' },
+      { href: '/admin/erp/equipment',      icon: '💻', label: 'Thiết bị',     desc: 'Tài sản nhà trường' },
+      { href: '/admin/erp/alumni',         icon: '🎓', label: 'Alumni',        desc: 'Học sinh đã tốt nghiệp' },
+      { href: '/admin/erp/transfers',      icon: '🔄', label: 'Chuyển lớp',   desc: 'Yêu cầu chuyển lớp' },
+      { href: '/admin/erp/timetable',      icon: '📅', label: 'TKB',           desc: 'Thời khóa biểu AI' },
     ],
   },
   {
@@ -45,33 +46,48 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
     icon: '💰',
     label: 'Tài chính',
     modules: [
-      { href: '/admin/finance',           icon: '💰', label: 'Finance',        desc: 'Doanh thu & học phí' },
-      { href: '/admin/finance/invoices',  icon: '📋', label: 'Hóa đơn',        desc: 'Quản lý đợt thu HP' },
-      { href: '/admin/data-migration',    icon: '📦', label: 'Data Migration', desc: 'Import Excel/CSV' },
+      { href: '/admin/finance',                   icon: '💰', label: 'Finance',    desc: 'Tổng quan tài chính' },
+      { href: '/admin/finance/invoices',           icon: '📋', label: 'Hóa đơn',   desc: 'Đợt thu học phí' },
+      { href: '/admin/finance/vouchers',           icon: '🎟️', label: 'Voucher',   desc: 'Mã giảm giá' },
+      { href: '/admin/finance/scholarships',       icon: '🏆', label: 'Học bổng',  desc: 'Chương trình học bổng' },
+      { href: '/admin/finance/installments',       icon: '📆', label: 'Trả góp',   desc: 'Kế hoạch trả góp' },
+      { href: '/admin/finance/cashflow',           icon: '📊', label: 'Cashflow',  desc: 'Dòng tiền' },
+      { href: '/admin/analytics',                  icon: '📈', label: 'Báo cáo',   desc: 'Phân tích & báo cáo' },
     ],
   },
   {
-    id: 'org',
-    icon: '🏢',
-    label: 'Tổ chức',
-    modules: [
-      { href: '/admin/organizations', icon: '🏢',  label: 'Organizations', desc: 'Trường & cơ sở' },
-      { href: '/admin/roles',         icon: '🛡️', label: 'RBAC',          desc: 'Roles & phân quyền' },
-      { href: '/admin/workflow',      icon: '⚙️',  label: 'Workflow',      desc: 'BPM & approval' },
-      { href: '/admin/erp',           icon: '🏫',  label: 'School ERP',    desc: 'Điểm danh · TKB' },
-      { href: '/admin/hrm',           icon: '👨‍💼', label: 'HRM',           desc: 'Nhân sự giáo viên' },
-      { href: '/admin/collab',        icon: '🤝',  label: 'Collaboration', desc: 'Cộng tác nhóm' },
-    ],
-  },
-  {
-    id: 'analytics',
+    id: 'crm',
     icon: '📊',
-    label: 'Phân tích',
+    label: 'CRM',
     modules: [
-      { href: '/admin/analytics',         icon: '📊', label: 'Analytics',         desc: 'Báo cáo học tập' },
-      { href: '/admin/analytics/owner',     icon: '👑', label: 'Owner Dashboard',    desc: 'Tổng quan toàn hệ thống' },
-      { href: '/admin/ai-decision',         icon: '🧠', label: 'AI Decision',        desc: 'Phân tích · Cảnh báo' },
-      { href: '/admin/gamification',        icon: '🎮', label: 'Gamification',       desc: 'XP · Badge · Mission' },
+      { href: '/admin/crm',           icon: '📊', label: 'CRM Hub',   desc: 'Pipeline · leads · tuyển sinh' },
+      { href: '/admin/crm/pipeline',  icon: '📋', label: 'Pipeline',  desc: 'Kanban leads' },
+      { href: '/admin/crm/campaigns', icon: '📣', label: 'Campaigns', desc: 'Email · SMS · Zalo' },
+    ],
+  },
+  {
+    id: 'hrm',
+    icon: '👔',
+    label: 'HRM',
+    modules: [
+      { href: '/admin/hrm',             icon: '👔', label: 'HRM Hub',     desc: 'Quản lý nhân sự' },
+      { href: '/admin/hrm/staff',       icon: '👥', label: 'Nhân viên',   desc: 'Hồ sơ, phân công' },
+      { href: '/admin/hrm/contracts',   icon: '📄', label: 'Hợp đồng',   desc: 'HĐLĐ, theo dõi' },
+      { href: '/admin/hrm/attendance',  icon: '⏰', label: 'Chấm công',   desc: 'Check-in/out' },
+      { href: '/admin/hrm/leave',       icon: '🌴', label: 'Nghỉ phép',   desc: 'Đơn xin nghỉ' },
+      { href: '/admin/hrm/kpi',         icon: '📊', label: 'KPI',         desc: 'Mục tiêu, đánh giá' },
+      { href: '/admin/hrm/payroll',     icon: '💰', label: 'Bảng lương',  desc: 'Lương, thưởng' },
+    ],
+  },
+  {
+    id: 'collab',
+    icon: '🤝',
+    label: 'Cộng tác',
+    modules: [
+      { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks',     desc: 'Quản lý công việc' },
+      { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar',  desc: 'Lịch nhóm' },
+      { href: '/admin/collab/meeting',  icon: '🎥', label: 'Meeting',   desc: 'Họp trực tuyến' },
+      { href: '/admin/workflow',        icon: '⚙️', label: 'Workflow',  desc: 'BPM & approval' },
     ],
   },
   {
@@ -79,18 +95,21 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
     icon: '⚙️',
     label: 'Hệ thống',
     modules: [
-      { href: '/admin/audit',           icon: '📋',  label: 'Audit Log',        desc: 'Lịch sử thay đổi' },
-      { href: '/admin/permissions',     icon: '🔑',  label: 'Permissions',      desc: 'Danh mục quyền' },
-      { href: '/admin/roles/matrix',    icon: '📊',  label: 'Permission Matrix', desc: 'Ma trận phân quyền' },
-      { href: '/admin/news',            icon: '📰',  label: 'Tin tức',          desc: 'Đăng bài viết' },
-      { href: '/admin/crm',             icon: '📊',  label: 'CRM',              desc: 'Pipeline · leads · tuyển sinh' },
-      { href: '/admin/crm/campaigns',   icon: '📣',  label: 'Campaigns',        desc: 'Chiến dịch marketing' },
-      { href: '/admin/contacts',        icon: '📩',  label: 'Liên hệ',          desc: 'CRM / leads (legacy)' },
-      { href: '/admin/schools',         icon: '🏫',  label: 'Trường & TT',      desc: 'Multi-school' },
-      { href: '/admin/publishing',      icon: '📤',  label: 'Publishing',       desc: 'Xuất Word/PDF/Slide' },
-      { href: '/admin/notifications',   icon: '🔔',  label: 'Notifications',    desc: 'Trung tâm thông báo' },
-      { href: '/admin/app-center',      icon: '🔌',  label: 'App Center',       desc: 'Tích hợp & mở rộng' },
-      { href: '/admin/settings',        icon: '⚙️',  label: 'Cài đặt',          desc: 'Cấu hình hệ thống' },
+      { href: '/admin/roles',         icon: '🛡️', label: 'RBAC',          desc: 'Roles & phân quyền' },
+      { href: '/admin/permissions',   icon: '🔑', label: 'Permissions',   desc: 'Danh mục quyền' },
+      { href: '/admin/audit',         icon: '📋', label: 'Audit',         desc: 'Lịch sử thay đổi' },
+      { href: '/admin/organizations', icon: '🏢', label: 'Organizations', desc: 'Trường & cơ sở' },
+      { href: '/admin/settings',      icon: '⚙️', label: 'Settings',      desc: 'Cấu hình hệ thống' },
+    ],
+  },
+  {
+    id: 'dev',
+    icon: '🔌',
+    label: 'Phát triển',
+    modules: [
+      { href: '/admin/api-platform', icon: '🔌', label: 'API Platform', desc: 'REST & GraphQL' },
+      { href: '/admin/webhooks',     icon: '🔔', label: 'Webhooks',     desc: 'Event triggers' },
+      { href: '/admin/app-center',   icon: '🧩', label: 'App Center',   desc: 'Tích hợp & mở rộng' },
     ],
   },
 ]
@@ -102,11 +121,9 @@ export default async function AdminPage() {
   const session = await auth()
   if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  // ── Org context ──────────────────────────────────────────────────────────
   const userId = (session.user as { id?: string })?.id ?? ''
   const orgCtx = userId ? await getOrganizationContext(userId) : null
 
-  // Orgs switcher: all orgs this user belongs to
   const allOrgUsers = userId
     ? await prisma.organizationUser.findMany({
         where: { userId },
@@ -114,8 +131,9 @@ export default async function AdminPage() {
       })
     : []
 
-  // ── Zone A data: today's operational snapshot ────────────────────────────
+  // ── Zone A data ───────────────────────────────────────────────────────────
   const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const overdueThreshold = new Date(Date.now() - 30 * 86_400_000)
 
   const [
     activeStudents,
@@ -125,6 +143,8 @@ export default async function AdminPage() {
     totalCourses,
     unpaidCount,
     paidThisMonth,
+    draftProjects,
+    aiWarnings,
   ] = await Promise.all([
     prisma.enrollment.count({ where: { status: 'ACTIVE' } }),
     prisma.enrollment.count({ where: { status: 'PENDING' } }),
@@ -136,57 +156,81 @@ export default async function AdminPage() {
       where: { isPaid: true, isFree: false, paidAt: { gte: thisMonthStart } },
       _sum: { amount: true },
     }),
+    prisma.aIProject.count({ where: { status: 'draft' } }),
+    // Cảnh báo = overdue payments + pending approvals over threshold
+    prisma.tuitionPayment.count({
+      where: { isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
+    }),
   ])
 
   const paidThisMonthAmt = paidThisMonth._sum.amount ?? 0
   const fmtVNDShort = (n: number) => {
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + 'B'
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
     if (n >= 1_000) return Math.round(n / 1_000) + 'K'
     return String(n)
   }
 
-  // ── Zone B: primary action cards ────────────────────────────────────────
+  // Total warning count for AI Decision badge
+  const totalWarnings = aiWarnings + (pendingApprovals > 5 ? 1 : 0)
+
+  // ── Zone A: stat pills ────────────────────────────────────────────────────
+  const statPills = [
+    { icon: '👥', count: activeStudents,   label: 'Đang học',   urgent: false },
+    { icon: '⏳', count: pendingApprovals, label: 'Chờ duyệt',  urgent: pendingApprovals > 0 },
+    { icon: '📩', count: newContacts,       label: 'Liên hệ mới', urgent: newContacts > 0 },
+    { icon: '🤖', count: activeProjects,    label: 'AI đang chạy', urgent: false },
+    { icon: '📚', count: totalCourses,      label: 'Khóa học',   urgent: false },
+  ]
+
+  // ── Zone B: 4 hero action cards ───────────────────────────────────────────
   const primaryActions = [
     {
       href: '/admin/ai-studio/course-generator',
       icon: '🚀',
-      title: 'Tạo khóa học mới',
-      desc: 'AI tự động sinh lý thuyết, bài tập, đề kiểm tra',
+      title: 'Tạo khóa học',
+      desc: 'AI sinh lý thuyết, bài tập, đề kiểm tra tự động',
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-      badge: 'AI',
+      badge: draftProjects > 0 ? `${draftProjects} projects draft` : null,
+      badgeUrgent: false,
     },
     {
       href: '/admin/enrollments',
       icon: '✅',
       title: 'Duyệt đăng ký',
-      desc: 'Xem và phê duyệt học viên đăng ký khóa học',
+      desc: 'Xem và phê duyệt học viên chờ vào khóa học',
       gradient: pendingApprovals > 0
         ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)'
         : 'linear-gradient(135deg, #fb923c 0%, #f59e0b 100%)',
-      badge: pendingApprovals > 0 ? `${pendingApprovals} chờ` : null,
+      badge: pendingApprovals > 0 ? `${pendingApprovals} chờ duyệt` : null,
+      badgeUrgent: pendingApprovals > 0,
     },
     {
-      href: '/admin/material-import',
-      icon: '📚',
-      title: 'Import tài liệu',
-      desc: 'Đưa Word/PDF/Quizizz vào AvaB bằng AI',
-      gradient: 'linear-gradient(135deg, #14b8a6 0%, #059669 100%)',
-      badge: 'AI',
+      href: '/admin/finance',
+      icon: '💰',
+      title: 'Thu học phí',
+      desc: 'Theo dõi và xử lý học phí học viên',
+      gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+      badge: unpaidCount > 0 ? `${unpaidCount} chưa thu` : null,
+      badgeUrgent: unpaidCount > 0,
     },
     {
-      href: '/admin/analytics',
-      icon: '📊',
-      title: 'Xem báo cáo',
-      desc: 'Doanh thu, học sinh, tiến độ học tập',
-      gradient: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-      badge: null,
+      href: '/admin/ai-decision',
+      icon: '🧠',
+      title: 'AI Decision',
+      desc: 'Phân tích rủi ro, cảnh báo học sinh & tài chính',
+      gradient: totalWarnings > 0
+        ? 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)'
+        : 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+      badge: totalWarnings > 0 ? `${totalWarnings} cảnh báo` : null,
+      badgeUrgent: totalWarnings > 0,
     },
   ]
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
 
-      {/* ── Zone A: Today's Overview ──────────────────────────────────────── */}
+      {/* ── Zone A: Today's Pulse (compact pills) ─────────────────────────── */}
       <div className="container-custom pt-6 pb-2">
         <div className="mb-4">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
@@ -210,15 +254,14 @@ export default async function AdminPage() {
           <p className="text-sm text-gray-500 mt-0.5">
             {orgCtx
               ? `${orgCtx.name} · Vai trò: ${orgCtx.orgRole}`
-              : 'Tình trạng vận hành nền tảng AvaB'
-            }
+              : 'Tình trạng vận hành nền tảng AvaB'}
           </p>
 
-          {/* Org switcher (shown when user belongs to multiple orgs) */}
+          {/* Org switcher */}
           {allOrgUsers.length > 1 && (
             <div className="mt-3 flex flex-wrap gap-2">
               <span className="text-xs font-semibold text-gray-400 self-center">Chuyển org:</span>
-              {allOrgUsers.map(ou => (
+              {allOrgUsers.map((ou) => (
                 <Link
                   key={ou.organization.id}
                   href={`/admin/organizations/${ou.organization.id}/settings`}
@@ -236,67 +279,26 @@ export default async function AdminPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {/* Học sinh đang học — teal */}
-          <div
-            className="rounded-2xl p-4 text-white shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #0d9488 0%, #0891b2 100%)' }}
-          >
-            <p className="text-xs font-semibold opacity-75 mb-1 leading-tight">👥 Học sinh đang học</p>
-            <p className="text-3xl font-black">{activeStudents}</p>
-          </div>
-
-          {/* Chờ duyệt — orange (highlight when > 0) */}
-          <div
-            className="rounded-2xl p-4 text-white shadow-sm relative overflow-hidden"
-            style={{
-              background: pendingApprovals > 0
-                ? 'linear-gradient(135deg, #f97316 0%, #dc2626 100%)'
-                : 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)',
-            }}
-          >
-            {pendingApprovals > 0 && (
-              <div
-                className="absolute top-0 right-0 w-10 h-10 bg-white/20 rounded-full pointer-events-none"
-                style={{ transform: 'translate(30%, -30%)' }}
-              />
-            )}
-            <p className="text-xs font-semibold opacity-75 mb-1 leading-tight">⏳ Chờ duyệt</p>
-            <p className="text-3xl font-black">{pendingApprovals}</p>
-            {pendingApprovals > 0 && (
-              <p className="text-xs mt-1 font-bold opacity-90">Cần xử lý</p>
-            )}
-          </div>
-
-          {/* Liên hệ mới — blue */}
-          <div
-            className="rounded-2xl p-4 text-white shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' }}
-          >
-            <p className="text-xs font-semibold opacity-75 mb-1 leading-tight">📩 Liên hệ mới</p>
-            <p className="text-3xl font-black">{newContacts}</p>
-          </div>
-
-          {/* AI Projects — violet */}
-          <div
-            className="rounded-2xl p-4 text-white shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' }}
-          >
-            <p className="text-xs font-semibold opacity-75 mb-1 leading-tight">🤖 AI Projects</p>
-            <p className="text-3xl font-black">{activeProjects}</p>
-          </div>
-
-          {/* Khóa học — purple */}
-          <div
-            className="rounded-2xl p-4 text-white shadow-sm col-span-2 sm:col-span-1"
-            style={{ background: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)' }}
-          >
-            <p className="text-xs font-semibold opacity-75 mb-1 leading-tight">📚 Khóa học</p>
-            <p className="text-3xl font-black">{totalCourses}</p>
-          </div>
+        {/* ── Compact stat pills ── */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {statPills.map((pill) => (
+            <div
+              key={pill.label}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold shadow-sm border transition-all"
+              style={{
+                background: pill.urgent ? '#fef2f2' : '#ffffff',
+                borderColor: pill.urgent ? '#fca5a5' : '#e5e7eb',
+                color: pill.urgent ? '#dc2626' : '#374151',
+              }}
+            >
+              <span className="text-base leading-none">{pill.icon}</span>
+              <span className="text-base font-black">{pill.count.toLocaleString('vi-VN')}</span>
+              <span className="text-xs font-semibold opacity-75">{pill.label}</span>
+            </div>
+          ))}
         </div>
 
-        {/* Finance quick-stats bar */}
+        {/* Finance quick bar */}
         <Link
           href="/admin/finance"
           className="flex items-center justify-between rounded-2xl px-5 py-3.5 text-white shadow-sm hover:opacity-90 active:scale-[0.99] transition-all"
@@ -327,7 +329,7 @@ export default async function AdminPage() {
 
       <div className="container-custom py-6 space-y-6">
 
-        {/* ── Organization Management card (shown when org context is active) ── */}
+        {/* ── Organization Management card ─────────────────────────────────── */}
         {orgCtx && (
           <div
             className="rounded-2xl overflow-hidden shadow-sm border border-purple-100"
@@ -369,10 +371,9 @@ export default async function AdminPage() {
           </div>
         )}
 
-        {/* ── Zone B: Primary Actions ───────────────────────────────────────── */}
+        {/* ── Zone B: 4 Hero Action Cards ──────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-500 mb-3">✨ Bạn muốn làm gì?</p>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {primaryActions.map((action) => (
               <Link
@@ -381,7 +382,7 @@ export default async function AdminPage() {
                 className="relative overflow-hidden rounded-2xl p-6 text-white hover:scale-[1.02] active:scale-[0.99] transition-all shadow-md hover:shadow-xl group"
                 style={{ background: action.gradient }}
               >
-                {/* decorative blob */}
+                {/* Decorative blob */}
                 <div
                   className="absolute top-0 right-0 w-28 h-28 bg-white/10 rounded-full pointer-events-none"
                   style={{ transform: 'translate(30%, -40%)' }}
@@ -391,8 +392,11 @@ export default async function AdminPage() {
                   <span className="text-4xl leading-none">{action.icon}</span>
                   {action.badge && (
                     <span
-                      className="text-xs font-black px-2.5 py-1 rounded-full"
-                      style={{ background: 'rgba(255,255,255,0.25)', color: 'white' }}
+                      className="text-xs font-black px-2.5 py-1 rounded-full animate-pulse"
+                      style={{
+                        background: action.badgeUrgent ? 'rgba(239,68,68,0.9)' : 'rgba(255,255,255,0.25)',
+                        color: 'white',
+                      }}
                     >
                       {action.badge}
                     </span>
@@ -412,7 +416,7 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* ── Zone C: Full Navigation (collapsible) ─────────────────────────── */}
+        {/* ── Zone C: Full Navigation (collapsible, state persisted) ─────── */}
         <QuickNav groups={ALL_MODULE_GROUPS} />
 
       </div>

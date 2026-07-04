@@ -360,7 +360,7 @@ export default async function FinanceDashboardPage() {
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
             Điều hướng nhanh
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3">
             <Link
               href="/admin/finance/invoices"
               className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
@@ -408,6 +408,30 @@ export default async function FinanceDashboardPage() {
             >
               <span className="text-2xl">📊</span>
               <span>Báo cáo</span>
+            </Link>
+            <Link
+              href="/admin/finance/invoices"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
+              style={{ background: 'linear-gradient(135deg, #0f766e 0%, #0d9488 100%)' }}
+            >
+              <span className="text-2xl">🖨️</span>
+              <span>In hóa đơn</span>
+            </Link>
+            <Link
+              href="/admin/finance/forecast"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
+              style={{ background: 'linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%)' }}
+            >
+              <span className="text-2xl">📈</span>
+              <span>Dự báo</span>
+            </Link>
+            <Link
+              href="/admin/finance/payment-gateway"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
+              style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)' }}
+            >
+              <span className="text-2xl">💳</span>
+              <span>Cổng TT</span>
             </Link>
           </div>
         </div>

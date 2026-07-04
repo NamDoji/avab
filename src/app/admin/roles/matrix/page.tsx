@@ -88,8 +88,9 @@ export default async function PermissionMatrixPage() {
         </div>
       </div>
 
-      {/* Matrix */}
+      {/* Matrix — responsive overflow */}
       <div className="container-custom py-8">
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto overflow-y-auto max-h-[80vh]">
             <table className="text-xs border-collapse w-full">
@@ -146,6 +147,7 @@ export default async function PermissionMatrixPage() {
               </tbody>
             </table>
           </div>
+        </div>
         </div>
 
         {/* Legend */}

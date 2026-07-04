@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import PageHeader from '@/components/admin/PageHeader'
 
 export const metadata = { title: 'HRM — Nhân sự — AvaB Admin' }
 
@@ -32,23 +33,14 @@ export default async function HRMPage() {
   ])
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
-      {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div
-        className="relative overflow-hidden text-white py-12"
-        style={{ background: 'linear-gradient(135deg, #4a044e 0%, #7e22ce 100%)' }}
-      >
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
-        <div className="container-custom relative">
-          <Link href="/admin" className="inline-flex items-center gap-1 text-purple-200 text-sm font-semibold mb-3 hover:text-white transition-colors">
-            ← Admin Dashboard
-          </Link>
-          <p className="text-purple-200 text-sm font-semibold mb-1">👔 AvaB Admin</p>
-          <h1 className="text-4xl font-black mb-1">HRM — Nhân sự</h1>
-          <p className="text-purple-100 text-sm">Quản lý nhân viên, hợp đồng, chấm công, KPI</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="HRM — Nhân sự"
+        icon="👔"
+        subtitle="Quản lý nhân viên, hợp đồng, chấm công, KPI"
+        gradient="linear-gradient(135deg, #4a044e 0%, #7e22ce 100%)"
+        breadcrumb={[{ label: 'Admin', href: '/admin' }]}
+      />
 
       <div className="container-custom py-8 space-y-8">
         {/* ── Stats ───────────────────────────────────────────────────────── */}

@@ -6,6 +6,7 @@ import { Suspense } from 'react'
 import { LeadsImportWrapper } from './LeadsImportWrapper'
 import LeadsTable from './LeadsTable'
 import QuickActionsBar from './QuickActionsBar'
+import PageHeader from '@/components/admin/PageHeader'
 
 export const metadata = { title: 'CRM — AvaB EOS' }
 
@@ -83,40 +84,26 @@ export default async function CRMPage({ searchParams }: { searchParams: SearchPa
   ]
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
-      {/* Header */}
-      <div
-        className="relative overflow-hidden text-white py-10"
-        style={{ background: 'linear-gradient(135deg, #7c2d12 0%, #c2410c 100%)' }}
-      >
-        <div
-          className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none"
-          style={{ background: 'rgba(255,255,255,0.06)', transform: 'translate(30%, -50%)' }}
-        />
-        <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-orange-200 text-sm mb-2">
-            <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
-            <span>/</span>
-            <span>CRM</span>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-black mb-1">📊 CRM</h1>
-              <p className="text-orange-200 text-sm">Quản lý khách hàng &amp; tuyển sinh · {total} leads</p>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <Link
-                href="/admin/crm/leads/new"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
-                style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}
-              >
-                ➕ Thêm Lead
-              </Link>
-              <LeadsImportWrapper />
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="CRM"
+        icon="📊"
+        subtitle={`Quản lý khách hàng & tuyển sinh · ${total} leads`}
+        gradient="linear-gradient(135deg, #7c2d12 0%, #c2410c 100%)"
+        breadcrumb={[{ label: 'Admin', href: '/admin' }]}
+        actions={
+          <>
+            <Link
+              href="/admin/crm/leads/new"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
+              style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}
+            >
+              ➕ Thêm Lead
+            </Link>
+            <LeadsImportWrapper />
+          </>
+        }
+      />
 
       <div className="container-custom py-6 space-y-6">
 

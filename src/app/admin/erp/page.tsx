@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import PageHeader from '@/components/admin/PageHeader'
 
 export const metadata = { title: 'School ERP — AvaB Admin' }
 
@@ -92,35 +93,25 @@ export default async function ERPHubPage() {
       gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
       badgeDynamic: pendingTransfers > 0 ? `${pendingTransfers} chờ duyệt` : undefined,
     },
+    {
+      href: '/admin/erp/reports',
+      icon: '📊',
+      label: 'ERP Reports',
+      desc: 'KPI, tăng trưởng, điểm danh',
+      gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)',
+      badge: 'New',
+    },
   ]
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
-      {/* Header */}
-      <div
-        className="relative overflow-hidden text-white py-12"
-        style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' }}
-      >
-        <div
-          className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
-          style={{ background: 'rgba(255,255,255,0.05)', transform: 'translate(25%, -50%)' }}
-        />
-        <div
-          className="absolute bottom-0 left-0 w-64 h-64 rounded-full pointer-events-none"
-          style={{ background: 'rgba(30,58,95,0.5)', transform: 'translate(-25%, 50%)' }}
-        />
-        <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-blue-300 text-sm mb-1">
-            <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
-            <span>/</span>
-            <span>School ERP</span>
-          </div>
-          <h1 className="text-4xl font-black mb-2">🏫 School ERP</h1>
-          <p className="text-blue-200 text-sm">
-            Quản lý toàn bộ hoạt động học vụ của trường
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="School ERP"
+        icon="🏫"
+        subtitle="Quản lý toàn bộ hoạt động học vụ của trường"
+        gradient="linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)"
+        breadcrumb={[{ label: 'Admin', href: '/admin' }]}
+      />
 
       <div className="container-custom py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -183,7 +174,7 @@ export default async function ERPHubPage() {
             href="/admin"
             className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
           >
-            ← Quay về Admin Dashboard
+            ← Admin Dashboard
           </Link>
         </div>
       </div>

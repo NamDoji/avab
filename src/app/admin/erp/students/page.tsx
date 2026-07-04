@@ -128,7 +128,8 @@ export default async function StudentsPage({ searchParams }: { searchParams: Sea
       </div>
 
       <div className="container-custom py-6">
-        {/* ── DataTable (client) ── */}
+        {/* ── DataTable (client) — responsive scroll wrapper ── */}
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         <Suspense fallback={<div className="bg-white rounded-2xl p-4 shadow-sm h-64 animate-pulse" />}>
           <StudentsTable
             data={students.map((s) => ({
@@ -151,6 +152,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Sea
             sortOrder={(sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc'}
           />
         </Suspense>
+        </div>
       </div>
     </div>
   )

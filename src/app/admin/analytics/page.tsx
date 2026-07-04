@@ -133,7 +133,7 @@ export default async function AnalyticsPage() {
         {/* ── 1. Stats row ───────────────────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">📈 Tổng quan</p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
                 icon: '👥',
@@ -410,7 +410,7 @@ export default async function AnalyticsPage() {
         {/* ── 5b. Learning Analytics ─────────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">🧠 Learning Analytics</p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
                 icon: '🗃️',

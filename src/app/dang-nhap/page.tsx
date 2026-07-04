@@ -7,6 +7,13 @@ import Link from 'next/link'
 import { LogIn, Phone, Lock } from 'lucide-react'
 import { useLang } from '@/contexts/LanguageContext'
 
+const ROLE_REDIRECT: Record<string, string> = {
+  ADMIN: '/admin',
+  TEACHER: '/giao-vien',
+  STUDENT: '/hoc-vien',
+  PARENT: '/phu-huynh',
+}
+
 export default function DangNhapPage() {
   const [form, setForm] = useState({ phone: '', password: '' })
   const [loading, setLoading] = useState(false)
@@ -26,11 +33,19 @@ export default function DangNhapPage() {
       redirect: false,
     })
 
-    setLoading(false)
-
     if (result?.error) {
+      setLoading(false)
       setError(vi ? 'Số điện thoại hoặc mật khẩu không đúng.' : 'Incorrect phone number or password.')
-    } else {
+      return
+    }
+
+    // Fetch session to get role and redirect accordingly
+    try {
+      const res = await fetch('/api/auth/session')
+      const sess = await res.json()
+      const role: string = (sess?.user?.role as string | undefined) ?? 'STUDENT'
+      router.push(ROLE_REDIRECT[role] ?? '/')
+    } catch {
       router.push('/hoc-vien')
     }
   }
@@ -42,7 +57,9 @@ export default function DangNhapPage() {
           <div className="gradient-hero text-white p-6 text-center">
             <LogIn className="mx-auto mb-2" size={36} />
             <h1 className="text-2xl font-black">{vi ? 'Đăng nhập' : 'Sign In'}</h1>
-            <p className="text-white/80 text-sm mt-1">{vi ? 'Vào trang học của con' : 'Access your learning dashboard'}</p>
+            <p className="text-white/80 text-sm mt-1">
+              {vi ? 'Vào trang học của bạn' : 'Access your learning dashboard'}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -54,7 +71,8 @@ export default function DangNhapPage() {
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1.5">
-                <Phone size={14} className="inline mr-1" /> {vi ? 'Số điện thoại' : 'Phone number'}
+                <Phone size={14} className="inline mr-1" />
+                {vi ? 'Số điện thoại' : 'Phone number'}
               </label>
               <input
                 type="tel"
@@ -68,7 +86,8 @@ export default function DangNhapPage() {
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1.5">
-                <Lock size={14} className="inline mr-1" /> {vi ? 'Mật khẩu' : 'Password'}
+                <Lock size={14} className="inline mr-1" />
+                {vi ? 'Mật khẩu' : 'Password'}
               </label>
               <input
                 type="password"

@@ -159,3 +159,15 @@
   font-size: 16px;
   animation: float 2s ease-in-out infinite;
 }
+
+/* ── Print styles ──────────────────────────────────────────────────────────── */
+@media print {
+  nav, header, .no-print, .sidebar, footer, button { display: none !important; }
+  body { font-size: 11pt; color: #000; background: white; }
+  a { color: inherit; text-decoration: none; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; }
+  .print-only { display: block !important; }
+  @page { margin: 2cm; }
+}
+.print-only { display: none; }
