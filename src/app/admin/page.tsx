@@ -11,132 +11,187 @@ export const metadata = { title: 'Admin Dashboard — AvaB' }
 // Zone C: full module list — matches specification exactly
 // ─────────────────────────────────────────────────────────────────────────────
 function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGroup[] {
-  const hasAI = isSuperAdmin || orgModules.includes('ai') || orgModules.includes('ai-studio')
-  return [
-  // ═══════════════════════════════════════════════════════════
-  //  STANDARD MODULES — bao gồm trong mọi subscription
-  // ═══════════════════════════════════════════════════════════
-  {
-    id: 'courses', icon: '📚', label: 'Khoá học',
-    modules: [
-      { href: '/admin/courses',          icon: '📚', label: 'Khoá học',    desc: 'Danh sách khoá học' },
-      { href: '/admin/enrollments',      icon: '📝', label: 'Đăng ký học', desc: 'Ghi danh & phê duyệt' },
-      { href: '/admin/finance/invoices', icon: '💰', label: 'Thu học phí', desc: 'Đợt thu & thanh toán' },
-      // AI Tạo khoá học — CHỈ SUPER_ADMIN (quản trị AvaB)
-      ...(isSuperAdmin ? [{ href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'AI Tạo khoá học', desc: 'Chỉ dành cho AvaB' }] : []),
-    ],
-  },
-  {
-    id: 'members', icon: '👥', label: 'Thành viên',
-    modules: [
-      { href: '/admin/erp/students',  icon: '👦', label: 'Học sinh',   desc: 'Hồ sơ học viên' },
-      { href: '/admin/erp/teachers',  icon: '👨‍🏫', label: 'Giáo viên', desc: 'Hồ sơ · lịch dạy' },
-      { href: '/admin/users',         icon: '👤', label: 'Tài khoản',  desc: 'Quản lý đăng nhập' },
-      { href: '/admin/erp/classes',   icon: '📋', label: 'Lớp học',    desc: 'Tạo lớp, gán GV' },
-      { href: '/admin/erp/transfers', icon: '🔄', label: 'Chuyển lớp', desc: 'Yêu cầu chuyển lớp' },
-      { href: '/admin/erp/alumni',    icon: '🎓', label: 'Alumni',      desc: 'Học sinh đã tốt nghiệp' },
-    ],
-  },
-  {
-    id: 'academic', icon: '🏫', label: 'Học vụ ERP',
-    modules: [
-      { href: '/admin/erp',                    icon: '🏫', label: 'ERP Hub',     desc: 'Trung tâm học vụ' },
-      { href: '/admin/erp/attendance',         icon: '✅', label: 'Điểm danh',   desc: 'Check-in, vắng mặt' },
-      { href: '/admin/erp/timetable',          icon: '📅', label: 'TKB',         desc: 'Thời khóa biểu' },
-      { href: '/admin/erp/timetable/workload', icon: '⚖️', label: 'Tải công GV', desc: 'Phân công giảng dạy' },
-      { href: '/admin/erp/classrooms',         icon: '🚪', label: 'Phòng học',   desc: 'Quản lý phòng học' },
-      { href: '/admin/erp/health',             icon: '🏥', label: 'Sức khỏe',    desc: 'Hồ sơ y tế HS' },
-      { href: '/admin/erp/equipment',          icon: '💻', label: 'Thiết bị',    desc: 'Tài sản nhà trường' },
-      { href: '/admin/erp/awards',             icon: '🏆', label: 'Khen thưởng', desc: 'Giải thưởng HS' },
-      { href: '/admin/erp/reports',            icon: '📊', label: 'Báo cáo ERP', desc: 'Báo cáo học vụ' },
-      { href: '/admin/erp/bus-routes',         icon: '🚌', label: 'Xe tuyến',    desc: 'Xe đưa đón HS' },
-      { href: '/admin/erp/uniforms',           icon: '👕', label: 'Đồng phục',   desc: 'Đặt đồng phục HS' },
-      { href: '/admin/erp/canteen',            icon: '🍽️', label: 'Căng tin',    desc: 'Suất ăn & thực đơn' },
-      { href: '/admin/erp/library',            icon: '📖', label: 'Thư viện',    desc: 'Sách & mượn trả' },
-      { href: '/admin/erp/academic-years',     icon: '📆', label: 'Năm học',     desc: 'Quản lý năm học' },
-    ],
-  },
-  {
-    id: 'finance', icon: '💰', label: 'Tài chính',
-    modules: [
-      { href: '/admin/finance',                icon: '💰', label: 'Finance Hub',  desc: 'Tổng quan tài chính' },
-      { href: '/admin/finance/invoices',       icon: '📋', label: 'Hóa đơn',     desc: 'Đợt thu học phí' },
-      { href: '/admin/finance/vouchers',       icon: '🎟️', label: 'Voucher',     desc: 'Mã giảm giá' },
-      { href: '/admin/finance/scholarships',   icon: '🏆', label: 'Học bổng',    desc: 'Chương trình học bổng' },
-      { href: '/admin/finance/installments',   icon: '📆', label: 'Trả góp',     desc: 'Kế hoạch trả góp' },
-      { href: '/admin/finance/cashflow',       icon: '📊', label: 'Cashflow',    desc: 'Dòng tiền' },
-      { href: '/admin/finance/payment-gateway',icon: '💳', label: 'Cổng TT',     desc: 'VNPay, MoMo, Banking' },
-      { href: '/admin/finance/forecast',       icon: '📉', label: 'Dự báo DT',   desc: 'Dự báo doanh thu' },
-      { href: '/admin/finance/reports',        icon: '📰', label: 'Báo cáo TC',  desc: 'Báo cáo tài chính' },
-      { href: '/admin/analytics',              icon: '📈', label: 'Phân tích',   desc: 'Báo cáo & phân tích' },
-    ],
-  },
-  {
-    id: 'crm', icon: '📊', label: 'CRM Tuyển sinh',
-    modules: [
-      { href: '/admin/crm',           icon: '📊', label: 'CRM Hub',   desc: 'Pipeline · leads · tuyển sinh' },
-      { href: '/admin/crm/pipeline',  icon: '📋', label: 'Pipeline',  desc: 'Kanban leads' },
-      { href: '/admin/crm/campaigns', icon: '📣', label: 'Campaigns', desc: 'Email · SMS · Zalo' },
-      { href: '/admin/contacts',      icon: '📞', label: 'Contacts',  desc: 'Danh bạ liên hệ' },
-    ],
-  },
-  {
-    id: 'hrm', icon: '👔', label: 'HRM Nhân sự',
-    modules: [
-      { href: '/admin/hrm',            icon: '👔', label: 'HRM Hub',    desc: 'Quản lý nhân sự' },
-      { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công' },
-      { href: '/admin/hrm/contracts',  icon: '📄', label: 'Hợp đồng',  desc: 'HĐLĐ, theo dõi' },
-      { href: '/admin/hrm/attendance', icon: '⏰', label: 'Chấm công',  desc: 'Check-in/out' },
-      { href: '/admin/hrm/leave',      icon: '🌴', label: 'Nghỉ phép',  desc: 'Đơn xin nghỉ' },
-      { href: '/admin/hrm/kpi',        icon: '📊', label: 'KPI',        desc: 'Mục tiêu, đánh giá' },
-      { href: '/admin/hrm/payroll',    icon: '💰', label: 'Bảng lương', desc: 'Lương, thưởng' },
-    ],
-  },
-  {
-    id: 'collab', icon: '🤝', label: 'Cộng tác',
-    modules: [
-      { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks',    desc: 'Quản lý công việc' },
-      { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar', desc: 'Lịch nhóm' },
-      { href: '/admin/collab/meetings', icon: '🎥', label: 'Meetings', desc: 'Họp trực tuyến' },
-      { href: '/admin/workflow',        icon: '⚙️', label: 'Workflow', desc: 'BPM & approval' },
-    ],
-  },
-  {
+  // Kiểm tra org có bật module không (mảng rỗng = chưa cấu hình → cho thấy mọi thứ chuẩn)
+  const has = (m: string) => isSuperAdmin || orgModules.length === 0 || orgModules.includes(m)
+  // AI luôn phải trả phí riêng — không bao giờ free
+  const hasAI = isSuperAdmin || orgModules.includes('ai')
+
+  const groups: NavGroup[] = []
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ĐIỂM 1 — KHOÁ HỌC: chỉ AvaB platform (SUPER_ADMIN)
+  //          Đây là hoạt động kinh doanh của AvaB, org không được vào
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (isSuperAdmin) {
+    groups.push({
+      id: 'courses', icon: '📚', label: 'Khoá học',
+      modules: [
+        { href: '/admin/courses',     icon: '📚', label: 'Khoá học',    desc: 'Khoá học của nền tảng AvaB' },
+        { href: '/admin/enrollments', icon: '📝', label: 'Đăng ký học', desc: 'Ghi danh & phê duyệt' },
+        { href: '/admin/finance/invoices', icon: '💰', label: 'Thu học phí', desc: 'Đợt thu & thanh toán' },
+        { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'AI Tạo khoá học', desc: 'Chỉ dành cho AvaB' },
+      ],
+    })
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // THÀNH VIÊN — LMS cơ bản (gói 'lms' hoặc mặc định)
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (has('lms')) {
+    groups.push({
+      id: 'members', icon: '👥', label: 'Thành viên',
+      modules: [
+        { href: '/admin/erp/students',  icon: '👦',    label: 'Học sinh',    desc: 'Hồ sơ học viên' },
+        { href: '/admin/erp/teachers',  icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Hồ sơ · lịch dạy' },
+        { href: '/admin/users',         icon: '👤',    label: 'Tài khoản',   desc: 'Quản lý đăng nhập' },
+        { href: '/admin/erp/classes',   icon: '📋',    label: 'Lớp học',     desc: 'Tạo lớp, gán GV' },
+        // Org admin: đăng ký học nằm ở đây (không có nhóm Khoá học riêng)
+        ...(!isSuperAdmin ? [
+          { href: '/admin/enrollments', icon: '📝', label: 'Đăng ký học', desc: 'Ghi danh & phê duyệt' },
+        ] : []),
+        { href: '/admin/erp/transfers', icon: '🔄',    label: 'Chuyển lớp', desc: 'Yêu cầu chuyển lớp' },
+        { href: '/admin/erp/alumni',    icon: '🎓',    label: 'Alumni',      desc: 'Học sinh đã tốt nghiệp' },
+      ],
+    })
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HỌC VỤ ERP (gói 'erp')
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (has('erp')) {
+    groups.push({
+      id: 'academic', icon: '🏫', label: 'Học vụ ERP',
+      modules: [
+        { href: '/admin/erp',                    icon: '🏫', label: 'ERP Hub',      desc: 'Trung tâm học vụ' },
+        { href: '/admin/erp/attendance',         icon: '✅', label: 'Điểm danh',    desc: 'Check-in, vắng mặt' },
+        { href: '/admin/erp/timetable',          icon: '📅', label: 'TKB',          desc: 'Thời khóa biểu' },
+        { href: '/admin/erp/timetable/workload', icon: '⚖️', label: 'Tải công GV',  desc: 'Phân công giảng dạy' },
+        { href: '/admin/erp/classrooms',         icon: '🚪', label: 'Phòng học',    desc: 'Quản lý phòng học' },
+        { href: '/admin/erp/health',             icon: '🏥', label: 'Sức khỏe',     desc: 'Hồ sơ y tế HS' },
+        { href: '/admin/erp/equipment',          icon: '💻', label: 'Thiết bị',     desc: 'Tài sản nhà trường' },
+        { href: '/admin/erp/awards',             icon: '🏆', label: 'Khen thưởng',  desc: 'Giải thưởng HS' },
+        { href: '/admin/erp/reports',            icon: '📊', label: 'Báo cáo ERP',  desc: 'Báo cáo học vụ' },
+        { href: '/admin/erp/bus-routes',         icon: '🚌', label: 'Xe tuyến',     desc: 'Xe đưa đón HS' },
+        { href: '/admin/erp/uniforms',           icon: '👕', label: 'Đồng phục',    desc: 'Đặt đồng phục HS' },
+        { href: '/admin/erp/canteen',            icon: '🍽️', label: 'Căng tin',     desc: 'Suất ăn & thực đơn' },
+        { href: '/admin/erp/library',            icon: '📖', label: 'Thư viện',     desc: 'Sách & mượn trả' },
+        { href: '/admin/erp/academic-years',     icon: '📆', label: 'Năm học',      desc: 'Quản lý năm học' },
+      ],
+    })
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TÀI CHÍNH (gói 'finance')
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (has('finance')) {
+    groups.push({
+      id: 'finance', icon: '💰', label: 'Tài chính',
+      modules: [
+        { href: '/admin/finance',                icon: '💰', label: 'Finance Hub',  desc: 'Tổng quan tài chính' },
+        { href: '/admin/finance/invoices',       icon: '📋', label: 'Hóa đơn',     desc: 'Đợt thu học phí' },
+        { href: '/admin/finance/vouchers',       icon: '🎟️', label: 'Voucher',     desc: 'Mã giảm giá' },
+        { href: '/admin/finance/scholarships',   icon: '🏆', label: 'Học bổng',    desc: 'Chương trình học bổng' },
+        { href: '/admin/finance/installments',   icon: '📆', label: 'Trả góp',     desc: 'Kế hoạch trả góp' },
+        { href: '/admin/finance/cashflow',       icon: '📊', label: 'Cashflow',    desc: 'Dòng tiền' },
+        { href: '/admin/finance/payment-gateway',icon: '💳', label: 'Cổng TT',     desc: 'VNPay, MoMo, Banking' },
+        { href: '/admin/finance/forecast',       icon: '📉', label: 'Dự báo DT',   desc: 'Dự báo doanh thu' },
+        { href: '/admin/finance/reports',        icon: '📰', label: 'Báo cáo TC',  desc: 'Báo cáo tài chính' },
+        { href: '/admin/analytics',              icon: '📈', label: 'Phân tích',   desc: 'Báo cáo & phân tích' },
+      ],
+    })
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CRM TUYỂN SINH (gói 'crm')
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (has('crm')) {
+    groups.push({
+      id: 'crm', icon: '📊', label: 'CRM Tuyển sinh',
+      modules: [
+        { href: '/admin/crm',           icon: '📊', label: 'CRM Hub',   desc: 'Pipeline · leads · tuyển sinh' },
+        { href: '/admin/crm/pipeline',  icon: '📋', label: 'Pipeline',  desc: 'Kanban leads' },
+        { href: '/admin/crm/campaigns', icon: '📣', label: 'Campaigns', desc: 'Email · SMS · Zalo' },
+        { href: '/admin/contacts',      icon: '📞', label: 'Contacts',  desc: 'Danh bạ liên hệ' },
+      ],
+    })
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HRM NHÂN SỰ (gói 'hrm')
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (has('hrm')) {
+    groups.push({
+      id: 'hrm', icon: '👔', label: 'HRM Nhân sự',
+      modules: [
+        { href: '/admin/hrm',            icon: '👔', label: 'HRM Hub',    desc: 'Quản lý nhân sự' },
+        { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công' },
+        { href: '/admin/hrm/contracts',  icon: '📄', label: 'Hợp đồng',  desc: 'HĐLĐ, theo dõi' },
+        { href: '/admin/hrm/attendance', icon: '⏰', label: 'Chấm công',  desc: 'Check-in/out' },
+        { href: '/admin/hrm/leave',      icon: '🌴', label: 'Nghỉ phép',  desc: 'Đơn xin nghỉ' },
+        { href: '/admin/hrm/kpi',        icon: '📊', label: 'KPI',        desc: 'Mục tiêu, đánh giá' },
+        { href: '/admin/hrm/payroll',    icon: '💰', label: 'Bảng lương', desc: 'Lương, thưởng' },
+      ],
+    })
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CỘNG TÁC (gói 'collab')
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (has('collab')) {
+    groups.push({
+      id: 'collab', icon: '🤝', label: 'Cộng tác',
+      modules: [
+        { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks',    desc: 'Quản lý công việc' },
+        { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar', desc: 'Lịch nhóm' },
+        { href: '/admin/collab/meetings', icon: '🎥', label: 'Meetings', desc: 'Họp trực tuyến' },
+        { href: '/admin/workflow',        icon: '⚙️', label: 'Workflow', desc: 'BPM & approval' },
+      ],
+    })
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PORTALS — luôn hiển thị
+  // ═══════════════════════════════════════════════════════════════════════════
+  groups.push({
     id: 'portals', icon: '🌐', label: 'Portals',
     modules: [
       { href: '/giao-vien', icon: '👩‍🏫', label: 'Portal Giáo viên', desc: 'Giao diện dành cho GV' },
-      { href: '/hoc-vien',  icon: '🎒',   label: 'Portal Học sinh',  desc: 'Giao diện dành cho HS' },
+      { href: '/hoc-vien',  icon: '🎒',          label: 'Portal Học sinh',  desc: 'Giao diện dành cho HS' },
       { href: '/phu-huynh', icon: '👨‍👩‍👧', label: 'Portal Phụ huynh', desc: 'Giao diện dành cho PH' },
     ],
-  },
+  })
 
-  // ═══════════════════════════════════════════════════════════
-  //  AI PREMIUM — Add-on trả phí riêng
-  //  Chỉ hiện nếu org có module 'ai' hoặc là SUPER_ADMIN
-  // ═══════════════════════════════════════════════════════════
-  ...(hasAI ? [{
-    id: 'ai-premium', icon: '🤖', label: '✨ AI Studio (Premium)',
-    modules: [
-      { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio',       desc: 'Tạo nội dung bằng AI' },
-      { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator', desc: 'Sinh khoá học tự động' },
-      { href: '/admin/ai-decision',                icon: '🧠', label: 'AI Decision',      desc: 'Phân tích & cảnh báo AI' },
-      { href: '/admin/material-import',            icon: '📥', label: 'Material Import',  desc: 'Word/PDF → AI xử lý' },
-      { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank',   desc: 'Ngân hàng câu hỏi AI' },
-      { href: '/admin/education-standards',        icon: '📖', label: 'AvaB Standards',   desc: 'K12/Cambridge/IB' },
-      { href: '/admin/publishing',                 icon: '📤', label: 'Publishing',       desc: 'Xuất Word/PDF/Slide' },
-      { href: '/admin/gamification',               icon: '🎮', label: 'Gamification',     desc: 'Điểm · huy hiệu · XH' },
-    ],
-  }] : [{
-    id: 'ai-upgrade', icon: '🔒', label: '🔒 AI Studio',
-    modules: [
-      { href: '/admin/settings', icon: '⭐', label: 'Nâng cấp lên AI Premium', desc: 'Liên hệ AvaB để kích hoạt' },
-    ],
-  }]),
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ĐIỂM 2 — AI PREMIUM: Add-on trả phí, mặc định khoá
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (hasAI) {
+    groups.push({
+      id: 'ai-premium', icon: '🤖', label: '✨ AI Studio (Premium)',
+      modules: [
+        { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio',       desc: 'Tạo nội dung bằng AI' },
+        { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator', desc: 'Sinh khoá học tự động' },
+        { href: '/admin/ai-decision',                icon: '🧠', label: 'AI Decision',      desc: 'Phân tích & cảnh báo AI' },
+        { href: '/admin/material-import',            icon: '📥', label: 'Material Import',  desc: 'Word/PDF → AI xử lý' },
+        { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank',   desc: 'Ngân hàng câu hỏi AI' },
+        { href: '/admin/education-standards',        icon: '📖', label: 'AvaB Standards',   desc: 'K12/Cambridge/IB' },
+        { href: '/admin/publishing',                 icon: '📤', label: 'Publishing',       desc: 'Xuất Word/PDF/Slide' },
+        { href: '/admin/gamification',               icon: '🎮', label: 'Gamification',     desc: 'Điểm · huy hiệu · XH' },
+      ],
+    })
+  } else {
+    // Org chưa mua AI → hiện nút nâng cấp
+    groups.push({
+      id: 'ai-upgrade', icon: '🔒', label: '🔒 AI Studio',
+      modules: [
+        { href: '/admin/settings', icon: '⭐', label: 'Nâng cấp lên AI Premium', desc: 'Liên hệ AvaB để kích hoạt' },
+      ],
+    })
+  }
 
-  // ═══════════════════════════════════════════════════════════
-  //  HỆ THỐNG — IT/config
-  // ═══════════════════════════════════════════════════════════
-  {
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HỆ THỐNG — luôn hiển thị cuối
+  // ═══════════════════════════════════════════════════════════════════════════
+  groups.push({
     id: 'system', icon: '⚙️', label: 'Hệ thống',
     modules: [
       { href: '/admin/roles',          icon: '🛡️', label: 'RBAC',           desc: 'Roles & phân quyền' },
@@ -145,12 +200,13 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
       { href: '/admin/organizations',  icon: '🏢', label: 'Tổ chức',        desc: 'Trường & cơ sở' },
       { href: '/admin/notifications',  icon: '🔔', label: 'Thông báo',      desc: 'Notification center' },
       { href: '/admin/news',           icon: '📰', label: 'Tin tức',         desc: 'Bài viết & thông báo' },
-      { href: '/admin/settings',       icon: '⚙️', label: 'Cài đặt',        desc: 'Cấu hình hệ thống' },
+      { href: '/admin/settings',       icon: '⚙️', label: 'Cài đặt & Gói dịch vụ', desc: 'Cấu hình & module' },
       { href: '/admin/data-migration', icon: '📦', label: 'Data Migration',  desc: 'Import/Export dữ liệu' },
     ],
-  },
+  })
 
-]}
+  return groups
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
