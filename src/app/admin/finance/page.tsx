@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth'
+import { getOrganizationContext } from '@/lib/organization'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
@@ -27,6 +28,12 @@ export default async function FinanceDashboardPage() {
   const session = await auth()
   if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const orgCtx = await getOrganizationContext(userId)
+  const orgPaymentFilter = orgCtx?.id
+    ? { enrollment: { course: { organizationId: orgCtx.id } } }
+    : {}
+
   const now = new Date()
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
@@ -45,31 +52,31 @@ export default async function FinanceDashboardPage() {
   ] = await Promise.all([
     // Tổng thu toàn thời gian
     prisma.tuitionPayment.aggregate({
-      where: { isPaid: true, isFree: false },
+      where: { isPaid: true, isFree: false, ...orgPaymentFilter },
       _sum: { amount: true },
     }),
     // Đã thu tháng này
     prisma.tuitionPayment.aggregate({
-      where: { isPaid: true, isFree: false, paidAt: { gte: thisMonthStart } },
+      where: { isPaid: true, isFree: false, paidAt: { gte: thisMonthStart }, ...orgPaymentFilter },
       _sum: { amount: true },
     }),
     // Đã thu tháng trước
     prisma.tuitionPayment.aggregate({
-      where: { isPaid: true, isFree: false, paidAt: { gte: lastMonthStart, lte: lastMonthEnd } },
+      where: { isPaid: true, isFree: false, paidAt: { gte: lastMonthStart, lte: lastMonthEnd }, ...orgPaymentFilter },
       _sum: { amount: true },
     }),
     // Tổng công nợ
     prisma.tuitionPayment.aggregate({
-      where: { isPaid: false, isFree: false },
+      where: { isPaid: false, isFree: false, ...orgPaymentFilter },
       _sum: { amount: true },
     }),
     // Số lượng công nợ
     prisma.tuitionPayment.count({
-      where: { isPaid: false, isFree: false },
+      where: { isPaid: false, isFree: false, ...orgPaymentFilter },
     }),
     // 10 giao dịch gần nhất
     prisma.tuitionPayment.findMany({
-      where: { isPaid: true },
+      where: { isPaid: true, ...orgPaymentFilter },
       orderBy: { paidAt: 'desc' },
       take: 10,
       include: {
@@ -83,7 +90,7 @@ export default async function FinanceDashboardPage() {
     }),
     // Tất cả payments để tính revenue per course
     prisma.tuitionPayment.findMany({
-      where: { isFree: false },
+      where: { isFree: false, ...orgPaymentFilter },
       select: {
         amount: true,
         isPaid: true,

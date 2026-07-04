@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth'
+import { getOrganizationContext } from '@/lib/organization'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
@@ -13,6 +14,12 @@ export default async function ERPReportsPage() {
   if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? ''))
     redirect('/dang-nhap')
 
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const orgCtx = await getOrganizationContext(userId)
+  const orgUserFilter = orgCtx?.id ? { organizationUsers: { some: { organizationId: orgCtx.id } } } : {}
+  const orgEnrollFilter = orgCtx?.id ? { organizationId: orgCtx.id } : {}
+  const orgCourseFilter = orgCtx?.id ? { organizationId: orgCtx.id, isActive: true } : { isActive: true }
+
   const now = new Date()
   const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1)
 
@@ -24,10 +31,10 @@ export default async function ERPReportsPage() {
     activeEnrollmentCount,
     sessionFeedbackCount,
   ] = await Promise.all([
-    prisma.user.count({ where: { role: 'STUDENT' } }),
-    prisma.user.count({ where: { role: 'TEACHER' } }),
-    prisma.course.count({ where: { isActive: true } }),
-    prisma.enrollment.count({ where: { status: 'ACTIVE' } }),
+    prisma.user.count({ where: { role: 'STUDENT', ...orgUserFilter } }),
+    prisma.user.count({ where: { role: 'TEACHER', ...orgUserFilter } }),
+    prisma.course.count({ where: orgCourseFilter }),
+    prisma.enrollment.count({ where: { status: 'ACTIVE', ...orgEnrollFilter } }),
     prisma.sessionFeedback.count(),
   ])
 

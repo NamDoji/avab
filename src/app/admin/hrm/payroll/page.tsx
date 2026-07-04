@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth'
+import { getOrganizationContext } from '@/lib/organization'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
@@ -33,6 +34,12 @@ function calcDeduction(salary: number): number {
 export default async function HRMPayrollPage() {
   const session = await auth()
   if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
+
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const orgCtx = await getOrganizationContext(userId)
+  const orgUserFilter = orgCtx?.id
+    ? { organizationUsers: { some: { organizationId: orgCtx.id } } }
+    : {}
 
   const now = new Date()
   const monthLabel = `Tháng ${now.getMonth() + 1}/${now.getFullYear()}`

@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth'
+import { getOrganizationContext } from '@/lib/organization'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
@@ -19,13 +20,19 @@ export default async function HRMPage() {
   const session = await auth()
   if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const orgCtx = await getOrganizationContext(userId)
+  const orgUserFilter = orgCtx?.id
+    ? { organizationUsers: { some: { organizationId: orgCtx.id } } }
+    : {}
+
   const now = new Date()
   const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
   const [totalStaff, adminCount, teacherCount, pendingLeave, expiringContracts] = await Promise.all([
     prisma.user.count({ where: { role: { in: ['ADMIN', 'TEACHER'] } } }),
-    prisma.user.count({ where: { role: 'ADMIN' } }),
-    prisma.user.count({ where: { role: 'TEACHER' } }),
+    prisma.user.count({ where: { role: 'ADMIN', ...orgUserFilter } }),
+    prisma.user.count({ where: { role: 'TEACHER', ...orgUserFilter } }),
     prisma.leaveRequest.count({ where: { status: 'pending' } }).catch(() => 0),
     prisma.contract
       .count({ where: { status: 'active', endDate: { gte: now, lte: in30Days } } })
