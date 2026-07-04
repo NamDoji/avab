@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { checkModuleAccess } from '@/lib/module-gate'
 
 // Simulate job ID generation
 function generateJobId(module: string): string {
@@ -23,10 +23,8 @@ function estimateDuration(module: string, params: Record<string, unknown>): numb
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const gate = await checkModuleAccess(req, 'ai')
+    if ('error' in gate) return NextResponse.json({ error: gate.error }, { status: gate.status })
 
     const body = await req.json()
     const { module, params } = body as { module: string; params: Record<string, unknown> }

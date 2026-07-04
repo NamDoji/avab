@@ -18,18 +18,17 @@ export async function GET() {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
 
-  // ClassRoom has no direct organizationId field — we use schoolId to scope by campus.
-  // orgCtx.campusIds = campuses the user belongs to; schoolId on ClassRoom = campusId when set.
+  // Scope classrooms by organizationId.
   // Super admin (orgCtx = null) sees all classrooms.
   const orgCtx = await getOrganizationContext(check.userId)
 
   try {
-    // Build where clause: filter by campusIds if org admin has assigned campuses
+    // Build where clause: filter by organizationId if org admin
     const where: Record<string, unknown> = {}
-    if (orgCtx && orgCtx.campusIds.length > 0) {
-      where.schoolId = { in: orgCtx.campusIds }
+    if (orgCtx) {
+      where.organizationId = orgCtx.id
     }
-    // If org admin has no campusIds, they see all (graceful fallback)
+    // If super admin (orgCtx = null), sees all classrooms
 
     const classrooms = await prisma.classRoom.findMany({
       where,
@@ -58,20 +57,15 @@ export async function POST(request: NextRequest) {
       type?: string
       floor?: number
       building?: string
-      schoolId?: string
+      organizationId?: string
     }
 
     if (!body.name) {
       return NextResponse.json({ success: false, error: 'Tên phòng học là bắt buộc' }, { status: 400 })
     }
 
-    // Validate schoolId (campusId) belongs to this org if provided
-    if (orgCtx && body.schoolId && !orgCtx.campusIds.includes(body.schoolId)) {
-      return NextResponse.json(
-        { success: false, error: 'schoolId không thuộc tổ chức của bạn' },
-        { status: 403 }
-      )
-    }
+    // Org admin: force organizationId to their org
+    const orgIdToUse = orgCtx ? orgCtx.id : (body.organizationId ?? null)
 
     const classroom = await prisma.classRoom.create({
       data: {
@@ -80,7 +74,7 @@ export async function POST(request: NextRequest) {
         type: body.type ?? 'standard',
         floor: body.floor ?? null,
         building: body.building ?? null,
-        schoolId: body.schoolId ?? null,
+        organizationId: orgIdToUse,
       },
     })
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
 import { openai } from '@/lib/openai'
+import { checkModuleAccess } from '@/lib/module-gate'
 
 // Context-aware system prompts per section
 function buildSystemPrompt(pathname: string): string {
@@ -83,10 +83,8 @@ Các module chính: Dashboard | AI Studio | Course Library | Question Bank | Ana
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const gate = await checkModuleAccess(req, 'ai')
+    if ('error' in gate) return NextResponse.json({ error: gate.error }, { status: gate.status })
 
     const body = await req.json() as {
       message: string

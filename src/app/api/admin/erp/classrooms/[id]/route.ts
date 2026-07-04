@@ -38,16 +38,16 @@ export async function PUT(
       isActive?: boolean
     }
 
-    // Org-scope: ADMIN chỉ thao tác phòng học thuộc campus của org mình
+    // Org-scope: ADMIN chỉ thao tác phòng học thuộc org mình
     if (orgCtx) {
       const existing = await prisma.classRoom.findUnique({
         where: { id },
-        select: { schoolId: true },
+        select: { organizationId: true },
       })
       if (!existing) {
         return NextResponse.json({ success: false, error: 'Không tìm thấy phòng học' }, { status: 404 })
       }
-      if (existing.schoolId && !orgCtx.campusIds.includes(existing.schoolId)) {
+      if (existing.organizationId && existing.organizationId !== orgCtx.id) {
         return NextResponse.json({ success: false, error: 'Không có quyền truy cập phòng học này' }, { status: 403 })
       }
     }
@@ -84,16 +84,16 @@ export async function DELETE(
   const { id } = await params
 
   try {
-    // Org-scope: ADMIN chỉ thao tác phòng học thuộc campus của org mình
+    // Org-scope: ADMIN chỉ thao tác phòng học thuộc org mình
     if (orgCtx) {
       const existing = await prisma.classRoom.findUnique({
         where: { id },
-        select: { schoolId: true },
+        select: { organizationId: true },
       })
       if (!existing) {
         return NextResponse.json({ success: false, error: 'Không tìm thấy phòng học' }, { status: 404 })
       }
-      if (existing.schoolId && !orgCtx.campusIds.includes(existing.schoolId)) {
+      if (existing.organizationId && existing.organizationId !== orgCtx.id) {
         return NextResponse.json({ success: false, error: 'Không có quyền truy cập phòng học này' }, { status: 403 })
       }
     }

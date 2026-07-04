@@ -170,18 +170,20 @@ model Enrollment {
 }
 
 model Subject {
-  id          String   @id @default(cuid())
-  courseId    String
-  order       Int      @default(0)
-  name        String
-  icon        String?
-  description String?
-  isActive    Boolean  @default(true)
-  isPreview   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  courseId       String
+  organizationId String?
+  order          Int      @default(0)
+  name           String
+  icon           String?
+  description    String?
+  isActive       Boolean  @default(true)
+  isPreview      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   course              Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  organization        Organization?       @relation("OrgSubjects", fields: [organizationId], references: [id], onDelete: SetNull)
   materials           SubjectMaterial[]
   questions           Question[]
   homeworkSets        HomeworkSet[]
@@ -194,6 +196,7 @@ model Subject {
 model HomeworkSet {
   id              String   @id @default(cuid())
   subjectId       String
+  organizationId  String?
   title           String
   order           Int      @default(0)
   fileUrl         String?
@@ -202,8 +205,9 @@ model HomeworkSet {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  subject   Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  questions Question[]
+  subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  organization Organization? @relation("OrgHomeworkSets", fields: [organizationId], references: [id], onDelete: SetNull)
+  questions    Question[]
 
   @@map("avab_homework_sets")
 }
@@ -225,9 +229,10 @@ model SubjectMaterial {
 }
 
 model Question {
-  id            String   @id @default(cuid())
-  subjectId     String
-  homeworkSetId String?
+  id             String   @id @default(cuid())
+  subjectId      String
+  organizationId String?
+  homeworkSetId  String?
   order         Int      @default(0)
   questionType  String   @default("OPEN")
   content       String
@@ -241,9 +246,10 @@ model Question {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  homeworkSet HomeworkSet? @relation(fields: [homeworkSetId], references: [id], onDelete: SetNull)
-  answers     StudentAnswer[]
+  subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  organization Organization? @relation("OrgQuestions", fields: [organizationId], references: [id], onDelete: SetNull)
+  homeworkSet  HomeworkSet?  @relation(fields: [homeworkSetId], references: [id], onDelete: SetNull)
+  answers      StudentAnswer[]
 
   @@map("avab_questions")
 }
@@ -504,8 +510,12 @@ model Organization {
 
   campuses         Campus[]
   organizationUsers OrganizationUser[]
-  courses          Course[]     @relation("OrgCourses")
-  aiProjects       AIProject[]  @relation("OrgAIProjects")
+  courses          Course[]      @relation("OrgCourses")
+  aiProjects       AIProject[]   @relation("OrgAIProjects")
+  subjects         Subject[]     @relation("OrgSubjects")
+  homeworkSets     HomeworkSet[] @relation("OrgHomeworkSets")
+  questions        Question[]    @relation("OrgQuestions")
+  classRooms       ClassRoom[]   @relation("OrgClassRooms")
   busRoutes        BusRoute[]
   uniformItems     UniformItem[]
   uniformOrders    UniformOrder[]
@@ -1000,16 +1010,19 @@ model ContentVersion {
 // ── School ERP ──────────────────────────────────────────────────────────────
 
 model ClassRoom {
-  id          String   @id @default(cuid())
-  schoolId    String?
-  name        String
-  capacity    Int      @default(30)
-  type        String   @default("standard") // standard | lab | computer | music | gym
-  floor       Int?
-  building    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  organizationId String?
+  name           String
+  capacity       Int      @default(30)
+  type           String   @default("standard") // standard | lab | computer | music | gym
+  floor          Int?
+  building       String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization? @relation("OrgClassRooms", fields: [organizationId], references: [id], onDelete: SetNull)
+
   @@map("avab_classrooms")
 }
 
