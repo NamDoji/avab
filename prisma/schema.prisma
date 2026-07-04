@@ -1132,10 +1132,25 @@ model TimetableRule {
   ruleScope       String   @default("all") // all|level|teacher|class
   scopeValue      String?
   value           Json
+  isHard          Boolean  @default(true)
   isActive        Boolean  @default(true)
   description     String?
   createdAt       DateTime @default(now())
 
   @@index([organizationId])
   @@map("avab_timetable_rules")
+}
+
+model TeacherAvailability {
+  id          String   @id @default(cuid())
+  teacherId   String
+  dayOfWeek   Int      // 1=T2, 2=T3, ..., 7=CN
+  periodFrom  Int      // first available period
+  periodTo    Int      // last available period
+  campusId    String?
+  note        String?
+  createdAt   DateTime @default(now())
+
+  @@index([teacherId])
+  @@map("avab_teacher_availability")
 }

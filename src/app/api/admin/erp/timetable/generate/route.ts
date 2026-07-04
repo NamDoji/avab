@@ -3,24 +3,34 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { openai } from '@/lib/openai'
 
-interface TimetableConstraints {
-  periodsPerDay: number
-  daysPerWeek: number
-  maxPeriodsPerTeacher: number
-}
-
-interface GenerateRequest {
-  campusId: string
-  semesterId?: string
-  constraints?: Partial<TimetableConstraints>
-}
-
 interface SlotAssignment {
   courseId: string
   teacherId: string | null
   roomId: string | null
   dayOfWeek: number
   period: number
+  levelCode?: string
+}
+
+interface VersionOutput {
+  name: string
+  score: number
+  conflicts: number
+  description: string
+  slots: SlotAssignment[]
+}
+
+interface GenerateRequest {
+  campusId: string
+  semesterId?: string
+  numVersions?: 1 | 2 | 3
+  includeSaturday?: boolean
+  includeSunday?: boolean
+  constraints?: {
+    periodsPerDay?: number
+    daysPerWeek?: number
+    maxPeriodsPerTeacher?: number
+  }
 }
 
 function detectConflicts(slots: SlotAssignment[]): number {
@@ -30,11 +40,8 @@ function detectConflicts(slots: SlotAssignment[]): number {
       const a = slots[i]
       const b = slots[j]
       if (a.dayOfWeek !== b.dayOfWeek || a.period !== b.period) continue
-      // Same teacher at same time
       if (a.teacherId && b.teacherId && a.teacherId === b.teacherId) conflicts++
-      // Same room at same time
       if (a.roomId && b.roomId && a.roomId === b.roomId) conflicts++
-      // Same course at same time
       if (a.courseId === b.courseId) conflicts++
     }
   }
@@ -44,7 +51,6 @@ function detectConflicts(slots: SlotAssignment[]): number {
 function calculateScore(slots: SlotAssignment[], conflicts: number): number {
   if (slots.length === 0) return 0
   const conflictPenalty = conflicts * 10
-  // Reward even distribution across days
   const dayCounts: Record<number, number> = {}
   for (const s of slots) {
     dayCounts[s.dayOfWeek] = (dayCounts[s.dayOfWeek] ?? 0) + 1
@@ -53,11 +59,12 @@ function calculateScore(slots: SlotAssignment[], conflicts: number): number {
   const avg = dayValues.reduce((a, b) => a + b, 0) / dayValues.length
   const variance = dayValues.reduce((acc, v) => acc + Math.pow(v - avg, 2), 0) / dayValues.length
   const distributionScore = Math.max(0, 20 - variance)
-
   const base = 80
   const score = Math.max(0, Math.min(100, base + distributionScore - conflictPenalty))
   return Math.round(score * 10) / 10
 }
+
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
 
 export async function POST(req: NextRequest) {
   try {
@@ -68,11 +75,9 @@ export async function POST(req: NextRequest) {
 
     const body: GenerateRequest = await req.json()
     const { campusId, semesterId } = body
-    const constraints: TimetableConstraints = {
-      periodsPerDay: body.constraints?.periodsPerDay ?? 8,
-      daysPerWeek: body.constraints?.daysPerWeek ?? 5,
-      maxPeriodsPerTeacher: body.constraints?.maxPeriodsPerTeacher ?? 6,
-    }
+    const numVersions = Math.min(3, Math.max(1, body.numVersions ?? 1)) as 1 | 2 | 3
+    const includeSaturday = body.includeSaturday ?? false
+    const includeSunday = body.includeSunday ?? false
 
     if (!campusId) {
       return NextResponse.json({ error: 'campusId là bắt buộc' }, { status: 400 })
@@ -84,7 +89,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Campus không tồn tại' }, { status: 404 })
     }
 
-    // 2. Fetch active courses at this campus (or org-wide)
+    // 2. Load EducationLevelConfig from DB
+    const levelConfigs = await prisma.educationLevelConfig.findMany({
+      where: { organizationId: campus.organizationId },
+    })
+
+    // 3. Load HolidayCalendar
+    const now = new Date()
+    const semesterEnd = new Date(now.getFullYear(), now.getMonth() + 6, 1)
+    const holidays = await prisma.holidayCalendar.findMany({
+      where: {
+        organizationId: campus.organizationId,
+        startDate: { lte: semesterEnd },
+        endDate: { gte: now },
+      },
+      orderBy: { startDate: 'asc' },
+    })
+
+    // 4. Load TimetableRules (active only, exclude teacher_subjects)
+    const rules = await prisma.timetableRule.findMany({
+      where: {
+        organizationId: campus.organizationId,
+        isActive: true,
+        ruleType: { not: 'teacher_subjects' },
+      },
+    })
+
+    // 5. Fetch courses, teachers, rooms
     const courses = await prisma.course.findMany({
       where: {
         isActive: true,
@@ -97,23 +128,18 @@ export async function POST(req: NextRequest) {
       take: 50,
     })
 
-    // 3. Fetch teachers (CampusUser with campusRole = TEACHER or any campusRole)
     const campusUsers = await prisma.campusUser.findMany({
       where: { campusId },
       include: { user: { select: { id: true, name: true, role: true } } },
       take: 30,
     })
     const teachers = campusUsers
-      .filter((cu) => cu.user.role === 'TEACHER' || cu.campusRole === 'TEACHER')
-      .map((cu) => ({ id: cu.user.id, name: cu.user.name ?? 'GV' }))
+      .filter(cu => cu.user.role === 'TEACHER' || cu.campusRole === 'TEACHER')
+      .map(cu => ({ id: cu.user.id, name: cu.user.name ?? 'GV' }))
+    const allStaff = teachers.length > 0
+      ? teachers
+      : campusUsers.map(cu => ({ id: cu.user.id, name: cu.user.name ?? 'Staff' }))
 
-    // Fallback: all campusUsers as potential teachers
-    const allStaff =
-      teachers.length > 0
-        ? teachers
-        : campusUsers.map((cu) => ({ id: cu.user.id, name: cu.user.name ?? 'Staff' }))
-
-    // 4. Fetch classrooms
     const rooms = await prisma.classRoom.findMany({
       where: { isActive: true },
       select: { id: true, name: true, capacity: true },
@@ -127,60 +153,89 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 5. Build AI prompt
-    const prompt = `Bạn là chuyên gia xếp thời khóa biểu giáo dục.
-Tạo thời khóa biểu tối ưu cho ${courses.length} lớp học.
+    // 6. Build working days
+    const baseDays = [1, 2, 3, 4, 5]
+    if (includeSaturday) baseDays.push(6)
+    if (includeSunday) baseDays.push(7)
 
-Danh sách lớp (courseId: tên):
-${courses.map((c) => `- ${c.id}: ${c.code} - ${c.name} (${c.subjectName ?? 'Chung'})`).join('\n')}
+    // 7. Build system prompt with config context
+    const levelConfigText = levelConfigs.length > 0
+      ? levelConfigs.map(l => {
+          const periodSchedule = Array.isArray(l.periodSchedule) ? l.periodSchedule : []
+          const workingDays = Array.isArray(l.workingDays) ? (l.workingDays as JsonValue[]).map(Number) : baseDays
+          const dayNames = ['', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']
+          return `${l.levelName} (${l.level}):
+  - Số tiết/ngày: ${l.periodsPerDay}
+  - Thời lượng: ${l.periodDuration} phút/tiết
+  - Ngày học: ${workingDays.map((d: number) => dayNames[d] ?? d).join(', ')}
+  - Giờ học: ${JSON.stringify(periodSchedule)}`
+        }).join('\n\n')
+      : `Mặc định: 5 tiết/ngày, 45 phút/tiết, T2-T6`
+
+    const holidayText = holidays.length > 0
+      ? holidays.map(h => `${h.name}: ${h.startDate.toLocaleDateString('vi-VN')} đến ${h.endDate.toLocaleDateString('vi-VN')}`).join('\n')
+      : 'Không có ngày nghỉ trong kỳ'
+
+    const rulesText = rules.length > 0
+      ? rules.map(r => `- ${r.description ?? r.ruleType}: ${JSON.stringify(r.value)}`).join('\n')
+      : '- Không có quy tắc đặc biệt (dùng quy tắc mặc định)'
+
+    const systemPrompt = `Bạn là chuyên gia xếp thời khóa biểu cho trường học Việt Nam.
+
+CẤU HÌNH CẤP HỌC:
+${levelConfigText}
+
+NGÀY NGHỈ TRONG KỲ:
+${holidayText}
+
+QUY TẮC BẮT BUỘC:
+${rulesText}
+
+Tạo ${numVersions} phương án thời khóa biểu (phương án 1 tối ưu nhất, các phương án sau là phương án dự phòng).
+
+Danh sách lớp học (courseId: tên):
+${courses.map(c => `- ${c.id}: ${c.code} - ${c.name} (${c.subjectName ?? 'Chung'})`).join('\n')}
 
 Giáo viên (${allStaff.length}):
-${allStaff.map((t) => `- ${t.id}: ${t.name}`).join('\n')}
+${allStaff.map(t => `- ${t.id}: ${t.name}`).join('\n')}
 
 Phòng học (${rooms.length}):
-${rooms.map((r) => `- ${r.id}: ${r.name} (sức chứa: ${r.capacity ?? 30})`).join('\n')}
+${rooms.map(r => `- ${r.id}: ${r.name} (sức chứa: ${r.capacity ?? 30})`).join('\n')}
 
 Yêu cầu:
+- dayOfWeek: 1=T2, 2=T3, 3=T4, 4=T5, 5=T6, 6=T7, 7=CN
+- Ngày học hợp lệ: ${baseDays.join(', ')}
+- KHÔNG trùng: giáo viên, phòng học, lớp học cùng tiết
 - Mỗi lớp: 5 tiết/tuần
-- Mỗi ngày: tối đa ${constraints.periodsPerDay} tiết (tiết từ 1 đến ${constraints.periodsPerDay})
-- Tuần: ${constraints.daysPerWeek} ngày học (dayOfWeek: 1=T2, 2=T3, 3=T4, 4=T5, 5=T6)
-- Giáo viên: tối đa ${constraints.maxPeriodsPerTeacher} tiết/ngày
-- KHÔNG trùng: giáo viên, phòng học, lớp học cùng tiết (cùng dayOfWeek + period)
-- Tối ưu hóa để giảm khoảng trống giữa các tiết trong ngày
+${allStaff.length === 0 ? '- Không có giáo viên — để teacherId là null' : ''}
+${rooms.length === 0 ? '- Không có phòng học — để roomId là null' : ''}
 
-${allStaff.length === 0 ? 'Không có giáo viên — để teacherId là null.' : ''}
-${rooms.length === 0 ? 'Không có phòng học — để roomId là null.' : ''}
+Trả về JSON (chỉ JSON thuần túy, không markdown):
+{
+  "versions": [
+    {
+      "name": "Phương án 1 — Tối ưu",
+      "score": 95,
+      "conflicts": 0,
+      "description": "Lý do đây là phương án tốt nhất",
+      "slots": [{"courseId": "...", "teacherId": "..." , "roomId": "...", "dayOfWeek": 1, "period": 1, "levelCode": "TH"}]
+    }
+  ]
+}`
 
-Trả về JSON array (chỉ JSON, không có markdown, không có giải thích):
-[
-  {
-    "courseId": "...",
-    "teacherId": "..." hoặc null,
-    "roomId": "..." hoặc null,
-    "dayOfWeek": 1,
-    "period": 1
-  }
-]
-
-Đảm bảo không có conflict. Mỗi slot phải có courseId hợp lệ từ danh sách trên.`
-
-    // 6. Call GPT-4o
-    let slots: SlotAssignment[] = []
+    // 8. Call GPT-4o
+    let versions: VersionOutput[] = []
     let aiError: string | null = null
 
     try {
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [
-          {
-            role: 'system',
-            content:
-              'Bạn là chuyên gia xếp thời khóa biểu. Chỉ trả về JSON array thuần túy, không markdown.',
-          },
-          { role: 'user', content: prompt },
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Tạo ${numVersions} phương án TKB theo cấu hình trên.` },
         ],
         temperature: 0.3,
-        max_tokens: 4000,
+        max_tokens: 8000,
         response_format: { type: 'json_object' },
       })
 
@@ -189,100 +244,113 @@ Trả về JSON array (chỉ JSON, không có markdown, không có giải thích
       try {
         parsed = JSON.parse(rawContent)
       } catch {
-        // Fallback: try to extract JSON array from text
-        const match = rawContent.match(/\[[\s\S]*\]/)
-        if (match) {
-          parsed = JSON.parse(match[0])
-        } else {
-          throw new Error('Không thể parse JSON từ AI response')
-        }
+        const match = rawContent.match(/\{[\s\S]*\}/)
+        if (match) parsed = JSON.parse(match[0])
+        else throw new Error('Không thể parse JSON từ AI response')
       }
 
-      // Handle both array and object with slots key
-      if (Array.isArray(parsed)) {
-        slots = parsed as SlotAssignment[]
-      } else if (parsed && typeof parsed === 'object') {
-        const obj = parsed as Record<string, unknown>
-        const key = Object.keys(obj).find((k) => Array.isArray(obj[k]))
-        if (key) {
-          slots = obj[key] as SlotAssignment[]
-        }
+      const obj = parsed as Record<string, unknown>
+      if (Array.isArray(obj.versions)) {
+        versions = obj.versions as VersionOutput[]
+      } else if (Array.isArray(parsed)) {
+        // Fallback: single version as array of slots
+        versions = [{
+          name: 'Phương án 1 — Tự động',
+          score: 80,
+          conflicts: 0,
+          description: 'TKB được tạo tự động',
+          slots: parsed as SlotAssignment[],
+        }]
       }
 
-      // Validate slots
-      const validCourseIds = new Set(courses.map((c) => c.id))
-      slots = slots.filter(
-        (s) =>
+      // Validate slots per version
+      const validCourseIds = new Set(courses.map(c => c.id))
+      versions = versions.map(v => ({
+        ...v,
+        slots: (v.slots ?? []).filter(s =>
           s.courseId &&
           validCourseIds.has(s.courseId) &&
           s.dayOfWeek >= 1 &&
-          s.dayOfWeek <= 6 &&
+          s.dayOfWeek <= 7 &&
+          baseDays.includes(s.dayOfWeek) &&
           s.period >= 1 &&
           s.period <= 10
-      )
+        ),
+      }))
     } catch (err) {
       aiError = err instanceof Error ? err.message : 'GPT-4o call failed'
-      // Return error with details
       return NextResponse.json(
-        {
-          error: 'AI generation failed',
-          details: aiError,
-          hint: 'Kiểm tra OPENAI_API_KEY và thử lại',
-        },
+        { error: 'AI generation failed', details: aiError, hint: 'Kiểm tra OPENAI_API_KEY và thử lại' },
         { status: 502 }
       )
     }
 
-    // 7. Calculate conflicts & score
-    const conflicts = detectConflicts(slots)
-    const score = calculateScore(slots, conflicts)
+    // 9. Save TimetableVersion records + slots for each version
+    const savedVersions = []
 
-    // 8. Create TimetableVersion
-    const versionName = semesterId
-      ? `TKB ${semesterId} - ${campus.name}`
-      : `TKB ${new Date().toLocaleDateString('vi-VN')} - ${campus.name}`
+    for (let vi = 0; vi < versions.length; vi++) {
+      const v = versions[vi]
+      const slots = v.slots ?? []
+      const conflicts = detectConflicts(slots)
+      const score = v.score ?? calculateScore(slots, conflicts)
 
-    const version = await prisma.timetableVersion.create({
-      data: {
-        organizationId: campus.organizationId,
-        campusId,
-        semesterId: semesterId ?? null,
-        name: versionName,
-        status: 'draft',
-        score,
-        conflicts,
-        generatedAt: new Date(),
-      },
-    })
+      const versionName = v.name ?? (semesterId
+        ? `TKB ${semesterId} - ${campus.name} v${vi + 1}`
+        : `TKB ${new Date().toLocaleDateString('vi-VN')} - ${campus.name} v${vi + 1}`)
 
-    // 9. Save TimetableSlot records in batches
-    if (slots.length > 0) {
-      const slotData = slots.map((s) => ({
-        organizationId: campus.organizationId,
-        campusId,
-        versionId: version.id,
-        courseId: s.courseId,
-        teacherId: s.teacherId ?? null,
-        roomId: s.roomId ?? null,
-        dayOfWeek: s.dayOfWeek,
-        period: s.period,
-        semesterId: semesterId ?? null,
-        status: 'active',
-      }))
+      const version = await prisma.timetableVersion.create({
+        data: {
+          organizationId: campus.organizationId,
+          campusId,
+          semesterId: semesterId ?? null,
+          name: versionName,
+          status: 'draft',
+          score,
+          conflicts,
+          generatedAt: new Date(),
+        },
+      })
 
-      // Insert in chunks of 100
-      const CHUNK = 100
-      for (let i = 0; i < slotData.length; i += CHUNK) {
-        await prisma.timetableSlot.createMany({ data: slotData.slice(i, i + CHUNK) })
+      if (slots.length > 0) {
+        const slotData = slots.map(s => ({
+          organizationId: campus.organizationId,
+          campusId,
+          versionId: version.id,
+          courseId: s.courseId,
+          teacherId: s.teacherId ?? null,
+          roomId: s.roomId ?? null,
+          dayOfWeek: s.dayOfWeek,
+          period: s.period,
+          semesterId: semesterId ?? null,
+          status: 'active',
+        }))
+        const CHUNK = 100
+        for (let i = 0; i < slotData.length; i += CHUNK) {
+          await prisma.timetableSlot.createMany({ data: slotData.slice(i, i + CHUNK) })
+        }
       }
+
+      savedVersions.push({
+        versionId: version.id,
+        versionName: version.name,
+        slots: slots.length,
+        conflicts,
+        score,
+        description: v.description ?? '',
+        status: 'draft',
+      })
     }
 
     return NextResponse.json({
-      versionId: version.id,
-      versionName: version.name,
-      slots: slots.length,
-      conflicts,
-      score,
+      success: true,
+      numVersions: savedVersions.length,
+      versions: savedVersions,
+      // Keep backward compat for single-version callers
+      versionId: savedVersions[0]?.versionId,
+      versionName: savedVersions[0]?.versionName,
+      slots: savedVersions[0]?.slots,
+      conflicts: savedVersions[0]?.conflicts,
+      score: savedVersions[0]?.score,
       status: 'draft',
     })
   } catch (err) {
