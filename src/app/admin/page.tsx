@@ -23,7 +23,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
       { href: '/admin/enrollments',      icon: '📝', label: 'Đăng ký học', desc: 'Ghi danh & phê duyệt' },
       { href: '/admin/finance/invoices', icon: '💰', label: 'Thu học phí', desc: 'Đợt thu & thanh toán' },
       // AI Tạo khoá học — CHỈ SUPER_ADMIN (quản trị AvaB)
-      ...(isSuperAdmin ? [{ href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'AI Tạo khoá học', desc: 'Sinh khoá học bằng AI' }] : []),
+      ...(isSuperAdmin ? [{ href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'AI Tạo khoá học', desc: 'Chỉ dành cho AvaB' }] : []),
     ],
   },
   {
@@ -149,16 +149,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
       { href: '/admin/data-migration', icon: '📦', label: 'Data Migration',  desc: 'Import/Export dữ liệu' },
     ],
   },
-  ...(isSuperAdmin ? [{
-    id: 'platform', icon: '🔧', label: '🔧 Platform Admin',
-    modules: [
-      { href: '/admin/platform',       icon: '🔧', label: 'Platform',        desc: 'Quản trị nền tảng AvaB' },
-      { href: '/admin/organizations',  icon: '🏢', label: 'Tất cả tổ chức', desc: 'Tạo & quản lý org' },
-      { href: '/admin/users',          icon: '👤', label: 'Tất cả user',    desc: 'Người dùng hệ thống' },
-      { href: '/admin/app-center',     icon: '🧩', label: 'App Center',      desc: 'Tích hợp & mở rộng' },
-      { href: '/admin/app-center/api', icon: '🔌', label: 'API Platform',    desc: 'REST & GraphQL' },
-    ],
-  }] : []),
+
 ]}
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
