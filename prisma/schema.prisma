@@ -41,7 +41,8 @@ model User {
   alumniRecord      AlumniRecord?
   classTransfers    ClassTransfer[] @relation("StudentTransfers")
   contracts         Contract[]
-  kpiRecords        KpiRecord[]
+  kpiRecords          KpiRecord[]
+  homeworkSubmissions HomeworkSubmission[] @relation("SubmissionStudent")
 
   @@map("avab_users")
 }
@@ -177,11 +178,12 @@ model Subject {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  course           Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  materials        SubjectMaterial[]
-  questions        Question[]
-  homeworkSets     HomeworkSet[]
-  sessionFeedbacks SessionFeedback[]
+  course              Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  materials           SubjectMaterial[]
+  questions           Question[]
+  homeworkSets        HomeworkSet[]
+  sessionFeedbacks    SessionFeedback[]
+  homeworkSubmissions HomeworkSubmission[] @relation("SubmissionSubject")
 
   @@map("avab_subjects")
 }
@@ -1389,4 +1391,40 @@ model ClassTransfer {
 
   @@index([organizationId])
   @@map("avab_class_transfers")
+}
+
+model HomeworkSubmission {
+  id          String    @id @default(cuid())
+  studentId   String
+  subjectId   String
+  materialId  String?   // SubjectMaterial HOMEWORK type
+  content     String    @db.Text // student's answers (JSON or text)
+  score       Float?
+  feedback    String?
+  status      String    @default("submitted") // submitted | graded | returned
+  submittedAt DateTime  @default(now())
+  gradedAt    DateTime?
+  gradedBy    String?
+
+  student User    @relation("SubmissionStudent", fields: [studentId], references: [id])
+  subject Subject @relation("SubmissionSubject", fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, subjectId])
+  @@map("avab_homework_submissions")
+}
+
+model HomeworkSubmission {
+  id          String   @id @default(cuid())
+  studentId   String
+  subjectId   String
+  materialId  String?
+  content     String   @db.Text
+  score       Float?
+  feedback    String?
+  status      String   @default("submitted")
+  submittedAt DateTime @default(now())
+  gradedAt    DateTime?
+  gradedBy    String?
+  @@index([studentId, subjectId])
+  @@map("avab_homework_submissions")
 }
