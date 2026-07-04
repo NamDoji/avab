@@ -12,38 +12,41 @@ interface Props {
 }
 
 const NAV = [
-  { group: '🤖 AI & Nội dung', items: [
-    { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio' },
-    { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator' },
-    { href: '/admin/ai-decision',                icon: '🧠', label: 'AI Decision' },
-    { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank' },
-    { href: '/admin/material-import',            icon: '📥', label: 'Material Import' },
-    { href: '/admin/publishing',                 icon: '📤', label: 'Publishing' },
-    { href: '/admin/education-standards',        icon: '📖', label: 'AvaB Standards' },
+  // ── 1. Khoá học (đầu tiên — sản phẩm cốt lõi) ───────────────────────────
+  { group: '📚 Khoá học', items: [
+    { href: '/admin/courses',                    icon: '📚', label: 'Khoá học' },
+    { href: '/admin/enrollments',                icon: '📝', label: 'Đăng ký học' },
+    { href: '/admin/finance/invoices',           icon: '💰', label: 'Thu học phí' },
+    { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Tạo khoá AI' },
   ]},
-  { group: '🏫 Học vụ', items: [
-    { href: '/admin/courses',            icon: '📚', label: 'Khoá học' },
-    { href: '/admin/enrollments',        icon: '📝', label: 'Đăng ký học' },
-    { href: '/admin/erp',                icon: '🏫', label: 'ERP Hub' },
-    { href: '/admin/erp/students',       icon: '👥', label: 'Học sinh' },
-    { href: '/admin/erp/teachers',       icon: '👨‍🏫', label: 'Giáo viên' },
-    { href: '/admin/erp/classes',        icon: '📋', label: 'Lớp học' },
-    { href: '/admin/erp/attendance',     icon: '✅', label: 'Điểm danh' },
-    { href: '/admin/erp/timetable',      icon: '📅', label: 'TKB AI' },
-    { href: '/admin/erp/academic-years', icon: '📆', label: 'Năm học' },
-    { href: '/admin/erp/classrooms',     icon: '🚪', label: 'Phòng học' },
-    { href: '/admin/erp/equipment',      icon: '💻', label: 'Thiết bị' },
-    { href: '/admin/erp/transfers',      icon: '🔄', label: 'Chuyển lớp' },
-    { href: '/admin/erp/alumni',         icon: '🎓', label: 'Alumni' },
-    { href: '/admin/erp/health',         icon: '🏥', label: 'Sức khỏe' },
-    { href: '/admin/erp/awards',         icon: '🏆', label: 'Khen thưởng' },
-    { href: '/admin/erp/rewards',        icon: '🎮', label: 'Điểm thưởng' },
-    { href: '/admin/erp/reports',        icon: '📊', label: 'Báo cáo ERP' },
-    { href: '/admin/erp/bus-routes',     icon: '🚌', label: 'Xe tuyến' },
-    { href: '/admin/erp/uniforms',       icon: '👕', label: 'Đồng phục' },
-    { href: '/admin/erp/canteen',        icon: '🍽️', label: 'Căng tin' },
-    { href: '/admin/erp/library',        icon: '📖', label: 'Thư viện' },
+  // ── 2. Thành viên (học sinh + GV + tài khoản — cùng nhóm người) ──────────
+  { group: '👥 Thành viên', items: [
+    { href: '/admin/erp/students', icon: '👦', label: 'Học sinh' },
+    { href: '/admin/erp/teachers', icon: '👨‍🏫', label: 'Giáo viên' },
+    { href: '/admin/users',        icon: '👤', label: 'Tài khoản' },
+    { href: '/admin/erp/classes',  icon: '📋', label: 'Lớp học' },
+    { href: '/admin/erp/transfers',icon: '🔄', label: 'Chuyển lớp' },
+    { href: '/admin/erp/alumni',   icon: '🎓', label: 'Alumni' },
   ]},
+  // ── 3. Học vụ ERP ─────────────────────────────────────────────────────────
+  { group: '🏫 Học vụ ERP', items: [
+    { href: '/admin/erp',                    icon: '🏫', label: 'ERP Hub' },
+    { href: '/admin/erp/attendance',         icon: '✅', label: 'Điểm danh' },
+    { href: '/admin/erp/timetable',          icon: '📅', label: 'TKB AI' },
+    { href: '/admin/erp/timetable/workload', icon: '⚖️', label: 'Tải công GV' },
+    { href: '/admin/erp/classrooms',         icon: '🚪', label: 'Phòng học' },
+    { href: '/admin/erp/health',             icon: '🏥', label: 'Sức khỏe' },
+    { href: '/admin/erp/equipment',          icon: '💻', label: 'Thiết bị' },
+    { href: '/admin/erp/rewards',            icon: '🎮', label: 'Điểm thưởng' },
+    { href: '/admin/erp/awards',             icon: '🏆', label: 'Khen thưởng' },
+    { href: '/admin/erp/reports',            icon: '📊', label: 'Báo cáo ERP' },
+    { href: '/admin/erp/bus-routes',         icon: '🚌', label: 'Xe tuyến' },
+    { href: '/admin/erp/uniforms',           icon: '👕', label: 'Đồng phục' },
+    { href: '/admin/erp/canteen',            icon: '🍽️', label: 'Căng tin' },
+    { href: '/admin/erp/library',            icon: '📖', label: 'Thư viện' },
+    { href: '/admin/erp/academic-years',     icon: '📆', label: 'Năm học' },
+  ]},
+  // ── 4. Tài chính ──────────────────────────────────────────────────────────
   { group: '💰 Tài chính', items: [
     { href: '/admin/finance',                 icon: '💰', label: 'Finance Hub' },
     { href: '/admin/finance/invoices',        icon: '📋', label: 'Hóa đơn' },
@@ -56,12 +59,14 @@ const NAV = [
     { href: '/admin/finance/reports',         icon: '📰', label: 'Báo cáo TC' },
     { href: '/admin/analytics',               icon: '📈', label: 'Phân tích' },
   ]},
+  // ── 5. CRM ────────────────────────────────────────────────────────────────
   { group: '📊 CRM', items: [
     { href: '/admin/crm',           icon: '📊', label: 'CRM Hub' },
     { href: '/admin/crm/pipeline',  icon: '📋', label: 'Pipeline' },
     { href: '/admin/crm/campaigns', icon: '📣', label: 'Campaigns' },
     { href: '/admin/contacts',      icon: '📞', label: 'Contacts' },
   ]},
+  // ── 6. HRM ────────────────────────────────────────────────────────────────
   { group: '👔 HRM', items: [
     { href: '/admin/hrm',            icon: '👔', label: 'HRM Hub' },
     { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên' },
@@ -71,24 +76,35 @@ const NAV = [
     { href: '/admin/hrm/kpi',        icon: '📊', label: 'KPI' },
     { href: '/admin/hrm/payroll',    icon: '💰', label: 'Bảng lương' },
   ]},
+  // ── 7. AI & Nội dung ──────────────────────────────────────────────────────
+  { group: '🤖 AI & Nội dung', items: [
+    { href: '/admin/ai-studio',           icon: '✨', label: 'AI Studio' },
+    { href: '/admin/ai-decision',         icon: '🧠', label: 'AI Decision' },
+    { href: '/admin/question-bank',       icon: '🗃️', label: 'Question Bank' },
+    { href: '/admin/material-import',     icon: '📥', label: 'Material Import' },
+    { href: '/admin/publishing',          icon: '📤', label: 'Publishing' },
+    { href: '/admin/education-standards', icon: '📖', label: 'AvaB Standards' },
+    { href: '/admin/gamification',        icon: '🎮', label: 'Gamification' },
+  ]},
+  // ── 8. Cộng tác ───────────────────────────────────────────────────────────
   { group: '🤝 Cộng tác', items: [
     { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks' },
     { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar' },
     { href: '/admin/collab/meetings', icon: '🎥', label: 'Meetings' },
     { href: '/admin/workflow',        icon: '⚡', label: 'Workflow' },
   ]},
+  // ── 9. Portals ────────────────────────────────────────────────────────────
   { group: '👥 Portals', items: [
     { href: '/giao-vien', icon: '👩‍🏫', label: 'Portal Giáo viên' },
     { href: '/hoc-vien',  icon: '🎒',   label: 'Portal Học sinh' },
     { href: '/phu-huynh', icon: '👨‍👩‍👧', label: 'Portal Phụ huynh' },
   ]},
+  // ── 10. Hệ thống (IT/config — cuối cùng) ─────────────────────────────────
   { group: '⚙️ Hệ thống', items: [
-    { href: '/admin/users',          icon: '👤', label: 'Người dùng' },
-    { href: '/admin/organizations',  icon: '🏢', label: 'Tổ chức' },
     { href: '/admin/roles',          icon: '🛡️', label: 'Phân quyền' },
     { href: '/admin/permissions',    icon: '🔑', label: 'Permissions' },
-    { href: '/admin/gamification',   icon: '🎮', label: 'Gamification' },
     { href: '/admin/audit',          icon: '📋', label: 'Audit Log' },
+    { href: '/admin/organizations',  icon: '🏢', label: 'Tổ chức' },
     { href: '/admin/news',           icon: '📰', label: 'Tin tức' },
     { href: '/admin/notifications',  icon: '🔔', label: 'Thông báo' },
     { href: '/admin/settings',       icon: '⚙️', label: 'Cài đặt' },
@@ -137,7 +153,6 @@ export function AdminMobileMenu({ currentOrg, allOrgs = [] }: Props) {
 
   const drawer = (
     <>
-      {/* Backdrop */}
       <div
         onClick={() => setOpen(false)}
         style={{
@@ -147,8 +162,6 @@ export function AdminMobileMenu({ currentOrg, allOrgs = [] }: Props) {
           WebkitBackdropFilter: 'blur(4px)',
         }}
       />
-
-      {/* Drawer panel */}
       <div style={{
         position: 'fixed', top: 0, right: 0, bottom: 0,
         width: 'min(300px, 85vw)',
