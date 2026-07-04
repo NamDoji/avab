@@ -251,6 +251,7 @@ model StudentAnswer {
 }
 
 model News {
+  organizationId  String?   // null = AvaB platform news (public); non-null = org-specific
   id          String    @id @default(cuid())
   title       String
   slug        String    @unique
@@ -708,6 +709,7 @@ model SchoolCourse {
 
 // Workflow Definition (blueprint)
 model WorkflowDef {
+  organizationId  String?
   id          String   @id @default(cuid())
   name        String
   slug        String   @unique
@@ -730,6 +732,7 @@ model WorkflowDef {
 
 // Running workflow instance
 model WorkflowInstance {
+  organizationId  String?
   id           String    @id @default(cuid())
   workflowId   String
   title        String
@@ -1032,6 +1035,7 @@ model HealthRecord {
 }
 
 model Registration {
+  organizationId  String?   // null = AvaB platform leads
   id        String   @id @default(cuid())
   name      String?
   phone     String
