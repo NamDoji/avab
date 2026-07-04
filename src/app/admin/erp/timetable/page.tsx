@@ -11,7 +11,7 @@ export default async function TimetablePage() {
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
+    <div className="min-h-screen pt-14 bg-gray-50">
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-12"

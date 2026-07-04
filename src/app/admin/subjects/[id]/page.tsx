@@ -591,7 +591,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   )
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 pt-24">
+    <main className="min-h-screen bg-gray-50 p-6 pt-14">
       <div className="max-w-5xl mx-auto">
         <Link href={`/admin/courses/${subject.courseId}`} className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-sm mb-6">
           <ArrowLeft className="w-4 h-4" /> {subject.course.name}

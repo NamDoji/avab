@@ -298,7 +298,7 @@ export default function ApiPlatformClient({ apiKeys: initialKeys, orgId }: Props
         <NewKeyDisplayModal rawKey={newRawKey} onClose={() => setNewRawKey(null)} />
       )}
 
-      <div className="min-h-screen pt-20 bg-gray-50">
+      <div className="min-h-screen pt-14 bg-gray-50">
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <div
           className="relative overflow-hidden text-white py-12"

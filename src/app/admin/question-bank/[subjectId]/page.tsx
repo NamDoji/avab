@@ -419,7 +419,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
     : 'Tất cả lớp'
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
+    <div className="min-h-screen pt-14 bg-gray-50">
       {/* Toast */}
       {toast && (
         <div className="fixed top-6 right-6 z-50 bg-gray-900 text-white px-4 py-3 rounded-2xl shadow-lg font-semibold text-sm">

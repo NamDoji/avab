@@ -444,7 +444,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 pt-24">
+    <main className="min-h-screen bg-gray-50 p-6 pt-14">
       <div className="max-w-5xl mx-auto">
         {/* Back */}
         <div className="flex items-center justify-between mb-6">

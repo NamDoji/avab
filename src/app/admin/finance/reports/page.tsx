@@ -149,7 +149,7 @@ export default async function FinanceReportsPage() {
   })
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-20">
+    <main className="min-h-screen bg-gray-50 pt-14">
       {/* ── Header ── */}
       <div
         className="px-6 py-8"

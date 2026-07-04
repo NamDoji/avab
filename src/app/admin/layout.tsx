@@ -76,12 +76,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <div
         style={{
           position: 'fixed',
-          top: 12,
-          right: 16,
+          top: 0,
+          right: 0,
+          left: 0,
           zIndex: 500,
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          justifyContent: 'flex-end',
+          gap: 6,
+          padding: '8px 12px',
+          background: 'rgba(255,255,255,0.92)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(0,0,0,0.07)',
+          boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+          minHeight: 52,
         }}
       >
         <NavSearchBar />
@@ -94,7 +103,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <AdminErrorBoundary>
         <Suspense
           fallback={
-            <div className="container-custom pt-28 pb-8">
+            <div className="container-custom pt-14 pb-8">
               <LoadingSkeleton type="list" rows={6} />
             </div>
           }

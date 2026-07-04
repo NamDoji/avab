@@ -100,7 +100,7 @@ export default async function AdminGamificationPage() {
   } = await getGamificationData()
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
+    <div className="min-h-screen pt-14 bg-gray-50">
       {/* Hero Header */}
       <div className="relative overflow-hidden py-10 text-white"
         style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}>

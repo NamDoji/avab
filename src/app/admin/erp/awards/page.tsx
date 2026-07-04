@@ -9,7 +9,7 @@ export default async function AwardsPage() {
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
   return (
-    <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen pt-14 flex items-center justify-center bg-gray-50">
       <div className="text-center max-w-md mx-auto p-8">
         <div className="text-6xl mb-4">🏆</div>
         <h1 className="text-2xl font-black text-gray-900 mb-2">Khen thưởng</h1>

@@ -89,7 +89,7 @@ export default function NotificationBell({ initialCount, initialRecent = [] }: P
 
       {/* Dropdown overlay */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[600]">
+        <div className="fixed top-[60px] right-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[9997]" style={{ width: 'min(320px, calc(100vw - 16px))', maxHeight: 'calc(100vh - 80px)', overflowY: 'auto' }}>
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <span className="font-black text-gray-800 text-sm">🔔 Thông báo</span>

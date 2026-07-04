@@ -73,7 +73,7 @@ export default async function CourseGeneratorResultPage({
     'draft' | 'review' | 'approved' | 'published' | 'archived'
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-gray-50 via-emerald-50/10 to-blue-50/10">
+    <div className="min-h-screen pt-14 bg-gradient-to-br from-gray-50 via-emerald-50/10 to-blue-50/10">
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <div className="bg-gradient-to-r from-gray-900 via-emerald-900 to-gray-900 text-white py-8">

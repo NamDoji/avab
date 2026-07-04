@@ -154,7 +154,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 pt-24">
+    <main className="min-h-screen bg-gray-50 p-6 pt-14">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">

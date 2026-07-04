@@ -160,6 +160,69 @@
   animation: float 2s ease-in-out infinite;
 }
 
+/* ── Admin responsive utilities ───────────────────────────────────────────── */
+
+/* Prevent horizontal overflow globally */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Admin page top padding — accounts for fixed top bar (~64px) */
+.admin-page-top {
+  padding-top: 72px;
+}
+@media (max-width: 640px) {
+  .admin-page-top {
+    padding-top: 64px;
+  }
+}
+
+/* Responsive table wrapper */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+@media (min-width: 640px) {
+  .table-responsive {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Admin top bar items — collapse text labels on small screens */
+.admin-topbar-label {
+  display: inline;
+}
+@media (max-width: 640px) {
+  .admin-topbar-label {
+    display: none;
+  }
+}
+
+/* Touch-friendly minimum tap target */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Modal responsive wrapper */
+.modal-body {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 640px) {
+  .modal-body {
+    max-height: calc(100vh - 80px);
+  }
+}
+
+/* Scrollbar hide utility */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* ── Print styles ──────────────────────────────────────────────────────────── */
 @media print {
   nav, header, .no-print, .sidebar, footer, button { display: none !important; }

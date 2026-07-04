@@ -569,7 +569,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
 
   // ── Main render ────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-gray-50 via-gray-50 to-white">
+    <div className="min-h-screen pt-14 bg-gradient-to-br from-gray-50 via-gray-50 to-white">
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className={`bg-gradient-to-r ${mod.gradient} text-white py-8 relative overflow-hidden`}>
         <div className="absolute inset-0 bg-black/10" />

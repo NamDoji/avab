@@ -51,7 +51,7 @@ export default async function PermissionsPage() {
   const modules = Object.keys(grouped).sort()
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
+    <div className="min-h-screen pt-14 bg-gray-50">
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 via-slate-600 to-gray-700 text-white py-10">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />

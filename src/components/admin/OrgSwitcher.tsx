@@ -78,8 +78,8 @@ export function OrgSwitcher({ currentOrg, allOrgs }: Props) {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '8px 14px',
+          gap: 6,
+          padding: '7px 10px',
           borderRadius: 10,
           border: '1.5px solid #e5e7eb',
           background: '#fff',
@@ -87,22 +87,25 @@ export function OrgSwitcher({ currentOrg, allOrgs }: Props) {
           fontWeight: 700,
           fontSize: 13,
           color: '#374151',
-          minWidth: 180,
-          maxWidth: 280,
+          maxWidth: 200,
           boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
           transition: 'border-color 0.15s, box-shadow 0.15s',
+          flexShrink: 0,
         }}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
         <span style={{ fontSize: 16 }}>🏢</span>
+        {/* Hide name on mobile — only show icon */}
         <span
+          className="admin-topbar-label"
           style={{
             flex: 1,
             textAlign: 'left',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            maxWidth: 140,
           }}
         >
           {label}
@@ -112,21 +115,24 @@ export function OrgSwitcher({ currentOrg, allOrgs }: Props) {
         </span>
       </button>
 
-      {/* Dropdown */}
+      {/* Dropdown — fixed so it never overflows viewport */}
       {open && (
         <div
           role="listbox"
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 6px)',
-            right: 0,
-            minWidth: 240,
+            position: 'fixed',
+            top: 60,
+            right: 8,
+            minWidth: Math.min(240, (typeof window !== 'undefined' ? window.innerWidth : 400) - 16),
+            maxWidth: 'calc(100vw - 16px)',
             background: '#fff',
             borderRadius: 12,
             border: '1.5px solid #e5e7eb',
             boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-            zIndex: 1000,
+            zIndex: 9998,
             overflow: 'hidden',
+            maxHeight: 'calc(100vh - 80px)',
+            overflowY: 'auto',
           }}
         >
           {/* Org list */}

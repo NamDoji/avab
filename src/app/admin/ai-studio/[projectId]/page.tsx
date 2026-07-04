@@ -570,7 +570,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="min-h-screen pt-14 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4" />
           <p className="text-gray-500">Đang tải dự án...</p>
@@ -581,7 +581,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
 
   if (!project) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="min-h-screen pt-14 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-500 text-lg mb-4">Không tìm thấy dự án</p>
           <Link href="/admin/ai-studio" className="text-purple-600 hover:underline">← Quay lại AI Studio</Link>
@@ -598,7 +598,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
   }
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50 flex flex-col">
+    <div className="min-h-screen pt-14 bg-gray-50 flex flex-col">
 
       {/* ── Top bar ───────────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3 flex-shrink-0 sticky top-0 z-30" style={{ top: '4rem' }}>

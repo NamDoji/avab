@@ -230,7 +230,7 @@ export default function WebhooksClient({ webhooks: initialWebhooks, orgId }: Pro
     <>
       {showAdd && <AddWebhookModal onClose={() => setShowAdd(false)} onAdded={handleAdded} />}
 
-      <div className="min-h-screen pt-20 bg-gray-50">
+      <div className="min-h-screen pt-14 bg-gray-50">
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <div
           className="relative overflow-hidden text-white py-12"
