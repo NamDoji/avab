@@ -20,6 +20,8 @@ const NAV = [
     { href: '/admin/material-import', icon: '📚', label: 'Material Import' },
   ]},
   { group: '🏫 Học vụ', items: [
+    { href: '/admin/courses', icon: '📚', label: 'Khoá học' },
+    { href: '/admin/enrollments', icon: '📝', label: 'Đăng ký học' },
     { href: '/admin/erp', icon: '🏫', label: 'ERP Hub' },
     { href: '/admin/erp/students', icon: '👥', label: 'Học sinh' },
     { href: '/admin/erp/teachers', icon: '👨‍🏫', label: 'Giáo viên' },
@@ -57,7 +59,7 @@ const NAV = [
   { group: '⚙️ Hệ thống', items: [
     { href: '/admin/organizations', icon: '🏢', label: 'Tổ chức' },
     { href: '/admin/roles', icon: '🛡️', label: 'Phân quyền' },
-    { href: '/admin/users', icon: '👤', label: 'Người dùng' },
+    { href: '/admin/users', icon: '👤', label: 'Người dùng (Admin)' },
     { href: '/admin/notifications', icon: '🔔', label: 'Thông báo' },
     { href: '/admin/settings', icon: '⚙️', label: 'Cài đặt' },
     { href: '/admin/workflow', icon: '⚡', label: 'Workflow' },

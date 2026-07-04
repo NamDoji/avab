@@ -29,6 +29,8 @@ function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
     icon: '🎓',
     label: 'Học vụ',
     modules: [
+      { href: '/admin/courses',            icon: '📚', label: 'Khoá học',    desc: 'Quản lý khoá học' },
+      { href: '/admin/enrollments',          icon: '📝', label: 'Đăng ký học', desc: 'Danh sách ghi danh' },
       { href: '/admin/erp',                icon: '🏫', label: 'ERP Hub',      desc: 'Trung tâm học vụ' },
       { href: '/admin/erp/students',       icon: '👥', label: 'Học sinh',     desc: 'Hồ sơ học viên' },
       { href: '/admin/erp/teachers',       icon: '👨‍🏫', label: 'Giáo viên',  desc: 'Hồ sơ · lịch dạy' },
@@ -107,6 +109,7 @@ function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
     icon: '⚙️',
     label: 'Hệ thống',
     modules: [
+      { href: '/admin/users',         icon: '👤', label: 'Người dùng',    desc: 'Quản lý tài khoản' },
       { href: '/admin/roles',         icon: '🛡️', label: 'RBAC',          desc: 'Roles & phân quyền' },
       { href: '/admin/permissions',   icon: '🔑', label: 'Permissions',   desc: 'Danh mục quyền' },
       { href: '/admin/audit',         icon: '📋', label: 'Audit',         desc: 'Lịch sử thay đổi' },
