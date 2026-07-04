@@ -7,6 +7,7 @@ import { QuickActionDial } from '@/components/admin/QuickActionDial'
 import NotificationBell from '@/components/admin/NotificationBell'
 import { AdminMobileMenu } from '@/components/admin/AdminMobileMenu'
 import { AdminLogoutButton } from '@/components/admin/AdminLogoutButton'
+import { AdminUserMenu } from '@/components/admin/AdminUserMenu'
 import { cookies } from 'next/headers'
 import { CURRENT_ORG_COOKIE } from '@/lib/current-org'
 import { getOrgTheme } from '@/lib/org-theme'
@@ -129,6 +130,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               color: '#374151',
             }}
           >🌐</a>
+          <AdminUserMenu />
           <AdminMobileMenu currentOrg={currentOrg} allOrgs={allOrgs} />
           <AdminLogoutButton />
         </div>
@@ -137,8 +139,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <AdminErrorBoundary>
         <Suspense
           fallback={
-            <div className="container-custom pt-14 pb-8">
-              <LoadingSkeleton type="list" rows={6} />
+            <div className="pt-14 min-h-screen flex items-start justify-center" style={{ paddingTop: 80 }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', border: '3px solid #e5e7eb', borderTopColor: '#7c3aed', animation: 'spin 0.8s linear infinite' }} />
+              <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
             </div>
           }
         >
