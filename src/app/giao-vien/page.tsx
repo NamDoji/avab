@@ -177,7 +177,7 @@ export default async function TeacherHub() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-teal-600 to-teal-500 px-6 py-8 shadow-lg">
+      <div className="bg-gradient-to-br from-teal-600 to-teal-500 px-4 sm:px-6 py-6 sm:py-8 shadow-lg">
         <div className="max-w-5xl mx-auto">
           <p className="text-teal-100 text-xs font-semibold uppercase tracking-wider mb-1">
             Cổng giáo viên · AvaB

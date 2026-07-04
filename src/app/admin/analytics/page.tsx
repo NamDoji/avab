@@ -365,7 +365,8 @@ export default async function AnalyticsPage() {
           <div>
             <p className="text-sm font-bold text-gray-700 mb-3">📊 Theo cơ sở</p>
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="hidden md:grid grid-cols-[1fr_120px_120px_180px] gap-4 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <div className="overflow-x-auto">
+              <div className="hidden md:grid grid-cols-[1fr_120px_120px_180px] gap-4 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[500px]">
                 <div>Cơ sở</div>
                 <div className="text-center">Nhân viên</div>
                 <div className="text-center">Lớp học</div>
@@ -402,6 +403,7 @@ export default async function AnalyticsPage() {
                     </div>
                   </div>
                 ))}
+              </div>
               </div>
             </div>
           </div>

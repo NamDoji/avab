@@ -199,23 +199,23 @@ export default async function CampaignsPage() {
               <p>Chưa có dữ liệu registration</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-50 overflow-x-auto">
+            <div className="divide-y divide-gray-50">
               {sourceStat.map(s => {
                 const cfg = SOURCE_CONFIG[s.source] ?? SOURCE_CONFIG.other
                 const barPct = Math.round((s.leads / maxLeads) * 100)
                 return (
                   <div key={s.source} className="px-5 py-4 hover:bg-gray-50/60 transition-colors">
-                    <div className="flex items-center gap-4 flex-wrap">
+                    <div className="flex flex-wrap items-center gap-3">
                       {/* Source badge */}
                       <span
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black w-32 shrink-0"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black w-28 sm:w-32 shrink-0"
                         style={{ background: cfg.bg, color: cfg.color }}
                       >
                         {cfg.icon} {cfg.label}
                       </span>
 
                       {/* Bar */}
-                      <div className="flex-1 min-w-[120px]">
+                      <div className="flex-1 min-w-[80px]">
                         <div className="bg-gray-100 rounded-full h-2 overflow-hidden">
                           <div
                             className="h-full rounded-full"
@@ -225,13 +225,13 @@ export default async function CampaignsPage() {
                       </div>
 
                       {/* Metrics */}
-                      <div className="flex gap-4 text-center text-xs shrink-0">
+                      <div className="flex gap-3 sm:gap-4 text-center text-xs shrink-0">
                         <div>
                           <p className="text-gray-400">Leads</p>
                           <p className="font-black" style={{ color: cfg.color }}>{s.leads}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Follow-up</p>
+                          <p className="text-gray-400">F/up</p>
                           <p className="font-black text-amber-600">{s.followup}</p>
                         </div>
                         <div>

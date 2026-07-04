@@ -61,8 +61,8 @@ export default async function PipelinePage() {
         </div>
       </div>
 
-      {/* Kanban: full horizontal scroll on all devices */}
-      <div className="py-6 px-4 sm:px-6 overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+      {/* Kanban: PipelineBoard auto-detects mobile vs desktop */}
+      <div className="py-4 sm:py-6 px-4 sm:px-6 overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
         <PipelineBoard leads={serialized} />
       </div>
     </div>

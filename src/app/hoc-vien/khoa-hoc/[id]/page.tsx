@@ -213,7 +213,7 @@ export default async function StudentCourseDetailPage({
                     {todayTotal}/{quizLimit} câu đã làm
                   </span>
                 </div>
-                <div className="bg-white/10 rounded-full h-2 overflow-hidden w-48">
+                <div className="bg-white/10 rounded-full h-2 overflow-hidden w-full max-w-[12rem]">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 transition-all"
                     style={{ width: `${Math.min(100, todayPct)}%` }}
@@ -224,7 +224,7 @@ export default async function StudentCourseDetailPage({
 
             <Link
               href={`/hoc-vien/khoa-hoc/${courseId}/quiz`}
-              className="shrink-0 bg-white text-indigo-800 font-black px-6 py-3 rounded-2xl hover:bg-indigo-50 transition active:scale-95 text-sm"
+              className="shrink-0 bg-white text-indigo-800 font-black px-6 py-3 rounded-2xl hover:bg-indigo-50 transition active:scale-95 text-sm min-h-[44px] flex items-center"
             >
               🎯 Làm bài kiểm tra →
             </Link>

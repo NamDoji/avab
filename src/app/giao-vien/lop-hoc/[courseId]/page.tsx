@@ -147,7 +147,7 @@ export default async function TeacherClassViewPage({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ── Header ────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-teal-600 to-teal-500 px-6 py-7 shadow-md">
+      <div className="bg-gradient-to-br from-teal-600 to-teal-500 px-4 sm:px-6 py-6 sm:py-7 shadow-md">
         <div className="max-w-5xl mx-auto">
           <Link
             href="/giao-vien"
@@ -180,7 +180,7 @@ export default async function TeacherClassViewPage({
 
             <Link
               href={`/giao-vien/buoi-hoc`}
-              className="shrink-0 flex items-center gap-2 bg-white text-teal-700 font-black px-4 py-2.5 rounded-2xl text-sm hover:bg-teal-50 transition shadow-sm"
+              className="shrink-0 flex items-center gap-2 bg-white text-teal-700 font-black px-4 py-2.5 min-h-[44px] rounded-2xl text-sm hover:bg-teal-50 transition shadow-sm"
             >
               📝 Tạo nhận xét buổi học
             </Link>

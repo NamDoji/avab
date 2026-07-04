@@ -85,7 +85,7 @@ export default async function CollabCalendarPage() {
           {/* Next event banner */}
           {nextEvent && (
             <div
-              className="mt-5 inline-flex items-center gap-3 rounded-2xl px-5 py-3"
+              className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl px-4 py-3 sm:inline-flex sm:px-5"
               style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)' }}
             >
               <span className="text-2xl">📌</span>

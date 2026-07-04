@@ -208,7 +208,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                 {lead.phone && (
                   <a
                     href={`tel:${lead.phone}`}
-                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-bold transition-colors"
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 min-h-[44px] rounded-xl text-sm font-bold transition-colors"
                     style={{ background: '#dcfce7', color: '#166534' }}
                   >
                     📞 Gọi điện · {lead.phone}
@@ -217,7 +217,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                 {lead.email && (
                   <a
                     href={`mailto:${lead.email}`}
-                    className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-bold transition-colors"
+                    className="flex items-center gap-2.5 w-full px-4 py-2.5 min-h-[44px] rounded-xl text-sm font-bold transition-colors"
                     style={{ background: '#dbeafe', color: '#1d4ed8' }}
                   >
                     ✉️ Gửi email · {lead.email}
@@ -225,7 +225,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                 )}
                 <Link
                   href={`/admin/enrollments/new?leadId=${lead.id}&phone=${encodeURIComponent(lead.phone)}&name=${encodeURIComponent(lead.name ?? '')}`}
-                  className="flex items-center gap-2.5 w-full px-4 py-2.5 rounded-xl text-sm font-bold transition-colors"
+                  className="flex items-center gap-2.5 w-full px-4 py-2.5 min-h-[44px] rounded-xl text-sm font-bold transition-colors"
                   style={{ background: '#fef9c3', color: '#854d0e' }}
                 >
                   📚 Tạo Enrollment
@@ -266,13 +266,13 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
             <div className="flex gap-2">
               <Link
                 href="/admin/crm"
-                className="flex-1 text-center py-2.5 rounded-xl text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                className="flex-1 text-center py-2.5 min-h-[44px] flex items-center justify-center rounded-xl text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 ← Danh sách
               </Link>
               <Link
                 href="/admin/crm/pipeline"
-                className="flex-1 text-center py-2.5 rounded-xl text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                className="flex-1 text-center py-2.5 min-h-[44px] flex items-center justify-center rounded-xl text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 📋 Pipeline
               </Link>
