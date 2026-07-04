@@ -1165,3 +1165,39 @@ model TeacherAvailability {
   @@index([teacherId])
   @@map("avab_teacher_availability")
 }
+
+// ── HRM Models ────────────────────────────────────────────────────────────────
+
+model LeaveRequest {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String?
+  type           String   // annual | sick | unpaid | maternity
+  startDate      DateTime
+  endDate        DateTime
+  days           Float
+  reason         String?
+  status         String   @default("pending") // pending | approved | rejected
+  approvedBy     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("avab_leave_requests")
+}
+
+model Timesheet {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String?
+  date           DateTime
+  checkIn        DateTime?
+  checkOut       DateTime?
+  hoursWorked    Float?
+  note           String?
+  createdAt      DateTime @default(now())
+
+  @@index([userId, date])
+  @@map("avab_timesheets")
+}
