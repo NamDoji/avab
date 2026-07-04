@@ -16,7 +16,7 @@ const MATERIAL_TYPE_LABELS: Record<string, string> = {
 
 export default async function AnalyticsPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
   const [
     totalStudents,
@@ -28,6 +28,8 @@ export default async function AnalyticsPage() {
     topCourses,
     materialsByType,
     recentAnswers,
+    campusStats,
+    coursesByCampus,
   ] = await Promise.all([
     prisma.user.count({ where: { role: 'STUDENT' } }),
     prisma.enrollment.count({ where: { status: 'ACTIVE' } }),
@@ -54,7 +56,26 @@ export default async function AnalyticsPage() {
         question: { select: { content: true, subjectId: true } },
       },
     }),
+    // Campus breakdown
+    prisma.campus.findMany({
+      where: { isActive: true },
+      include: {
+        _count: { select: { campusUsers: true } },
+      },
+      orderBy: { name: 'asc' },
+    }),
+    prisma.course.groupBy({
+      by: ['campusId'],
+      where: { campusId: { not: null } },
+      _count: { id: true },
+    }),
   ])
+
+  // Build campusId → courseCount map
+  const campusCourseMap = new Map<string, number>()
+  for (const row of coursesByCampus) {
+    if (row.campusId) campusCourseMap.set(row.campusId, row._count.id)
+  }
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
@@ -305,7 +326,47 @@ export default async function AnalyticsPage() {
           </div>
         </div>
 
-        {/* ── 5. Quick links ─────────────────────────────────────────────── */}
+        {/* ── 5. Campus Breakdown ─────────────────────────────────────────── */}
+        {campusStats.length > 0 && (
+          <div>
+            <p className="text-sm font-bold text-gray-700 mb-3">📊 Theo cơ sở</p>
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="hidden md:grid grid-cols-[1fr_120px_120px_180px] gap-4 px-6 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <div>Cơ sở</div>
+                <div className="text-center">Nhân viên</div>
+                <div className="text-center">Lớp học</div>
+                <div className="text-center">Doanh thu</div>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {campusStats.map((campus) => (
+                  <div
+                    key={campus.id}
+                    className="grid grid-cols-1 md:grid-cols-[1fr_120px_120px_180px] gap-4 items-center px-6 py-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <div>
+                      <p className="font-bold text-gray-900">{campus.name}</p>
+                      {campus.code && <p className="text-gray-400 text-xs mt-0.5">{campus.code}</p>}
+                      {campus.address && <p className="text-gray-400 text-xs truncate">{campus.address}</p>}
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xl font-black text-indigo-600">{campus._count.campusUsers}</p>
+                      <p className="text-xs text-gray-400">nhân viên</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xl font-black text-teal-600">{campusCourseMap.get(campus.id) ?? 0}</p>
+                      <p className="text-xs text-gray-400">lớp học</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-gray-300 font-semibold">— Đang cập nhật</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── 6. Quick links ─────────────────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">🔗 Truy cập nhanh</p>
           <div className="flex flex-wrap gap-3">
