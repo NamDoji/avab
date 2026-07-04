@@ -13,38 +13,39 @@ interface SearchItem {
 }
 
 const ITEMS: SearchItem[] = [
-  { id: 'dashboard', label: 'Dashboard', description: 'Trang chủ quản trị', icon: '🏠', href: '/admin', keywords: ['dashboard','trang chủ','home'] },
-  { id: 'ai-studio', label: 'AI Studio', icon: '✨', href: '/admin/ai-studio', keywords: ['ai studio','ai'] },
-  { id: 'course-generator', label: 'Course Generator', description: 'Tạo khóa học bằng AI', icon: '🚀', href: '/admin/ai-studio/course-generator', keywords: ['course','generator','tạo khóa học'] },
-  { id: 'courses', label: 'Khóa học', description: 'Quản lý khóa học', icon: '📚', href: '/admin/courses', keywords: ['khóa học','course'] },
-  { id: 'students', label: 'Học sinh', description: 'Danh sách học sinh', icon: '👥', href: '/admin/erp/students', keywords: ['học sinh','student'] },
-  { id: 'teachers', label: 'Giáo viên', description: 'Danh sách giáo viên', icon: '👨‍🏫', href: '/admin/erp/teachers', keywords: ['giáo viên','teacher'] },
-  { id: 'classes', label: 'Lớp học', icon: '📋', href: '/admin/erp/classes', keywords: ['lớp','class'] },
-  { id: 'attendance', label: 'Điểm danh', icon: '✅', href: '/admin/erp/attendance', keywords: ['điểm danh','attendance'] },
-  { id: 'timetable', label: 'Thời khóa biểu', icon: '📅', href: '/admin/erp/timetable', keywords: ['thời khóa biểu','tkb','lịch'] },
-  { id: 'finance', label: 'Tài chính', icon: '💰', href: '/admin/finance', keywords: ['tài chính','finance','doanh thu'] },
-  { id: 'invoices', label: 'Học phí', icon: '📋', href: '/admin/finance/invoices', keywords: ['học phí','invoice','thu tiền'] },
-  { id: 'crm', label: 'CRM', icon: '📊', href: '/admin/crm', keywords: ['crm','khách hàng','lead'] },
-  { id: 'hrm', label: 'Nhân sự', icon: '👔', href: '/admin/hrm', keywords: ['nhân sự','hr'] },
-  { id: 'analytics', label: 'Phân tích', icon: '📈', href: '/admin/analytics', keywords: ['analytics','phân tích','báo cáo'] },
-  { id: 'question-bank', label: 'Ngân hàng câu hỏi', icon: '🗃️', href: '/admin/question-bank', keywords: ['câu hỏi','question bank'] },
-  { id: 'material-import', label: 'Import học liệu', icon: '📤', href: '/admin/material-import', keywords: ['import','học liệu'] },
-  { id: 'roles', label: 'Phân quyền', icon: '🔐', href: '/admin/roles', keywords: ['role','phân quyền','quyền'] },
-  { id: 'users', label: 'Người dùng', icon: '👤', href: '/admin/users', keywords: ['user','người dùng','tài khoản'] },
-  { id: 'organizations', label: 'Tổ chức', icon: '🏢', href: '/admin/organizations', keywords: ['organization','tổ chức','trường'] },
-  { id: 'settings', label: 'Cài đặt', icon: '⚙️', href: '/admin/settings', keywords: ['setting','cài đặt','cấu hình'] },
-  { id: 'notifications', label: 'Thông báo', icon: '🔔', href: '/admin/notifications', keywords: ['thông báo','notification'] },
-  { id: 'collab', label: 'Lịch & Họp', icon: '📅', href: '/admin/collab', keywords: ['lịch','họp','calendar','meeting'] },
-  { id: 'gamification', label: 'Gamification', icon: '🎮', href: '/admin/gamification', keywords: ['game','điểm','leaderboard'] },
-  { id: 'erp', label: 'School ERP', icon: '🏫', href: '/admin/erp', keywords: ['erp','trường'] },
+  { id: 'dashboard',      label: 'Dashboard',           description: 'Trang chủ quản trị',    icon: '🏠', href: '/admin',                          keywords: ['dashboard','trang chủ','home'] },
+  { id: 'ai-studio',      label: 'AI Studio',           description: 'Quản lý AI projects',   icon: '✨', href: '/admin/ai-studio',                 keywords: ['ai studio','ai'] },
+  { id: 'course-gen',     label: 'Course Generator',    description: 'Tạo khóa học bằng AI',  icon: '🚀', href: '/admin/ai-studio/course-generator', keywords: ['course','generator','tạo khóa học'] },
+  { id: 'courses',        label: 'Khóa học',            description: 'Quản lý khóa học',      icon: '📚', href: '/admin/courses',                   keywords: ['khóa học','course'] },
+  { id: 'students',       label: 'Học sinh',            description: 'Danh sách học sinh',    icon: '👥', href: '/admin/erp/students',              keywords: ['học sinh','student'] },
+  { id: 'teachers',       label: 'Giáo viên',           description: 'Danh sách giáo viên',   icon: '👨‍🏫', href: '/admin/erp/teachers',             keywords: ['giáo viên','teacher'] },
+  { id: 'classes',        label: 'Lớp học',             description: 'Quản lý lớp học',       icon: '📋', href: '/admin/erp/classes',               keywords: ['lớp','class'] },
+  { id: 'attendance',     label: 'Điểm danh',           description: 'Điểm danh học sinh',    icon: '✅', href: '/admin/erp/attendance',            keywords: ['điểm danh','attendance'] },
+  { id: 'timetable',      label: 'Thời khóa biểu',     description: 'AI xếp TKB',            icon: '📅', href: '/admin/erp/timetable',             keywords: ['thời khóa biểu','tkb','lịch'] },
+  { id: 'finance',        label: 'Tài chính',           description: 'Dashboard tài chính',   icon: '💰', href: '/admin/finance',                   keywords: ['tài chính','finance','doanh thu'] },
+  { id: 'invoices',       label: 'Học phí',             description: 'Quản lý học phí',       icon: '📋', href: '/admin/finance/invoices',          keywords: ['học phí','invoice','thu tiền'] },
+  { id: 'crm',            label: 'CRM',                 description: 'Quản lý khách hàng',    icon: '📊', href: '/admin/crm',                       keywords: ['crm','khách hàng','lead'] },
+  { id: 'hrm',            label: 'Nhân sự',             description: 'Quản lý nhân sự',       icon: '👔', href: '/admin/hrm',                       keywords: ['nhân sự','hr'] },
+  { id: 'analytics',      label: 'Phân tích',           description: 'Báo cáo & thống kê',    icon: '📈', href: '/admin/analytics',                 keywords: ['analytics','phân tích','báo cáo'] },
+  { id: 'question-bank',  label: 'Ngân hàng câu hỏi',  description: 'Quản lý câu hỏi',       icon: '🗃️', href: '/admin/question-bank',            keywords: ['câu hỏi','question bank'] },
+  { id: 'material',       label: 'Import học liệu',     description: 'Import Word/PDF',        icon: '📤', href: '/admin/material-import',           keywords: ['import','học liệu'] },
+  { id: 'roles',          label: 'Phân quyền',          description: 'Roles & permissions',   icon: '🔐', href: '/admin/roles',                     keywords: ['role','phân quyền','quyền'] },
+  { id: 'users',          label: 'Người dùng',          description: 'Quản lý tài khoản',     icon: '👤', href: '/admin/users',                     keywords: ['user','người dùng','tài khoản'] },
+  { id: 'organizations',  label: 'Tổ chức',             description: 'Quản lý tổ chức',       icon: '🏢', href: '/admin/organizations',             keywords: ['organization','tổ chức','trường'] },
+  { id: 'settings',       label: 'Cài đặt',             description: 'Cấu hình hệ thống',     icon: '⚙️', href: '/admin/settings',                 keywords: ['setting','cài đặt','cấu hình'] },
+  { id: 'gamification',   label: 'Gamification',        description: 'Điểm & bảng xếp hạng', icon: '🎮', href: '/admin/gamification',              keywords: ['game','điểm','leaderboard'] },
+  { id: 'erp',            label: 'School ERP',          description: 'Quản lý nhà trường',    icon: '🏫', href: '/admin/erp',                       keywords: ['erp','trường'] },
 ]
 
+const QUICK_CHIPS = ['Học sinh', 'Tài chính', 'Điểm danh', 'Thời khóa biểu', 'Phân quyền']
+
 export function NavSearchBar() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen]   = useState(false)
   const [query, setQuery] = useState('')
+  const [panelRect, setPanelRect] = useState<{ top: number; right: number } | null>(null)
+  const btnRef   = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
+  const router   = useRouter()
 
   const results = query.trim()
     ? ITEMS.filter(it =>
@@ -56,6 +57,11 @@ export function NavSearchBar() {
 
   const openBar = useCallback(() => {
     setOpen(true)
+    // Capture button position so panel can be positioned via fixed
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect()
+      setPanelRect({ top: r.bottom + 8, right: window.innerWidth - r.right })
+    }
     setTimeout(() => inputRef.current?.focus(), 50)
   }, [])
 
@@ -69,37 +75,57 @@ export function NavSearchBar() {
     router.push(href)
   }, [closeBar, router])
 
-  // Close on Escape
+  // Escape key
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeBar()
-    }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeBar() }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [closeBar])
 
-  // Close on outside click
+  // Outside click
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        closeBar()
-      }
+      const panel = document.getElementById('nav-search-panel')
+      if (
+        btnRef.current && !btnRef.current.contains(e.target as Node) &&
+        panel && !panel.contains(e.target as Node)
+      ) closeBar()
     }
     if (open) document.addEventListener('mousedown', onClick)
     return () => document.removeEventListener('mousedown', onClick)
   }, [open, closeBar])
 
+  // Recalc on resize
+  useEffect(() => {
+    if (!open) return
+    const onResize = () => {
+      if (btnRef.current) {
+        const r = btnRef.current.getBoundingClientRect()
+        setPanelRect({ top: r.bottom + 8, right: window.innerWidth - r.right })
+      }
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [open])
+
+  // Panel width: capped at 360 but never wider than viewport - 16px
+  const panelWidth = typeof window !== 'undefined'
+    ? Math.min(360, window.innerWidth - 16)
+    : 360
+
   return (
-    <div ref={containerRef} style={{ position: 'relative' }}>
-      {/* Search toggle button */}
+    <>
+      {/* Toggle button */}
       <button
+        ref={btnRef}
         onClick={open ? closeBar : openBar}
-        title={open ? 'Đóng tìm kiếm (Esc)' : 'Tìm chức năng'}
+        aria-label="Tìm chức năng"
+        aria-expanded={open}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 6,
-          padding: open ? '6px 14px' : '6px 12px',
+          gap: 5,
+          padding: '6px 10px',
           background: open ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.9)',
           border: open ? '1.5px solid rgba(99,102,241,0.4)' : '1.5px solid rgba(0,0,0,0.1)',
           borderRadius: 20,
@@ -111,21 +137,26 @@ export function NavSearchBar() {
           backdropFilter: 'blur(8px)',
           boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
           whiteSpace: 'nowrap',
+          flexShrink: 0,
         }}
       >
         <span style={{ fontSize: 15 }}>🔍</span>
-        {!open && <span>Tìm kiếm</span>}
-        {open && <span>✕</span>}
+        {/* Hide text label on very small screens via inline media — handled by CSS class below */}
+        <span className="nav-search-label">{open ? '✕' : 'Tìm kiếm'}</span>
       </button>
 
-      {/* Dropdown search panel */}
-      {open && (
+      {/* Fixed-position dropdown — never clips outside viewport */}
+      {open && panelRect && (
         <div
+          id="nav-search-panel"
+          role="dialog"
+          aria-label="Tìm kiếm chức năng"
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 8px)',
-            right: 0,
-            width: 360,
+            position: 'fixed',
+            top: panelRect.top,
+            // Anchor right edge to button's right edge; clamp so left edge ≥ 8px
+            right: Math.max(panelRect.right, 8),
+            width: panelWidth,
             background: '#fff',
             borderRadius: 16,
             boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
@@ -135,7 +166,7 @@ export function NavSearchBar() {
           }}
         >
           {/* Input */}
-          <div style={{ padding: '12px 14px 0' }}>
+          <div style={{ padding: '12px 12px 0' }}>
             <input
               ref={inputRef}
               value={query}
@@ -158,7 +189,7 @@ export function NavSearchBar() {
 
           {/* Results */}
           {results.length > 0 ? (
-            <ul style={{ listStyle: 'none', margin: 0, padding: '8px 8px 10px', maxHeight: 360, overflowY: 'auto' }}>
+            <ul style={{ listStyle: 'none', margin: 0, padding: '6px 8px 10px', maxHeight: 340, overflowY: 'auto' }}>
               {results.map(item => (
                 <li key={item.id}>
                   <button
@@ -167,14 +198,13 @@ export function NavSearchBar() {
                       width: '100%',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 12,
+                      gap: 10,
                       padding: '9px 10px',
                       border: 'none',
                       background: 'transparent',
                       borderRadius: 10,
                       cursor: 'pointer',
                       textAlign: 'left',
-                      transition: 'background 0.12s',
                     }}
                     onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f3f4f6' }}
                     onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
@@ -192,13 +222,13 @@ export function NavSearchBar() {
             </ul>
           ) : query.trim() ? (
             <div style={{ padding: '16px 20px 18px', textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
-              Không tìm thấy chức năng &ldquo;{query}&rdquo;
+              Không tìm thấy &ldquo;{query}&rdquo;
             </div>
           ) : (
-            <div style={{ padding: '14px 16px 16px' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gợi ý nhanh</div>
+            <div style={{ padding: '12px 14px 14px' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gợi ý nhanh</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {['Học sinh', 'Tài chính', 'Điểm danh', 'Thời khóa biểu', 'Phân quyền'].map(t => (
+                {QUICK_CHIPS.map(t => (
                   <button
                     key={t}
                     onClick={() => setQuery(t)}
@@ -210,7 +240,6 @@ export function NavSearchBar() {
                       fontSize: 13,
                       cursor: 'pointer',
                       color: '#374151',
-                      transition: 'all 0.12s',
                     }}
                     onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#6366f1'; (e.currentTarget as HTMLButtonElement).style.color = '#4f46e5' }}
                     onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#e5e7eb'; (e.currentTarget as HTMLButtonElement).style.color = '#374151' }}
@@ -223,6 +252,13 @@ export function NavSearchBar() {
           )}
         </div>
       )}
-    </div>
+
+      {/* Scoped responsive style */}
+      <style>{`
+        @media (max-width: 480px) {
+          .nav-search-label { display: none; }
+        }
+      `}</style>
+    </>
   )
 }
