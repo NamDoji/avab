@@ -50,8 +50,6 @@ function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
       { href: '/admin/erp/rewards',        icon: '🎮', label: 'Điểm thưởng',    desc: 'Gamification' },
       { href: '/admin/erp/awards',         icon: '🏆', label: 'Khen thưởng',    desc: 'Giải thưởng HS' },
       { href: '/admin/erp/timetable/workload', icon: '⚖️', label: 'Tải công GV', desc: 'Phân công giảng dạy' },
-      { href: '/admin/erp/bus-routes',       icon: '🚌', label: 'Xe tuyến',     desc: 'Xe đưa đón HS' },
-      { href: '/admin/erp/uniforms',         icon: '👕', label: 'Đồng phục',    desc: 'Quản lý đồng phục' },
     ],
   },
   {
