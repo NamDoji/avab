@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { GlobalAIChat } from '@/components/admin/GlobalAIChat'
@@ -96,17 +97,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {/* Logo left */}
         <a
           href="/admin"
-          style={{
-            display: 'flex', alignItems: 'center', gap: 7, textDecoration: 'none',
-            flexShrink: 0,
-          }}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', flexShrink: 0 }}
         >
-          <span style={{
-            width: 30, height: 30, borderRadius: 8, flexShrink: 0,
-            background: 'linear-gradient(135deg,#7c3aed,#14b8a6)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 16, fontWeight: 900, color: '#fff',
-          }}>A</span>
+          <Image
+            src="/logo.png"
+            alt="AvaB"
+            width={32}
+            height={32}
+            style={{ objectFit: 'contain', borderRadius: 6 }}
+            priority
+          />
           <span
             className="admin-topbar-label"
             style={{ fontWeight: 900, fontSize: 15, color: '#111827', letterSpacing: '-0.02em' }}

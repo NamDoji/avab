@@ -76,6 +76,10 @@ const PILLARS = [
   { icon: '👥', label: 'HRM Nhân sự', desc: 'Giáo viên, lương thưởng, đánh giá' },
   { icon: '💬', label: 'Collaboration', desc: 'Chat, task, họp trực tuyến' },
   { icon: '🎨', label: 'White Label', desc: 'Brand riêng, domain riêng' },
+  { icon: '🚌', label: 'Xe tuyến', desc: 'Quản lý xe đưa đón học sinh' },
+  { icon: '👕', label: 'Đồng phục', desc: 'Đơn hàng, size, giao nhận' },
+  { icon: '🏆', label: 'Khen thưởng', desc: 'Ghi nhận thành tích học sinh' },
+  { icon: '📅', label: 'AI Timetable', desc: 'Xếp thời khóa biểu tự động' },
 ]
 
 // ── Page ───────────────────────────────────────────────────────────────────────
