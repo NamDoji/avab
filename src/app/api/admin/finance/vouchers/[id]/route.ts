@@ -11,14 +11,14 @@ function adminOnly(session: any) {
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   const err = adminOnly(session)
   if (err) return err
 
   const body = await req.json()
-  const { id } = params
+  const { id } = await context.params
 
   const voucher = await prisma.voucher.update({
     where: { id },
@@ -39,13 +39,13 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   const err = adminOnly(session)
   if (err) return err
 
-  const { id } = params
+  const { id } = await context.params
 
   await prisma.voucher.delete({ where: { id } })
 

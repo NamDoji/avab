@@ -1,23 +1,98 @@
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
 export const metadata = { title: 'School ERP — AvaB Admin' }
 
-const ERP_MODULES = [
-  { href: '/admin/erp/students',   icon: '👥', label: 'Học sinh',       desc: 'Hồ sơ, chuyển lớp, sức khỏe',  gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)' },
-  { href: '/admin/erp/teachers',   icon: '👨‍🏫', label: 'Giáo viên',     desc: 'Hồ sơ, phân công, lịch dạy',   gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)' },
-  { href: '/admin/erp/classes',    icon: '📋', label: 'Lớp học',        desc: 'Tạo lớp, gán GV, quản lý HS',  gradient: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)' },
-  { href: '/admin/erp/rooms',      icon: '🚪', label: 'Phòng học',      desc: 'Phòng, sức chứa, lịch sử dụng', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)' },
-  { href: '/admin/erp/timetable',  icon: '📅', label: 'Thời khóa biểu', desc: 'AI tự động xếp lịch',           gradient: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)', badge: 'AI' },
-  { href: '/admin/erp/attendance', icon: '✅', label: 'Điểm danh',      desc: 'Check-in, báo cáo vắng',        gradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' },
-  { href: '/admin/erp/awards',     icon: '🏆', label: 'Khen thưởng',    desc: 'Kỷ luật, khen thưởng, ghi chú', gradient: 'linear-gradient(135deg, #eab308 0%, #f97316 100%)' },
-  { href: '/admin/erp/alumni',     icon: '🎓', label: 'Alumni',         desc: 'Học sinh đã tốt nghiệp',        gradient: 'linear-gradient(135deg, #14b8a6 0%, #0891b2 100%)' },
-]
-
 export default async function ERPHubPage() {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+
+  // Pending transfer count badge
+  const pendingTransfers = await prisma.classTransfer.count({ where: { status: 'pending' } })
+
+  const ERP_MODULES = [
+    {
+      href: '/admin/erp/students',
+      icon: '👥',
+      label: 'Học sinh',
+      desc: 'Hồ sơ, chuyển lớp, sức khỏe',
+      gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    },
+    {
+      href: '/admin/erp/teachers',
+      icon: '👨‍🏫',
+      label: 'Giáo viên',
+      desc: 'Hồ sơ, phân công, lịch dạy',
+      gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+    },
+    {
+      href: '/admin/erp/classes',
+      icon: '📋',
+      label: 'Lớp học',
+      desc: 'Tạo lớp, gán GV, quản lý HS',
+      gradient: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    },
+    {
+      href: '/admin/erp/rooms',
+      icon: '🚪',
+      label: 'Phòng học',
+      desc: 'Phòng, sức chứa, lịch sử dụng',
+      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+    },
+    {
+      href: '/admin/erp/timetable',
+      icon: '📅',
+      label: 'Thời khóa biểu',
+      desc: 'AI tự động xếp lịch',
+      gradient: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+      badge: 'AI',
+    },
+    {
+      href: '/admin/erp/attendance',
+      icon: '✅',
+      label: 'Điểm danh',
+      desc: 'Check-in, báo cáo vắng',
+      gradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+    },
+    {
+      href: '/admin/erp/awards',
+      icon: '🏆',
+      label: 'Khen thưởng',
+      desc: 'Kỷ luật, khen thưởng, ghi chú',
+      gradient: 'linear-gradient(135deg, #eab308 0%, #f97316 100%)',
+    },
+    {
+      href: '/admin/erp/health',
+      icon: '🏥',
+      label: 'Sức khỏe',
+      desc: 'Hồ sơ y tế, bảo hiểm học sinh',
+      gradient: 'linear-gradient(135deg, #22c55e 0%, #059669 100%)',
+    },
+    {
+      href: '/admin/erp/equipment',
+      icon: '💻',
+      label: 'Thiết bị',
+      desc: 'Tài sản, trang thiết bị trường',
+      gradient: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    },
+    {
+      href: '/admin/erp/alumni',
+      icon: '🎓',
+      label: 'Alumni',
+      desc: 'Học sinh đã tốt nghiệp',
+      gradient: 'linear-gradient(135deg, #14b8a6 0%, #0891b2 100%)',
+    },
+    {
+      href: '/admin/erp/transfers',
+      icon: '🔄',
+      label: 'Chuyển lớp',
+      desc: 'Duyệt yêu cầu chuyển lớp',
+      gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+      badgeDynamic: pendingTransfers > 0 ? `${pendingTransfers} chờ duyệt` : undefined,
+    },
+  ]
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
@@ -48,7 +123,6 @@ export default async function ERPHubPage() {
       </div>
 
       <div className="container-custom py-8">
-        {/* 2×4 grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {ERP_MODULES.map((mod) => (
             <Link
@@ -69,7 +143,7 @@ export default async function ERPHubPage() {
                   {mod.icon}
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
                     <h3 className="font-black text-lg text-white">{mod.label}</h3>
                     {mod.badge && (
                       <span
@@ -77,6 +151,14 @@ export default async function ERPHubPage() {
                         style={{ background: 'rgba(250,204,21,1)', color: '#713f12' }}
                       >
                         {mod.badge}
+                      </span>
+                    )}
+                    {mod.badgeDynamic && (
+                      <span
+                        className="text-xs font-black px-2 py-0.5 rounded-full"
+                        style={{ background: '#fef08a', color: '#713f12' }}
+                      >
+                        {mod.badgeDynamic}
                       </span>
                     )}
                   </div>
@@ -96,7 +178,6 @@ export default async function ERPHubPage() {
           ))}
         </div>
 
-        {/* Back */}
         <div className="mt-8">
           <Link
             href="/admin"

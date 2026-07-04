@@ -11,14 +11,14 @@ function adminOnly(session: any) {
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   const err = adminOnly(session)
   if (err) return err
 
   const body = await req.json()
-  const { id } = params
+  const { id } = await context.params
 
   const scholarship = await prisma.scholarship.update({
     where: { id },
@@ -35,13 +35,13 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   const err = adminOnly(session)
   if (err) return err
 
-  await prisma.scholarship.delete({ where: { id: params.id } })
+  await prisma.scholarship.delete({ where: { id: (await context.params).id } })
 
   return NextResponse.json({ success: true })
 }

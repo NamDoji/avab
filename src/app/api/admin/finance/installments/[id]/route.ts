@@ -12,14 +12,14 @@ function adminOnly(session: any) {
 // PATCH: mark an installment item as paid or update status
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   const err = adminOnly(session)
   if (err) return err
 
   const body = await req.json()
-  const { id } = params
+  const { id } = await context.params
 
   const plan = await prisma.installmentPlan.findUnique({ where: { id } })
   if (!plan) return NextResponse.json({ error: 'Không tìm thấy kế hoạch' }, { status: 404 })
