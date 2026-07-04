@@ -95,6 +95,16 @@ export function AdminMobileMenu({ currentOrg, allOrgs = [] }: Props) {
   const pathname = usePathname()
   const router = useRouter()
 
+  // Lock body scroll when drawer open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [open])
+
   useEffect(() => { setOpen(false); setSearch('') }, [pathname])
 
   useEffect(() => {
@@ -147,7 +157,12 @@ export function AdminMobileMenu({ currentOrg, allOrgs = [] }: Props) {
       {open && (
         <div
           onClick={() => setOpen(false)}
-          style={{ position: 'fixed', inset: 0, zIndex: 9990, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(3px)' }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9990,
+            background: 'rgba(0,0,0,0.5)',
+            WebkitBackdropFilter: 'blur(2px)',
+            backdropFilter: 'blur(2px)',
+          }}
         />
       )}
 

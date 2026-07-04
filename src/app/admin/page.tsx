@@ -156,6 +156,10 @@ export default async function AdminPage() {
   const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   const overdueThreshold = new Date(Date.now() - 30 * 86_400_000)
 
+  // Org filter — SUPER_ADMIN without org sees all, org admin sees only their org
+  const orgFilter = orgCtx?.id ? { organizationId: orgCtx.id } : {}
+  const courseOrgFilter = orgCtx?.id ? { organizationId: orgCtx.id, isActive: true } : { isActive: true }
+
   const [
     activeStudents,
     pendingApprovals,
@@ -167,20 +171,19 @@ export default async function AdminPage() {
     draftProjects,
     aiWarnings,
   ] = await Promise.all([
-    prisma.enrollment.count({ where: { status: 'ACTIVE' } }),
-    prisma.enrollment.count({ where: { status: 'PENDING' } }),
+    prisma.enrollment.count({ where: { ...orgFilter, status: 'ACTIVE' } }),
+    prisma.enrollment.count({ where: { ...orgFilter, status: 'PENDING' } }),
     prisma.registration.count({ where: { status: 'NEW' } }),
-    prisma.aIProject.count({ where: { status: 'in-progress' } }),
-    prisma.course.count({ where: { isActive: true } }),
-    prisma.tuitionPayment.count({ where: { isPaid: false, isFree: false } }),
+    prisma.aIProject.count({ where: { ...orgFilter, status: 'in-progress' } }),
+    prisma.course.count({ where: courseOrgFilter }),
+    prisma.tuitionPayment.count({ where: { ...orgFilter, isPaid: false, isFree: false } }),
     prisma.tuitionPayment.aggregate({
-      where: { isPaid: true, isFree: false, paidAt: { gte: thisMonthStart } },
+      where: { ...orgFilter, isPaid: true, isFree: false, paidAt: { gte: thisMonthStart } },
       _sum: { amount: true },
     }),
-    prisma.aIProject.count({ where: { status: 'draft' } }),
-    // Cảnh báo = overdue payments + pending approvals over threshold
+    prisma.aIProject.count({ where: { ...orgFilter, status: 'draft' } }),
     prisma.tuitionPayment.count({
-      where: { isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
+      where: { ...orgFilter, isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
     }),
   ])
 
