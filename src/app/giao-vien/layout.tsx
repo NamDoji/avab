@@ -5,12 +5,13 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, LayoutDashboard, BookOpen, LogOut, BarChart2 } from 'lucide-react'
+import { Menu, X, LayoutDashboard, BookOpen, LogOut, BarChart2, ClipboardList } from 'lucide-react'
 
 const NAV = [
   { href: '/giao-vien', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/giao-vien/dashboard', label: 'Analytics Dashboard', icon: BarChart2 },
   { href: '/giao-vien/buoi-hoc', label: 'Buổi học của tôi', icon: BookOpen },
+  { href: '/giao-vien/cham-bai', label: 'Chấm bài', icon: ClipboardList },
 ]
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }) {

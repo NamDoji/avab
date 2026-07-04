@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { recordGamificationProgress } from '@/lib/gamification-progress'
 
 interface SubmitAnswer {
   questionId: string
@@ -204,6 +205,13 @@ export async function POST(req: NextRequest) {
         data: { xp: { increment: newBadgeXP.total } },
       })
     }
+
+    // ── Gamification progress ────────────────────────────────────────────────
+    // Fire-and-forget: update missions tracking 'questions_answered'.
+    // Errors are non-fatal so we run outside the main try/catch.
+    recordGamificationProgress(userId, 'questions_answered', total).catch((e) =>
+      console.warn('[quiz/submit] gamification progress error:', e),
+    )
 
     return NextResponse.json({
       success: true,

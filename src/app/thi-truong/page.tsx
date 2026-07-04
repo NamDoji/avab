@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: 'Khám phá kho học liệu phong phú từ mầm non đến THPT. AI-powered, cập nhật liên tục.',
 }
 
+export const revalidate = 3600 // 1 giờ — marketplace catalog thay đổi chậm
+
 // Filter labels
 const GRADE_FILTERS = [
   { key: '',    label: 'Tất cả' },

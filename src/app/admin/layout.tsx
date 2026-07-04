@@ -3,8 +3,10 @@ import { prisma } from '@/lib/prisma'
 import { GlobalAIChat } from '@/components/admin/GlobalAIChat'
 import { OrgSwitcher } from '@/components/admin/OrgSwitcher'
 import { QuickActionDial } from '@/components/admin/QuickActionDial'
+import NotificationBell from '@/components/admin/NotificationBell'
 import { cookies } from 'next/headers'
 import { CURRENT_ORG_COOKIE } from '@/lib/current-org'
+import { getOrgTheme } from '@/lib/org-theme'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // ── Fetch user's orgs server-side ─────────────────────────────────────────
@@ -12,7 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const userId = (session?.user as { id?: string })?.id ?? ''
 
   let allOrgs: { id: string; name: string; slug: string; type: string }[] = []
-  let currentOrg: { id: string; name: string; slug: string } | null = null
+  let currentOrg: { id: string; name: string; slug: string; settings?: Record<string, unknown> } | null = null
 
   if (userId) {
     // Fetch OrganizationUser rows and join organizations separately
@@ -25,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       const orgIds = orgUsers.map(ou => ou.organizationId)
       const orgs = await prisma.organization.findMany({
         where: { id: { in: orgIds }, isActive: true, deletedAt: null },
-        select: { id: true, name: true, slug: true, type: true },
+        select: { id: true, name: true, slug: true, type: true, settings: true },
       })
 
       // Preserve order from orgUsers (default first)
@@ -42,25 +44,50 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     }
   }
 
+  const orgSettings = (currentOrg?.settings && typeof currentOrg.settings === 'object' && !Array.isArray(currentOrg.settings))
+    ? (currentOrg.settings as Record<string, unknown>)
+    : {}
+  const orgTheme = getOrgTheme(orgSettings)
+
+  // ── Notification count for bell ────────────────────────────────────────
+  const overdueThreshold = new Date(Date.now() - 30 * 86_400_000)
+  const [pendingEnrollCount, newContactCount, overdueCount] = await Promise.all([
+    prisma.enrollment.count({ where: { status: 'PENDING' } }),
+    prisma.registration.count({ where: { status: 'NEW' } }),
+    prisma.tuitionPayment.count({
+      where: { isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
+    }),
+  ])
+  const notifCount = pendingEnrollCount + newContactCount + Math.min(overdueCount, 99)
+
   return (
-    <>
-      {/* ── Org switcher bar ────────────────────────────────────────────── */}
-      {allOrgs.length > 0 && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 12,
-            right: 16,
-            zIndex: 500,
-          }}
-        >
+    <div
+      style={{
+        '--org-primary': orgTheme.primaryColor,
+        '--org-primary-rgb': `${parseInt(orgTheme.primaryColor.replace('#','').slice(0,2),16)}, ${parseInt(orgTheme.primaryColor.replace('#','').slice(2,4),16)}, ${parseInt(orgTheme.primaryColor.replace('#','').slice(4,6),16)}`,
+      } as React.CSSProperties}
+    >
+      {/* ── Top-right bar: Notification bell + Org switcher ─────────── */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 12,
+          right: 16,
+          zIndex: 500,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <NotificationBell initialCount={notifCount} />
+        {allOrgs.length > 0 && (
           <OrgSwitcher currentOrg={currentOrg} allOrgs={allOrgs} />
-        </div>
-      )}
+        )}
+      </div>
 
       {children}
       <QuickActionDial />
       <GlobalAIChat />
-    </>
+    </div>
   )
 }

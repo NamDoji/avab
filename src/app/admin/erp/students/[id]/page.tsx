@@ -166,6 +166,8 @@ export default async function StudentDetailPage({
             <span>{student.name ?? student.phone}</span>
             <span>/</span>
             <Link href={`/admin/erp/students/${id}/analytics`} className="hover:text-white transition-colors">📊 Analytics</Link>
+            <span>/</span>
+            <Link href={`/admin/erp/students/${id}/homework`} className="hover:text-white transition-colors">📝 Bài tập</Link>
           </div>
           <h1 className="text-2xl font-black">{student.name ?? 'Chưa có tên'}</h1>
         </div>
@@ -288,6 +290,14 @@ export default async function StudentDetailPage({
                 })}
               </div>
             </div>
+
+            {/* Homework link */}
+            <Link
+              href={`/admin/erp/students/${id}/homework`}
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+            >
+              📝 Xem bài tập nộp
+            </Link>
 
             {/* Actions */}
             <div className="space-y-2">

@@ -230,13 +230,25 @@ function TabModules({ org }: { org: OrgData }) {
 
 // ─── Tab: Branding ────────────────────────────────────────────────────────────
 
+const THEME_OPTIONS = [
+  { value: 'light',  label: '☀️ Sáng' },
+  { value: 'dark',   label: '🌙 Tối' },
+  { value: 'system', label: '🖥️ Theo thiết bị' },
+]
+
 function TabBranding({ org }: { org: OrgData }) {
   const [primaryColor, setPrimaryColor] = useState(
     (org.settings.primaryColor as string) ?? '#7c3aed'
   )
-  const [logo, setLogo] = useState(org.logo)
+  const [logo, setLogo] = useState((org.settings.logo as string) ?? org.logo ?? '')
   const [faviconUrl, setFaviconUrl] = useState((org.settings.faviconUrl as string) ?? '')
   const [welcomeMsg, setWelcomeMsg] = useState((org.settings.welcomeMessage as string) ?? '')
+  const [customDomain, setCustomDomain] = useState((org.settings.customDomain as string) ?? org.domain ?? '')
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(
+    (['light','dark','system'].includes(org.settings.theme as string)
+      ? (org.settings.theme as 'light' | 'dark' | 'system')
+      : 'system')
+  )
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -249,17 +261,24 @@ function TabBranding({ org }: { org: OrgData }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           logo,
-          settings: { primaryColor, faviconUrl, welcomeMessage: welcomeMsg },
+          domain: customDomain || undefined,
+          settings: { primaryColor, faviconUrl, welcomeMessage: welcomeMsg, customDomain, theme, logo },
         }),
       })
-      if (res.ok) { setMsg('✅ Đã lưu branding') } else { setMsg('❌ Lỗi') }
+      if (res.ok) { setMsg('✅ Đã lưu branding') } else { setMsg('❌ Lỗi khi lưu') }
     } catch { setMsg('❌ Không kết nối được') } finally { setSaving(false) }
   }
 
   return (
     <div style={sectionStyle}>
-      <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 20, color: '#111827' }}>🎨 Branding</h3>
+      <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 4, color: '#111827' }}>🎨 Giao diện &amp; White Label</h3>
+      <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 20 }}>
+        Tuỳ chỉnh màu sắc, logo, domain riêng cho tổ chức của bạn.
+      </p>
+
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
+        {/* Color picker */}
         <div>
           <label style={labelStyle}>Màu chủ đạo</label>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -267,52 +286,117 @@ function TabBranding({ org }: { org: OrgData }) {
               type="color"
               value={primaryColor}
               onChange={e => setPrimaryColor(e.target.value)}
-              style={{ width: 48, height: 40, borderRadius: 8, border: '1.5px solid #e5e7eb', cursor: 'pointer' }}
+              style={{ width: 48, height: 40, borderRadius: 8, border: '1.5px solid #e5e7eb', cursor: 'pointer', padding: 2 }}
             />
             <input
-              style={{ ...inputStyle, flex: 1 }}
+              style={{ ...inputStyle, flex: 1, fontFamily: 'monospace' }}
               value={primaryColor}
               onChange={e => setPrimaryColor(e.target.value)}
               placeholder="#7c3aed"
+              maxLength={7}
             />
           </div>
         </div>
+
+        {/* Color preview */}
         <div>
-          <label style={labelStyle}>Preview màu</label>
+          <label style={labelStyle}>Preview</label>
           <div style={{
             height: 40, borderRadius: 10,
-            background: primaryColor,
+            background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc)`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: 700, fontSize: 13,
+            color: '#fff', fontWeight: 800, fontSize: 13,
+            boxShadow: `0 2px 8px ${primaryColor}44`,
           }}>
-            AvaB · {org.name}
+            {org.name || 'AvaB'}
           </div>
         </div>
+
+        {/* Logo */}
         <div style={{ gridColumn: '1/-1' }}>
           <label style={labelStyle}>Logo URL</label>
-          <input style={inputStyle} placeholder="https://..." value={logo} onChange={e => setLogo(e.target.value)} />
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <input
+              style={{ ...inputStyle, flex: 1 }}
+              placeholder="https://your-school.edu.vn/logo.png"
+              value={logo}
+              onChange={e => setLogo(e.target.value)}
+            />
+            {logo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logo} alt="logo" style={{ height: 40, maxWidth: 80, objectFit: 'contain', borderRadius: 6, border: '1px solid #e5e7eb' }} />
+            )}
+          </div>
         </div>
-        <div style={{ gridColumn: '1/-1' }}>
+
+        {/* Favicon */}
+        <div>
           <label style={labelStyle}>Favicon URL</label>
-          <input style={inputStyle} placeholder="https://.../favicon.ico" value={faviconUrl} onChange={e => setFaviconUrl(e.target.value)} />
+          <input
+            style={inputStyle}
+            placeholder="https://.../favicon.ico"
+            value={faviconUrl}
+            onChange={e => setFaviconUrl(e.target.value)}
+          />
         </div>
+
+        {/* Theme */}
+        <div>
+          <label style={labelStyle}>Giao diện mặc định</label>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {THEME_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setTheme(opt.value as 'light' | 'dark' | 'system')}
+                style={{
+                  flex: 1, padding: '9px 6px', borderRadius: 9, fontSize: 12, fontWeight: 700,
+                  border: `1.5px solid ${theme === opt.value ? primaryColor : '#e5e7eb'}`,
+                  background: theme === opt.value ? `${primaryColor}18` : '#fafafa',
+                  color: theme === opt.value ? primaryColor : '#6b7280',
+                  cursor: 'pointer', transition: 'all 0.15s',
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Custom domain */}
         <div style={{ gridColumn: '1/-1' }}>
-          <label style={labelStyle}>Welcome message (hiển thị khi login)</label>
+          <label style={labelStyle}>Custom Domain</label>
+          <input
+            style={inputStyle}
+            placeholder="school.edu.vn hoặc app.yourschool.vn"
+            value={customDomain}
+            onChange={e => setCustomDomain(e.target.value)}
+          />
+          <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 4 }}>
+            Domain riêng cho học sinh đăng nhập. Cần cấu hình DNS trỏ về AvaB.
+          </p>
+        </div>
+
+        {/* Welcome message */}
+        <div style={{ gridColumn: '1/-1' }}>
+          <label style={labelStyle}>Welcome message (hiển thị khi đăng nhập)</label>
           <textarea
             style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
-            placeholder="Chào mừng bạn đến với hệ thống..."
+            placeholder="Chào mừng bạn đến với hệ thống của {org.name}!"
             value={welcomeMsg}
             onChange={e => setWelcomeMsg(e.target.value)}
           />
         </div>
+
       </div>
+
       <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
         <button
           onClick={handleSave}
           disabled={saving}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            background: saving ? '#c4b5fd' : 'linear-gradient(135deg, #7c3aed, #2563eb)',
+            background: saving ? '#c4b5fd' : `linear-gradient(135deg, ${primaryColor}, #2563eb)`,
             color: '#fff', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer',
           }}
         >

@@ -1413,18 +1413,4 @@ model HomeworkSubmission {
   @@map("avab_homework_submissions")
 }
 
-model HomeworkSubmission {
-  id          String   @id @default(cuid())
-  studentId   String
-  subjectId   String
-  materialId  String?
-  content     String   @db.Text
-  score       Float?
-  feedback    String?
-  status      String   @default("submitted")
-  submittedAt DateTime @default(now())
-  gradedAt    DateTime?
-  gradedBy    String?
-  @@index([studentId, subjectId])
-  @@map("avab_homework_submissions")
-}
+

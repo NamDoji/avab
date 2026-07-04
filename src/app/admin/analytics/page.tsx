@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
 export const metadata = { title: 'Analytics Center — AvaB Admin' }
+export const revalidate = 1800 // 30 phút — dữ liệu analytics ít thay đổi
 
 const MATERIAL_TYPE_LABELS: Record<string, string> = {
   THEORY: '📖 Lý thuyết',

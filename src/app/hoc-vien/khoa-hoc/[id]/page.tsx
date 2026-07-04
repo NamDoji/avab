@@ -354,7 +354,7 @@ export default async function StudentCourseDetailPage({
                 return (
                   <Link
                     key={subject.id}
-                    href={`/khoa-hoc/${courseId}/${subject.id}`}
+                    href={`/hoc-vien/khoa-hoc/${courseId}/${subject.id}`}
                     className="flex items-center gap-3 p-3 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/30 transition group"
                   >
                     <div
@@ -379,20 +379,27 @@ export default async function StudentCourseDetailPage({
         </div>
 
         {/* ── Quick actions ──────────────────────────────────────── */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <Link
             href={`/hoc-vien/khoa-hoc/${courseId}/quiz`}
-            className={`bg-gradient-to-br ${theme.gradient} text-white rounded-2xl p-5 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition`}
+            className={`bg-gradient-to-br ${theme.gradient} text-white rounded-2xl p-4 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition`}
           >
-            <span className="text-3xl">🎯</span>
-            <span className="text-sm font-black">Làm bài kiểm tra</span>
+            <span className="text-2xl">🎯</span>
+            <span className="text-xs font-black">Kiểm tra</span>
+          </Link>
+          <Link
+            href={`/hoc-vien/khoa-hoc/${courseId}/bai-tap`}
+            className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl p-4 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition"
+          >
+            <span className="text-2xl">📝</span>
+            <span className="text-xs font-black">Bài tập</span>
           </Link>
           <Link
             href="/hoc-vien/gamification"
-            className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white rounded-2xl p-5 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition"
+            className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white rounded-2xl p-4 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition"
           >
-            <span className="text-3xl">🏅</span>
-            <span className="text-sm font-black">Thành tích & XP</span>
+            <span className="text-2xl">🏅</span>
+            <span className="text-xs font-black">Thành tích</span>
           </Link>
         </div>
       </div>

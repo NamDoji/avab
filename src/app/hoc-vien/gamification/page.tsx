@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import MissionClaimButton from './MissionClaimButton'
+import DailyCheckinButton from './DailyCheckinButton'
 
 export const metadata = { title: 'Thành tích — AvaB Học viên' }
 
@@ -64,6 +65,13 @@ export default async function GamificationPage() {
   }
 
   const { level, xpProgress, xpRequired } = computeLevel(stats.xp)
+
+  // Determine if user already checked in today
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+  const checkedInToday = rawStats?.lastLoginAt
+    ? new Date(rawStats.lastLoginAt) >= todayStart
+    : false
 
   // Rank by xp
   const usersAbove = await prisma.userStats.count({ where: { xp: { gt: stats.xp } } })
@@ -133,16 +141,22 @@ export default async function GamificationPage() {
               </div>
             </div>
 
-            {/* Coin + Streak */}
-            <div className="flex gap-3">
+            {/* Coin + Streak + Daily check-in */}
+            <div className="flex flex-wrap gap-3 items-center">
               <div className="flex items-center gap-1.5 bg-white/20 rounded-xl px-4 py-2">
                 <span>💰</span>
                 <span className="font-black text-sm">{stats.coin.toLocaleString('vi-VN')} xu</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white/20 rounded-xl px-4 py-2">
-                <span>🔥</span>
+                <span
+                  className="text-lg"
+                  style={stats.streak > 0 ? { animation: 'flicker 1.2s ease-in-out infinite alternate' } : {}}
+                >
+                  🔥
+                </span>
                 <span className="font-black text-sm">Streak {stats.streak} ngày</span>
               </div>
+              <DailyCheckinButton checkedInToday={checkedInToday} currentStreak={stats.streak} />
             </div>
           </div>
         </div>

@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
-import { Menu, X, Globe, User, LogOut, ChevronDown } from 'lucide-react'
+import { Menu, X, Globe, User, LogOut, ChevronDown, Search } from 'lucide-react'
 import { useLang } from '@/contexts/LanguageContext'
 
 // ── "Về chúng tôi" dropdown items ──────────────────────────────────────────
@@ -26,14 +26,24 @@ const navLinks = [
 ]
 
 export function Navbar() {
-  const [isOpen, setIsOpen]         = useState(false)
-  const [scrolled, setScrolled]     = useState(false)
-  const [aboutOpen, setAboutOpen]   = useState(false)   // desktop hover
-  const [aboutMobile, setAboutMobile] = useState(false) // mobile expand
+  const [isOpen, setIsOpen]           = useState(false)
+  const [scrolled, setScrolled]       = useState(false)
+  const [aboutOpen, setAboutOpen]     = useState(false)   // desktop hover
+  const [aboutMobile, setAboutMobile] = useState(false)   // mobile expand
+  const [searchQuery, setSearchQuery] = useState('')
   const { lang, setLang } = useLang()
   const pathname  = usePathname()
+  const router    = useRouter()
   const { data: session } = useSession()
   const dropRef = useRef<HTMLDivElement>(null)
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault()
+    if (!searchQuery.trim()) return
+    router.push(`/tim-kiem?q=${encodeURIComponent(searchQuery.trim())}`)
+    setIsOpen(false)
+    setSearchQuery('')
+  }
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -231,6 +241,44 @@ export function Navbar() {
                 {lang === 'vi' ? link.label : link.labelEn}
               </Link>
             ))}
+
+            {/* Mobile Search bar */}
+            <form onSubmit={handleSearch} className="relative mt-1 mb-2">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={lang === 'vi' ? 'Tìm khoá học, bài học...' : 'Search courses, lessons...'}
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                />
+              </div>
+            </form>
+
+            {/* Quick portal links */}
+            <div className="border-t border-gray-100 pt-3 mt-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-1">
+                {lang === 'vi' ? 'Cổng thông tin' : 'Portals'}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { href: '/hoc-vien',  icon: '🎓', label: lang === 'vi' ? 'Học viên'  : 'Student'  },
+                  { href: '/giao-vien', icon: '👨‍🏫', label: lang === 'vi' ? 'Giáo viên' : 'Teacher'  },
+                  { href: '/phu-huynh',icon: '👪', label: lang === 'vi' ? 'Phụ huynh' : 'Parent'   },
+                ].map((portal) => (
+                  <Link
+                    key={portal.href}
+                    href={portal.href}
+                    onClick={() => setIsOpen(false)}
+                    className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-gray-50 hover:bg-purple-50 hover:text-purple-700 transition-all text-center"
+                  >
+                    <span className="text-xl">{portal.icon}</span>
+                    <span className="text-[11px] font-bold text-gray-700">{portal.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             {/* Auth buttons */}
             <div className="border-t border-gray-100 pt-3 mt-2 flex flex-col gap-2">
