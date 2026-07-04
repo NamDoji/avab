@@ -22,6 +22,8 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
       { href: '/admin/courses',          icon: '📚', label: 'Khoá học',    desc: 'Danh sách khoá học' },
       { href: '/admin/enrollments',      icon: '📝', label: 'Đăng ký học', desc: 'Ghi danh & phê duyệt' },
       { href: '/admin/finance/invoices', icon: '💰', label: 'Thu học phí', desc: 'Đợt thu & thanh toán' },
+      // AI Tạo khoá học — CHỈ SUPER_ADMIN (quản trị AvaB)
+      ...(isSuperAdmin ? [{ href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'AI Tạo khoá học', desc: 'Sinh khoá học bằng AI' }] : []),
     ],
   },
   {
