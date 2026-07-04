@@ -78,7 +78,7 @@ export default function PipelineBoard({ leads: initialLeads }: PipelineBoardProp
   const leadsByStage = (stage: Stage) => leads.filter((l) => l.status === stage)
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div className="flex gap-4" style={{ minWidth: "max-content" }}>
       {STAGES.map((stage) => {
         const stageLeads = leadsByStage(stage.id)
         const stageIdx   = STAGE_ORDER.indexOf(stage.id)
@@ -86,7 +86,7 @@ export default function PipelineBoard({ leads: initialLeads }: PipelineBoardProp
         const nextStage  = stageIdx < STAGE_ORDER.length - 1 ? STAGE_ORDER[stageIdx + 1] : null
 
         return (
-          <div key={stage.id} className="flex flex-col gap-3">
+          <div key={stage.id} className="flex flex-col gap-3" style={{ width: 260, flexShrink: 0 }}>
             {/* ── Column header with count badge ── */}
             <div
               className="rounded-2xl px-4 py-3 flex items-center justify-between"
