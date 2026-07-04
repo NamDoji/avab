@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import AddCampusModal from './AddCampusModal'
 
 interface Campus {
@@ -74,6 +75,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
   const [activeTab, setActiveTab] = useState<Tab>('campuses')
   const [showAddCampus, setShowAddCampus] = useState(false)
   const [search, setSearch] = useState('')
+  const router = useRouter()
   const [deactivatingCampus, setDeactivatingCampus] = useState<string | null>(null)
 
   const TABS: { key: Tab; label: string }[] = [
@@ -105,6 +107,21 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
     } finally {
       setDeactivatingCampus(null)
     }
+  }
+
+  async function handleEnterCampus(campusId: string) {
+    const res = await fetch('/api/auth/switch-org', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ organizationId: org.id }),
+    })
+    if (!res.ok) {
+      const data = await res.json()
+      alert(data.error ?? 'Không thể chuyển sang org này')
+      return
+    }
+    // Navigate to campus-scoped analytics
+    router.push(`/admin/organizations/${org.id}/campuses/${campusId}`)
   }
 
   return (
@@ -184,20 +201,52 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                               👥 {campus._count.campusUsers} thành viên
                             </p>
                           </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+                            {/* View campus analytics */}
+                            <Link
+                              href={`/admin/organizations/${org.id}/campuses/${campus.id}`}
+                              className="text-xs font-bold px-2.5 py-1 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors"
+                              title="Xem analytics cơ sở"
+                            >
+                              📊 Analytics
+                            </Link>
+
+                            {/* Set campus principal */}
+                            <Link
+                              href={`/admin/organizations/${org.id}/campuses/${campus.id}?tab=principal`}
+                              className="text-xs font-bold px-2.5 py-1 rounded-lg border border-violet-200 text-violet-600 hover:bg-violet-50 transition-colors"
+                              title="Thiết lập hiệu trưởng / người phụ trách"
+                            >
+                              👤 Hiệu trưởng
+                            </Link>
+
+                            {/* Enter campus scope */}
+                            {campus.isActive && (
+                              <button
+                                onClick={() => handleEnterCampus(campus.id)}
+                                className="text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-200 text-emerald-600 hover:bg-emerald-50 transition-colors"
+                                title="Đăng nhập vào campus này"
+                              >
+                                🔑 Vào campus
+                              </button>
+                            )}
+
+                            {/* Edit */}
                             <Link
                               href={`/admin/organizations/${org.id}/campuses/${campus.id}`}
                               className="text-xs font-bold px-2.5 py-1 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors"
                             >
-                              Sửa
+                              ✏️ Sửa
                             </Link>
+
+                            {/* Deactivate */}
                             {campus.isActive && (
                               <button
                                 onClick={() => handleDeactivateCampus(campus.id)}
                                 disabled={deactivatingCampus === campus.id}
                                 className="text-xs font-bold px-2.5 py-1 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
                               >
-                                {deactivatingCampus === campus.id ? '...' : 'Vô hiệu'}
+                                {deactivatingCampus === campus.id ? '...' : '🚫 Vô hiệu'}
                               </button>
                             )}
                           </div>
