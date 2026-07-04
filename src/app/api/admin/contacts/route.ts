@@ -24,3 +24,28 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ success: true, data: contacts })
 }
+
+export async function POST(req: NextRequest) {
+  const check = await requireAdmin()
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+
+  const body = await req.json() as { name?: string; phone?: string; email?: string; note?: string; type?: string }
+  const { name, phone, email, note, type } = body
+
+  if (!phone?.trim()) {
+    return NextResponse.json({ success: false, error: 'Số điện thoại là bắt buộc' }, { status: 400 })
+  }
+
+  const registration = await prisma.registration.create({
+    data: {
+      name: name?.trim() || null,
+      phone: phone.trim(),
+      email: email?.trim() || null,
+      note: note?.trim() || null,
+      type: type ?? 'CONTACT',
+      status: 'NEW',
+    },
+  })
+
+  return NextResponse.json({ success: true, data: registration }, { status: 201 })
+}
