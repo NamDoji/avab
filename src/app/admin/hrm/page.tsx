@@ -7,7 +7,7 @@ export const metadata = { title: 'HRM — Nhân sự — AvaB Admin' }
 
 const HRM_MODULES = [
   { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công',    color: '#7c3aed', badge: null },
-  { href: '/admin/hrm/contracts',  icon: '📄', label: 'Hợp đồng',  desc: 'HĐLĐ, theo dõi',       color: '#4f46e5', badge: null },
+  { href: '/admin/hrm/contracts',  icon: '📄', label: 'Hợp đồng',  desc: 'HĐLĐ, theo dõi',       color: '#4f46e5', badge: 'expiringContracts' },
   { href: '/admin/hrm/attendance', icon: '⏰', label: 'Chấm công',  desc: 'Check-in/out',          color: '#0369a1', badge: null },
   { href: '/admin/hrm/kpi',        icon: '📊', label: 'KPI & OKR', desc: 'Mục tiêu, đánh giá',   color: '#059669', badge: null },
   { href: '/admin/hrm/leave',      icon: '🌴', label: 'Nghỉ phép', desc: 'Đơn xin nghỉ',          color: '#d97706', badge: 'pendingLeave' },
@@ -18,11 +18,17 @@ export default async function HRMPage() {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const [totalStaff, adminCount, teacherCount, pendingLeave] = await Promise.all([
+  const now = new Date()
+  const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+  const [totalStaff, adminCount, teacherCount, pendingLeave, expiringContracts] = await Promise.all([
     prisma.user.count({ where: { role: { in: ['ADMIN', 'TEACHER'] } } }),
     prisma.user.count({ where: { role: 'ADMIN' } }),
     prisma.user.count({ where: { role: 'TEACHER' } }),
     prisma.leaveRequest.count({ where: { status: 'pending' } }).catch(() => 0),
+    prisma.contract
+      .count({ where: { status: 'active', endDate: { gte: now, lte: in30Days } } })
+      .catch(() => 0),
   ])
 
   return (
@@ -72,7 +78,12 @@ export default async function HRMPage() {
           <p className="text-sm font-bold text-gray-700 mb-3">🗂️ Phân hệ HRM</p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {HRM_MODULES.map((mod) => {
-              const badgeCount = mod.badge === 'pendingLeave' ? pendingLeave : 0
+              const badgeCount =
+            mod.badge === 'pendingLeave'
+              ? pendingLeave
+              : mod.badge === 'expiringContracts'
+              ? expiringContracts
+              : 0
               return (
                 <Link
                   key={mod.href}
