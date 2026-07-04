@@ -1,6 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
 export interface NotificationItem {
   type: 'enrollment' | 'contact' | 'payment'
@@ -13,18 +15,27 @@ export interface NotificationItem {
  * GET /api/admin/notifications/count
  * Returns total count of actionable items + 5 most recent notifications.
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth()
     if (!session?.user || (session.user as { role?: string }).role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = (session.user as { id?: string })?.id ?? ''
+    const cookieOrgId = getCurrentOrgFromRequest(req)
+    const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+
+    // Org-scoped where clauses
+    const whereEnrollOrg = orgCtx ? { course: { organizationId: orgCtx.id } } : {}
+    const whereContactOrg = orgCtx ? { organizationId: orgCtx.id } : {}
+    const wherePaymentOrg = orgCtx ? { enrollment: { course: { organizationId: orgCtx.id } } } : {}
+
     const overdueThreshold = new Date(Date.now() - 30 * 86_400_000) // 30 days ago
 
     const [pendingEnrollments, newContacts, overduePayments] = await Promise.all([
       prisma.enrollment.findMany({
-        where: { status: 'PENDING' },
+        where: { ...whereEnrollOrg, status: 'PENDING' },
         include: {
           user: { select: { name: true } },
           course: { select: { name: true } },
@@ -33,12 +44,12 @@ export async function GET() {
         take: 5,
       }),
       prisma.registration.findMany({
-        where: { status: 'NEW' },
+        where: { ...whereContactOrg, status: 'NEW' },
         orderBy: { createdAt: 'desc' },
         take: 5,
       }),
       prisma.tuitionPayment.findMany({
-        where: { isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
+        where: { ...wherePaymentOrg, isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
         include: { enrollment: { include: { user: { select: { name: true } } } } },
         orderBy: { createdAt: 'desc' },
         take: 3,
@@ -46,7 +57,7 @@ export async function GET() {
     ])
 
     const overdueCount = await prisma.tuitionPayment.count({
-      where: { isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
+      where: { ...wherePaymentOrg, isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
     })
 
     const count =

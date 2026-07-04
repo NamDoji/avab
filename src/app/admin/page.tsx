@@ -43,6 +43,8 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
       { href: '/admin/erp/reports',        icon: '📊', label: 'Báo cáo ERP',    desc: 'Báo cáo học vụ' },
       { href: '/admin/erp/bus-routes',     icon: '🚌', label: 'Xe tuyến',       desc: 'Xe đưa đón HS' },
       { href: '/admin/erp/uniforms',       icon: '👕', label: 'Đồng phục',      desc: 'Đặt đồng phục HS' },
+      { href: '/admin/erp/canteen',          icon: '🍽️', label: 'Căng tin',       desc: 'Suất ăn & thực đơn' },
+      { href: '/admin/erp/library',          icon: '📖', label: 'Thư viện',       desc: 'Sách & mượn trả' },
       { href: '/admin/erp/rewards',        icon: '🎮', label: 'Điểm thưởng',    desc: 'Gamification' },
       { href: '/admin/erp/awards',         icon: '🏆', label: 'Khen thưởng',    desc: 'Giải thưởng HS' },
       { href: '/admin/erp/timetable/workload', icon: '⚖️', label: 'Tải công GV', desc: 'Phân công giảng dạy' },

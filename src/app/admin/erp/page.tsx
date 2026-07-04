@@ -115,6 +115,20 @@ export default async function ERPHubPage() {
       desc: 'Quản lý đồng phục HS',
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
     },
+    {
+      href: '/admin/erp/canteen',
+      icon: '🍽️',
+      label: 'Căng tin',
+      desc: 'Suất ăn & thực đơn',
+      gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+    },
+    {
+      href: '/admin/erp/library',
+      icon: '📖',
+      label: 'Thư viện',
+      desc: 'Sách & mượn trả',
+      gradient: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    },
   ]
 
   return (

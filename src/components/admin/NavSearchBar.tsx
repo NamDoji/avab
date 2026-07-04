@@ -53,6 +53,8 @@ const ITEMS: SearchItem[] = [
   { id: 'erp',            label: 'School ERP',          description: 'Quản lý nhà trường',    icon: '🏫', href: '/admin/erp',                       keywords: ['erp','trường'] },
   { id: 'bus-routes',     label: 'Xe tuyến',            description: 'Quản lý xe đưa đón',    icon: '🚌', href: '/admin/erp/bus-routes',            keywords: ['xe tuyến','xe buýt','đưa đón','bus'] },
   { id: 'uniforms',       label: 'Đồng phục',           description: 'Quản lý đồng phục HS',  icon: '👕', href: '/admin/erp/uniforms',              keywords: ['đồng phục','quần áo','uniform','áo'] },
+  { id: 'canteen',        label: 'Căng tin',             description: 'Suất ăn & thực đơn',     icon: '🍽️', href: '/admin/erp/canteen',              keywords: ['căng tin','suất ăn','thực đơn','ăn trưa','bữa ăn','canteen'] },
+  { id: 'library',        label: 'Thư viện',             description: 'Sách & mượn trả',          icon: '📖', href: '/admin/erp/library',              keywords: ['thư viện','sách','mượn sách','library','book'] },
 ]
 
 const QUICK_CHIPS = ['Học sinh', 'Tài chính', 'Điểm danh', 'Thời khóa biểu', 'Phân quyền']
