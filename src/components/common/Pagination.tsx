@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-const PAGE_SIZE_KEY = 'dataTablePageSize'
+const DEFAULT_PAGE_SIZE_KEY = 'dataTablePageSize'
 const DEFAULT_PAGE_SIZES = [20, 50, 100, 200]
 
 export interface PaginationProps {
@@ -13,6 +13,9 @@ export interface PaginationProps {
   onPageChange: (page: number) => void
   onPageSizeChange: (size: number) => void
   pageSizeOptions?: number[]
+  /** localStorage key for persisting pageSize preference */
+  storageKey?: string
+  className?: string
 }
 
 function getPageNumbers(current: number, total: number): (number | '...')[] {
@@ -36,15 +39,34 @@ export default function Pagination({
   onPageChange,
   onPageSizeChange,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
+  storageKey,
+  className = '',
 }: PaginationProps) {
   const [jumpValue, setJumpValue] = useState('')
 
-  // Persist page size preference
+  // ── Load preference from localStorage on mount ────────────────────────────
   useEffect(() => {
+    const key = storageKey ?? DEFAULT_PAGE_SIZE_KEY
     try {
-      localStorage.setItem(PAGE_SIZE_KEY, String(pageSize))
+      const stored = localStorage.getItem(key)
+      if (stored) {
+        const n = parseInt(stored, 10)
+        if (!isNaN(n) && pageSizeOptions.includes(n) && n !== pageSize) {
+          onPageSizeChange(n)
+        }
+      }
     } catch {}
-  }, [pageSize])
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ── Persist page size when it changes ─────────────────────────────────────
+  useEffect(() => {
+    const key = storageKey ?? DEFAULT_PAGE_SIZE_KEY
+    try {
+      localStorage.setItem(key, String(pageSize))
+    } catch {}
+  }, [pageSize, storageKey])
 
   const handleJump = useCallback(() => {
     const n = parseInt(jumpValue, 10)
@@ -59,82 +81,100 @@ export default function Pagination({
   const pages = getPageNumbers(currentPage, totalPages)
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-gray-100">
-      {/* Left: page size + count */}
+    <div
+      className={`flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-gray-100 ${className}`}
+    >
+      {/* Left: page size + record range */}
       <div className="flex items-center gap-3 text-sm text-gray-600">
         <span>Hiển thị</span>
         <select
           value={pageSize}
-          onChange={(e) => onPageSizeChange(Number(e.target.value))}
+          onChange={(e) => {
+            const size = Number(e.target.value)
+            onPageSizeChange(size)
+          }}
           className="border border-gray-200 rounded-lg px-2 py-1 text-sm font-semibold text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           {pageSizeOptions.map((s) => (
-            <option key={s} value={s}>{s}</option>
+            <option key={s} value={s}>
+              {s}
+            </option>
           ))}
         </select>
         <span>bản ghi</span>
         {totalCount > 0 && (
           <span className="text-gray-400">
-            ({startItem.toLocaleString('vi-VN')}–{endItem.toLocaleString('vi-VN')} của {totalCount.toLocaleString('vi-VN')})
+            ({startItem.toLocaleString('vi-VN')}–{endItem.toLocaleString('vi-VN')} trong{' '}
+            {totalCount.toLocaleString('vi-VN')} bản ghi)
           </span>
         )}
       </div>
 
       {/* Right: navigation */}
       <div className="flex items-center gap-1">
-        {/* First */}
+        {/* First |◀ */}
         <button
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
           className="px-2 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           title="Trang đầu"
+          aria-label="Trang đầu"
         >
           «
         </button>
-        {/* Prev */}
+        {/* Prev ◀ */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="px-2 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           title="Trang trước"
+          aria-label="Trang trước"
         >
           ‹
         </button>
 
+        {/* Page numbers */}
         {pages.map((p, i) =>
           p === '...' ? (
-            <span key={`ellipsis-${i}`} className="px-2 py-1.5 text-gray-400 text-xs">…</span>
+            <span key={`ellipsis-${i}`} className="px-2 py-1.5 text-gray-400 text-xs">
+              …
+            </span>
           ) : (
             <button
               key={p}
               onClick={() => onPageChange(p as number)}
               className={`min-w-[32px] px-2 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                p === currentPage
-                  ? 'text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
+                p === currentPage ? 'text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
-              style={p === currentPage ? { background: 'linear-gradient(135deg, #0f766e, #0369a1)' } : {}}
+              style={
+                p === currentPage
+                  ? { background: 'linear-gradient(135deg, #0f766e, #0369a1)' }
+                  : {}
+              }
+              aria-current={p === currentPage ? 'page' : undefined}
             >
               {p}
             </button>
           ),
         )}
 
-        {/* Next */}
+        {/* Next ▶ */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
           className="px-2 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           title="Trang sau"
+          aria-label="Trang sau"
         >
           ›
         </button>
-        {/* Last */}
+        {/* Last ▶| */}
         <button
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage >= totalPages}
           className="px-2 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           title="Trang cuối"
+          aria-label="Trang cuối"
         >
           »
         </button>
@@ -150,8 +190,10 @@ export default function Pagination({
               value={jumpValue}
               onChange={(e) => setJumpValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleJump()}
+              onBlur={handleJump}
               className="w-14 border border-gray-200 rounded-lg px-2 py-1 text-xs text-center focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder={String(currentPage)}
+              aria-label="Nhảy đến trang"
             />
           </div>
         )}

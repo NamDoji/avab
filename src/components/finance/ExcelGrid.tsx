@@ -18,7 +18,7 @@ import React, {
 export interface ExcelColumn {
   key: string
   header: string
-  type: 'text' | 'number' | 'currency' | 'date' | 'select' | 'readonly'
+  type: 'text' | 'number' | 'currency' | 'date' | 'select' | 'readonly' | 'checkbox'
   options?: string[]
   width?: number
   formula?: string // e.g. "=SUM(colKey)"
@@ -45,7 +45,7 @@ interface HistoryEntry {
   data: ExcelRow[]
 }
 
-const HISTORY_LIMIT = 50
+const HISTORY_LIMIT = 20
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -73,6 +73,8 @@ function displayValue(col: ExcelColumn, value: unknown): string {
       return fmtCurrency(value)
     case 'date':
       return fmtDate(value)
+    case 'checkbox':
+      return value ? '✓' : ''
     default:
       return String(value)
   }
@@ -88,6 +90,7 @@ function editValue(col: ExcelColumn, value: unknown): string {
       }
     } catch {}
   }
+  if (col.type === 'checkbox') return String(!!value)
   return String(value)
 }
 
@@ -99,6 +102,8 @@ function parseValue(col: ExcelColumn, raw: string): unknown {
       return raw === '' ? null : Number(raw.replace(/[^0-9.\-]/g, ''))
     case 'date':
       return raw === '' ? null : raw
+    case 'checkbox':
+      return raw === 'true' || raw === '1' || raw === 'on' || raw === '✓'
     default:
       return raw
   }
@@ -380,16 +385,28 @@ export default function ExcelGrid({
         case 'Escape':
           setSelected(null)
           break
+        case ' ': {
+          const col = columns[selected.col]
+          if (col?.type === 'checkbox' && !isReadonly(col)) {
+            e.preventDefault()
+            updateCell(selected.row, col.key, !rows[selected.row][col.key])
+          }
+          break
+        }
         case 'Delete':
         case 'Backspace': {
           const col = columns[selected.col]
-          if (col && !isReadonly(col)) updateCell(selected.row, col.key, null)
+          if (col && !isReadonly(col)) {
+            if (col.type === 'checkbox') updateCell(selected.row, col.key, false)
+            else updateCell(selected.row, col.key, null)
+          }
           break
         }
         default:
-          // Start typing → start edit
+          // Start typing → start edit (not for checkbox)
           if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-            startEdit(selected.row, selected.col, e.key)
+            const col = columns[selected.col]
+            if (col?.type !== 'checkbox') startEdit(selected.row, selected.col, e.key)
           }
       }
     },
@@ -574,6 +591,8 @@ export default function ExcelGrid({
               />
               Đang lưu...
             </>
+          ) : changedCount > 0 ? (
+            <>💾 Lưu ({changedCount} thay đổi)</>
           ) : (
             <>💾 Lưu</>
           )}
@@ -695,11 +714,24 @@ export default function ExcelGrid({
                           setRangeStart(null)
                           setSelected({ row: ri, col: ci })
                         }
+                        // Toggle checkbox directly on click
+                        if (col.type === 'checkbox' && !readonly) {
+                          updateCell(ri, col.key, !cellValue)
+                        }
                         gridRef.current?.focus()
                       }}
-                      onDoubleClick={() => !readonly && startEdit(ri, ci)}
+                      onDoubleClick={() => !readonly && col.type !== 'checkbox' && startEdit(ri, ci)}
                     >
-                      {isEditingThis ? (
+                      {col.type === 'checkbox' ? (
+                        <div className="px-2 py-1.5 flex items-center justify-center min-h-[32px]">
+                          <input
+                            type="checkbox"
+                            checked={!!cellValue}
+                            readOnly
+                            className="w-4 h-4 accent-emerald-600 pointer-events-none"
+                          />
+                        </div>
+                      ) : isEditingThis ? (
                         col.type === 'select' ? (
                           <select
                             ref={inputRef as React.RefObject<HTMLSelectElement>}
