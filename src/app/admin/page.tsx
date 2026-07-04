@@ -109,8 +109,8 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
     icon: '🔌',
     label: 'Phát triển',
     modules: [
-      { href: '/admin/api-platform', icon: '🔌', label: 'API Platform', desc: 'REST & GraphQL' },
-      { href: '/admin/webhooks',     icon: '🔔', label: 'Webhooks',     desc: 'Event triggers' },
+      { href: '/admin/app-center/api', icon: '🔌', label: 'API Platform', desc: 'REST & GraphQL' },
+      { href: '/admin/app-center/webhooks',     icon: '🔔', label: 'Webhooks',     desc: 'Event triggers' },
       { href: '/admin/app-center',   icon: '🧩', label: 'App Center',   desc: 'Tích hợp & mở rộng' },
     ],
   },
