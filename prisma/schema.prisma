@@ -1351,3 +1351,34 @@ model ClassTransfer {
   @@index([organizationId])
   @@map("avab_class_transfers")
 }
+
+model KpiRecord {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String?
+  period         String
+  targets        Json     @default("[]")
+  overallScore   Float?
+  rating         String?
+  reviewedBy     String?
+  reviewedAt     DateTime?
+  createdAt      DateTime @default(now())
+  @@index([userId])
+  @@map("avab_kpi_records")
+}
+
+model Contract {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String?
+  type           String   @default("fulltime")
+  startDate      DateTime
+  endDate        DateTime?
+  salary         Float?
+  position       String?
+  status         String   @default("active")
+  notes          String?
+  createdAt      DateTime @default(now())
+  @@index([userId])
+  @@map("avab_contracts")
+}
