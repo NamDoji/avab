@@ -88,7 +88,7 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
     modules: [
       { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks',     desc: 'Quản lý công việc' },
       { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar',  desc: 'Lịch nhóm' },
-      { href: '/admin/collab/meeting',  icon: '🎥', label: 'Meeting',   desc: 'Họp trực tuyến' },
+      { href: '/admin/collab/meetings',  icon: '🎥', label: 'Meeting',   desc: 'Họp trực tuyến' },
       { href: '/admin/workflow',        icon: '⚙️', label: 'Workflow',  desc: 'BPM & approval' },
     ],
   },
@@ -102,6 +102,7 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
       { href: '/admin/audit',         icon: '📋', label: 'Audit',         desc: 'Lịch sử thay đổi' },
       { href: '/admin/organizations', icon: '🏢', label: 'Organizations', desc: 'Trường & cơ sở' },
       { href: '/admin/settings',      icon: '⚙️', label: 'Settings',      desc: 'Cấu hình hệ thống' },
+      { href: '/admin/notifications', icon: '🔔', label: 'Thông báo',      desc: 'Notification center' },
     ],
   },
   {

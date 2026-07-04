@@ -32,6 +32,7 @@ const ITEMS: SearchItem[] = [
   { id: 'roles',          label: 'Phân quyền',          description: 'Roles & permissions',   icon: '🔐', href: '/admin/roles',                     keywords: ['role','phân quyền','quyền'] },
   { id: 'users',          label: 'Người dùng',          description: 'Quản lý tài khoản',     icon: '👤', href: '/admin/users',                     keywords: ['user','người dùng','tài khoản'] },
   { id: 'organizations',  label: 'Tổ chức',             description: 'Quản lý tổ chức',       icon: '🏢', href: '/admin/organizations',             keywords: ['organization','tổ chức','trường'] },
+  { id: 'notifications', label: 'Thông báo', description: 'Notification center', icon: '🔔', href: '/admin/notifications', keywords: ['thông báo','notification','notify','chuông'] },
   { id: 'settings',       label: 'Cài đặt',             description: 'Cấu hình hệ thống',     icon: '⚙️', href: '/admin/settings',                 keywords: ['setting','cài đặt','cấu hình'] },
   { id: 'gamification',   label: 'Gamification',        description: 'Điểm & bảng xếp hạng', icon: '🎮', href: '/admin/gamification',              keywords: ['game','điểm','leaderboard'] },
   { id: 'erp',            label: 'School ERP',          description: 'Quản lý nhà trường',    icon: '🏫', href: '/admin/erp',                       keywords: ['erp','trường'] },
