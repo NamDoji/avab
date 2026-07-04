@@ -133,7 +133,10 @@ model Curriculum {
 }
 
 model Enrollment {
-  id        String    @id @default(cuid())
+  id             String    @id @default(cuid())
+  organizationId String?   // scoped to org
+  campusId       String?   // scoped to campus
+  academicYearId String?   // scoped to academic year
   userId    String
   courseId  String
   status    String    @default("ACTIVE") // ACTIVE | EXPIRED | PENDING | REMOVED
@@ -284,7 +287,9 @@ model Recruitment {
 
 // Một đợt thu học phí (admin tạo)
 model TuitionCollection {
-  id          String   @id @default(cuid())
+  id             String   @id @default(cuid())
+  organizationId String?
+  campusId       String?
   courseId    String
   title       String   // Ví dụ: "Thu học phí tháng 3/2026"
   sessions    Int      @default(0)  // Số buổi thu
@@ -325,7 +330,9 @@ model TuitionPayment {
 
 // Một buổi học cụ thể (admin/GV tạo sau mỗi buổi dạy)
 model SessionFeedback {
-  id          String   @id @default(cuid())
+  id             String   @id @default(cuid())
+  organizationId String?
+  campusId       String?
   subjectId   String
   sessionDate DateTime @default(now())
   sessionNote String?  // Ghi chú chung về buổi học
