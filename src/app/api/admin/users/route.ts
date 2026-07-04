@@ -93,6 +93,14 @@ export async function PATCH(req: NextRequest) {
       )
     }
 
+    // Ownership check: ADMIN chỉ thác tác user trong org của mình
+    if (check.orgCtx) {
+      const member = await prisma.organizationUser.findFirst({
+        where: { userId, organizationId: check.orgCtx.id },
+      })
+      if (!member) return NextResponse.json({ success: false, error: 'Người dùng không thuộc tổ chức này' }, { status: 403 })
+    }
+
     if (action === 'reset-password') {
       const hashedPassword = await bcrypt.hash('123456', 12)
       await prisma.user.update({
@@ -129,6 +137,14 @@ export async function PUT(req: NextRequest) {
   try {
     const { userId, name, phone, email, role, isActive } = await req.json()
     if (!userId) return NextResponse.json({ success: false, error: 'Thiếu userId' }, { status: 400 })
+
+    // Ownership check: ADMIN chỉ sửa user trong org của mình
+    if (check.orgCtx) {
+      const member = await prisma.organizationUser.findFirst({
+        where: { userId, organizationId: check.orgCtx.id },
+      })
+      if (!member) return NextResponse.json({ success: false, error: 'Người dùng không thuộc tổ chức này' }, { status: 403 })
+    }
 
     // Kiểm tra trùng sĐT / email (ngoại trừ chính user đang sửa)
     if (phone || email) {
@@ -176,6 +192,17 @@ export async function DELETE(req: NextRequest) {
   try {
     const { userId } = await req.json()
     if (!userId) return NextResponse.json({ success: false, error: 'Thiếu userId' }, { status: 400 })
+
+    // Ownership check: ADMIN chỉ xóa user trong org của mình
+    if (check.orgCtx) {
+      const member = await prisma.organizationUser.findFirst({
+        where: { userId, organizationId: check.orgCtx.id },
+      })
+      if (!member) return NextResponse.json({ success: false, error: 'Người dùng không thuộc tổ chức này' }, { status: 403 })
+      // Chỉ xóa khỏi org, không xóa user khỏi hệ thống (an toàn hơn)
+      await prisma.organizationUser.deleteMany({ where: { userId, organizationId: check.orgCtx.id } })
+      return NextResponse.json({ success: true })
+    }
 
     await prisma.user.delete({ where: { id: userId } })
     return NextResponse.json({ success: true })
@@ -234,6 +261,20 @@ export async function POST(req: NextRequest) {
         createdAt: true,
       },
     })
+
+    // Gắn user vào org của admin (nếu có org context)
+    if (check.orgCtx) {
+      await prisma.organizationUser.upsert({
+        where: { organizationId_userId: { organizationId: check.orgCtx.id, userId: user.id } },
+        create: {
+          organizationId: check.orgCtx.id,
+          userId: user.id,
+          orgRole: 'MEMBER',
+          isDefault: true,
+        },
+        update: {},
+      })
+    }
 
     return NextResponse.json({ success: true, data: user })
   } catch (error) {

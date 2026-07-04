@@ -4,13 +4,14 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentOrgFromSession } from '@/lib/organization'
 import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
-async function requireAdmin() {
+async function requireAdmin(req?: NextRequest) {
   const session = await auth()
   if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
-  if ((session.user as { role?: string }).role !== 'ADMIN')
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
     return { error: 'Không có quyền truy cập', status: 403 as const }
   const userId = (session.user as { id?: string })?.id ?? ''
-  return { session, userId }
+  return { session, userId, role }
 }
 
 export async function GET(request: NextRequest) {

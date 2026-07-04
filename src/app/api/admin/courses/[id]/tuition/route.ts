@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
-async function requireAdmin() {
+async function requireAdmin(req: NextRequest) {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN') return { error: 'Không có quyền', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN') return { error: 'Không có quyền', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
+}
+
+// Verify course belongs to admin's org
+async function verifyCourseOwnership(courseId: string, orgCtx: { id: string } | null) {
+  if (!orgCtx) return true // SUPER_ADMIN: no restriction
+  const course = await prisma.course.findFirst({
+    where: { id: courseId },
+    select: { organizationId: true, isPublic: true },
+  })
+  if (!course) return false
+  return course.organizationId === orgCtx.id || course.isPublic === true
 }
 
 // Shared helper — map collection + payments to summary stats
@@ -43,10 +60,14 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+  const check = await requireAdmin(_req)
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
   const { id: courseId } = await params
+
+  // Org ownership check
+  if (!await verifyCourseOwnership(courseId, check.orgCtx))
+    return NextResponse.json({ success: false, error: 'Khoá học không thuộc tổ chức này' }, { status: 403 })
 
   const course = await prisma.course.findUnique({
     where: { id: courseId },
@@ -136,10 +157,13 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+  const check = await requireAdmin(req)
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
   const { id: courseId } = await params
+
+  if (!await verifyCourseOwnership(courseId, check.orgCtx))
+    return NextResponse.json({ success: false, error: 'Khoá học không thuộc tổ chức này' }, { status: 403 })
 
   const body = await req.json()
   const { title, sessions, note } = body
