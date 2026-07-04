@@ -49,7 +49,7 @@ export default async function OrganizationsPage({
   searchParams: Promise<{ filter?: string; sort?: string }>
 }) {
   const session = await auth()
-  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
+  if (!session || (session.user as { role?: string })?.role !== 'SUPER_ADMIN') redirect('/dang-nhap')
 
   const { filter = 'ALL', sort = 'newest' } = await searchParams
 

@@ -6,6 +6,7 @@ import { CommandPalette } from '@/components/admin/CommandPalette'
 import { QuickActionDial } from '@/components/admin/QuickActionDial'
 import NotificationBell from '@/components/admin/NotificationBell'
 import { AdminMobileMenu } from '@/components/admin/AdminMobileMenu'
+import { AdminLogoutButton } from '@/components/admin/AdminLogoutButton'
 import { cookies } from 'next/headers'
 import { CURRENT_ORG_COOKIE } from '@/lib/current-org'
 import { getOrgTheme } from '@/lib/org-theme'
@@ -129,6 +130,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             }}
           >🌐</a>
           <AdminMobileMenu currentOrg={currentOrg} allOrgs={allOrgs} />
+          <AdminLogoutButton />
         </div>
       </div>
 

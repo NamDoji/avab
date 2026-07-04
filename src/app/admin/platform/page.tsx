@@ -27,7 +27,7 @@ export default async function PlatformPage() {
   const userId   = (session?.user as { id?: string })?.id
 
   // Only ADMIN-level users without an active org context can access this
-  if (!session || userRole !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || userRole !== 'SUPER_ADMIN') redirect('/dang-nhap')
 
   const cookieStore = await cookies()
   const orgCtx = cookieStore.get(CURRENT_ORG_COOKIE)?.value ?? null

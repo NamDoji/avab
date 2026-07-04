@@ -10,7 +10,7 @@ export const metadata = { title: 'Admin Dashboard — AvaB' }
 // ─────────────────────────────────────────────────────────────────────────────
 // Zone C: full module list — matches specification exactly
 // ─────────────────────────────────────────────────────────────────────────────
-const ALL_MODULE_GROUPS: NavGroup[] = [
+function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
   {
     id: 'ai-content',
     icon: '🤖',
@@ -121,19 +121,29 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
       { href: '/admin/roles/matrix',  icon: '🗂️', label: 'Ma trận quyền', desc: 'Permission matrix' },
     ],
   },
+  ...(isSuperAdmin ? [{
+    id: 'platform',
+    icon: '🔧',
+    label: 'Platform',
+    modules: [
+      { href: '/admin/platform',        icon: '🔧', label: 'Platform Admin',  desc: 'Quản trị nền tảng' },
+      { href: '/admin/organizations',   icon: '🏢', label: 'Tất cả tổ chức', desc: 'Tạo & quản lý org' },
+      { href: '/admin/users',           icon: '👤', label: 'Tất cả user',    desc: 'Người dùng hệ thống' },
+      { href: '/admin/data-migration',  icon: '📦', label: 'Data Migration',  desc: 'Import/Export' },
+    ],
+  }] : []),
   {
     id: 'dev',
     icon: '🔌',
     label: 'Phát triển',
     modules: [
       { href: '/admin/app-center/api', icon: '🔌', label: 'API Platform', desc: 'REST & GraphQL' },
-      { href: '/admin/app-center/webhooks',     icon: '🔔', label: 'Webhooks',     desc: 'Event triggers' },
-      { href: '/admin/app-center',   icon: '🧩', label: 'App Center',   desc: 'Tích hợp & mở rộng' },
-      { href: '/admin/workflow',      icon: '⚡', label: 'Workflow',       desc: 'Quy trình tự động' },
-      { href: '/admin/workflow/instances', icon: '📋', label: 'Workflow Runs', desc: 'Lịch sử chạy' },
+      { href: '/admin/app-center/webhooks', icon: '🔔', label: 'Webhooks', desc: 'Event triggers' },
+      { href: '/admin/app-center', icon: '🧩', label: 'App Center', desc: 'Tích hợp & mở rộng' },
+      { href: '/admin/workflow', icon: '⚡', label: 'Workflow', desc: 'Quy trình tự động' },
     ],
   },
-]
+]}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
@@ -144,6 +154,8 @@ export default async function AdminPage() {
 
   const userId = (session.user as { id?: string })?.id ?? ''
   const orgCtx = userId ? await getOrganizationContext(userId) : null
+  const userRole = (session.user as { role?: string })?.role ?? ''
+  const isSuperAdmin = userRole === 'SUPER_ADMIN'
 
   const allOrgUsers = userId
     ? await prisma.organizationUser.findMany({
@@ -442,7 +454,7 @@ export default async function AdminPage() {
         </div>
 
         {/* ── Zone C: Full Navigation (collapsible, state persisted) ─────── */}
-        <QuickNav groups={ALL_MODULE_GROUPS} />
+        <QuickNav groups={buildModuleGroups(isSuperAdmin)} />
 
       </div>
     </div>
