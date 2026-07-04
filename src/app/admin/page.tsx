@@ -166,7 +166,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
   // ═══════════════════════════════════════════════════════════════════════════
   if (hasAI) {
     groups.push({
-      id: 'ai-premium', icon: '🤖', label: '✨ AI Studio (Premium)',
+      id: 'ai-premium', icon: '✨', label: 'AI Studio (Premium)',
       modules: [
         { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio',       desc: 'Tạo nội dung bằng AI' },
         { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator', desc: 'Sinh khoá học tự động' },
@@ -181,7 +181,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
   } else {
     // Org chưa mua AI → hiện nút nâng cấp
     groups.push({
-      id: 'ai-upgrade', icon: '🔒', label: '🔒 AI Studio',
+      id: 'ai-upgrade', icon: '🔒', label: 'AI Studio',
       modules: [
         { href: '/admin/settings', icon: '⭐', label: 'Nâng cấp lên AI Premium', desc: 'Liên hệ AvaB để kích hoạt' },
       ],
