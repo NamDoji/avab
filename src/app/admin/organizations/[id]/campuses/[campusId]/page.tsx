@@ -29,6 +29,7 @@ export default async function CampusDetailPage({
     prisma.campusUser.findMany({
       where: { campusId },
       orderBy: { createdAt: 'desc' },
+      take: 200,
       include: {
         user: {
           select: { id: true, name: true, phone: true, role: true, avatar: true },

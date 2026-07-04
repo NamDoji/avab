@@ -1,28 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 import bcrypt from 'bcryptjs'
 
-async function requireAdmin() {
+async function requireAdmin(req: NextRequest) {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
   if ((session.user as any).role !== 'ADMIN')
-    return { error: 'Không có quyền truy cập', status: 403 }
-  return { session }
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
 }
 
 // GET /api/admin/courses/[id]/students - Danh sách học viên
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(request)
+  if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
 
   try {
     const { id: courseId } = await params
+
+    // Validate that this course belongs to the admin's org
+    if (check.orgCtx) {
+      const course = await prisma.course.findUnique({
+        where: { id: courseId },
+        select: { organizationId: true },
+      })
+      if (!course || course.organizationId !== check.orgCtx.id) {
+        return NextResponse.json({ success: false, error: 'Không tìm thấy khóa học' }, { status: 404 })
+      }
+    }
 
     const enrollments = await prisma.enrollment.findMany({
       where: { courseId, status: { not: 'REMOVED' } },
@@ -53,8 +69,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(request)
+  if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
 
@@ -67,9 +83,12 @@ export async function POST(
       return NextResponse.json({ success: false, error: 'Cần nhập SĐT hoặc email' }, { status: 400 })
     }
 
-    // Lấy thông tin khoá học
+    // Lấy thông tin khoá học và validate org ownership
     const course = await prisma.course.findUnique({ where: { id: courseId } })
     if (!course) {
+      return NextResponse.json({ success: false, error: 'Không tìm thấy khoá học' }, { status: 404 })
+    }
+    if (check.orgCtx && course.organizationId !== check.orgCtx.id) {
       return NextResponse.json({ success: false, error: 'Không tìm thấy khoá học' }, { status: 404 })
     }
 

@@ -8,6 +8,7 @@ import { LogIn, Phone, Lock } from 'lucide-react'
 import { useLang } from '@/contexts/LanguageContext'
 
 const ROLE_REDIRECT: Record<string, string> = {
+  SUPER_ADMIN: '/admin',
   ADMIN: '/admin',
   TEACHER: '/giao-vien',
   STUDENT: '/hoc-vien',
@@ -44,7 +45,7 @@ export default function DangNhapPage() {
       const res = await fetch('/api/auth/session')
       const sess = await res.json()
       const role: string = (sess?.user?.role as string | undefined) ?? 'STUDENT'
-      router.push(ROLE_REDIRECT[role] ?? '/')
+      router.push(ROLE_REDIRECT[role] ?? '/hoc-vien')
     } catch {
       router.push('/hoc-vien')
     }
@@ -77,6 +78,7 @@ export default function DangNhapPage() {
               <input
                 type="tel"
                 required
+                autoFocus
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 placeholder="0912345678"
@@ -110,7 +112,12 @@ export default function DangNhapPage() {
             </button>
           </form>
 
-          <div className="px-6 pb-6 text-center">
+          <div className="px-6 pb-6 text-center space-y-2">
+            <p className="text-gray-500 text-sm">
+              <Link href="/doi-mat-khau" className="text-purple-500 hover:underline text-sm">
+                {vi ? '🔓 Quên mật khẩu?' : '🔓 Forgot password?'}
+              </Link>
+            </p>
             <p className="text-gray-500 text-sm">
               {vi ? 'Chưa có tài khoản?' : "Don't have an account?"}{' '}
               <Link href="/dang-ky" className="text-purple-600 font-bold hover:underline">

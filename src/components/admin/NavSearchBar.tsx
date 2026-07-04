@@ -46,6 +46,7 @@ const ITEMS: SearchItem[] = [
   { id: 'data-migration', label: 'Data Migration',     description: 'Import/Export dữ liệu',    icon: '📦', href: '/admin/data-migration',          keywords: ['data migration','import','export','dữ liệu'] },
   { id: 'roles-matrix',   label: 'Ma trận quyền',      description: 'Permission matrix',        icon: '🗂️', href: '/admin/roles/matrix',            keywords: ['ma trận quyền','permission matrix','phân quyền'] },
   { id: 'workflow',       label: 'Workflow',            description: 'Quy trình tự động',        icon: '⚡', href: '/admin/workflow',                keywords: ['workflow','quy trình','automation','tự động'] },
+  { id: 'academic-years', label: 'Năm học', description: 'Quản lý năm học', icon: '📅', href: '/admin/erp/academic-years', keywords: ['năm học','academic year','học kỳ'] },
   { id: 'notifications', label: 'Thông báo', description: 'Notification center', icon: '🔔', href: '/admin/notifications', keywords: ['thông báo','notification','notify','chuông'] },
   { id: 'settings',       label: 'Cài đặt',             description: 'Cấu hình hệ thống',     icon: '⚙️', href: '/admin/settings',                 keywords: ['setting','cài đặt','cấu hình'] },
   { id: 'gamification',   label: 'Gamification',        description: 'Điểm & bảng xếp hạng', icon: '🎮', href: '/admin/gamification',              keywords: ['game','điểm','leaderboard'] },

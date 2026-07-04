@@ -109,6 +109,7 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
       { href: '/admin/permissions',   icon: '🔑', label: 'Permissions',   desc: 'Danh mục quyền' },
       { href: '/admin/audit',         icon: '📋', label: 'Audit',         desc: 'Lịch sử thay đổi' },
       { href: '/admin/organizations', icon: '🏢', label: 'Organizations', desc: 'Trường & cơ sở' },
+      { href: '/admin/erp/academic-years', icon: '📅', label: 'Năm học', desc: 'Quản lý năm học' },
       { href: '/admin/settings',      icon: '⚙️', label: 'Settings',      desc: 'Cấu hình hệ thống' },
       { href: '/admin/notifications', icon: '🔔', label: 'Thông báo',      desc: 'Notification center' },
       { href: '/admin/news',          icon: '📰', label: 'Tin tức',        desc: 'Bài viết & thông báo' },

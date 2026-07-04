@@ -1,19 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 import bcrypt from 'bcryptjs'
 
-async function requireAdmin() {
+async function requireAdmin(req: NextRequest) {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN')
-    return { error: 'Không có quyền truy cập', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  const role = (session.user as any).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
 }
 
 export async function GET(request: NextRequest) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(request)
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
@@ -25,8 +31,14 @@ export async function GET(request: NextRequest) {
     const role = searchParams.get('role')
     const search = searchParams.get('search')
 
+    // Scope users to org via OrganizationUser join; null orgCtx = super-admin (no filter)
+    const orgFilter = check.orgCtx
+      ? { organizationUsers: { some: { organizationId: check.orgCtx.id } } }
+      : {}
+
     const users = await prisma.user.findMany({
       where: {
+        ...orgFilter,
         ...(role ? { role: role as any } : {}),
         ...(search
           ? {
@@ -39,6 +51,7 @@ export async function GET(request: NextRequest) {
           : {}),
       },
       orderBy: { createdAt: 'desc' },
+      take: 500,
       select: {
         id: true,
         name: true,
@@ -62,8 +75,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(req)
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
@@ -110,8 +123,8 @@ export async function PATCH(req: NextRequest) {
 
 // PUT — cập nhật thông tin user
 export async function PUT(req: NextRequest) {
-  const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+  const check = await requireAdmin(req)
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
   try {
     const { userId, name, phone, email, role, isActive } = await req.json()
@@ -157,8 +170,8 @@ export async function PUT(req: NextRequest) {
 
 // DELETE — xóa user
 export async function DELETE(req: NextRequest) {
-  const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+  const check = await requireAdmin(req)
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
   try {
     const { userId } = await req.json()
@@ -174,8 +187,8 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(req)
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }

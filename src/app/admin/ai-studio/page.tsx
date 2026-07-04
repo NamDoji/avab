@@ -246,6 +246,7 @@ export default async function AIStudioPage({
       ...(isSuperAdmin ? { createdByUser: { select: { name: true } } } : {}),
     },
     orderBy: { updatedAt: 'desc' },
+    take: 100,
   })
 
   const active    = projects.filter(p => ['draft', 'in-progress'].includes(p.status))

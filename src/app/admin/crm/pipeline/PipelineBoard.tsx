@@ -289,6 +289,16 @@ function LeadCard({ lead, stageBg, stageColor, prevStage, nextStage, isUpdating,
         style={{ borderColor: '#e5e7eb', color: '#6b7280' }}>
         👁 Xem chi tiết
       </Link>
+
+      {lead.status === 'WON' && (
+        <Link
+          href={`/admin/enrollments?phone=${lead.phone}`}
+          className="mt-1 flex items-center justify-center gap-1 w-full text-xs font-bold py-2 rounded-xl min-h-[40px] transition-colors"
+          style={{ background: '#166534', color: '#fff' }}
+        >
+          🎓 Tạo đăng ký học
+        </Link>
+      )}
     </div>
   )
 }

@@ -54,6 +54,8 @@ export default async function CampaignsPage() {
   // or use the note2 (admin note) as channel tag.
   const allRegs = await prisma.registration.findMany({
     select: { status: true, note: true, note2: true, type: true },
+    orderBy: { createdAt: 'desc' },
+    take: 1000,
   })
 
   // Derive source from note / note2 content

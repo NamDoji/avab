@@ -42,6 +42,7 @@ export default async function OrgDetailPage({
     prisma.organizationUser.findMany({
       where: { organizationId: id },
       orderBy: { joinedAt: 'desc' },
+      take: 200,
       include: {
         user: {
           select: { id: true, name: true, phone: true, role: true, avatar: true },
@@ -51,6 +52,7 @@ export default async function OrgDetailPage({
     prisma.academicYear.findMany({
       where: { organizationId: id },
       orderBy: { startDate: 'desc' },
+      take: 50,
     }),
   ])
 

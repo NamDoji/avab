@@ -73,6 +73,7 @@ export default async function OrganizationsPage({
     prisma.organization.findMany({
       where,
       orderBy,
+      take: 200,
       include: {
         _count: {
           select: {
