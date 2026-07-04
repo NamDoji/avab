@@ -24,7 +24,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
   // ═══════════════════════════════════════════════════════════════════════════
   if (isSuperAdmin) {
     groups.push({
-      id: 'courses', icon: '📚', label: 'Khoá học',
+      id: 'courses', icon: '📚', label: 'Khoá học (Chỉ dành cho AvaB)',
       modules: [
         { href: '/admin/courses',     icon: '📚', label: 'Khoá học',    desc: 'Khoá học của nền tảng AvaB' },
         { href: '/admin/enrollments', icon: '📝', label: 'Đăng ký học', desc: 'Ghi danh & phê duyệt' },
@@ -204,6 +204,20 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
       { href: '/admin/data-migration', icon: '📦', label: 'Data Migration',  desc: 'Import/Export dữ liệu' },
     ],
   })
+
+  // Platform Admin — chỉ SUPER_ADMIN
+  if (isSuperAdmin) {
+    groups.push({
+      id: 'platform', icon: '🔧', label: 'Platform Admin',
+      modules: [
+        { href: '/admin/platform',       icon: '🔧', label: 'Platform',        desc: 'Quản trị nền tảng AvaB' },
+        { href: '/admin/organizations',  icon: '🏢', label: 'Tất cả tổ chức', desc: 'Tạo & quản lý org' },
+        { href: '/admin/users',          icon: '👤', label: 'Tất cả user',    desc: 'Người dùng hệ thống' },
+        { href: '/admin/app-center',     icon: '🧩', label: 'App Center',      desc: 'Tích hợp & mở rộng' },
+        { href: '/admin/app-center/api', icon: '🔌', label: 'API Platform',    desc: 'REST & GraphQL' },
+      ],
+    })
+  }
 
   return groups
 }
