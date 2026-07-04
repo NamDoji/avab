@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useMemo, use } from 'react'
+import { useState, useEffect, useMemo, use, useRef } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft, Search, Filter, Trash2, Edit3, Sparkles,
   RefreshCw, ChevronDown, ChevronUp, X, CheckCircle, Circle,
-  BookOpen, Layers, AlertCircle
+  BookOpen, Layers, AlertCircle, PlusCircle, Upload
 } from 'lucide-react'
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -78,6 +78,354 @@ function diffLabel(points: number) {
   if (points <= 1) return { label: 'Dễ', color: 'bg-green-100 text-green-700', dot: '🟢' }
   if (points <= 3) return { label: 'TB', color: 'bg-yellow-100 text-yellow-700', dot: '🟡' }
   return { label: 'Khó', color: 'bg-red-100 text-red-700', dot: '🔴' }
+}
+
+// ─── Add Question Modal ────────────────────────────────────────────────────────
+
+const ADD_Q_TYPES = [
+  { value: 'MULTIPLE_CHOICE', label: 'Trắc nghiệm (A/B/C/D)' },
+  { value: 'OPEN', label: 'Tự luận' },
+  { value: 'FILL_BLANK', label: 'Điền chỗ trống' },
+  { value: 'TRUE_FALSE', label: 'Đúng/Sai' },
+  { value: 'SHORT_ANSWER', label: 'Trả lời ngắn' },
+]
+
+function AddQuestionModal({
+  subjectId,
+  onClose,
+  onSaved,
+}: {
+  subjectId: string
+  onClose: () => void
+  onSaved: () => void
+}) {
+  const [content, setContent] = useState('')
+  const [qType, setQType] = useState('MULTIPLE_CHOICE')
+  const [optA, setOptA] = useState('')
+  const [optB, setOptB] = useState('')
+  const [optC, setOptC] = useState('')
+  const [optD, setOptD] = useState('')
+  const [correctAnswer, setCorrectAnswer] = useState('A')
+  const [explanation, setExplanation] = useState('')
+  const [points, setPoints] = useState('1')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const isMultipleChoice = qType === 'MULTIPLE_CHOICE'
+  const isTrueFalse = qType === 'TRUE_FALSE'
+
+  async function handleSave() {
+    if (!content.trim()) {
+      setError('Nội dung câu hỏi không được để trống')
+      return
+    }
+    if (!correctAnswer.trim()) {
+      setError('Đáp án đúng không được để trống')
+      return
+    }
+    if (isMultipleChoice && (!optA.trim() || !optB.trim() || !optC.trim() || !optD.trim())) {
+      setError('Vui lòng điền đủ 4 lựa chọn A/B/C/D')
+      return
+    }
+
+    setSaving(true)
+    setError('')
+
+    let options: { key: string; text: string }[] | undefined
+    if (isMultipleChoice) {
+      options = [
+        { key: 'A', text: optA.trim() },
+        { key: 'B', text: optB.trim() },
+        { key: 'C', text: optC.trim() },
+        { key: 'D', text: optD.trim() },
+      ]
+    } else if (isTrueFalse) {
+      options = [
+        { key: 'A', text: 'Đúng' },
+        { key: 'B', text: 'Sai' },
+      ]
+    }
+
+    try {
+      const res = await fetch('/api/admin/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subjectId,
+          questionType: qType,
+          content: content.trim(),
+          options: options ?? null,
+          correctAnswer: correctAnswer.trim(),
+          explanation: explanation.trim() || null,
+          points: Number(points) || 1,
+        }),
+      })
+      const data = await res.json()
+      if (!data.success) throw new Error(data.error ?? 'Lỗi không xác định')
+      onSaved()
+      onClose()
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Lỗi không xác định')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-white rounded-t-3xl p-5 border-b border-gray-100 flex items-center justify-between">
+          <h2 className="font-black text-gray-900 flex items-center gap-2">
+            <PlusCircle size={18} className="text-green-500" />
+            Thêm câu hỏi mới
+          </h2>
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100 transition">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-4">
+          {/* Question type */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 block mb-1.5">Loại câu hỏi *</label>
+            <select
+              value={qType}
+              onChange={e => {
+                setQType(e.target.value)
+                setCorrectAnswer(e.target.value === 'MULTIPLE_CHOICE' ? 'A' : e.target.value === 'TRUE_FALSE' ? 'A' : '')
+              }}
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white"
+            >
+              {ADD_Q_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+          </div>
+
+          {/* Content */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 block mb-1.5">Nội dung câu hỏi *</label>
+            <textarea
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              rows={3}
+              placeholder="Nhập nội dung câu hỏi..."
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none"
+            />
+          </div>
+
+          {/* Multiple choice options */}
+          {isMultipleChoice && (
+            <div>
+              <label className="text-xs font-semibold text-gray-500 block mb-2">Lựa chọn A/B/C/D *</label>
+              <div className="space-y-2">
+                {[
+                  { key: 'A', val: optA, set: setOptA },
+                  { key: 'B', val: optB, set: setOptB },
+                  { key: 'C', val: optC, set: setOptC },
+                  { key: 'D', val: optD, set: setOptD },
+                ].map(({ key, val, set }) => (
+                  <div key={key} className="flex items-center gap-2">
+                    <span className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center text-xs font-black text-gray-600 flex-shrink-0">{key}</span>
+                    <input
+                      type="text"
+                      value={val}
+                      onChange={e => set(e.target.value)}
+                      placeholder={`Lựa chọn ${key}...`}
+                      className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Correct answer */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 block mb-1.5">Đáp án đúng *</label>
+            {isMultipleChoice ? (
+              <select
+                value={correctAnswer}
+                onChange={e => setCorrectAnswer(e.target.value)}
+                className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white"
+              >
+                {['A', 'B', 'C', 'D'].map(k => <option key={k} value={k}>{k}</option>)}
+              </select>
+            ) : isTrueFalse ? (
+              <select
+                value={correctAnswer}
+                onChange={e => setCorrectAnswer(e.target.value)}
+                className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white"
+              >
+                <option value="A">Đúng</option>
+                <option value="B">Sai</option>
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={correctAnswer}
+                onChange={e => setCorrectAnswer(e.target.value)}
+                placeholder="Nhập đáp án đúng..."
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+              />
+            )}
+          </div>
+
+          {/* Explanation */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 block mb-1.5">Giải thích (tuỳ chọn)</label>
+            <textarea
+              value={explanation}
+              onChange={e => setExplanation(e.target.value)}
+              rows={2}
+              placeholder="Lời giải / gợi ý cho học viên..."
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 resize-none"
+            />
+          </div>
+
+          {/* Points */}
+          <div>
+            <label className="text-xs font-semibold text-gray-500 block mb-1.5">Điểm</label>
+            <select
+              value={points}
+              onChange={e => setPoints(e.target.value)}
+              className="px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-300 bg-white"
+            >
+              {[1, 2, 3, 4, 5].map(p => (
+                <option key={p} value={p}>{p} điểm</option>
+              ))}
+            </select>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 text-red-700 rounded-xl p-3 text-sm flex items-start gap-2">
+              <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+              {error}
+            </div>
+          )}
+        </div>
+
+        <div className="sticky bottom-0 bg-white rounded-b-3xl p-5 border-t border-gray-100 flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 transition min-h-[44px]"
+          >
+            Huỷ
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-green-600 text-white font-bold text-sm hover:bg-green-700 transition disabled:opacity-60 min-h-[44px] flex items-center justify-center gap-2"
+          >
+            {saving ? <RefreshCw size={14} className="animate-spin" /> : <PlusCircle size={14} />}
+            {saving ? 'Đang lưu...' : 'Thêm câu hỏi'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Excel Import Button ─────────────────────────────────────────────────────
+
+function ImportQuestionsButton({
+  subjectId,
+  onImported,
+}: {
+  subjectId: string
+  onImported: () => void
+}) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [importing, setImporting] = useState(false)
+  const [importMsg, setImportMsg] = useState('')
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImporting(true)
+    setImportMsg('')
+
+    try {
+      const XLSX = await import('xlsx')
+      const data = await file.arrayBuffer()
+      const wb = XLSX.read(data)
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: '' })
+
+      if (rows.length === 0) throw new Error('File không có dữ liệu')
+
+      let success = 0
+      let fail = 0
+
+      for (const row of rows) {
+        const content = (row['content'] || row['Câu hỏi'] || row['noi_dung'] || '').toString().trim()
+        const correctAnswer = (row['correctAnswer'] || row['Đáp án'] || row['dap_an'] || '').toString().trim()
+        if (!content || !correctAnswer) { fail++; continue }
+
+        const optA = (row['A'] || row['optionA'] || '').toString().trim()
+        const optB = (row['B'] || row['optionB'] || '').toString().trim()
+        const optC = (row['C'] || row['optionC'] || '').toString().trim()
+        const optD = (row['D'] || row['optionD'] || '').toString().trim()
+        const explanation = (row['explanation'] || row['Giải thích'] || '').toString().trim()
+        const hasOptions = optA && optB && optC && optD
+
+        const res = await fetch('/api/admin/questions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            subjectId,
+            questionType: hasOptions ? 'MULTIPLE_CHOICE' : 'OPEN',
+            content,
+            options: hasOptions ? [
+              { key: 'A', text: optA },
+              { key: 'B', text: optB },
+              { key: 'C', text: optC },
+              { key: 'D', text: optD },
+            ] : null,
+            correctAnswer,
+            explanation: explanation || null,
+            points: 1,
+          }),
+        })
+        const d = await res.json()
+        if (d.success) success++; else fail++
+      }
+
+      setImportMsg(`✅ Import xong: ${success} câu thành công${fail > 0 ? `, ${fail} lỗi` : ''}`)
+      if (success > 0) onImported()
+    } catch (err: unknown) {
+      setImportMsg(`❌ ${err instanceof Error ? err.message : 'Lỗi đọc file'}`)
+    } finally {
+      setImporting(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".xlsx,.xls,.csv"
+        className="hidden"
+        onChange={handleFile}
+      />
+      <button
+        onClick={() => fileRef.current?.click()}
+        disabled={importing}
+        className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 text-white rounded-xl text-sm font-semibold hover:bg-gray-600 transition disabled:opacity-60 min-h-[44px]"
+      >
+        {importing ? <RefreshCw size={15} className="animate-spin" /> : <Upload size={15} />}
+        {importing ? 'Đang import...' : 'Import Excel'}
+      </button>
+      {importMsg && (
+        <span className={`text-xs font-semibold ${importMsg.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>
+          {importMsg}
+        </span>
+      )}
+    </div>
+  )
 }
 
 // ─── Edit Modal ─────────────────────────────────────────────────────────────────
@@ -361,6 +709,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
 
   // Modals
   const [editingQ, setEditingQ] = useState<Question | null>(null)
+  const [showAddModal, setShowAddModal] = useState(false)
   const [deletingIds, setDeletingIds] = useState<string[]>([])
   const [aiGenerating, setAiGenerating] = useState(false)
 
@@ -469,6 +818,15 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
         </div>
       )}
 
+      {/* Add Question Modal */}
+      {showAddModal && (
+        <AddQuestionModal
+          subjectId={subjectId}
+          onClose={() => setShowAddModal(false)}
+          onSaved={() => { fetchData(); showToast('✅ Đã thêm câu hỏi mới') }}
+        />
+      )}
+
       {/* Edit Modal */}
       {editingQ && (
         <EditModal
@@ -501,7 +859,14 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
                 </p>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition min-h-[44px]"
+              >
+                <PlusCircle size={15} />
+                Thêm câu hỏi
+              </button>
               <Link
                 href={`/admin/subjects/${subjectId}`}
                 className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 text-white rounded-xl text-sm font-semibold hover:bg-gray-600 transition min-h-[44px]"
@@ -517,6 +882,10 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
                 {aiGenerating ? <RefreshCw size={15} className="animate-spin" /> : <Sparkles size={15} />}
                 {aiGenerating ? 'Đang sinh...' : 'AI Sinh câu hỏi'}
               </button>
+              <ImportQuestionsButton
+                subjectId={subjectId}
+                onImported={() => { fetchData(); showToast('✅ Import thành công') }}
+              />
             </div>
           </div>
         </div>

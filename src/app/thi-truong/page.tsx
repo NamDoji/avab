@@ -1,244 +1,298 @@
-'use client'
+import { prisma } from '@/lib/prisma'
+import Link from 'next/link'
+import type { Metadata } from 'next'
 
-import { BarChart3, TrendingUp, Users, Target, Award } from 'lucide-react'
-import { useLang } from '@/contexts/LanguageContext'
-
-const competitors = [
-  { name: 'Cleavai', focus: { vi: 'AI học tập', en: 'AI learning' }, avabEdge: { vi: 'AvaB tập trung lứa tuổi mầm non — chưa ai làm tốt', en: 'AvaB focuses on pre-school age — no one does it well yet' } },
-  { name: 'Teky', focus: { vi: 'Lập trình', en: 'Coding' }, avabEdge: { vi: 'Hoàn toàn khác phân khúc', en: 'Completely different segment' } },
-  { name: 'Hocmai', focus: { vi: 'Luyện thi THPT', en: 'High school exam prep' }, avabEdge: { vi: 'AvaB target nhỏ hơn, ít cạnh tranh hơn', en: 'AvaB targets a smaller, less competitive niche' } },
-  { name: 'Vuihoc', focus: { vi: 'Học online phổ thông', en: 'General online learning' }, avabEdge: { vi: 'Không có chuyên môn luyện thi lớp 1', en: 'No expertise in Grade 1 exam prep' } },
-  { name: 'Qanda', focus: { vi: 'Q&A tức thì', en: 'Instant Q&A' }, avabEdge: { vi: 'Khác model hoàn toàn', en: 'Completely different model' } },
-  { name: 'Azota', focus: { vi: 'Quản lý bài tập', en: 'Homework management' }, avabEdge: { vi: 'Không phải đối thủ trực tiếp', en: 'Not a direct competitor' } },
-]
-
-const t = {
-  vi: {
-    heroTitle: 'Phân Tích Thị Trường',
-    heroSub: 'Thị trường EdTech Việt Nam đang bùng nổ — và AvaB đã xác định đúng phân khúc chưa ai khai thác hiệu quả: luyện thi học bổng lớp 1 bằng AI.',
-    marketTitle: '🌏 Thị trường EdTech Việt Nam 2023–2024',
-    marketMetrics: [
-      { value: '3 tỷ USD', label: 'Quy mô thị trường EdTech VN 2023', icon: '💰', desc: 'Đứng thứ 3 về thu hút đầu tư, chỉ sau E-commerce và Fintech', color: 'from-purple-500 to-purple-700' },
-      { value: '20%', label: 'Tăng trưởng CAGR hàng năm', icon: '📈', desc: 'EdTech là ngành tăng trưởng nhanh nhất Đông Nam Á sau đại dịch', color: 'from-teal-500 to-teal-700' },
-      { value: '23 triệu', label: 'Users dùng app học tập', icon: '📱', desc: 'Người Việt đã quen học online — hành vi thay đổi không đảo ngược', color: 'from-orange-500 to-orange-700' },
-      { value: '13 triệu', label: 'Học sinh các cấp', icon: '🎒', desc: 'Cùng 1.4 triệu giáo viên và 30,000 trường học — hệ sinh thái khổng lồ', color: 'from-blue-500 to-blue-700' },
-      { value: '30%', label: 'Thu nhập phụ huynh chi cho giáo dục', icon: '👨‍👩‍👧', desc: 'Tỷ lệ cao nhất khu vực — người Việt sẵn sàng đầu tư cho con học', color: 'from-pink-500 to-pink-700' },
-      { value: 'Top 3', label: 'Ngành thu hút VC tại Việt Nam', icon: '🏆', desc: 'Nhà đầu tư đang đổ tiền vào EdTech — thời điểm vàng để xây dựng', color: 'from-yellow-500 to-yellow-600' },
-    ],
-    segmentTitle: 'Phân khúc AvaB nhắm đến — Chưa ai khai thác đúng',
-    segmentH3a: '👶 Trẻ 5–6 tuổi luyện thi lớp 1',
-    segmentItemsA: [
-      'Mỗi năm có ~96,000 trẻ sinh ra tại Hà Nội → sau 5 năm = 96K gia đình cần chuẩn bị',
-      'Tỷ lệ thi vào trường chất lượng cao cạnh tranh cao: 1 chọn 10, thậm chí 1 chọn 20',
-      'Phụ huynh sẵn sàng chi 500K–2M để con có lợi thế thi đầu vào',
-      'Không có nền tảng online nào đủ tốt, đủ chuyên cho lứa tuổi này',
-    ],
-    segmentH3b: '😤 Pain points chưa được giải quyết',
-    segmentItemsB: [
-      'Tài liệu rời rạc, không hệ thống, không cá nhân hoá',
-      'Trung tâm luyện thi offline: chi phí cao, đi lại bất tiện, lịch cứng nhắc',
-      'Ứng dụng học hiện tại không thiết kế cho lứa tuổi 5, UI/UX không phù hợp',
-      'Không có cơ chế theo dõi tiến độ real-time cho phụ huynh bận rộn',
-    ],
-    compTitle: '⚔️ Bức tranh cạnh tranh',
-    compDesc: 'AvaB không cạnh tranh trực tiếp với các nền tảng lớn — thay vào đó, nhóm TenGo xác định đúng khoảng trắng thị trường mà tất cả đối thủ đang bỏ qua.',
-    compDescStrong: 'khoảng trắng thị trường',
-    tableHeaders: ['Tiêu chí', 'Trung tâm offline', 'App học phổ thông', 'AvaB ⭐'],
-    tableRows: [
-      ['Thiết kế cho trẻ 5 tuổi', '❌', '❌', '✅'],
-      ['AI cá nhân hoá lộ trình', '❌', '⚠️ Hạn chế', '✅'],
-      ['Chấm bài tự động', '❌', '⚠️', '✅'],
-      ['Bảng xếp hạng tạo động lực', '❌', '❌', '✅'],
-      ['Theo dõi tiến độ real-time', '⚠️', '⚠️', '✅'],
-      ['Học mọi lúc mọi nơi', '❌', '✅', '✅'],
-      ['Chi phí hợp lý', '❌', '✅', '✅'],
-      ['Nội dung chuyên biệt thi lớp 1', '⚠️', '❌', '✅'],
-    ],
-    gtmTitle: 'Chiến lược Go-to-Market',
-    gtmPhases: [
-      { phase: 'Giai đoạn 1', title: 'Chứng minh giá trị', target: '500 users', desc: 'Tập trung phụ huynh Hà Nội qua Facebook group, word-of-mouth và kênh giáo viên Newton. Chứng minh conversion và retention.' },
-      { phase: 'Giai đoạn 2', title: 'Mở rộng B2B', target: '2,000 users', desc: 'Ký hợp tác với 5–10 trường tiểu học, trung tâm luyện thi uy tín. Gói 30K/tháng/HS đem lại doanh thu ổn định.' },
-      { phase: 'Giai đoạn 3', title: 'AI & Scale', target: '5,000+ users', desc: 'Triển khai app Android/iOS, tích hợp AI sâu hơn (adaptive difficulty), mở rộng sang Tiếng Anh và Lập trình.' },
-    ],
-  },
-  en: {
-    heroTitle: 'Market Analysis',
-    heroSub: 'The Vietnamese EdTech market is booming — and AvaB has identified the right segment no one has tapped effectively: AI-powered Grade 1 scholarship exam prep.',
-    marketTitle: '🌏 Vietnam EdTech Market 2023–2024',
-    marketMetrics: [
-      { value: '$3B USD', label: 'Vietnam EdTech market size 2023', icon: '💰', desc: '3rd in investment attraction, behind only E-commerce and Fintech', color: 'from-purple-500 to-purple-700' },
-      { value: '20%', label: 'Annual CAGR growth', icon: '📈', desc: 'EdTech is the fastest-growing sector in Southeast Asia post-pandemic', color: 'from-teal-500 to-teal-700' },
-      { value: '23M', label: 'Learning app users', icon: '📱', desc: 'Vietnamese are now accustomed to online learning — a behaviour shift that won\'t reverse', color: 'from-orange-500 to-orange-700' },
-      { value: '13M', label: 'K–12 students', icon: '🎒', desc: 'Plus 1.4M teachers and 30,000 schools — a massive ecosystem', color: 'from-blue-500 to-blue-700' },
-      { value: '30%', label: 'of parent income spent on education', icon: '👨‍👩‍👧', desc: 'Highest ratio in the region — Vietnamese families invest heavily in learning', color: 'from-pink-500 to-pink-700' },
-      { value: 'Top 3', label: 'VC-attracting sector in Vietnam', icon: '🏆', desc: 'Investors are pouring money into EdTech — the golden time to build', color: 'from-yellow-500 to-yellow-600' },
-    ],
-    segmentTitle: 'AvaB\'s Target Segment — Untapped by Anyone',
-    segmentH3a: '👶 Children aged 5–6 — Grade 1 exam prep',
-    segmentItemsA: [
-      '~96,000 children are born in Hanoi each year → after 5 years = 96K families needing to prepare',
-      'Competition for quality schools is fierce: 1 spot per 10–20 applicants',
-      'Parents are willing to spend 500K–2M VND for their child to have an admissions edge',
-      'No online platform is good enough or specialised enough for this age group',
-    ],
-    segmentH3b: '😤 Unresolved pain points',
-    segmentItemsB: [
-      'Scattered materials — no system, no personalisation',
-      'Offline tutoring centres: high cost, inconvenient travel, rigid schedules',
-      'Existing learning apps are not designed for 5-year-olds — UI/UX doesn\'t fit',
-      'No real-time progress tracking for busy parents',
-    ],
-    compTitle: '⚔️ Competitive Landscape',
-    compDesc: 'AvaB doesn\'t compete head-on with large platforms — instead, Team TenGo has correctly identified the white space in the market that all competitors are ignoring.',
-    compDescStrong: 'white space in the market',
-    tableHeaders: ['Criterion', 'Offline tutoring', 'General learning apps', 'AvaB ⭐'],
-    tableRows: [
-      ['Designed for 5-year-olds', '❌', '❌', '✅'],
-      ['AI-personalised learning path', '❌', '⚠️ Limited', '✅'],
-      ['Automated grading', '❌', '⚠️', '✅'],
-      ['Motivational leaderboard', '❌', '❌', '✅'],
-      ['Real-time progress tracking', '⚠️', '⚠️', '✅'],
-      ['Learn anytime, anywhere', '❌', '✅', '✅'],
-      ['Affordable price', '❌', '✅', '✅'],
-      ['Content specialised for Grade 1 exam', '⚠️', '❌', '✅'],
-    ],
-    gtmTitle: 'Go-to-Market Strategy',
-    gtmPhases: [
-      { phase: 'Phase 1', title: 'Prove value', target: '500 users', desc: 'Focus on Hanoi parents via Facebook groups, word-of-mouth, and Newton teacher channels. Prove conversion and retention.' },
-      { phase: 'Phase 2', title: 'B2B expansion', target: '2,000 users', desc: 'Sign partnerships with 5–10 primary schools and reputable tutoring centres. 30K/month/student package brings stable recurring revenue.' },
-      { phase: 'Phase 3', title: 'AI & Scale', target: '5,000+ users', desc: 'Launch Android/iOS app, deeper AI integration (adaptive difficulty), expand into English and Coding subjects.' },
-    ],
-  },
+export const metadata: Metadata = {
+  title: 'Kho học liệu AvaB — Marketplace',
+  description: 'Khám phá kho học liệu phong phú từ mầm non đến THPT. AI-powered, cập nhật liên tục.',
 }
 
-export default function ThiTruongPage() {
-  const { lang } = useLang()
-  const ui = t[lang]
+// Filter labels
+const GRADE_FILTERS = [
+  { key: '',    label: 'Tất cả' },
+  { key: '0',   label: 'Mầm non' },
+  { key: '1-5', label: 'Tiểu học' },
+  { key: '6-9', label: 'THCS' },
+  { key: '10-12', label: 'THPT' },
+]
+
+const SUBJECT_FILTERS = [
+  { key: '',            label: 'Tất cả môn' },
+  { key: 'MATH',        label: '➕ Toán' },
+  { key: 'ENGLISH',     label: '🇬🇧 Tiếng Anh' },
+  { key: 'THINKING_MATH', label: '🧠 Tư duy' },
+  { key: 'CODING',      label: '💻 Lập trình' },
+  { key: 'SCIENCE',     label: '🔬 Khoa học' },
+  { key: 'VIETNAMESE',  label: '📚 Tiếng Việt' },
+]
+
+function gradeLabel(grade: string | null): string {
+  if (!grade) return 'Mọi lớp'
+  const g = parseInt(grade)
+  if (g === 0) return 'Mầm non'
+  return `Lớp ${grade}`
+}
+
+function fmtPrice(price: number | null): string {
+  if (!price || price === 0) return 'Miễn phí'
+  if (price >= 1_000_000) return (price / 1_000_000).toFixed(1) + 'M đ'
+  if (price >= 1_000) return Math.round(price / 1_000) + 'K đ'
+  return price + ' đ'
+}
+
+interface PageProps {
+  searchParams: Promise<{ grade?: string; subject?: string; q?: string }>
+}
+
+export default async function ThiTruongPage({ searchParams }: PageProps) {
+  const params = await searchParams
+  const gradeFilter = params.grade ?? ''
+  const subjectFilter = params.subject ?? ''
+  const searchQuery = params.q ?? ''
+
+  // Build where clause
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = { isActive: true, isPublic: true }
+
+  if (gradeFilter === '0') {
+    where.grade = '0'
+  } else if (gradeFilter === '1-5') {
+    where.grade = { in: ['1', '2', '3', '4', '5'] }
+  } else if (gradeFilter === '6-9') {
+    where.grade = { in: ['6', '7', '8', '9'] }
+  } else if (gradeFilter === '10-12') {
+    where.grade = { in: ['10', '11', '12'] }
+  }
+
+  if (subjectFilter) {
+    where.subjectCode = subjectFilter
+  }
+
+  if (searchQuery) {
+    where.name = { contains: searchQuery, mode: 'insensitive' }
+  }
+
+  const publicCourses = await prisma.course.findMany({
+    where,
+    include: {
+      _count: { select: { enrollments: true, subjects: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 24,
+  })
+
+  const totalCount = await prisma.course.count({ where: { isActive: true, isPublic: true } })
+
+  // Build filter URL helper
+  function filterHref(overrides: Record<string, string>): string {
+    const qs = new URLSearchParams({
+      ...(gradeFilter   ? { grade: gradeFilter }     : {}),
+      ...(subjectFilter ? { subject: subjectFilter } : {}),
+      ...(searchQuery   ? { q: searchQuery }          : {}),
+      ...overrides,
+    })
+    const str = qs.toString()
+    return `/thi-truong${str ? `?${str}` : ''}`
+  }
 
   return (
-    <div className="min-h-screen pt-20">
-      <div className="gradient-hero text-white py-16">
-        <div className="container-custom text-center">
-          <BarChart3 className="mx-auto mb-4" size={48} />
-          <h1 className="text-2xl md:text-4xl font-black mb-4">{ui.heroTitle}</h1>
-          <p className="text-white/80 max-w-2xl mx-auto text-lg">
-            {ui.heroSub}
+    <main className="min-h-screen bg-gray-50 pt-20">
+
+      {/* ── Hero header ──────────────────────────────────────────────────── */}
+      <div
+        className="px-6 py-12"
+        style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%)' }}
+      >
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-black text-white mb-2">🛍️ Kho học liệu AvaB</h1>
+          <p className="text-blue-200 text-sm mb-6">
+            {totalCount} khóa học · AI-powered · Mầm non → THPT
           </p>
+
+          {/* Search bar */}
+          <form method="GET" action="/thi-truong" className="max-w-lg">
+            <div className="relative">
+              <input
+                name="q"
+                defaultValue={searchQuery}
+                placeholder="Tìm khóa học, môn học…"
+                className="w-full pl-5 pr-32 py-3.5 rounded-2xl text-sm font-medium text-gray-900 outline-none shadow-lg"
+                style={{ border: '2px solid transparent' }}
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+              >
+                🔍 Tìm
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
-      <div className="container-custom py-16 space-y-16">
+      <div className="max-w-6xl mx-auto px-6 py-8">
 
-        {/* Key market numbers */}
-        <section>
-          <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-8">
-            {ui.marketTitle}
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {ui.marketMetrics.map((m) => (
-              <div key={m.label} className={`rounded-4xl bg-gradient-to-br ${m.color} p-6 text-white card-hover`}>
-                <div className="text-4xl mb-3">{m.icon}</div>
-                <div className="text-3xl font-black mb-1">{m.value}</div>
-                <div className="font-bold text-white/90 mb-2 text-sm">{m.label}</div>
-                <p className="text-white/70 text-xs leading-relaxed">{m.desc}</p>
-              </div>
+        {/* ── Filters ────────────────────────────────────────────────────── */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          {/* Grade filter */}
+          <div className="flex flex-wrap gap-1.5">
+            {GRADE_FILTERS.map(f => (
+              <Link
+                key={f.key}
+                href={filterHref(f.key ? { grade: f.key } : { grade: '' })}
+                className="px-3.5 py-1.5 rounded-xl text-sm font-semibold transition"
+                style={{
+                  background: gradeFilter === f.key ? '#1e40af' : '#fff',
+                  color: gradeFilter === f.key ? '#fff' : '#6b7280',
+                  border: `1.5px solid ${gradeFilter === f.key ? '#1e40af' : '#e5e7eb'}`,
+                }}
+              >
+                {f.label}
+              </Link>
             ))}
           </div>
-        </section>
 
-        {/* Target segment */}
-        <section className="bg-purple-50 rounded-4xl p-8 md:p-10 border border-purple-100">
-          <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-            <Target size={24} className="text-purple-600" />
-            {ui.segmentTitle}
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
-              <h3 className="font-black text-lg mb-4">{ui.segmentH3a}</h3>
-              <ul className="space-y-3">
-                {ui.segmentItemsA.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
-                    <span className="text-purple-500 mt-0.5 shrink-0">●</span> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-white rounded-3xl p-6 shadow-sm">
-              <h3 className="font-black text-lg mb-4">{ui.segmentH3b}</h3>
-              <ul className="space-y-3">
-                {ui.segmentItemsB.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
-                    <span className="text-orange-500 mt-0.5 shrink-0">⚠</span> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="w-px bg-gray-200 self-stretch hidden sm:block" />
+
+          {/* Subject filter */}
+          <div className="flex flex-wrap gap-1.5">
+            {SUBJECT_FILTERS.map(f => (
+              <Link
+                key={f.key}
+                href={filterHref(f.key ? { subject: f.key } : { subject: '' })}
+                className="px-3.5 py-1.5 rounded-xl text-sm font-semibold transition"
+                style={{
+                  background: subjectFilter === f.key ? '#7c3aed' : '#fff',
+                  color: subjectFilter === f.key ? '#fff' : '#6b7280',
+                  border: `1.5px solid ${subjectFilter === f.key ? '#7c3aed' : '#e5e7eb'}`,
+                }}
+              >
+                {f.label}
+              </Link>
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* Competitive landscape */}
-        <section>
-          <h2 className="text-2xl font-black text-gray-900 mb-6">{ui.compTitle}</h2>
-          <p className="text-gray-500 mb-6">
-            {lang === 'vi' ? (
-              <>AvaB không cạnh tranh trực tiếp với các nền tảng lớn — thay vào đó, nhóm TenGo xác định đúng <strong>{ui.compDescStrong}</strong> mà tất cả đối thủ đang bỏ qua.</>
-            ) : (
-              <>AvaB doesn&apos;t compete head-on with large platforms — instead, Team TenGo has correctly identified the <strong>{ui.compDescStrong}</strong> that all competitors are ignoring.</>
-            )}
+        {/* ── Results header ──────────────────────────────────────────────── */}
+        <div className="flex items-center justify-between mb-5">
+          <p className="text-sm text-gray-500 font-medium">
+            {publicCourses.length > 0
+              ? `${publicCourses.length} khóa học${searchQuery ? ` cho "${searchQuery}"` : ''}`
+              : 'Không có kết quả'}
           </p>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-            {competitors.map((c) => (
-              <div key={c.name} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
-                <div className="font-black text-gray-900">{c.name}</div>
-                <div className="text-xs text-gray-500 mb-2">{c.focus[lang]}</div>
-                <div className="text-xs text-teal-600 font-medium flex items-start gap-1">
-                  <span>✅</span> {c.avabEdge[lang]}
+          {(gradeFilter || subjectFilter || searchQuery) && (
+            <Link
+              href="/thi-truong"
+              className="text-xs font-bold text-blue-600 hover:text-blue-700 transition"
+            >
+              ✕ Xóa bộ lọc
+            </Link>
+          )}
+        </div>
+
+        {/* ── Course grid ─────────────────────────────────────────────────── */}
+        {publicCourses.length === 0 ? (
+          <div className="bg-white rounded-3xl border border-gray-100 py-16 text-center shadow-sm">
+            <p className="text-5xl mb-4">🔍</p>
+            <p className="font-black text-gray-700 text-lg">Không tìm thấy khóa học nào</p>
+            <p className="text-sm text-gray-400 mt-2 mb-6">
+              Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
+            </p>
+            <Link
+              href="/thi-truong"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:opacity-90 transition"
+              style={{ background: 'linear-gradient(135deg, #1e3a5f, #1e40af)' }}
+            >
+              Xem tất cả khóa học
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {publicCourses.map(course => (
+              <div
+                key={course.id}
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all group"
+              >
+                {/* Thumbnail / placeholder */}
+                <div
+                  className="h-36 flex items-center justify-center text-5xl"
+                  style={{
+                    background: course.thumbnail
+                      ? `url(${course.thumbnail}) center/cover`
+                      : 'linear-gradient(135deg, #ede9fe 0%, #dbeafe 100%)',
+                  }}
+                >
+                  {!course.thumbnail && '📚'}
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+                      {gradeLabel(course.grade)}
+                    </span>
+                    {course.subjectName && (
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 truncate max-w-[100px]">
+                        {course.subjectName}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="font-black text-gray-900 text-sm leading-tight mb-1 line-clamp-2">
+                    {course.name}
+                  </h3>
+
+                  {course.description && (
+                    <p className="text-xs text-gray-400 leading-relaxed line-clamp-2 mb-3">
+                      {course.description}
+                    </p>
+                  )}
+
+                  <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                    <span>👥 {course._count.enrollments} học viên</span>
+                    <span>📖 {course._count.subjects} chủ đề</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="text-base font-black"
+                      style={{ color: course.price ? '#1e40af' : '#059669' }}
+                    >
+                      {fmtPrice(course.price)}
+                    </span>
+                    <Link
+                      href={`/dang-ky?courseId=${course.id}`}
+                      className="text-xs font-bold px-3 py-1.5 rounded-xl text-white transition hover:opacity-90 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                    >
+                      Đăng ký
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+        )}
 
-          {/* Positioning table */}
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] border-collapse rounded-2xl overflow-hidden">
-              <thead>
-                <tr className="bg-purple-600 text-white">
-                  {ui.tableHeaders.map((h) => (
-                    <th key={h} className={`text-left p-4 ${h === 'AvaB ⭐' ? 'bg-purple-800' : ''}`}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ui.tableRows.map(([criteria, col1, col2, col3], i) => (
-                  <tr key={criteria} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                    <td className="p-3 font-medium text-gray-700 text-sm">{criteria}</td>
-                    <td className="p-3 text-center text-xl">{col1}</td>
-                    <td className="p-3 text-center text-xl">{col2}</td>
-                    <td className="p-3 text-center text-xl bg-purple-50 font-bold">{col3}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Go-to-market */}
-        <section className="bg-gray-900 rounded-4xl p-8 md:p-10 text-white">
-          <TrendingUp className="mb-4 text-teal-400" size={32} />
-          <h2 className="text-2xl font-black mb-6">{ui.gtmTitle}</h2>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {ui.gtmPhases.map((p) => (
-              <div key={p.phase} className="bg-white/10 rounded-3xl p-5">
-                <div className="text-xs font-bold text-purple-300 mb-1">{p.phase}</div>
-                <div className="font-black text-white text-lg mb-0.5">{p.title}</div>
-                <div className="text-teal-300 font-bold text-sm mb-3">🎯 {p.target}</div>
-                <p className="text-white/70 text-sm leading-relaxed">{p.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* ── CTA banner ──────────────────────────────────────────────────── */}
+        <div
+          className="mt-12 rounded-3xl p-8 text-white text-center"
+          style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%)' }}
+        >
+          <p className="text-2xl font-black mb-2">🏫 Bạn là trường học hoặc trung tâm?</p>
+          <p className="text-blue-200 mb-6 text-sm">
+            Triển khai AvaB EOS cho toàn tổ chức — quản lý học viên, giáo viên, tài chính trong một hệ thống
+          </p>
+          <Link
+            href="/dang-ky-to-chuc"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-blue-900 font-black text-sm hover:bg-blue-50 transition shadow-lg"
+          >
+            🚀 Đăng ký tổ chức miễn phí →
+          </Link>
+        </div>
 
       </div>
-    </div>
+    </main>
   )
 }

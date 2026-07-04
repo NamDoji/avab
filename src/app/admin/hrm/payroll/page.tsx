@@ -2,38 +2,76 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import PayrollExportButton from './PayrollExportButton'
 
 export const metadata = { title: 'Bảng lương — HRM — AvaB Admin' }
 
-const MOCK_PAYROLL = [
-  { name: 'Nguyễn Văn An',   role: 'TEACHER', base: 12_000_000, allowance: 1_500_000, deduction: 1_200_000 },
-  { name: 'Trần Thị Bình',   role: 'TEACHER', base: 11_500_000, allowance: 1_500_000, deduction: 1_150_000 },
-  { name: 'Lê Minh Cường',   role: 'ADMIN',   base: 15_000_000, allowance: 2_000_000, deduction: 1_700_000 },
-  { name: 'Phạm Thị Dung',   role: 'TEACHER', base: 10_000_000, allowance: 1_200_000, deduction: 1_000_000 },
-  { name: 'Hoàng Quốc Huy',  role: 'TEACHER', base: 12_500_000, allowance: 1_500_000, deduction: 1_250_000 },
-]
+const CONTRACT_TYPE_LABELS: Record<string, string> = {
+  fulltime: 'Toàn thời gian',
+  parttime: 'Bán thời gian',
+  probation: 'Thử việc',
+  freelance: 'Freelance',
+}
 
 function fmtVND(n: number) {
   return n.toLocaleString('vi-VN') + ' đ'
+}
+
+// Simple payroll calculation
+function calcAllowance(salary: number, type: string): number {
+  if (type === 'fulltime') return Math.round(salary * 0.12)
+  if (type === 'parttime') return Math.round(salary * 0.08)
+  if (type === 'probation') return 0
+  return Math.round(salary * 0.05)
+}
+
+// BHXH 10.5% + small TNCN estimate
+function calcDeduction(salary: number): number {
+  return Math.round(salary * 0.105)
 }
 
 export default async function HRMPayrollPage() {
   const session = await auth()
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const totalStaff = await prisma.user.count({ where: { role: { in: ['ADMIN', 'TEACHER'] } } })
-
-  const totalBase = MOCK_PAYROLL.reduce((s, r) => s + r.base, 0)
-  const totalAllowance = MOCK_PAYROLL.reduce((s, r) => s + r.allowance, 0)
-  const totalDeduction = MOCK_PAYROLL.reduce((s, r) => s + r.deduction, 0)
-  const totalNet = MOCK_PAYROLL.reduce((s, r) => s + r.base + r.allowance - r.deduction, 0)
-
   const now = new Date()
   const monthLabel = `Tháng ${now.getMonth() + 1}/${now.getFullYear()}`
 
+  const contracts = await prisma.contract.findMany({
+    where: { status: 'active' },
+    include: { employee: { select: { name: true, phone: true, role: true } } },
+    orderBy: { createdAt: 'asc' },
+  })
+
+  const rows = contracts.map((c) => {
+    const salary = c.salary ?? 0
+    const allowance = calcAllowance(salary, c.type)
+    const deduction = calcDeduction(salary)
+    const net = salary + allowance - deduction
+    return {
+      id: c.id,
+      name: c.employee.name ?? c.employee.phone,
+      phone: c.employee.phone,
+      role: c.employee.role,
+      position: c.position,
+      contractType: CONTRACT_TYPE_LABELS[c.type] ?? c.type,
+      salary,
+      allowance,
+      deduction,
+      net,
+    }
+  })
+
+  const totalSalary = rows.reduce((s, r) => s + r.salary, 0)
+  const totalAllowance = rows.reduce((s, r) => s + r.allowance, 0)
+  const totalDeduction = rows.reduce((s, r) => s + r.deduction, 0)
+  const totalNet = rows.reduce((s, r) => s + r.net, 0)
+
+  const totalStaff = await prisma.user.count({ where: { role: { in: ['ADMIN', 'TEACHER'] } } })
+
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
-      {/* Header */}
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden text-white py-12"
         style={{ background: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)' }}
@@ -51,24 +89,25 @@ export default async function HRMPayrollPage() {
           <div className="flex items-start justify-between flex-wrap gap-3">
             <div>
               <h1 className="text-3xl font-black mb-1">💰 Bảng lương</h1>
-              <p className="text-red-100 text-sm">Tính lương, thưởng, phụ cấp — {monthLabel}</p>
+              <p className="text-red-100 text-sm">Tính lương từ hợp đồng đang hiệu lực — {monthLabel}</p>
             </div>
-            <span className="bg-amber-400 text-amber-900 rounded-2xl px-4 py-2 text-xs font-black shadow">
-              🚀 Beta — Dữ liệu mẫu
-            </span>
+            <PayrollExportButton rows={rows} month={monthLabel} />
           </div>
 
           {/* Summary stats */}
           <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: 'Nhân viên', value: totalStaff, icon: '👤' },
-              { label: 'Lương cơ bản', value: fmtVND(totalBase), icon: '💵' },
+              { label: 'Nhân viên có HĐ', value: rows.length, icon: '👤', sub: `/ ${totalStaff} tổng` },
+              { label: 'Lương cơ bản', value: fmtVND(totalSalary), icon: '💵' },
               { label: 'Phụ cấp', value: fmtVND(totalAllowance), icon: '➕' },
               { label: 'Thực lĩnh', value: fmtVND(totalNet), icon: '💰' },
             ].map((s) => (
               <div key={s.label} className="bg-white/15 backdrop-blur rounded-2xl p-3">
                 <div className="text-lg font-black">{s.value}</div>
-                <div className="text-xs text-red-100 mt-0.5">{s.icon} {s.label}</div>
+                <div className="text-xs text-red-100 mt-0.5">
+                  {s.icon} {s.label}
+                </div>
+                {s.sub && <div className="text-xs text-red-200 mt-0.5">{s.sub}</div>}
               </div>
             ))}
           </div>
@@ -92,14 +131,34 @@ export default async function HRMPayrollPage() {
           </Link>
         </div>
 
-        {/* Payroll calculation overview */}
+        {/* No contracts warning */}
+        {rows.length === 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-3xl p-6 text-center">
+            <div className="text-4xl mb-3">⚠️</div>
+            <p className="font-black text-amber-800 mb-1">Chưa có hợp đồng đang hiệu lực</p>
+            <p className="text-amber-700 text-sm mb-4">Bảng lương được tính từ các hợp đồng có trạng thái &quot;active&quot;</p>
+            <Link
+              href="/admin/hrm/contracts"
+              className="inline-flex items-center gap-2 bg-amber-600 text-white rounded-2xl px-5 py-2.5 text-sm font-bold hover:bg-amber-700 transition-colors"
+            >
+              📄 Quản lý hợp đồng →
+            </Link>
+          </div>
+        )}
+
+        {/* Payroll formula */}
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
           <h2 className="text-lg font-black text-gray-900 mb-4">📐 Công thức tính lương</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             {[
               { icon: '💵', label: 'Lương cơ bản', desc: 'Theo hợp đồng lao động', color: 'bg-blue-50 border-blue-200' },
-              { icon: '➕', label: 'Phụ cấp & Thưởng', desc: 'Xăng xe, ăn trưa, thưởng KPI', color: 'bg-green-50 border-green-200' },
-              { icon: '➖', label: 'Khấu trừ', desc: 'BHXH 10.5%, thuế TNCN', color: 'bg-red-50 border-red-200' },
+              {
+                icon: '➕',
+                label: 'Phụ cấp (theo loại HĐ)',
+                desc: 'Toàn thời gian 12%, Bán thời gian 8%, Freelance 5%',
+                color: 'bg-green-50 border-green-200',
+              },
+              { icon: '➖', label: 'Khấu trừ (10.5%)', desc: 'BHXH 8% + BHYT 1.5% + BHTN 1%', color: 'bg-red-50 border-red-200' },
             ].map((item) => (
               <div key={item.label} className={`rounded-2xl border p-4 ${item.color}`}>
                 <div className="text-2xl mb-2">{item.icon}</div>
@@ -108,91 +167,70 @@ export default async function HRMPayrollPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 bg-gray-50 rounded-2xl p-4 font-mono text-sm text-gray-700">
+          <div className="bg-gray-50 rounded-2xl p-4 font-mono text-sm text-gray-700">
             <span className="font-black text-gray-900">Thực lĩnh</span>
             {' = Lương cơ bản + Phụ cấp − Khấu trừ'}
           </div>
         </div>
 
         {/* Payroll table */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <p className="text-sm font-black text-gray-700">📋 Bảng lương {monthLabel}</p>
-            <span className="bg-amber-100 text-amber-700 rounded-xl px-3 py-1 text-xs font-black">
-              🚧 Dữ liệu mẫu
-            </span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
-                  <th className="text-left px-5 py-3 font-bold text-gray-600 text-xs">Nhân viên</th>
-                  <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Lương cơ bản</th>
-                  <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Phụ cấp</th>
-                  <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Khấu trừ</th>
-                  <th className="text-right px-5 py-3 font-bold text-gray-600 text-xs">Thực lĩnh</th>
-                </tr>
-              </thead>
-              <tbody>
-                {MOCK_PAYROLL.map((row) => {
-                  const net = row.base + row.allowance - row.deduction
-                  return (
-                    <tr key={row.name} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+        {rows.length > 0 && (
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
+              <p className="text-sm font-black text-gray-700">📋 Bảng lương {monthLabel}</p>
+              <span className="bg-green-100 text-green-700 rounded-xl px-3 py-1 text-xs font-black">
+                ✅ Dữ liệu thực từ hợp đồng
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <th className="text-left px-5 py-3 font-bold text-gray-600 text-xs">Nhân viên</th>
+                    <th className="text-left px-4 py-3 font-bold text-gray-600 text-xs">Chức vụ</th>
+                    <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Lương cơ bản</th>
+                    <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Phụ cấp</th>
+                    <th className="text-right px-4 py-3 font-bold text-gray-600 text-xs">Khấu trừ</th>
+                    <th className="text-right px-5 py-3 font-bold text-gray-600 text-xs">Thực lĩnh</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row) => (
+                    <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center text-red-700 font-black text-sm flex-shrink-0">
-                            {row.name[0]}
+                            {row.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className="font-bold text-gray-900">{row.name}</div>
-                            <div className="text-xs text-gray-400">{row.role}</div>
+                            <div className="text-xs text-gray-400">{row.role} · {row.contractType}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-700 font-medium">{fmtVND(row.base)}</td>
+                      <td className="px-4 py-3 text-gray-600 text-sm">{row.position ?? '—'}</td>
+                      <td className="px-4 py-3 text-right text-gray-700 font-medium">{fmtVND(row.salary)}</td>
                       <td className="px-4 py-3 text-right text-green-700 font-medium">+{fmtVND(row.allowance)}</td>
                       <td className="px-4 py-3 text-right text-red-600 font-medium">−{fmtVND(row.deduction)}</td>
                       <td className="px-5 py-3 text-right">
-                        <span className="font-black text-gray-900 text-base">{fmtVND(net)}</span>
+                        <span className="font-black text-gray-900 text-base">{fmtVND(row.net)}</span>
                       </td>
                     </tr>
-                  )
-                })}
-              </tbody>
-              <tfoot>
-                <tr className="border-t-2 border-gray-200 bg-gray-50">
-                  <td className="px-5 py-3 font-black text-gray-900">Tổng cộng</td>
-                  <td className="px-4 py-3 text-right font-black text-gray-900">{fmtVND(totalBase)}</td>
-                  <td className="px-4 py-3 text-right font-black text-green-700">+{fmtVND(totalAllowance)}</td>
-                  <td className="px-4 py-3 text-right font-black text-red-600">−{fmtVND(totalDeduction)}</td>
-                  <td className="px-5 py-3 text-right font-black text-red-700 text-base">{fmtVND(totalNet)}</td>
-                </tr>
-              </tfoot>
-            </table>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t-2 border-gray-200 bg-gray-50">
+                    <td className="px-5 py-3 font-black text-gray-900" colSpan={2}>Tổng cộng</td>
+                    <td className="px-4 py-3 text-right font-black text-gray-900">{fmtVND(totalSalary)}</td>
+                    <td className="px-4 py-3 text-right font-black text-green-700">+{fmtVND(totalAllowance)}</td>
+                    <td className="px-4 py-3 text-right font-black text-red-600">−{fmtVND(totalDeduction)}</td>
+                    <td className="px-5 py-3 text-right font-black text-red-700 text-base">{fmtVND(totalNet)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
-        </div>
-
-        {/* Coming soon */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
-          <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">🚀 Tính năng sắp ra mắt</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { icon: '🔄', label: 'Tự động tính lương', desc: 'Từ chấm công + HĐ' },
-              { icon: '📊', label: 'Thưởng KPI', desc: 'Liên kết với OKR' },
-              { icon: '📄', label: 'Xuất bảng lương', desc: 'Excel & PDF' },
-              { icon: '🏦', label: 'Chuyển khoản', desc: 'Tích hợp ngân hàng' },
-            ].map((f) => (
-              <div key={f.label} className="relative rounded-2xl border border-dashed border-gray-200 p-4 bg-gray-50">
-                <div className="absolute top-2 right-2">
-                  <span className="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5 text-xs font-black">Soon</span>
-                </div>
-                <div className="text-2xl mb-2">{f.icon}</div>
-                <div className="font-black text-gray-700 text-sm">{f.label}</div>
-                <div className="text-gray-400 text-xs mt-0.5">{f.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   )

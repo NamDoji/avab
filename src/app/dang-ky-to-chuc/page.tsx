@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -121,8 +122,8 @@ export default function DangKyToChucPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'submit', string>>>({})
   const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'ok' | 'taken'>('idle')
   const [slugSuggestion, setSlugSuggestion] = useState<string>('')
+  const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
-  const [success, setSuccess] = useState<{ orgName: string; slug: string; workspaceUrl: string } | null>(null)
 
   // Auto-generate slug from orgName
   useEffect(() => {
@@ -244,48 +245,13 @@ export default function DangKyToChucPage() {
         setErrors({ submit: data.error ?? 'Đã có lỗi xảy ra' })
         return
       }
-      setSuccess({ orgName: data.orgName!, slug: data.slug!, workspaceUrl: data.workspaceUrl! })
+      const qs = new URLSearchParams({ slug: data.slug!, orgName: encodeURIComponent(data.orgName!) })
+      router.push(`/dang-ky-to-chuc/thanh-cong?${qs.toString()}`)
     } catch {
       setErrors({ submit: 'Không thể kết nối đến máy chủ' })
     } finally {
       setSubmitting(false)
     }
-  }
-
-  // ── Success screen ────────────────────────────────────────────────────────
-  if (success) {
-    return (
-      <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <div style={{ background: '#fff', borderRadius: 24, padding: 48, maxWidth: 480, width: '100%', textAlign: 'center', boxShadow: '0 8px 48px rgba(0,0,0,0.1)' }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
-          <h2 style={{ fontSize: 24, fontWeight: 900, color: '#111827', marginBottom: 8 }}>
-            Workspace đã được tạo!
-          </h2>
-          <p style={{ color: '#6b7280', fontSize: 15, marginBottom: 24, lineHeight: 1.6 }}>
-            Workspace của <strong>{success.orgName}</strong> đã sẵn sàng.<br />
-            Đăng nhập tại:
-          </p>
-          <a
-            href={`https://${success.workspaceUrl}`}
-            style={{
-              display: 'inline-block',
-              background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
-              color: '#fff', fontWeight: 800, fontSize: 15,
-              padding: '14px 32px', borderRadius: 12, textDecoration: 'none',
-              marginBottom: 16,
-            }}
-          >
-            🚀 Vào {success.slug}.avab.vn
-          </a>
-          <p style={{ fontSize: 13, color: '#9ca3af' }}>
-            Hoặc{' '}
-            <Link href="/dang-nhap" style={{ color: '#7c3aed', fontWeight: 700 }}>
-              đăng nhập tại đây
-            </Link>
-          </p>
-        </div>
-      </div>
-    )
   }
 
   // ── Shared input style ────────────────────────────────────────────────────

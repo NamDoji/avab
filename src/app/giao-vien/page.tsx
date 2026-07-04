@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import QuickFeedbackEntry from './QuickFeedbackEntry'
 
 export default async function TeacherDashboard() {
   const session = await auth()
@@ -17,7 +18,7 @@ export default async function TeacherDashboard() {
   // Month start
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  // Load tất cả sessions (với records) để tính stats + recent 5
+  // Load all sessions (with records) for stats + recent 5
   const [allSessions, sessionsThisWeek, sessionsThisMonth] = await Promise.all([
     prisma.sessionFeedback.findMany({
       where: { createdBy: userId },
@@ -35,8 +36,15 @@ export default async function TeacherDashboard() {
     }),
   ])
 
+  // Active courses for quick feedback entry
+  const activeCourses = await prisma.course.findMany({
+    where: { isActive: true },
+    select: { id: true, name: true, grade: true },
+    orderBy: { name: 'asc' },
+    take: 20,
+  })
+
   const recentSessions = allSessions.slice(0, 5)
-  const totalSessions = allSessions.length
   const totalStudentsReviewed = allSessions.reduce(
     (acc, s) => acc + s.records.filter((r) => r.attendance).length,
     0
@@ -52,6 +60,8 @@ export default async function TeacherDashboard() {
     month: 'long',
     year: 'numeric',
   })
+
+  const isTeacherOrAdmin = userRole === 'ADMIN' || userRole === 'TEACHER'
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-5xl">
@@ -83,20 +93,64 @@ export default async function TeacherDashboard() {
         </div>
       </div>
 
-      {/* Upcoming schedule placeholder */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
-        <h2 className="font-black text-gray-900 mb-2 flex items-center gap-2">
-          📅 Lịch dạy tuần này
-        </h2>
-        <p className="text-sm text-gray-400 italic">Lịch dạy tuần này đang được phát triển. Vui lòng kiểm tra lại sau.</p>
-        {(userRole === 'ADMIN' || userRole === 'TEACHER') && (
+      {/* Quick Actions row */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+        {/* Timetable */}
+        <Link
+          href="/admin/erp/timetable"
+          className="flex items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-3.5 hover:bg-blue-50 hover:border-blue-200 transition group"
+        >
+          <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-xl shrink-0 group-hover:bg-blue-100 transition">
+            📅
+          </div>
+          <div>
+            <p className="text-sm font-bold text-gray-900">Thời khóa biểu</p>
+            <p className="text-xs text-gray-400">Lịch dạy của tôi</p>
+          </div>
+        </Link>
+
+        {/* Attendance */}
+        {isTeacherOrAdmin && (
           <Link
             href="/admin/erp/attendance"
-            className="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-3.5 hover:bg-teal-50 hover:border-teal-200 transition group"
           >
-            ✅ Ghi điểm danh ngay →
+            <div className="w-9 h-9 rounded-xl bg-teal-50 flex items-center justify-center text-xl shrink-0 group-hover:bg-teal-100 transition">
+              ✅
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Điểm danh</p>
+              <p className="text-xs text-gray-400">Ghi nhận buổi học</p>
+            </div>
           </Link>
         )}
+
+        {/* Session feedback */}
+        <Link
+          href="/giao-vien/buoi-hoc"
+          className="flex items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-4 py-3.5 hover:bg-purple-50 hover:border-purple-200 transition group"
+        >
+          <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center text-xl shrink-0 group-hover:bg-purple-100 transition">
+            📋
+          </div>
+          <div>
+            <p className="text-sm font-bold text-gray-900">Buổi học</p>
+            <p className="text-xs text-gray-400">Nhận xét học viên</p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Quick Feedback Entry */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-6">
+        <div className="px-5 py-4 border-b border-gray-100">
+          <h2 className="font-black text-gray-900 flex items-center gap-2">
+            ✏️ Ghi nhận buổi học nhanh
+          </h2>
+          <p className="text-xs text-gray-400 mt-0.5">
+            Tạo feedback buổi học ngay tại đây
+          </p>
+        </div>
+        <QuickFeedbackEntry courses={activeCourses} />
       </div>
 
       {/* Recent sessions */}
@@ -115,7 +169,7 @@ export default async function TeacherDashboard() {
           <div className="px-6 py-12 text-center text-gray-400">
             <p className="text-4xl mb-3">📋</p>
             <p className="font-semibold">Chưa có buổi học nào</p>
-            <p className="text-sm mt-1">Admin sẽ tạo buổi học và phân công cho bạn</p>
+            <p className="text-sm mt-1">Tạo buổi học đầu tiên bằng form trên</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
