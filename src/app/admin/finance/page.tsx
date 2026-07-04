@@ -355,26 +355,35 @@ export default async function FinanceDashboardPage() {
           )}
         </div>
 
-        {/* ── Zone 4: Quick Actions ────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link
-            href="/admin/courses"
-            className="flex items-center justify-center gap-2.5 rounded-2xl px-5 py-4 font-bold text-sm text-white transition hover:opacity-90 shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)' }}
-          >
-            <span className="text-xl">📋</span>
-            Tạo đợt thu học phí
-          </Link>
-
-          <ExportButton variant="card" />
-
-          <Link
-            href="/admin/finance/payments"
-            className="flex items-center justify-center gap-2.5 rounded-2xl px-5 py-4 font-bold text-sm text-gray-700 transition hover:bg-gray-100 shadow-sm bg-white border border-gray-200"
-          >
-            <span className="text-xl">👁️</span>
-            Xem tất cả thanh toán
-          </Link>
+        {/* ── Zone 4: Quick Nav ─────────────────────────────────────────────── */}
+        <div>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+            Điều hướng nhanh
+          </p>
+          <div className="flex gap-3 flex-wrap">
+            <Link
+              href="/admin/finance/invoices"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
+              style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}
+            >
+              📋 Hóa đơn
+            </Link>
+            <Link
+              href="/admin/finance/reports"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
+              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+            >
+              📊 Báo cáo
+            </Link>
+            <Link
+              href="/admin/finance/invoices?status=unpaid"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
+              style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}
+            >
+              🔴 Công nợ
+            </Link>
+            <ExportButton variant="card" />
+          </div>
         </div>
 
       </div>
