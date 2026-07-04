@@ -143,7 +143,8 @@ export function GlobalAIChat() {
 
       {/* ── Chat panel ──────────────────────────────────────────── */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-[380px] max-h-[560px] flex flex-col rounded-3xl shadow-2xl border border-white/20 overflow-hidden bg-white">
+        <div className="fixed z-50 flex flex-col rounded-3xl shadow-2xl border border-white/20 overflow-hidden bg-white"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)', right: 16, width: 'min(380px, calc(100vw - 24px))', maxHeight: 'min(560px, 70vh)' }}>
 
           {/* header */}
           <div className={`bg-gradient-to-r ${ctx.color} px-4 py-3 flex items-center gap-3`}>

@@ -82,7 +82,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           zIndex: 500,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'space-between',
           gap: 6,
           padding: '8px 12px',
           background: 'rgba(255,255,255,0.92)',
@@ -93,11 +93,36 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           minHeight: 52,
         }}
       >
+        {/* Logo left */}
+        <a
+          href="/admin"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 7, textDecoration: 'none',
+            flexShrink: 0,
+          }}
+        >
+          <span style={{
+            width: 30, height: 30, borderRadius: 8, flexShrink: 0,
+            background: 'linear-gradient(135deg,#7c3aed,#14b8a6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 16, fontWeight: 900, color: '#fff',
+          }}>A</span>
+          <span
+            className="admin-topbar-label"
+            style={{ fontWeight: 900, fontSize: 15, color: '#111827', letterSpacing: '-0.02em' }}
+          >
+            AvaB
+          </span>
+        </a>
+
+        {/* Right actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
         <NavSearchBar />
         <NotificationBell initialCount={notifCount} />
         {allOrgs.length > 0 && (
           <OrgSwitcher currentOrg={currentOrg} allOrgs={allOrgs} />
         )}
+        </div>
       </div>
 
       <AdminErrorBoundary>
