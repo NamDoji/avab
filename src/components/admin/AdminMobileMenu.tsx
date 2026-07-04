@@ -86,6 +86,17 @@ const NAV = [
     { href: '/admin/education-standards', icon: '📖', label: 'AvaB Standards' },
     { href: '/admin/gamification',        icon: '🎮', label: 'Gamification' },
   ]},
+  // ── 7. ✨ AI Studio (Premium — Add-on) ───────────────────────────────────
+  { group: '✨ AI Studio (Premium)', items: [
+    { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio' },
+    { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator' },
+    { href: '/admin/ai-decision',                icon: '🧠', label: 'AI Decision' },
+    { href: '/admin/material-import',            icon: '📥', label: 'Material Import' },
+    { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank' },
+    { href: '/admin/publishing',                 icon: '📤', label: 'Publishing' },
+    { href: '/admin/education-standards',        icon: '📖', label: 'AvaB Standards' },
+    { href: '/admin/gamification',               icon: '🎮', label: 'Gamification' },
+  ]},
   // ── 8. Cộng tác ───────────────────────────────────────────────────────────
   { group: '🤝 Cộng tác', items: [
     { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks' },

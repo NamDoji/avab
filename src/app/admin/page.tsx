@@ -10,47 +10,41 @@ export const metadata = { title: 'Admin Dashboard — AvaB' }
 // ─────────────────────────────────────────────────────────────────────────────
 // Zone C: full module list — matches specification exactly
 // ─────────────────────────────────────────────────────────────────────────────
-function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
-  // ── 1. Khoá học (sản phẩm cốt lõi, hiển thị đầu tiên) ───────────────────
+function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGroup[] {
+  const hasAI = isSuperAdmin || orgModules.includes('ai') || orgModules.includes('ai-studio')
+  return [
+  // ═══════════════════════════════════════════════════════════
+  //  STANDARD MODULES — bao gồm trong mọi subscription
+  // ═══════════════════════════════════════════════════════════
   {
-    id: 'courses',
-    icon: '📚',
-    label: 'Khoá học',
+    id: 'courses', icon: '📚', label: 'Khoá học',
     modules: [
-      { href: '/admin/courses',                    icon: '📚', label: 'Khoá học',     desc: 'Danh sách khoá học' },
-      { href: '/admin/enrollments',                icon: '📝', label: 'Đăng ký học',  desc: 'Ghi danh & phê duyệt' },
-      { href: '/admin/finance/invoices',           icon: '💰', label: 'Thu học phí',  desc: 'Đợt thu & thanh toán' },
-      { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Tạo khoá AI',  desc: 'Sinh nội dung bằng AI' },
+      { href: '/admin/courses',          icon: '📚', label: 'Khoá học',    desc: 'Danh sách khoá học' },
+      { href: '/admin/enrollments',      icon: '📝', label: 'Đăng ký học', desc: 'Ghi danh & phê duyệt' },
+      { href: '/admin/finance/invoices', icon: '💰', label: 'Thu học phí', desc: 'Đợt thu & thanh toán' },
     ],
   },
-  // ── 2. Thành viên (học sinh + GV + tài khoản — cùng nhóm người) ──────────
   {
-    id: 'members',
-    icon: '👥',
-    label: 'Thành viên',
+    id: 'members', icon: '👥', label: 'Thành viên',
     modules: [
-      { href: '/admin/erp/students', icon: '👦', label: 'Học sinh',   desc: 'Hồ sơ học viên' },
-      { href: '/admin/erp/teachers', icon: '👨‍🏫', label: 'Giáo viên', desc: 'Hồ sơ · lịch dạy' },
-      { href: '/admin/users',        icon: '👤', label: 'Tài khoản',  desc: 'Quản lý đăng nhập' },
-      { href: '/admin/erp/classes',  icon: '📋', label: 'Lớp học',    desc: 'Tạo lớp, gán GV' },
-      { href: '/admin/erp/transfers',icon: '🔄', label: 'Chuyển lớp', desc: 'Yêu cầu chuyển lớp' },
-      { href: '/admin/erp/alumni',   icon: '🎓', label: 'Alumni',      desc: 'Học sinh đã tốt nghiệp' },
+      { href: '/admin/erp/students',  icon: '👦', label: 'Học sinh',   desc: 'Hồ sơ học viên' },
+      { href: '/admin/erp/teachers',  icon: '👨‍🏫', label: 'Giáo viên', desc: 'Hồ sơ · lịch dạy' },
+      { href: '/admin/users',         icon: '👤', label: 'Tài khoản',  desc: 'Quản lý đăng nhập' },
+      { href: '/admin/erp/classes',   icon: '📋', label: 'Lớp học',    desc: 'Tạo lớp, gán GV' },
+      { href: '/admin/erp/transfers', icon: '🔄', label: 'Chuyển lớp', desc: 'Yêu cầu chuyển lớp' },
+      { href: '/admin/erp/alumni',    icon: '🎓', label: 'Alumni',      desc: 'Học sinh đã tốt nghiệp' },
     ],
   },
-  // ── 3. Học vụ ERP (vận hành hàng ngày) ───────────────────────────────────
   {
-    id: 'academic',
-    icon: '🏫',
-    label: 'Học vụ ERP',
+    id: 'academic', icon: '🏫', label: 'Học vụ ERP',
     modules: [
       { href: '/admin/erp',                    icon: '🏫', label: 'ERP Hub',     desc: 'Trung tâm học vụ' },
       { href: '/admin/erp/attendance',         icon: '✅', label: 'Điểm danh',   desc: 'Check-in, vắng mặt' },
-      { href: '/admin/erp/timetable',          icon: '📅', label: 'TKB AI',      desc: 'Thời khóa biểu AI' },
+      { href: '/admin/erp/timetable',          icon: '📅', label: 'TKB',         desc: 'Thời khóa biểu' },
       { href: '/admin/erp/timetable/workload', icon: '⚖️', label: 'Tải công GV', desc: 'Phân công giảng dạy' },
       { href: '/admin/erp/classrooms',         icon: '🚪', label: 'Phòng học',   desc: 'Quản lý phòng học' },
       { href: '/admin/erp/health',             icon: '🏥', label: 'Sức khỏe',    desc: 'Hồ sơ y tế HS' },
       { href: '/admin/erp/equipment',          icon: '💻', label: 'Thiết bị',    desc: 'Tài sản nhà trường' },
-      { href: '/admin/erp/rewards',            icon: '🎮', label: 'Điểm thưởng', desc: 'Gamification' },
       { href: '/admin/erp/awards',             icon: '🏆', label: 'Khen thưởng', desc: 'Giải thưởng HS' },
       { href: '/admin/erp/reports',            icon: '📊', label: 'Báo cáo ERP', desc: 'Báo cáo học vụ' },
       { href: '/admin/erp/bus-routes',         icon: '🚌', label: 'Xe tuyến',    desc: 'Xe đưa đón HS' },
@@ -60,29 +54,23 @@ function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
       { href: '/admin/erp/academic-years',     icon: '📆', label: 'Năm học',     desc: 'Quản lý năm học' },
     ],
   },
-  // ── 4. Tài chính ──────────────────────────────────────────────────────────
   {
-    id: 'finance',
-    icon: '💰',
-    label: 'Tài chính',
+    id: 'finance', icon: '💰', label: 'Tài chính',
     modules: [
-      { href: '/admin/finance',                 icon: '💰', label: 'Finance',    desc: 'Tổng quan tài chính' },
-      { href: '/admin/finance/invoices',         icon: '📋', label: 'Hóa đơn',   desc: 'Đợt thu học phí' },
-      { href: '/admin/finance/vouchers',         icon: '🎟️', label: 'Voucher',   desc: 'Mã giảm giá' },
-      { href: '/admin/finance/scholarships',     icon: '🏆', label: 'Học bổng',  desc: 'Chương trình học bổng' },
-      { href: '/admin/finance/installments',     icon: '📆', label: 'Trả góp',   desc: 'Kế hoạch trả góp' },
-      { href: '/admin/finance/cashflow',         icon: '📊', label: 'Cashflow',  desc: 'Dòng tiền' },
-      { href: '/admin/finance/forecast',         icon: '📉', label: 'Dự báo',    desc: 'Dự báo doanh thu' },
-      { href: '/admin/finance/reports',          icon: '📰', label: 'Báo cáo TC',desc: 'Báo cáo tài chính' },
-      { href: '/admin/analytics',                icon: '📈', label: 'Phân tích',  desc: 'Phân tích & báo cáo' },
-      { href: '/admin/finance/payment-gateway',  icon: '💳', label: 'Cổng TT',   desc: 'VNPay, MoMo, Banking' },
+      { href: '/admin/finance',                icon: '💰', label: 'Finance Hub',  desc: 'Tổng quan tài chính' },
+      { href: '/admin/finance/invoices',       icon: '📋', label: 'Hóa đơn',     desc: 'Đợt thu học phí' },
+      { href: '/admin/finance/vouchers',       icon: '🎟️', label: 'Voucher',     desc: 'Mã giảm giá' },
+      { href: '/admin/finance/scholarships',   icon: '🏆', label: 'Học bổng',    desc: 'Chương trình học bổng' },
+      { href: '/admin/finance/installments',   icon: '📆', label: 'Trả góp',     desc: 'Kế hoạch trả góp' },
+      { href: '/admin/finance/cashflow',       icon: '📊', label: 'Cashflow',    desc: 'Dòng tiền' },
+      { href: '/admin/finance/payment-gateway',icon: '💳', label: 'Cổng TT',     desc: 'VNPay, MoMo, Banking' },
+      { href: '/admin/finance/forecast',       icon: '📉', label: 'Dự báo DT',   desc: 'Dự báo doanh thu' },
+      { href: '/admin/finance/reports',        icon: '📰', label: 'Báo cáo TC',  desc: 'Báo cáo tài chính' },
+      { href: '/admin/analytics',              icon: '📈', label: 'Phân tích',   desc: 'Báo cáo & phân tích' },
     ],
   },
-  // ── 5. CRM ────────────────────────────────────────────────────────────────
   {
-    id: 'crm',
-    icon: '📊',
-    label: 'CRM',
+    id: 'crm', icon: '📊', label: 'CRM Tuyển sinh',
     modules: [
       { href: '/admin/crm',           icon: '📊', label: 'CRM Hub',   desc: 'Pipeline · leads · tuyển sinh' },
       { href: '/admin/crm/pipeline',  icon: '📋', label: 'Pipeline',  desc: 'Kanban leads' },
@@ -90,11 +78,8 @@ function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
       { href: '/admin/contacts',      icon: '📞', label: 'Contacts',  desc: 'Danh bạ liên hệ' },
     ],
   },
-  // ── 6. HRM ────────────────────────────────────────────────────────────────
   {
-    id: 'hrm',
-    icon: '👔',
-    label: 'HRM',
+    id: 'hrm', icon: '👔', label: 'HRM Nhân sự',
     modules: [
       { href: '/admin/hrm',            icon: '👔', label: 'HRM Hub',    desc: 'Quản lý nhân sự' },
       { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công' },
@@ -105,74 +90,73 @@ function buildModuleGroups(isSuperAdmin: boolean): NavGroup[] { return [
       { href: '/admin/hrm/payroll',    icon: '💰', label: 'Bảng lương', desc: 'Lương, thưởng' },
     ],
   },
-  // ── 7. AI & Nội dung ──────────────────────────────────────────────────────
   {
-    id: 'ai-content',
-    icon: '🤖',
-    label: 'AI & Nội dung',
-    modules: [
-      { href: '/admin/ai-studio',           icon: '✨', label: 'AI Studio',      desc: 'AI projects & engine' },
-      { href: '/admin/ai-decision',         icon: '🧠', label: 'AI Decision',    desc: 'Phân tích & quyết định AI' },
-      { href: '/admin/material-import',     icon: '📚', label: 'Material Import',desc: 'Word/PDF/Quizizz' },
-      { href: '/admin/question-bank',       icon: '🗃️', label: 'Question Bank', desc: 'Ngân hàng câu hỏi' },
-      { href: '/admin/education-standards', icon: '📖', label: 'AvaB Standards', desc: 'K12/Cambridge/IB' },
-      { href: '/admin/publishing',          icon: '📤', label: 'Publishing',      desc: 'Xuất Word/PDF/Slide' },
-      { href: '/admin/gamification',        icon: '🎮', label: 'Gamification',    desc: 'Điểm · huy hiệu · xếp hạng' },
-    ],
-  },
-  // ── 8. Cộng tác ───────────────────────────────────────────────────────────
-  {
-    id: 'collab',
-    icon: '🤝',
-    label: 'Cộng tác',
+    id: 'collab', icon: '🤝', label: 'Cộng tác',
     modules: [
       { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks',    desc: 'Quản lý công việc' },
       { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar', desc: 'Lịch nhóm' },
-      { href: '/admin/collab/meetings', icon: '🎥', label: 'Meeting',  desc: 'Họp trực tuyến' },
+      { href: '/admin/collab/meetings', icon: '🎥', label: 'Meetings', desc: 'Họp trực tuyến' },
       { href: '/admin/workflow',        icon: '⚙️', label: 'Workflow', desc: 'BPM & approval' },
     ],
   },
-  // ── 9. Hệ thống (IT/config — cuối cùng) ──────────────────────────────────
   {
-    id: 'system',
-    icon: '⚙️',
-    label: 'Hệ thống',
+    id: 'portals', icon: '🌐', label: 'Portals',
     modules: [
-      { href: '/admin/roles',          icon: '🛡️', label: 'RBAC',          desc: 'Roles & phân quyền' },
-      { href: '/admin/permissions',    icon: '🔑', label: 'Permissions',   desc: 'Danh mục quyền' },
-      { href: '/admin/roles/matrix',   icon: '🗂️', label: 'Ma trận quyền', desc: 'Permission matrix' },
-      { href: '/admin/audit',          icon: '📋', label: 'Audit',         desc: 'Lịch sử thay đổi' },
-      { href: '/admin/organizations',  icon: '🏢', label: 'Tổ chức',       desc: 'Trường & cơ sở' },
-      { href: '/admin/settings',       icon: '⚙️', label: 'Settings',      desc: 'Cấu hình hệ thống' },
-      { href: '/admin/notifications',  icon: '🔔', label: 'Thông báo',     desc: 'Notification center' },
-      { href: '/admin/news',           icon: '📰', label: 'Tin tức',        desc: 'Bài viết & thông báo' },
-      { href: '/admin/platform',       icon: '🔧', label: 'Platform',       desc: 'Quản trị nền tảng' },
-      { href: '/admin/data-migration', icon: '📦', label: 'Data Migration', desc: 'Import/Export dữ liệu' },
+      { href: '/giao-vien', icon: '👩‍🏫', label: 'Portal Giáo viên', desc: 'Giao diện dành cho GV' },
+      { href: '/hoc-vien',  icon: '🎒',   label: 'Portal Học sinh',  desc: 'Giao diện dành cho HS' },
+      { href: '/phu-huynh', icon: '👨‍👩‍👧', label: 'Portal Phụ huynh', desc: 'Giao diện dành cho PH' },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  //  AI PREMIUM — Add-on trả phí riêng
+  //  Chỉ hiện nếu org có module 'ai' hoặc là SUPER_ADMIN
+  // ═══════════════════════════════════════════════════════════
+  ...(hasAI ? [{
+    id: 'ai-premium', icon: '🤖', label: '✨ AI Studio (Premium)',
+    modules: [
+      { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio',       desc: 'Tạo nội dung bằng AI' },
+      { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator', desc: 'Sinh khoá học tự động' },
+      { href: '/admin/ai-decision',                icon: '🧠', label: 'AI Decision',      desc: 'Phân tích & cảnh báo AI' },
+      { href: '/admin/material-import',            icon: '📥', label: 'Material Import',  desc: 'Word/PDF → AI xử lý' },
+      { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank',   desc: 'Ngân hàng câu hỏi AI' },
+      { href: '/admin/education-standards',        icon: '📖', label: 'AvaB Standards',   desc: 'K12/Cambridge/IB' },
+      { href: '/admin/publishing',                 icon: '📤', label: 'Publishing',       desc: 'Xuất Word/PDF/Slide' },
+      { href: '/admin/gamification',               icon: '🎮', label: 'Gamification',     desc: 'Điểm · huy hiệu · XH' },
+    ],
+  }] : [{
+    id: 'ai-upgrade', icon: '🔒', label: '🔒 AI Studio',
+    modules: [
+      { href: '/admin/settings', icon: '⭐', label: 'Nâng cấp lên AI Premium', desc: 'Liên hệ AvaB để kích hoạt' },
+    ],
+  }]),
+
+  // ═══════════════════════════════════════════════════════════
+  //  HỆ THỐNG — IT/config
+  // ═══════════════════════════════════════════════════════════
+  {
+    id: 'system', icon: '⚙️', label: 'Hệ thống',
+    modules: [
+      { href: '/admin/roles',          icon: '🛡️', label: 'RBAC',           desc: 'Roles & phân quyền' },
+      { href: '/admin/permissions',    icon: '🔑', label: 'Permissions',    desc: 'Danh mục quyền' },
+      { href: '/admin/audit',          icon: '📋', label: 'Audit Log',      desc: 'Lịch sử thay đổi' },
+      { href: '/admin/organizations',  icon: '🏢', label: 'Tổ chức',        desc: 'Trường & cơ sở' },
+      { href: '/admin/notifications',  icon: '🔔', label: 'Thông báo',      desc: 'Notification center' },
+      { href: '/admin/news',           icon: '📰', label: 'Tin tức',         desc: 'Bài viết & thông báo' },
+      { href: '/admin/settings',       icon: '⚙️', label: 'Cài đặt',        desc: 'Cấu hình hệ thống' },
+      { href: '/admin/data-migration', icon: '📦', label: 'Data Migration',  desc: 'Import/Export dữ liệu' },
     ],
   },
   ...(isSuperAdmin ? [{
-    id: 'platform',
-    icon: '🔧',
-    label: 'Platform Admin',
+    id: 'platform', icon: '🔧', label: '🔧 Platform Admin',
     modules: [
-      { href: '/admin/platform',       icon: '🔧', label: 'Platform Admin',  desc: 'Quản trị nền tảng' },
+      { href: '/admin/platform',       icon: '🔧', label: 'Platform',        desc: 'Quản trị nền tảng AvaB' },
       { href: '/admin/organizations',  icon: '🏢', label: 'Tất cả tổ chức', desc: 'Tạo & quản lý org' },
       { href: '/admin/users',          icon: '👤', label: 'Tất cả user',    desc: 'Người dùng hệ thống' },
-      { href: '/admin/data-migration', icon: '📦', label: 'Data Migration',  desc: 'Import/Export' },
+      { href: '/admin/app-center',     icon: '🧩', label: 'App Center',      desc: 'Tích hợp & mở rộng' },
+      { href: '/admin/app-center/api', icon: '🔌', label: 'API Platform',    desc: 'REST & GraphQL' },
     ],
   }] : []),
-  // ── 10. Phát triển ────────────────────────────────────────────────────────
-  {
-    id: 'dev',
-    icon: '🔌',
-    label: 'Phát triển',
-    modules: [
-      { href: '/admin/app-center/api',      icon: '🔌', label: 'API Platform', desc: 'REST & GraphQL' },
-      { href: '/admin/app-center/webhooks', icon: '🔔', label: 'Webhooks',     desc: 'Event triggers' },
-      { href: '/admin/app-center',          icon: '🧩', label: 'App Center',   desc: 'Tích hợp & mở rộng' },
-      { href: '/admin/workflow',            icon: '⚡', label: 'Workflow',     desc: 'Quy trình tự động' },
-    ],
-  },
 ]}
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
@@ -483,7 +467,7 @@ export default async function AdminPage() {
         </div>
 
         {/* ── Zone C: Full Navigation (collapsible, state persisted) ─────── */}
-        <QuickNav groups={buildModuleGroups(isSuperAdmin)} />
+        <QuickNav groups={buildModuleGroups(isSuperAdmin, orgCtx?.modules ?? [])} />
 
       </div>
     </div>
