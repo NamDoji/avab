@@ -1,9 +1,10 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback } from 'react'
-import DataTable, { ColumnDef } from '@/components/common/DataTable'
+import { useCallback, useState } from 'react'
+import DataTable, { ColumnDef, BulkAction } from '@/components/common/DataTable'
 import Link from 'next/link'
+import CampusFilter from './CampusFilter'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -28,6 +29,12 @@ export interface StudentRow {
   _count: { answers: number }
 }
 
+interface Campus {
+  id: string
+  name: string
+  code: string | null
+}
+
 interface StudentsTableProps {
   data: StudentRow[]
   totalCount: number
@@ -36,6 +43,7 @@ interface StudentsTableProps {
   searchValue: string
   sortColumn: string
   sortOrder: 'asc' | 'desc'
+  campuses?: Campus[]
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -50,6 +58,120 @@ function Avatar({ name, size = 36 }: { name: string | null; size?: number }) {
       style={{ width: size, height: size, background: color, fontSize: size * 0.4 }}
     >
       {letter}
+    </div>
+  )
+}
+
+// ─── Bulk Transfer Modal ──────────────────────────────────────────────────────
+
+function BulkTransferModal({
+  students,
+  onClose,
+}: {
+  students: StudentRow[]
+  onClose: () => void
+}) {
+  if (students.length === 0) return null
+  return (
+    <div
+      className="fixed inset-0 z-[300] flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-3xl">🔄</span>
+          <div>
+            <h2 className="text-lg font-black text-gray-900">Chuyển lớp hàng loạt</h2>
+            <p className="text-sm text-gray-400">{students.length} học sinh được chọn</p>
+          </div>
+        </div>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4">
+          <p className="text-sm text-amber-700 font-semibold">
+            ⚠️ Tính năng đang phát triển
+          </p>
+          <p className="text-xs text-amber-600 mt-1">
+            Chuyển lớp hàng loạt sẽ cho phép di chuyển tất cả học sinh đã chọn sang một lớp học khác trong cùng cơ sở.
+          </p>
+        </div>
+
+        <div className="mb-4">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
+            Học sinh được chọn ({students.length})
+          </p>
+          <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1">
+            {students.slice(0, 10).map(s => (
+              <div key={s.id} className="flex items-center gap-2 text-sm text-gray-700">
+                <Avatar name={s.name} size={24} />
+                <span>{s.name ?? '—'}</span>
+                {s.phone && <span className="text-gray-400 text-xs">{s.phone}</span>}
+              </div>
+            ))}
+            {students.length > 10 && (
+              <p className="text-xs text-gray-400 pl-7">...và {students.length - 10} học sinh khác</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
+          >
+            Đóng
+          </button>
+          <button
+            disabled
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition opacity-50 cursor-not-allowed"
+            style={{ background: 'linear-gradient(135deg,#0f766e,#0369a1)' }}
+          >
+            🔄 Chuyển lớp (sắp có)
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Notification Modal ───────────────────────────────────────────────────────
+
+function NotifyModal({
+  count,
+  onClose,
+}: {
+  count: number
+  onClose: () => void
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[300] flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.5)' }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-3xl">📧</span>
+          <div>
+            <h2 className="text-lg font-black text-gray-900">Gửi thông báo</h2>
+            <p className="text-sm text-gray-400">{count} học sinh được chọn</p>
+          </div>
+        </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-4">
+          <p className="text-sm text-blue-700 font-semibold">
+            📣 Tính năng đang phát triển
+          </p>
+          <p className="text-xs text-blue-600 mt-1">
+            Gửi thông báo hàng loạt đến học sinh và phụ huynh qua SMS, email và thông báo trong app.
+          </p>
+        </div>
+        <button
+          onClick={onClose}
+          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
+        >
+          Đóng
+        </button>
+      </div>
     </div>
   )
 }
@@ -156,9 +278,13 @@ export default function StudentsTable({
   searchValue,
   sortColumn,
   sortOrder,
+  campuses = [],
 }: StudentsTableProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  const [transferStudents, setTransferStudents] = useState<StudentRow[]>([])
+  const [notifyCount, setNotifyCount] = useState<number | null>(null)
 
   const pushParams = useCallback(
     (updates: Record<string, string | number | undefined>) => {
@@ -175,51 +301,102 @@ export default function StudentsTable({
     [router, searchParams],
   )
 
-  const handleExportCSV = useCallback(() => {
-    const headers = ['Họ tên', 'SĐT', 'Số câu', 'Ngày tham gia', 'Trạng thái']
-    const rows = data.map((s) => [
-      s.name ?? '',
-      s.phone ?? '',
-      String(s._count.answers),
-      new Date(s.createdAt).toLocaleDateString('vi-VN'),
-      s.enrollments.length > 0 ? 'Đang học' : 'Chưa có lớp',
-    ])
-    const csv = [headers, ...rows].map((r) => r.join(',')).join('\n')
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `hoc-sinh-${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [data])
+  const handleExportCSV = useCallback(
+    (rows?: StudentRow[]) => {
+      const source = rows && rows.length > 0 ? rows : data
+      const headers = ['Họ tên', 'SĐT', 'Email', 'Số câu', 'Ngày tham gia', 'Trạng thái', 'Khóa học']
+      const csvRows = source.map((s) => [
+        s.name ?? '',
+        s.phone ?? '',
+        s.email ?? '',
+        String(s._count.answers),
+        new Date(s.createdAt).toLocaleDateString('vi-VN'),
+        s.enrollments.length > 0 ? 'Đang học' : 'Chưa có lớp',
+        s.enrollments.map(e => e.course.name).join(' | '),
+      ])
+      const csv = [headers, ...csvRows].map((r) => r.map(v => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n')
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `hoc-sinh-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    },
+    [data],
+  )
+
+  // Bulk actions
+  const bulkActions: BulkAction[] = [
+    {
+      label: 'Gửi thông báo',
+      icon: '📧',
+      onClick: (rows) => {
+        setNotifyCount((rows as StudentRow[]).length)
+      },
+    },
+    {
+      label: 'Xuất CSV',
+      icon: '📦',
+      onClick: (rows) => {
+        handleExportCSV(rows as StudentRow[])
+      },
+    },
+    {
+      label: 'Chuyển lớp',
+      icon: '🔄',
+      onClick: (rows) => {
+        setTransferStudents(rows as StudentRow[])
+      },
+    },
+  ]
 
   return (
-    <DataTable
-      data={data}
-      columns={columns}
-      totalCount={totalCount}
-      currentPage={currentPage}
-      pageSize={pageSize}
-      onPageChange={(page) => pushParams({ page })}
-      onPageSizeChange={(size) => pushParams({ page: 1, pageSize: size })}
-      searchValue={searchValue}
-      onSearchChange={(v) => pushParams({ search: v, page: 1 })}
-      searchPlaceholder="Tìm theo tên, SĐT..."
-      sortColumn={sortColumn}
-      sortOrder={sortOrder}
-      onSortChange={(col, order) => pushParams({ sort: col, sortOrder: order, page: 1 })}
-      rowActions={(row) => (
-        <Link
-          href={`/admin/erp/students/${row.id}`}
-          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:opacity-90 transition"
-          style={{ background: 'linear-gradient(135deg, #0f766e, #0369a1)' }}
-        >
-          Xem →
-        </Link>
+    <>
+      <DataTable
+        data={data}
+        columns={columns}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        onPageChange={(page) => pushParams({ page })}
+        onPageSizeChange={(size) => pushParams({ page: 1, pageSize: size })}
+        searchValue={searchValue}
+        onSearchChange={(v) => pushParams({ search: v, page: 1 })}
+        searchPlaceholder="Tìm theo tên, SĐT..."
+        sortColumn={sortColumn}
+        sortOrder={sortOrder}
+        onSortChange={(col, order) => pushParams({ sort: col, sortOrder: order, page: 1 })}
+        bulkActions={bulkActions}
+        filterNode={campuses.length > 0 ? <CampusFilter campuses={campuses} /> : undefined}
+        rowActions={(row) => (
+          <Link
+            href={`/admin/erp/students/${row.id}`}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:opacity-90 transition"
+            style={{ background: 'linear-gradient(135deg, #0f766e, #0369a1)' }}
+          >
+            Xem →
+          </Link>
+        )}
+        onExportCSV={() => handleExportCSV()}
+        title={`${totalCount.toLocaleString('vi-VN')} học sinh`}
+      />
+
+      {/* Bulk Transfer Modal */}
+      {transferStudents.length > 0 && (
+        <BulkTransferModal
+          students={transferStudents}
+          onClose={() => setTransferStudents([])}
+        />
       )}
-      onExportCSV={handleExportCSV}
-      title={`${totalCount.toLocaleString('vi-VN')} học sinh`}
-    />
+
+      {/* Notify Modal */}
+      {notifyCount !== null && (
+        <NotifyModal
+          count={notifyCount}
+          onClose={() => setNotifyCount(null)}
+        />
+      )}
+    </>
   )
 }
