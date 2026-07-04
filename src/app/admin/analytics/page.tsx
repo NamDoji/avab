@@ -30,6 +30,10 @@ export default async function AnalyticsPage() {
     recentAnswers,
     campusStats,
     coursesByCampus,
+    totalQuestions,
+    totalAnswers,
+    correctAnswers,
+    campusCourseRevenue,
   ] = await Promise.all([
     prisma.user.count({ where: { role: 'STUDENT' } }),
     prisma.enrollment.count({ where: { status: 'ACTIVE' } }),
@@ -69,12 +73,41 @@ export default async function AnalyticsPage() {
       where: { campusId: { not: null } },
       _count: { id: true },
     }),
+    // Learning Analytics
+    prisma.question.count(),
+    prisma.studentAnswer.count(),
+    prisma.studentAnswer.count({ where: { isCorrect: true } }),
+    // Campus revenue from TuitionCollection
+    prisma.tuitionCollection.groupBy({
+      by: ['campusId'],
+      where: { campusId: { not: null } },
+      _sum: { totalAmount: true },
+    }),
   ])
 
   // Build campusId → courseCount map
   const campusCourseMap = new Map<string, number>()
   for (const row of coursesByCampus) {
     if (row.campusId) campusCourseMap.set(row.campusId, row._count.id)
+  }
+
+  // Build campusId → revenue map
+  const campusRevenueMap = new Map<string, number>()
+  for (const row of campusCourseRevenue) {
+    if (row.campusId) campusRevenueMap.set(row.campusId, row._sum.totalAmount ?? 0)
+  }
+
+  // Learning analytics computed values
+  const avgAccuracy = totalAnswers > 0
+    ? Math.round((correctAnswers / totalAnswers) * 100)
+    : 0
+
+  // Format VND short
+  const fmtVNDShort = (n: number) => {
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + 'B'
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
+    if (n >= 1_000) return Math.round(n / 1_000) + 'K'
+    return String(n)
   }
 
   return (
@@ -357,7 +390,14 @@ export default async function AnalyticsPage() {
                       <p className="text-xs text-gray-400">lớp học</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-sm text-gray-300 font-semibold">— Đang cập nhật</p>
+                      {(campusRevenueMap.get(campus.id) ?? 0) > 0 ? (
+                        <>
+                          <p className="text-xl font-black text-emerald-600">{fmtVNDShort(campusRevenueMap.get(campus.id) ?? 0)}đ</p>
+                          <p className="text-xs text-gray-400">doanh thu</p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-gray-300 font-semibold">— Chưa có</p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -366,14 +406,69 @@ export default async function AnalyticsPage() {
           </div>
         )}
 
+        {/* ── 5b. Learning Analytics ─────────────────────────────────────── */}
+        <div>
+          <p className="text-sm font-bold text-gray-700 mb-3">🧠 Learning Analytics</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                icon: '🗃️',
+                label: 'Câu hỏi',
+                value: totalQuestions,
+                sub: 'Question Bank toàn hệ thống',
+                gradient: 'from-blue-500 to-indigo-600',
+              },
+              {
+                icon: '✍️',
+                label: 'Lượt trả lời',
+                value: totalAnswers,
+                sub: 'Tổng StudentAnswer',
+                gradient: 'from-teal-500 to-emerald-600',
+              },
+              {
+                icon: '🎯',
+                label: 'Độ chính xác TB',
+                value: `${avgAccuracy}%`,
+                sub: `${correctAnswers.toLocaleString('vi-VN')} đúng / ${totalAnswers.toLocaleString('vi-VN')} câu`,
+                gradient: avgAccuracy >= 70 ? 'from-green-500 to-emerald-600' : avgAccuracy >= 50 ? 'from-amber-500 to-orange-600' : 'from-red-500 to-rose-600',
+                isText: true,
+              },
+              {
+                icon: '🤖',
+                label: 'AI Projects',
+                value: totalAIProjects,
+                sub: 'AI Studio workspace',
+                gradient: 'from-purple-500 to-violet-600',
+              },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${stat.gradient} p-6 text-white shadow-md`}
+              >
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="text-3xl mb-3">{stat.icon}</div>
+                <div className={`font-black mb-1 ${'isText' in stat && stat.isText ? 'text-3xl' : 'text-4xl'}`}>
+                  {'isText' in stat && stat.isText
+                    ? stat.value
+                    : (stat.value as number).toLocaleString('vi-VN')}
+                </div>
+                <div className="font-bold text-sm">{stat.label}</div>
+                <div className="text-white/60 text-xs mt-0.5">{stat.sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* ── 6. Quick links ─────────────────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">🔗 Truy cập nhanh</p>
           <div className="flex flex-wrap gap-3">
             {[
-              { href: '/admin/users',      icon: '👥', label: 'Xem chi tiết học sinh',   color: 'hover:border-blue-300 hover:bg-blue-50' },
-              { href: '/admin/courses',    icon: '📚', label: 'Quản lý khóa học',         color: 'hover:border-purple-300 hover:bg-purple-50' },
-              { href: '/admin/ai-studio',  icon: '🤖', label: 'AI Studio',                color: 'hover:border-pink-300 hover:bg-pink-50' },
+              { href: '/admin/users',              icon: '👥', label: 'Xem chi tiết học sinh', color: 'hover:border-blue-300 hover:bg-blue-50' },
+              { href: '/admin/courses',            icon: '📚', label: 'Quản lý khóa học',       color: 'hover:border-purple-300 hover:bg-purple-50' },
+              { href: '/admin/ai-studio',          icon: '🤖', label: 'AI Studio',              color: 'hover:border-pink-300 hover:bg-pink-50' },
+              { href: '/admin/analytics/owner',    icon: '👑', label: 'Owner Dashboard',        color: 'hover:border-slate-300 hover:bg-slate-50' },
+              { href: '/admin/question-bank',      icon: '🗃️', label: 'Question Bank',          color: 'hover:border-indigo-300 hover:bg-indigo-50' },
             ].map((link) => (
               <Link
                 key={link.href}

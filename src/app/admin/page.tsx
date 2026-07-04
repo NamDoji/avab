@@ -68,9 +68,10 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
     icon: '📊',
     label: 'Phân tích',
     modules: [
-      { href: '/admin/analytics',     icon: '📊', label: 'Analytics',    desc: 'Báo cáo học tập' },
-      { href: '/admin/ai-decision',   icon: '🧠', label: 'AI Decision',  desc: 'Phân tích · Cảnh báo' },
-      { href: '/admin/gamification',  icon: '🎮', label: 'Gamification', desc: 'XP · Badge · Mission' },
+      { href: '/admin/analytics',         icon: '📊', label: 'Analytics',         desc: 'Báo cáo học tập' },
+      { href: '/admin/analytics/owner',     icon: '👑', label: 'Owner Dashboard',    desc: 'Tổng quan toàn hệ thống' },
+      { href: '/admin/ai-decision',         icon: '🧠', label: 'AI Decision',        desc: 'Phân tích · Cảnh báo' },
+      { href: '/admin/gamification',        icon: '🎮', label: 'Gamification',       desc: 'XP · Badge · Mission' },
     ],
   },
   {

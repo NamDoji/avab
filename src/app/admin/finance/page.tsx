@@ -360,29 +360,55 @@ export default async function FinanceDashboardPage() {
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
             Điều hướng nhanh
           </p>
-          <div className="flex gap-3 flex-wrap">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <Link
               href="/admin/finance/invoices"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
               style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)' }}
             >
-              📋 Hóa đơn
+              <span className="text-2xl">📋</span>
+              <span>Hóa đơn</span>
+            </Link>
+            <Link
+              href="/admin/finance/vouchers"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
+              style={{ background: 'linear-gradient(135deg, #065f46 0%, #059669 100%)' }}
+            >
+              <span className="text-2xl">🎫</span>
+              <span>Voucher</span>
+            </Link>
+            <Link
+              href="/admin/finance/scholarships"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
+              style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)' }}
+            >
+              <span className="text-2xl">🎓</span>
+              <span>Học bổng</span>
+            </Link>
+            <Link
+              href="/admin/finance/installments"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
+              style={{ background: 'linear-gradient(135deg, #92400e 0%, #d97706 100%)' }}
+            >
+              <span className="text-2xl">📋</span>
+              <span>Trả góp</span>
+            </Link>
+            <Link
+              href="/admin/finance/cashflow"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
+              style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%)' }}
+            >
+              <span className="text-2xl">📈</span>
+              <span>Dòng tiền</span>
             </Link>
             <Link
               href="/admin/finance/reports"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
+              className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
               style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
             >
-              📊 Báo cáo
+              <span className="text-2xl">📊</span>
+              <span>Báo cáo</span>
             </Link>
-            <Link
-              href="/admin/finance/invoices?status=unpaid"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
-              style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}
-            >
-              🔴 Công nợ
-            </Link>
-            <ExportButton variant="card" />
           </div>
         </div>
 

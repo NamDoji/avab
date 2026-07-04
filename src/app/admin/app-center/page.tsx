@@ -79,17 +79,18 @@ const APP_SECTIONS: AppSection[] = [
   },
 ]
 
-const DEV_CARDS: (AppCard & { big?: boolean })[] = [
+const DEV_CARDS: (AppCard & { big?: boolean; href?: string })[] = [
   {
-    icon: '📡',
-    name: 'Public API',
-    desc: 'REST API đầy đủ cho toàn hệ thống AvaB. Tích hợp dữ liệu học sinh, khoá học, điểm số và nhiều hơn nữa.',
-    apiDoc: '/admin/api-docs',
+    icon: '🔑',
+    name: 'API Platform',
+    desc: 'Quản lý API Keys, xem tài liệu REST API và tích hợp dữ liệu học sinh, khoá học, điểm số.',
+    href: '/admin/app-center/api',
   },
   {
     icon: '🔗',
     name: 'Webhooks',
     desc: 'Nhận thông báo sự kiện thời gian thực: đăng ký mới, thanh toán, điểm danh, nộp bài và các sự kiện tuỳ chỉnh.',
+    href: '/admin/app-center/webhooks',
   },
 ]
 
@@ -147,7 +148,15 @@ function DevCardComponent({ card }: { card: typeof DEV_CARDS[number] }) {
         </div>
       </div>
       <div className="flex items-center gap-3 mt-auto">
-        {card.apiDoc ? (
+        {card.href ? (
+          <Link
+            href={card.href}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+          >
+            ⚙️ Quản lý
+          </Link>
+        ) : card.apiDoc ? (
           <Link
             href={card.apiDoc}
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"

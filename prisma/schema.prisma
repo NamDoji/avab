@@ -37,6 +37,9 @@ model User {
   organizationUsers OrganizationUser[]
   campusUsers       CampusUser[]
   schoolUsers       SchoolUser[]
+  healthRecord      HealthRecord?   @relation("StudentHealthRecord")
+  alumniRecord      AlumniRecord?
+  classTransfers    ClassTransfer[] @relation("StudentTransfers")
 
   @@map("avab_users")
 }
@@ -109,6 +112,8 @@ model Course {
   curriculum          Curriculum?  @relation(fields: [curriculumId], references: [id], onDelete: SetNull)
   organization        Organization? @relation("OrgCourses", fields: [organizationId], references: [id], onDelete: SetNull)
   schoolCourses       SchoolCourse[]
+  transfersAsFrom    ClassTransfer[]  @relation("TransferFromCourse")
+  transfersAsTo      ClassTransfer[]  @relation("TransferToCourse")
 
   @@map("avab_courses")
 }
@@ -1026,18 +1031,23 @@ model RewardDiscipline {
 }
 
 model HealthRecord {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  bloodType   String?
-  allergies   String?
-  conditions  String?
-  medications String?
+  id               String    @id @default(cuid())
+  studentId        String    @unique
+  organizationId   String?
+  bloodType        String?
+  allergies        String?
+  conditions       String?
   emergencyContact String?
   emergencyPhone   String?
-  insuranceNo String?
-  insuranceProvider String?
-  insuranceExpiry DateTime?
-  lastUpdated DateTime @default(now())
+  insuranceNo      String?
+  insuranceExpiry  DateTime?
+  lastCheckup      DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  student User @relation("StudentHealthRecord", fields: [studentId], references: [id])
+
   @@map("avab_health_records")
 }
 
@@ -1316,6 +1326,9 @@ model AlumniRecord {
   achievements   String?
   contactEmail   String?
   createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
   @@map("avab_alumni_records")
 }
 
@@ -1330,6 +1343,11 @@ model ClassTransfer {
   approvedBy     String?
   status         String   @default("pending")
   createdAt      DateTime @default(now())
+
+  student    User   @relation("StudentTransfers", fields: [studentId], references: [id])
+  fromCourse Course @relation("TransferFromCourse", fields: [fromCourseId], references: [id])
+  toCourse   Course @relation("TransferToCourse", fields: [toCourseId], references: [id])
+
   @@index([organizationId])
   @@map("avab_class_transfers")
 }

@@ -17,16 +17,21 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url)
-  const userId = searchParams.get('userId')
+  const studentId = searchParams.get('studentId')
 
   try {
-    if (userId) {
-      const record = await prisma.healthRecord.findUnique({ where: { userId } })
+    if (studentId) {
+      const record = await prisma.healthRecord.findUnique({
+        where: { studentId },
+        include: { student: { select: { id: true, name: true, phone: true } } },
+      })
       return NextResponse.json({ success: true, data: record })
     }
 
     const records = await prisma.healthRecord.findMany({
-      orderBy: { lastUpdated: 'desc' },
+      include: { student: { select: { id: true, name: true, phone: true } } },
+      orderBy: { updatedAt: 'desc' },
+      take: 50,
     })
     return NextResponse.json({ success: true, data: records })
   } catch (error) {
@@ -35,7 +40,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const check = await requireAdmin()
   if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
@@ -43,53 +48,59 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json() as {
-      userId: string
+      studentId: string
+      organizationId?: string
       bloodType?: string
       allergies?: string
       conditions?: string
-      medications?: string
       emergencyContact?: string
       emergencyPhone?: string
       insuranceNo?: string
-      insuranceProvider?: string
       insuranceExpiry?: string
+      lastCheckup?: string
+      notes?: string
     }
 
-    if (!body.userId) {
-      return NextResponse.json({ success: false, error: 'userId là bắt buộc' }, { status: 400 })
+    if (!body.studentId) {
+      return NextResponse.json({ success: false, error: 'studentId là bắt buộc' }, { status: 400 })
     }
 
     const record = await prisma.healthRecord.upsert({
-      where: { userId: body.userId },
-      update: {
-        bloodType: body.bloodType ?? null,
-        allergies: body.allergies ?? null,
-        conditions: body.conditions ?? null,
-        medications: body.medications ?? null,
-        emergencyContact: body.emergencyContact ?? null,
-        emergencyPhone: body.emergencyPhone ?? null,
-        insuranceNo: body.insuranceNo ?? null,
-        insuranceProvider: body.insuranceProvider ?? null,
-        insuranceExpiry: body.insuranceExpiry ? new Date(body.insuranceExpiry) : null,
-        lastUpdated: new Date(),
-      },
+      where: { studentId: body.studentId },
       create: {
-        userId: body.userId,
+        studentId: body.studentId,
+        organizationId: body.organizationId ?? null,
         bloodType: body.bloodType ?? null,
         allergies: body.allergies ?? null,
         conditions: body.conditions ?? null,
-        medications: body.medications ?? null,
         emergencyContact: body.emergencyContact ?? null,
         emergencyPhone: body.emergencyPhone ?? null,
         insuranceNo: body.insuranceNo ?? null,
-        insuranceProvider: body.insuranceProvider ?? null,
         insuranceExpiry: body.insuranceExpiry ? new Date(body.insuranceExpiry) : null,
+        lastCheckup: body.lastCheckup ? new Date(body.lastCheckup) : null,
+        notes: body.notes ?? null,
+      },
+      update: {
+        organizationId: body.organizationId ?? null,
+        bloodType: body.bloodType ?? null,
+        allergies: body.allergies ?? null,
+        conditions: body.conditions ?? null,
+        emergencyContact: body.emergencyContact ?? null,
+        emergencyPhone: body.emergencyPhone ?? null,
+        insuranceNo: body.insuranceNo ?? null,
+        insuranceExpiry: body.insuranceExpiry ? new Date(body.insuranceExpiry) : null,
+        lastCheckup: body.lastCheckup ? new Date(body.lastCheckup) : null,
+        notes: body.notes ?? null,
       },
     })
 
     return NextResponse.json({ success: true, data: record })
   } catch (error) {
-    console.error('Health PUT error:', error)
-    return NextResponse.json({ success: false, error: 'Không thể cập nhật hồ sơ' }, { status: 500 })
+    console.error('Health POST error:', error)
+    return NextResponse.json({ success: false, error: 'Không thể lưu hồ sơ sức khỏe' }, { status: 500 })
   }
+}
+
+export async function PUT(request: NextRequest) {
+  return POST(request)
 }
