@@ -183,7 +183,14 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
     groups.push({
       id: 'ai-upgrade', icon: '🔒', label: 'AI Studio',
       modules: [
-        { href: '/admin/settings', icon: '⭐', label: 'Nâng cấp lên AI Premium', desc: 'Liên hệ AvaB để kích hoạt' },
+        { href: '/admin/settings', icon: '⭐', label: '✨ Nâng cấp để dùng AI', desc: 'Liên hệ AvaB để kích hoạt' },
+        { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio',       desc: 'Tạo nội dung bằng AI' },
+        { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator', desc: 'Sinh khoá học tự động' },
+        { href: '/admin/ai-decision',                icon: '🧠', label: 'AI Decision',      desc: 'Phân tích & cảnh báo AI' },
+        { href: '/admin/material-import',            icon: '📥', label: 'Material Import',  desc: 'Word/PDF → AI xử lý' },
+        { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank',   desc: 'Ngân hàng câu hỏi AI' },
+        { href: '/admin/publishing',                 icon: '📤', label: 'Publishing',       desc: 'Xuất Word/PDF/Slide' },
+        { href: '/admin/gamification',               icon: '🎮', label: 'Gamification',     desc: 'Điểm · huy hiệu · Xếp hạng' },
       ],
     })
   }
