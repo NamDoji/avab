@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import DataTable, { ColumnDef, BulkAction } from '@/components/common/DataTable'
 import Link from 'next/link'
 import CampusFilter from './CampusFilter'
@@ -71,6 +71,35 @@ function BulkTransferModal({
   students: StudentRow[]
   onClose: () => void
 }) {
+  const [courses, setCourses] = useState<{ id: string; name: string; code: string }[]>([])
+  const [targetCourseId, setTargetCourseId] = useState('')
+  const [note, setNote] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState<{ succeeded: number; failed: number } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/admin/courses?status=published&limit=100')
+      .then(r => r.json())
+      .then(d => setCourses(d.courses ?? d ?? []))
+      .catch(() => {})
+  }, [])
+
+  async function handleTransfer() {
+    if (!targetCourseId) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/admin/erp/students/bulk-transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentIds: students.map(s => s.id), targetCourseId, note }),
+      })
+      const data = await res.json()
+      setDone(data)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   if (students.length === 0) return null
   return (
     <div
@@ -87,48 +116,72 @@ function BulkTransferModal({
           </div>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4">
-          <p className="text-sm text-amber-700 font-semibold">
-            ⚠️ Tính năng đang phát triển
-          </p>
-          <p className="text-xs text-amber-600 mt-1">
-            Chuyển lớp hàng loạt sẽ cho phép di chuyển tất cả học sinh đã chọn sang một lớp học khác trong cùng cơ sở.
-          </p>
-        </div>
-
-        <div className="mb-4">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">
-            Học sinh được chọn ({students.length})
-          </p>
-          <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1">
-            {students.slice(0, 10).map(s => (
-              <div key={s.id} className="flex items-center gap-2 text-sm text-gray-700">
-                <Avatar name={s.name} size={24} />
-                <span>{s.name ?? '—'}</span>
-                {s.phone && <span className="text-gray-400 text-xs">{s.phone}</span>}
-              </div>
-            ))}
-            {students.length > 10 && (
-              <p className="text-xs text-gray-400 pl-7">...và {students.length - 10} học sinh khác</p>
-            )}
+        {done ? (
+          <div className="text-center py-6">
+            <div className="text-5xl mb-3">✅</div>
+            <p className="font-black text-gray-900 text-lg mb-1">Hoàn tất!</p>
+            <p className="text-sm text-gray-500">Thành công: <strong className="text-green-600">{done.succeeded}</strong> · Lỗi: <strong className="text-red-500">{done.failed}</strong></p>
+            <button onClick={onClose} className="mt-5 px-6 py-2.5 rounded-xl font-bold text-white text-sm" style={{ background: 'linear-gradient(135deg,#0f766e,#0369a1)' }}>
+              Đóng
+            </button>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="mb-4">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Học sinh ({students.length})</p>
+              <div className="max-h-28 overflow-y-auto space-y-1 pr-1">
+                {students.slice(0, 8).map(s => (
+                  <div key={s.id} className="flex items-center gap-2 text-sm text-gray-700">
+                    <Avatar name={s.name} size={22} />
+                    <span>{s.name ?? '—'}</span>
+                    {s.phone && <span className="text-gray-400 text-xs ml-auto">{s.phone}</span>}
+                  </div>
+                ))}
+                {students.length > 8 && <p className="text-xs text-gray-400 pl-6">...và {students.length - 8} học sinh khác</p>}
+              </div>
+            </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
-          >
-            Đóng
-          </button>
-          <button
-            disabled
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition opacity-50 cursor-not-allowed"
-            style={{ background: 'linear-gradient(135deg,#0f766e,#0369a1)' }}
-          >
-            🔄 Chuyển lớp (sắp có)
-          </button>
-        </div>
+            <div className="mb-3">
+              <label className="text-xs font-bold text-gray-600 uppercase tracking-wide block mb-1">Lớp đích *</label>
+              <select
+                value={targetCourseId}
+                onChange={e => setTargetCourseId(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-teal-400"
+              >
+                <option value="">-- Chọn lớp --</option>
+                {courses.map(c => (
+                  <option key={c.id} value={c.id}>{c.name || c.code}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-xs font-bold text-gray-600 uppercase tracking-wide block mb-1">Ghi chú</label>
+              <input
+                value={note}
+                onChange={e => setNote(e.target.value)}
+                placeholder="Lý do chuyển lớp..."
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal-400"
+              />
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-700">
+              ⚠️ Học sinh sẽ được chuyển khỏi lớp hiện tại và đăng ký vào lớp mới. Hành động này không thể hoàn tác tự động.
+            </div>
+
+            <div className="flex gap-2">
+              <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition">Hủy</button>
+              <button
+                onClick={handleTransfer}
+                disabled={!targetCourseId || loading}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: 'linear-gradient(135deg,#0f766e,#0369a1)' }}
+              >
+                {loading ? '⏳ Đang chuyển...' : '🔄 Chuyển lớp'}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
@@ -138,11 +191,34 @@ function BulkTransferModal({
 
 function NotifyModal({
   count,
+  studentIds,
   onClose,
 }: {
   count: number
+  studentIds: string[]
   onClose: () => void
 }) {
+  const [title, setTitle] = useState('')
+  const [message, setMessage] = useState('')
+  const [type, setType] = useState('INFO')
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
+
+  async function handleSend() {
+    if (!message.trim()) return
+    setLoading(true)
+    try {
+      await fetch('/api/admin/notifications/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentIds, title, message, type }),
+      })
+      setDone(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div
       className="fixed inset-0 z-[300] flex items-center justify-center p-4"
@@ -157,20 +233,58 @@ function NotifyModal({
             <p className="text-sm text-gray-400">{count} học sinh được chọn</p>
           </div>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-4">
-          <p className="text-sm text-blue-700 font-semibold">
-            📣 Tính năng đang phát triển
-          </p>
-          <p className="text-xs text-blue-600 mt-1">
-            Gửi thông báo hàng loạt đến học sinh và phụ huynh qua SMS, email và thông báo trong app.
-          </p>
-        </div>
-        <button
-          onClick={onClose}
-          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
-        >
-          Đóng
-        </button>
+
+        {done ? (
+          <div className="text-center py-6">
+            <div className="text-5xl mb-3">✅</div>
+            <p className="font-black text-gray-900 text-lg mb-1">Đã gửi!</p>
+            <p className="text-sm text-gray-500">Thông báo đến <strong>{count}</strong> học sinh</p>
+            <button onClick={onClose} className="mt-5 px-6 py-2.5 rounded-xl font-bold text-white text-sm" style={{ background: 'linear-gradient(135deg,#4f46e5,#7c3aed)' }}>
+              Đóng
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mb-3">
+              <label className="text-xs font-bold text-gray-600 uppercase mb-1 block">Loại thông báo</label>
+              <div className="flex gap-2">
+                {[{v:'INFO',l:'📢 Thông báo'},{v:'WARNING',l:'⚠️ Cảnh báo'},{v:'SUCCESS',l:'✅ Khen thưởng'}].map(t => (
+                  <button key={t.v} onClick={() => setType(t.v)} className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${type===t.v ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>{t.l}</button>
+                ))}
+              </div>
+            </div>
+            <div className="mb-3">
+              <label className="text-xs font-bold text-gray-600 uppercase mb-1 block">Tiêu đề</label>
+              <input
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                placeholder="Tiêu đề thông báo..."
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="text-xs font-bold text-gray-600 uppercase mb-1 block">Nội dung *</label>
+              <textarea
+                rows={3}
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                placeholder="Nhập nội dung thông báo..."
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400 resize-none"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition">Hủy</button>
+              <button
+                onClick={handleSend}
+                disabled={!message.trim() || loading}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: 'linear-gradient(135deg,#4f46e5,#7c3aed)' }}
+              >
+                {loading ? '⏳ Đang gửi...' : '📢 Gửi thông báo'}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
@@ -284,7 +398,7 @@ export default function StudentsTable({
   const searchParams = useSearchParams()
 
   const [transferStudents, setTransferStudents] = useState<StudentRow[]>([])
-  const [notifyCount, setNotifyCount] = useState<number | null>(null)
+  const [notifyStudents, setNotifyStudents] = useState<StudentRow[]>([])
 
   const pushParams = useCallback(
     (updates: Record<string, string | number | undefined>) => {
@@ -332,7 +446,7 @@ export default function StudentsTable({
       label: 'Gửi thông báo',
       icon: '📧',
       onClick: (rows) => {
-        setNotifyCount((rows as StudentRow[]).length)
+        setNotifyStudents(rows as StudentRow[])
       },
     },
     {
@@ -391,10 +505,11 @@ export default function StudentsTable({
       )}
 
       {/* Notify Modal */}
-      {notifyCount !== null && (
+      {notifyStudents.length > 0 && (
         <NotifyModal
-          count={notifyCount}
-          onClose={() => setNotifyCount(null)}
+          count={notifyStudents.length}
+          studentIds={notifyStudents.map(s => s.id)}
+          onClose={() => setNotifyStudents([])}
         />
       )}
     </>

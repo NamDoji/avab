@@ -2,11 +2,9 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import TimetableVersionCompare from './TimetableVersionCompare'
+import TimetableAIGenerator from './TimetableAIGenerator'
 
 export const metadata = { title: 'Thời khóa biểu AI — School ERP' }
-
-const DAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6']
-const PERIODS = Array.from({ length: 10 }, (_, i) => `Tiết ${i + 1}`)
 
 export default async function TimetablePage() {
   const session = await auth()
@@ -58,80 +56,8 @@ export default async function TimetablePage() {
       </div>
 
       <div className="container-custom py-8">
-        {/* CTA Card */}
-        <div
-          className="rounded-3xl p-8 text-white text-center mb-8 shadow-xl"
-          style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4338ca 100%)' }}
-        >
-          <div className="text-5xl mb-4">🤖</div>
-          <h2 className="text-2xl font-black mb-2">Tạo thời khóa biểu tự động</h2>
-          <p className="text-purple-200 text-sm mb-6 max-w-md mx-auto">
-            Nhập yêu cầu: số lớp, giáo viên, môn học, phòng có sẵn — AI sẽ tối ưu hóa
-            toàn bộ thời khóa biểu trong vài giây.
-          </p>
-          <button
-            disabled
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl font-black text-base transition-all cursor-not-allowed opacity-70"
-            style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}
-          >
-            🤖 Generate Timetable với AI
-          </button>
-          <p className="mt-4 text-xs text-purple-300">
-            ⏳ Tính năng đang phát triển — Phase 2
-          </p>
-        </div>
-
-        {/* Preview Grid */}
-        <div className="mb-8">
-          <h3 className="text-base font-black text-gray-700 mb-3">Preview Grid (5 ngày × 10 tiết)</h3>
-          <div className="bg-white rounded-2xl shadow-sm overflow-auto">
-            <table className="w-full text-xs min-w-max">
-              <thead>
-                <tr style={{ background: '#f8fafc' }}>
-                  <th
-                    className="text-left px-4 py-3 font-bold text-gray-500 uppercase"
-                    style={{ width: 80 }}
-                  >
-                    Tiết
-                  </th>
-                  {DAYS.map((d) => (
-                    <th key={d} className="px-4 py-3 font-bold text-gray-700 text-center">
-                      {d}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {PERIODS.map((period, pi) => (
-                  <tr key={period} style={{ borderTop: '1px solid #f1f5f9' }}>
-                    <td
-                      className="px-4 py-3 font-bold text-gray-400"
-                      style={{ background: '#fafafa' }}
-                    >
-                      {period}
-                    </td>
-                    {DAYS.map((d) => (
-                      <td
-                        key={d}
-                        className="px-3 py-2.5 text-center"
-                        style={{ borderLeft: '1px solid #f1f5f9' }}
-                      >
-                        <div
-                          className="rounded-lg h-8 w-full"
-                          style={{ background: pi % 2 === 0 ? '#f8fafc' : '#f1f5f9' }}
-                          title={`${d} - ${period}`}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="text-xs text-gray-400 mt-2 text-center">
-            Grid trống — chờ AI generate
-          </p>
-        </div>
+        {/* AI Generator */}
+        <TimetableAIGenerator />
 
         {/* Feature list */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">

@@ -428,27 +428,46 @@ export default async function PhuHuynhThanhToanPage() {
                     >
                       Chọn phương thức thanh toán
                     </p>
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                      <PaymentButton
-                        provider="Thanh toán VNPay"
-                        icon="🏦"
-                        color="linear-gradient(135deg,#005BAC,#0070C9)"
-                        disabled
-                      />
-                      <PaymentButton
-                        provider="Thanh toán MoMo"
-                        icon="💜"
-                        color="linear-gradient(135deg,#A50064,#D8006B)"
-                        disabled
-                      />
+                    {/* VietQR Bank Transfer */}
+                    <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 14, padding: '14px 16px', marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                        <span style={{ fontSize: 18 }}>🏦</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>Chuyển khoản ngân hàng</span>
+                        <span style={{ marginLeft: 'auto', fontSize: 10, fontWeight: 700, background: '#22c55e33', color: '#4ade80', padding: '2px 8px', borderRadius: 6 }}>Đang mở</span>
+                      </div>
+                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+                        <div style={{ flex: 1, minWidth: 180 }}>
+                          {[['Ngân hàng','MB Bank (MB)'],['Số tài khoản','1234567890'],['Chủ tài khoản','CONG TY ITSOL'],['Nội dung',`HP ${name ?? 'Hoc sinh'} - Thang ${new Date().getMonth()+1}`]].map(([k,v]) => (
+                            <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+                              <span style={{ fontSize: 11, color: '#64748b' }}>{k}</span>
+                              <span style={{ fontSize: 12, fontWeight: 700, color: '#e2e8f0', textAlign: 'right' }}>{v}</span>
+                            </div>
+                          ))}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+                            <span style={{ fontSize: 11, color: '#64748b' }}>Số tiền</span>
+                            <span style={{ fontSize: 13, fontWeight: 900, color: '#f59e0b' }}>{subtotal.toLocaleString('vi-VN')}đ</span>
+                          </div>
+                        </div>
+                        {/* VietQR */}
+                        <div style={{ textAlign: 'center', flexShrink: 0 }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={`https://img.vietqr.io/image/MB-1234567890-compact2.png?amount=${subtotal}&addInfo=${encodeURIComponent(`HP ${name ?? 'Hoc sinh'} T${new Date().getMonth()+1}`)}&accountName=CONG%20TY%20ITSOL`}
+                            alt="VietQR"
+                            width={110}
+                            height={110}
+                            style={{ borderRadius: 10, border: '2px solid #1e293b' }}
+                          />
+                          <p style={{ fontSize: 10, color: '#475569', marginTop: 4 }}>Scan QR để chuyển khoản</p>
+                        </div>
+                      </div>
                     </div>
-                    <p
-                      style={{
-                        fontSize: 11, color: '#334155', marginTop: 8, textAlign: 'center',
-                      }}
-                    >
-                      💡 Thanh toán online sẽ được kích hoạt sớm. Vui lòng liên hệ trung tâm để đóng trực tiếp.
-                    </p>
+                    {/* Online gateway coming soon */}
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <PaymentButton provider="VNPay" icon="🏦" color="linear-gradient(135deg,#005BAC,#0070C9)" disabled />
+                      <PaymentButton provider="MoMo" icon="💜" color="linear-gradient(135deg,#A50064,#D8006B)" disabled />
+                    </div>
+                    <p style={{ fontSize: 10, color: '#334155', marginTop: 6, textAlign: 'center' }}>VNPay &amp; MoMo sẽ được kích hoạt sớm</p>
                   </div>
                 </div>
               )

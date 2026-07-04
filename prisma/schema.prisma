@@ -40,6 +40,7 @@ model User {
   healthRecord      HealthRecord?   @relation("StudentHealthRecord")
   alumniRecord      AlumniRecord?
   classTransfers    ClassTransfer[] @relation("StudentTransfers")
+  notifications     Notification[]
   contracts         Contract[]
   kpiRecords          KpiRecord[]
   homeworkSubmissions HomeworkSubmission[] @relation("SubmissionStudent")
@@ -1391,6 +1392,21 @@ model ClassTransfer {
 
   @@index([organizationId])
   @@map("avab_class_transfers")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   @default("INFO") // INFO | WARNING | SUCCESS
+  title     String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("avab_notifications")
 }
 
 model HomeworkSubmission {
