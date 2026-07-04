@@ -115,7 +115,7 @@ export default function NewAttendancePage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen pt-14 bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-10 shadow-lg text-center max-w-md">
           <div className="text-6xl mb-4">✅</div>
           <h2 className="text-2xl font-black text-gray-900 mb-2">Điểm danh thành công!</h2>
@@ -141,7 +141,7 @@ export default function NewAttendancePage() {
   }
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-10"

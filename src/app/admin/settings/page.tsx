@@ -5,7 +5,7 @@ export const metadata = { title: 'Cài đặt hệ thống — AvaB' }
 // Server Component wrapper — all interactive logic lives in SettingsClient
 export default function SettingsPage() {
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-12"

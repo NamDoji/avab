@@ -110,7 +110,7 @@ export default function NewAIProjectPage() {
   }
 
   return (
-    <div className="min-h-screen pt-14 bg-gradient-to-br from-gray-50 via-purple-50/10 to-blue-50/10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/10 to-blue-50/10">
 
       {/* Hero */}
       <div className="bg-gradient-to-r from-gray-900 via-indigo-900 to-gray-900 text-white py-8">

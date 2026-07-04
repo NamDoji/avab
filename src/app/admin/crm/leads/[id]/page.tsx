@@ -66,7 +66,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const typeLabel = lead.type === 'ENROLLMENT' ? 'Đăng ký học' : 'Liên hệ / Hỏi thông tin'
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
 
       {/* ── Header gradient ─────────────────────────────────────────── */}
       <div

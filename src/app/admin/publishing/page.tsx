@@ -67,7 +67,7 @@ export default async function PublishingPage() {
   const batchCourses = coursesWithContent.map(c => ({ id: c.id, name: c.name, code: c.code }))
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-14">
+    <main className="min-h-screen bg-gray-50">
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <div
         className="px-6 py-10"

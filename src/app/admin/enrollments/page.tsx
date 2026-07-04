@@ -53,7 +53,7 @@ export default function AdminEnrollmentsPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 pt-14">
+    <main className="min-h-screen bg-gray-50 px-3 py-4 sm:px-6 sm:py-6">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
           <Users className="w-6 h-6 text-purple-600" />

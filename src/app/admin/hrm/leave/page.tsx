@@ -54,7 +54,7 @@ export default async function HRMLeafPage() {
   const totalDays = requests.filter((r) => r.status === 'approved').reduce((s, r) => s + r.days, 0)
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-12"

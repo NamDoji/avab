@@ -208,7 +208,7 @@ export default function EditRolePage() {
 
   if (loadingRole) {
     return (
-      <div className="min-h-screen pt-14 flex items-center justify-center text-gray-400">
+      <div className="min-h-screen flex items-center justify-center text-gray-400">
         Đang tải...
       </div>
     )
@@ -216,7 +216,7 @@ export default function EditRolePage() {
 
   if (!role) {
     return (
-      <div className="min-h-screen pt-14 flex items-center justify-center text-red-500">
+      <div className="min-h-screen flex items-center justify-center text-red-500">
         Role không tồn tại.
       </div>
     )
@@ -227,7 +227,7 @@ export default function EditRolePage() {
   const totalPerms = permsData?.permissions.length ?? 0
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white py-10">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />

@@ -91,7 +91,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           WebkitBackdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(0,0,0,0.07)',
           boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-          minHeight: 52,
+          height: 56,
         }}
       >
         {/* Logo left */}
@@ -129,11 +129,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </div>
 
-      <AdminErrorBoundary>
-        <Suspense fallback={null}>
-          {children}
-        </Suspense>
-      </AdminErrorBoundary>
+      {/* Wrapper đẩy nội dung xuống dưới topbar — tập trung ở layout, không cần pt-14 ở từng page */}
+      <div style={{ paddingTop: 56 }}>
+        <AdminErrorBoundary>
+          <Suspense fallback={null}>
+            {children}
+          </Suspense>
+        </AdminErrorBoundary>
+      </div>
       <QuickActionDial />
       <CommandPalette />
       <GlobalAIChat />

@@ -138,7 +138,7 @@ export default async function FinanceDashboardPage() {
   const maxPaid = topCourses.length > 0 ? topCourses[0].paid : 1
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-14">
+    <main className="min-h-screen bg-gray-50">
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div
         className="px-4 sm:px-6 py-8"

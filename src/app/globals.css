@@ -234,3 +234,28 @@ html, body {
   @page { margin: 2cm; }
 }
 .print-only { display: none; }
+
+/* ── Admin responsive utilities ─────────────────────────────────────────── */
+/* Container tự động responsive cho toàn bộ admin pages */
+.admin-page {
+  min-height: 100vh;
+  background: #f9fafb;
+  padding: 12px;
+}
+@media (min-width: 640px) {
+  .admin-page { padding: 20px 24px; }
+}
+@media (min-width: 1024px) {
+  .admin-page { padding: 24px 32px; }
+}
+
+/* Admin table: stack thành card trên mobile */
+@media (max-width: 639px) {
+  .admin-table-responsive { display: none; }
+  .admin-table-card { display: block; }
+  .admin-topbar-label { display: none !important; }
+}
+@media (min-width: 640px) {
+  .admin-table-responsive { display: table; width: 100%; }
+  .admin-table-card { display: none; }
+}

@@ -33,7 +33,7 @@ export default async function ClassroomsPage() {
   const totalCapacity = classrooms.reduce((sum, c) => sum + c.capacity, 0)
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-10"

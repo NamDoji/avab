@@ -55,7 +55,7 @@ export default async function ScholarshipsPage() {
     .reduce((sum, s) => sum + s.amount, 0)
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-14">
+    <main className="min-h-screen bg-gray-50">
       {/* Header */}
       <div
         className="px-4 sm:px-6 py-8"

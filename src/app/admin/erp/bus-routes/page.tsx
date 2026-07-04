@@ -90,7 +90,7 @@ export default function BusRoutesPage() {
   const totalFee = routes.reduce((s, r) => s + r.feePerMonth * r._count.assignments, 0)
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* ─── Header ─────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden text-white py-10"

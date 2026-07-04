@@ -112,7 +112,7 @@ export default async function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden bg-gradient-to-br from-orange-500 via-red-500 to-rose-600 text-white py-12">

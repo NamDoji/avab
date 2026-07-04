@@ -81,7 +81,7 @@ export default function AdminContactsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 pt-14">
+    <main className="min-h-screen bg-gray-50 px-3 py-4 sm:px-6 sm:py-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">

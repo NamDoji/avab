@@ -295,7 +295,7 @@ export default function QuestionBankPage() {
     COURSE_TYPE_LABELS[type] ?? { label: type, emoji: '📚', color: 'bg-gray-100 text-gray-700' }
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* AI Modal */}
       <AIGenerateModal
         subject={aiSubject}

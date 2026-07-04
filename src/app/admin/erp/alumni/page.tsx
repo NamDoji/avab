@@ -29,7 +29,7 @@ export default async function AlumniPage() {
   const sortedYears = Object.keys(byYear).map(Number).sort((a, b) => b - a)
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-10"

@@ -61,7 +61,7 @@ export default async function OrgDetailPage({
   const modules: string[] = Array.isArray(org.modules) ? (org.modules as string[]) : []
 
   return (
-    <div className="min-h-screen pt-14 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-10"
