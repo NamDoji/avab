@@ -1,13 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession, type OrganizationContext } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
-async function requireAdmin() {
+async function requireAdmin(req: NextRequest) {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN')
-    return { error: 'Không có quyền truy cập', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
+}
+
+async function verifyCourseOwnership(
+  courseId: string,
+  orgCtx: OrganizationContext | null,
+): Promise<boolean> {
+  if (!orgCtx) return true // SUPER_ADMIN: không filter
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: { organizationId: true, isPublic: true },
+  })
+  if (!course) return false
+  return course.organizationId === orgCtx.id || course.isPublic === true
 }
 
 // PATCH /api/admin/courses/[id]/students/[userId] - Cập nhật parentName
@@ -15,13 +34,20 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; userId: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(request)
+  if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id: courseId, userId } = await params
+
+    const allowed = await verifyCourseOwnership(courseId, orgCtx)
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập khoá học này' }, { status: 403 })
+    }
+
     const body = await request.json()
 
     const enrollment = await prisma.enrollment.findUnique({
@@ -33,7 +59,7 @@ export async function PATCH(
     }
 
     const { parentName, action } = body
-    const updateData: any = {}
+    const updateData: Record<string, unknown> = {}
 
     if (action === 'pause') {
       updateData.status = 'PAUSED'
@@ -42,7 +68,7 @@ export async function PATCH(
     } else if (action === 'resume') {
       updateData.status = 'ACTIVE'
       updateData.resumedAt = new Date()
-      // giữ pausedAt cũ — dùng để filter chưyên đề trong giai đoạn nghỉ
+      // giữ pausedAt cũ — dùng để filter chuyên đề trong giai đoạn nghỉ
     } else if (parentName !== undefined) {
       updateData.parentName = parentName ?? null
     }
@@ -65,16 +91,22 @@ export async function PATCH(
 
 // DELETE /api/admin/courses/[id]/students/[userId] - Xoá học viên (soft delete)
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string; userId: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(request)
+  if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id: courseId, userId } = await params
+
+    const allowed = await verifyCourseOwnership(courseId, orgCtx)
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập khoá học này' }, { status: 403 })
+    }
 
     const enrollment = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId, courseId } },

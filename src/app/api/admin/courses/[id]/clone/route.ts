@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
-async function requireAdmin() {
+async function requireAdmin(req: NextRequest) {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN')
-    return { error: 'Không có quyền truy cập', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
 }
 
 // POST /api/admin/courses/[id]/clone - Nhân bản khoá học
@@ -15,10 +21,11 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const check = await requireAdmin()
-  if (check.error) {
+  const check = await requireAdmin(request)
+  if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id: courseId } = await params
@@ -54,6 +61,11 @@ export async function POST(
       return NextResponse.json({ success: false, error: 'Không tìm thấy khoá học' }, { status: 404 })
     }
 
+    // Org-scope: ADMIN chỉ clone khoá học thuộc org của mình
+    if (orgCtx && original.organizationId !== orgCtx.id) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập khoá học này' }, { status: 403 })
+    }
+
     const timestamp = Date.now()
     const newCode = `${original.code}_clone_${timestamp}`
 
@@ -77,6 +89,7 @@ export async function POST(
         gradeMax: original.gradeMax,
         curriculumId: original.curriculumId,
         isActive: false, // Ẩn cho đến khi admin kích hoạt
+        organizationId: orgCtx?.id ?? null,
       },
     })
 
@@ -129,11 +142,11 @@ export async function POST(
               content: q.content,
               imageUrl: q.imageUrl,
               audioUrl: q.audioUrl,
-              options: q.options as any,
+              options: q.options as object,
               correctAnswer: q.correctAnswer,
               explanation: q.explanation,
               points: q.points,
-              metadata: q.metadata as any,
+              metadata: q.metadata as object,
             })),
           })
         }
@@ -150,11 +163,11 @@ export async function POST(
             content: q.content,
             imageUrl: q.imageUrl,
             audioUrl: q.audioUrl,
-            options: q.options as any,
+            options: q.options as object,
             correctAnswer: q.correctAnswer,
             explanation: q.explanation,
             points: q.points,
-            metadata: q.metadata as any,
+            metadata: q.metadata as object,
           })),
         })
       }

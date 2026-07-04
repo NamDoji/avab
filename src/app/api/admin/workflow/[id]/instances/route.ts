@@ -1,23 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
-async function requireAdmin() {
+async function requireAdmin(req: NextRequest) {
   const session = await auth()
   if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
-  if ((session.user as { role?: string }).role !== 'ADMIN')
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
     return { error: 'Không có quyền truy cập', status: 403 as const }
-  return { session }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
 }
 
 type RouteContext = { params: Promise<{ id: string }> }
 
 // GET /api/admin/workflow/[id]/instances — list instances for this workflow
-export async function GET(_request: NextRequest, { params }: RouteContext) {
-  const check = await requireAdmin()
+export async function GET(request: NextRequest, { params }: RouteContext) {
+  const check = await requireAdmin(request)
   if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id } = await params
@@ -26,6 +33,11 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     const def = await prisma.workflowDef.findUnique({ where: { id } })
     if (!def) {
       return NextResponse.json({ success: false, error: 'Workflow không tồn tại' }, { status: 404 })
+    }
+
+    // Org-scope: ADMIN chỉ xem workflow của org mình
+    if (orgCtx && def.organizationId !== orgCtx.id) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập' }, { status: 403 })
     }
 
     const instances = await prisma.workflowInstance.findMany({
@@ -46,10 +58,11 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
 // POST /api/admin/workflow/[id]/instances — create new instance
 export async function POST(request: NextRequest, { params }: RouteContext) {
-  const check = await requireAdmin()
+  const check = await requireAdmin(request)
   if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id } = await params
@@ -57,6 +70,11 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     const def = await prisma.workflowDef.findUnique({ where: { id } })
     if (!def) {
       return NextResponse.json({ success: false, error: 'Workflow không tồn tại' }, { status: 404 })
+    }
+
+    // Org-scope: ADMIN chỉ tạo instance cho workflow của org mình
+    if (orgCtx && def.organizationId !== orgCtx.id) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập' }, { status: 403 })
     }
 
     const body = await request.json() as {
@@ -94,7 +112,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
         assignedTo: assignedTo,
         dueAt: dueAt ? new Date(dueAt) : undefined,
         startedBy: userId,
-        data: data as any ?? undefined,
+        data: data as object ?? undefined,
       },
       include: {
         workflow: { select: { name: true } },

@@ -1,18 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
+
+async function requireAdmin(req: NextRequest) {
+  const session = await auth()
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
+}
 
 export async function GET(req: NextRequest) {
-  const session = await auth()
-  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const check = await requireAdmin(req)
+  if ('error' in check) return NextResponse.json({ error: check.error }, { status: check.status })
+  const { orgCtx } = check
 
   const { searchParams } = new URL(req.url)
   const status = searchParams.get('status')
 
   const contracts = await prisma.contract.findMany({
-    where: status ? { status } : undefined,
+    where: {
+      ...(orgCtx ? { organizationId: orgCtx.id } : {}),
+      ...(status ? { status } : {}),
+    },
     include: {
       employee: { select: { id: true, name: true, role: true, phone: true } },
     },
@@ -23,10 +39,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth()
-  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const check = await requireAdmin(req)
+  if ('error' in check) return NextResponse.json({ error: check.error }, { status: check.status })
+  const { orgCtx } = check
 
   const body = await req.json()
   const { userId, type, startDate, endDate, salary, position, notes } = body
@@ -45,6 +60,7 @@ export async function POST(req: NextRequest) {
       position: position ?? null,
       notes: notes ?? null,
       status: 'active',
+      organizationId: orgCtx?.id ?? null,
     },
     include: {
       employee: { select: { id: true, name: true, role: true, phone: true } },

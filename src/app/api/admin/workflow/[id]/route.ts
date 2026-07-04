@@ -1,23 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
-async function requireAdmin() {
+async function requireAdmin(req: NextRequest) {
   const session = await auth()
   if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
-  if ((session.user as { role?: string }).role !== 'ADMIN')
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
     return { error: 'Không có quyền truy cập', status: 403 as const }
-  return { session }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(userId, cookieOrgId)
+  return { session, userId, orgCtx }
 }
 
 type RouteContext = { params: Promise<{ id: string }> }
 
 // GET /api/admin/workflow/[id] — get workflow def + instance count
-export async function GET(_request: NextRequest, { params }: RouteContext) {
-  const check = await requireAdmin()
+export async function GET(request: NextRequest, { params }: RouteContext) {
+  const check = await requireAdmin(request)
   if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id } = await params
@@ -35,6 +42,11 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ success: false, error: 'Workflow không tồn tại' }, { status: 404 })
     }
 
+    // Org-scope: ADMIN chỉ xem workflow của org mình
+    if (orgCtx && def.organizationId !== orgCtx.id) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập' }, { status: 403 })
+    }
+
     return NextResponse.json({ success: true, data: def })
   } catch (error) {
     console.error('GET /api/admin/workflow/[id] error:', error)
@@ -44,10 +56,11 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
 // PUT /api/admin/workflow/[id] — update workflow def
 export async function PUT(request: NextRequest, { params }: RouteContext) {
-  const check = await requireAdmin()
+  const check = await requireAdmin(request)
   if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id } = await params
@@ -68,6 +81,11 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ success: false, error: 'Workflow không tồn tại' }, { status: 404 })
     }
 
+    // Org-scope: ADMIN chỉ sửa workflow của org mình
+    if (orgCtx && existing.organizationId !== orgCtx.id) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập' }, { status: 403 })
+    }
+
     const updated = await prisma.workflowDef.update({
       where: { id },
       data: {
@@ -76,9 +94,9 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
         ...(body.module !== undefined && { module: body.module }),
         ...(body.isTemplate !== undefined && { isTemplate: body.isTemplate }),
         ...(body.isActive !== undefined && { isActive: body.isActive }),
-        ...(body.steps !== undefined && { steps: body.steps as any }),
-        ...(body.formSchema !== undefined && { formSchema: body.formSchema as any }),
-        ...(body.settings !== undefined && { settings: body.settings as any }),
+        ...(body.steps !== undefined && { steps: body.steps as object[] }),
+        ...(body.formSchema !== undefined && { formSchema: body.formSchema as object }),
+        ...(body.settings !== undefined && { settings: body.settings as object }),
         ...(body.version !== undefined && { version: body.version }),
       },
     })
@@ -91,17 +109,23 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
 }
 
 // DELETE /api/admin/workflow/[id] — soft delete (set isActive=false)
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  const check = await requireAdmin()
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
+  const check = await requireAdmin(request)
   if ('error' in check) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
+  const { orgCtx } = check
 
   try {
     const { id } = await params
     const existing = await prisma.workflowDef.findUnique({ where: { id } })
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Workflow không tồn tại' }, { status: 404 })
+    }
+
+    // Org-scope: ADMIN chỉ xoá workflow của org mình
+    if (orgCtx && existing.organizationId !== orgCtx.id) {
+      return NextResponse.json({ success: false, error: 'Không có quyền truy cập' }, { status: 403 })
     }
 
     await prisma.workflowDef.update({
