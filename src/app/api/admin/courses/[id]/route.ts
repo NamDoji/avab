@@ -10,7 +10,8 @@ async function requireAdmin() {
   if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
     return { error: 'Không có quyền truy cập', status: 403 as const }
   const userId = (session.user as { id?: string })?.id ?? ''
-  return { session, userId }
+  const isSuperAdmin = role === 'SUPER_ADMIN'
+  return { session, userId, isSuperAdmin }
 }
 
 export async function GET(
@@ -98,7 +99,8 @@ export async function PUT(
         { status: 404 }
       )
     }
-    if (orgCtx && existing.organizationId !== orgCtx.id) {
+    // SUPER_ADMIN có thể sửa mọi khoá học (kể cả platform course có organizationId = null)
+    if (!check.isSuperAdmin && orgCtx && existing.organizationId !== orgCtx.id) {
       return NextResponse.json(
         { success: false, error: 'Không có quyền chỉnh sửa khoá học này' },
         { status: 403 }
@@ -174,7 +176,8 @@ export async function DELETE(
         { status: 404 }
       )
     }
-    if (orgCtx && existing.organizationId !== orgCtx.id) {
+    // SUPER_ADMIN có thể xoá mọi khoá học
+    if (!check.isSuperAdmin && orgCtx && existing.organizationId !== orgCtx.id) {
       return NextResponse.json(
         { success: false, error: 'Không có quyền xoá khoá học này' },
         { status: 403 }
