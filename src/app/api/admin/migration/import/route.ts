@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import bcrypt from 'bcryptjs'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
@@ -38,16 +39,19 @@ async function handleDirectImport(
   type: string,
   rows: Record<string, string>[],
   skipErrors: boolean,
+  orgId: string | null,
 ) {
   let imported = 0
   let failed = 0
   const importErrors: ImportError[] = []
 
-  // Get default org once
-  const defaultOrg = await prisma.organization.findFirst({
-    where: { deletedAt: null, isActive: true },
-    orderBy: { createdAt: 'asc' },
-  })
+  // Use the importing admin's org if available; fall back to first active org for super admins
+  const targetOrgId = orgId ?? (
+    await prisma.organization.findFirst({
+      where: { deletedAt: null, isActive: true },
+      orderBy: { createdAt: 'asc' },
+    })
+  )?.id ?? null
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
@@ -75,10 +79,10 @@ async function handleDirectImport(
           update: { name },
         })
 
-        if (defaultOrg) {
+        if (targetOrgId) {
           await prisma.organizationUser.upsert({
-            where: { organizationId_userId: { organizationId: defaultOrg.id, userId: user.id } },
-            create: { organizationId: defaultOrg.id, userId: user.id, orgRole: 'MEMBER' },
+            where: { organizationId_userId: { organizationId: targetOrgId, userId: user.id } },
+            create: { organizationId: targetOrgId, userId: user.id, orgRole: 'MEMBER' },
             update: {},
           })
         }
@@ -119,10 +123,10 @@ async function handleDirectImport(
           update: { name },
         })
 
-        if (defaultOrg) {
+        if (targetOrgId) {
           await prisma.organizationUser.upsert({
-            where: { organizationId_userId: { organizationId: defaultOrg.id, userId: user.id } },
-            create: { organizationId: defaultOrg.id, userId: user.id, orgRole: 'MEMBER' },
+            where: { organizationId_userId: { organizationId: targetOrgId, userId: user.id } },
+            create: { organizationId: targetOrgId, userId: user.id, orgRole: 'MEMBER' },
             update: {},
           })
         }
@@ -194,10 +198,10 @@ async function handleDirectImport(
           update: { name, role: validRole },
         })
 
-        if (defaultOrg) {
+        if (targetOrgId) {
           await prisma.organizationUser.upsert({
-            where: { organizationId_userId: { organizationId: defaultOrg.id, userId: user.id } },
-            create: { organizationId: defaultOrg.id, userId: user.id, orgRole: validRole === 'ADMIN' ? 'ADMIN' : 'MEMBER' },
+            where: { organizationId_userId: { organizationId: targetOrgId, userId: user.id } },
+            create: { organizationId: targetOrgId, userId: user.id, orgRole: validRole === 'ADMIN' ? 'ADMIN' : 'MEMBER' },
             update: {},
           })
         }
@@ -236,9 +240,14 @@ async function handleDirectImport(
 }
 
 export async function POST(req: NextRequest) {
-  if (!await requireAdmin()) {
+  const adminSession = await requireAdmin()
+  if (!adminSession) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
+
+  // Get org context to assign imported users to the admin's org
+  const adminUserId = (adminSession.user as { id?: string })?.id ?? ''
+  const orgCtx = await getOrganizationContext(adminUserId)
 
   try {
     const body = await req.json() as {
@@ -259,7 +268,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: false, error: 'Không có dữ liệu để import' }, { status: 400 })
       }
 
-      const result = await handleDirectImport(type, rows, skipErrors)
+      // Pass orgId so imported users are assigned to the admin's org
+      const result = await handleDirectImport(type, rows, skipErrors, orgCtx?.id ?? null)
 
       return NextResponse.json({
         success: true,
@@ -291,10 +301,13 @@ export async function POST(req: NextRequest) {
     let failed = 0
     const importErrors: ImportError[] = []
 
-    const defaultOrg = await prisma.organization.findFirst({
-      where: { deletedAt: null, isActive: true },
-      orderBy: { createdAt: 'asc' },
-    })
+    // Use the importing admin's org if available; fall back to first active org for super admins
+    const legacyOrgId = orgCtx?.id ?? (
+      await prisma.organization.findFirst({
+        where: { deletedAt: null, isActive: true },
+        orderBy: { createdAt: 'asc' },
+      })
+    )?.id ?? null
 
     for (let i = 0; i < data.length; i++) {
       const row = data[i]
@@ -320,10 +333,10 @@ export async function POST(req: NextRequest) {
             },
           })
 
-          if (defaultOrg) {
+          if (legacyOrgId) {
             await prisma.organizationUser.upsert({
-              where: { organizationId_userId: { organizationId: defaultOrg.id, userId: newUser.id } },
-              create: { organizationId: defaultOrg.id, userId: newUser.id, orgRole: 'MEMBER' },
+              where: { organizationId_userId: { organizationId: legacyOrgId, userId: newUser.id } },
+              create: { organizationId: legacyOrgId, userId: newUser.id, orgRole: 'MEMBER' },
               update: {},
             })
           }

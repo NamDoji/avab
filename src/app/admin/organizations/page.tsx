@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { type Prisma } from '@prisma/client'
 
 export const metadata = { title: 'Organizations — AvaB Admin' }
 
@@ -42,14 +43,36 @@ function OrgInitials({ name }: { name: string }) {
   )
 }
 
-export default async function OrganizationsPage() {
+export default async function OrganizationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string; sort?: string }>
+}) {
   const session = await auth()
   if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
 
-  const [orgs, campusCount, totalUsers] = await Promise.all([
+  const { filter = 'ALL', sort = 'newest' } = await searchParams
+
+  // Build where clause
+  const typeFilter = filter !== 'ALL' ? filter : undefined
+  const where: Prisma.OrganizationWhereInput = {
+    deletedAt: null,
+    ...(typeFilter ? { type: typeFilter } : {}),
+  }
+
+  // Build orderBy
+  const orderBy: Prisma.OrganizationOrderByWithRelationInput =
+    sort === 'name'
+      ? { name: 'asc' }
+      : { createdAt: 'desc' }
+
+  // Stats for the month
+  const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+
+  const [orgs, campusCount, totalUsers, activeCount, thisMonthCount] = await Promise.all([
     prisma.organization.findMany({
-      where: { deletedAt: null },
-      orderBy: { createdAt: 'desc' },
+      where,
+      orderBy,
       include: {
         _count: {
           select: {
@@ -62,9 +85,23 @@ export default async function OrganizationsPage() {
     }),
     prisma.campus.count({ where: { isActive: true } }),
     prisma.organizationUser.count(),
+    prisma.organization.count({ where: { deletedAt: null, isActive: true } }),
+    prisma.organization.count({ where: { deletedAt: null, createdAt: { gte: thisMonthStart } } }),
   ])
 
   const orgCount = orgs.length
+
+  // Filter tabs
+  const FILTER_TABS = [
+    { value: 'ALL',    label: 'Tất cả' },
+    { value: 'SCHOOL', label: '🏫 Trường học' },
+    { value: 'CENTER', label: '🎓 Trung tâm' },
+    { value: 'CHAIN',  label: '🏢 Chuỗi' },
+  ]
+  const SORT_OPTIONS = [
+    { value: 'newest', label: 'Mới nhất' },
+    { value: 'name',   label: 'Tên A-Z' },
+  ]
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
@@ -84,11 +121,12 @@ export default async function OrganizationsPage() {
 
       <div className="container-custom py-8 space-y-8">
         {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           {[
-            { label: 'Tổ chức', value: orgCount, icon: '🏢', color: 'from-violet-500 to-indigo-600' },
-            { label: 'Cơ sở đang hoạt động', value: campusCount, icon: '🏫', color: 'from-blue-500 to-cyan-600' },
-            { label: 'Tổng thành viên', value: totalUsers, icon: '👥', color: 'from-emerald-500 to-teal-600' },
+            { label: 'Tổng tổ chức',          value: orgCount,      icon: '🏢', color: 'from-violet-500 to-indigo-600' },
+            { label: 'Đang active',             value: activeCount,   icon: '✅', color: 'from-emerald-500 to-teal-600' },
+            { label: 'Cơ sở hoạt động',        value: campusCount,   icon: '🏫', color: 'from-blue-500 to-cyan-600' },
+            { label: 'Đăng ký tháng này',      value: thisMonthCount,icon: '📅', color: 'from-orange-500 to-amber-500' },
           ].map((stat) => (
             <div
               key={stat.label}
@@ -101,17 +139,62 @@ export default async function OrganizationsPage() {
           ))}
         </div>
 
-        {/* Actions row */}
-        <div className="flex items-center justify-between">
+        {/* CTA + Actions row */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <h2 className="text-lg font-black text-gray-900">Danh sách tổ chức</h2>
-          <Link
-            href="/admin/organizations/new"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold shadow-md hover:scale-[1.02] transition-transform"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
-          >
-            <span>➕</span>
-            <span>Thêm Organization</span>
-          </Link>
+          <div className="flex gap-2 flex-wrap">
+            <Link
+              href="/dang-ky-to-chuc"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold shadow-md hover:scale-[1.02] transition-transform"
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+            >
+              <span>✨</span>
+              <span>Đăng ký tổ chức mới</span>
+            </Link>
+            <Link
+              href="/admin/organizations/new"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold shadow-md hover:scale-[1.02] transition-transform"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+            >
+              <span>➕</span>
+              <span>Thêm nhanh</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Filter & Sort bar */}
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+          <div className="flex gap-2 flex-wrap">
+            {FILTER_TABS.map(tab => (
+              <Link
+                key={tab.value}
+                href={`/admin/organizations?filter=${tab.value}&sort=${sort}`}
+                className="px-3 py-1.5 rounded-full text-sm font-bold transition-colors"
+                style={{
+                  background: filter === tab.value ? '#7c3aed' : '#f1f5f9',
+                  color: filter === tab.value ? '#fff' : '#475569',
+                }}
+              >
+                {tab.label}
+              </Link>
+            ))}
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-xs font-semibold text-gray-400">Sắp xếp:</span>
+            {SORT_OPTIONS.map(opt => (
+              <Link
+                key={opt.value}
+                href={`/admin/organizations?filter=${filter}&sort=${opt.value}`}
+                className="px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
+                style={{
+                  background: sort === opt.value ? '#0f172a' : '#f1f5f9',
+                  color: sort === opt.value ? '#fff' : '#475569',
+                }}
+              >
+                {opt.label}
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Org grid */}

@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN')
-    return { error: 'Không có quyền truy cập', status: 403 }
-  return { session, userId: (session.user as any).id as string }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  if ((session.user as { role?: string }).role !== 'ADMIN')
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  return { session, userId }
 }
 
 export async function GET() {
   const check = await requireAdmin()
-  if (check.error) {
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
@@ -20,15 +22,13 @@ export async function GET() {
   }
 
   try {
-    // Get admin's organization(s)
-    const orgUser = await prisma.organizationUser.findFirst({
-      where: { userId: check.userId },
-      select: { organizationId: true },
-    })
-    // If admin has an org → show only that org's courses + AvaB public courses
-    // If super admin (no org) → show all
-    const whereClause = orgUser
-      ? { OR: [{ organizationId: orgUser.organizationId }, { isPublic: true }] }
+    // Use getOrganizationContext for consistent org scoping
+    const orgCtx = await getOrganizationContext(check.userId)
+
+    // Org admin → see their org's courses + AvaB public courses (isPublic = true)
+    // Super admin (orgCtx = null) → see all
+    const whereClause = orgCtx
+      ? { OR: [{ organizationId: orgCtx.id }, { isPublic: true }] }
       : {}
 
     const courses = await prisma.course.findMany({
@@ -51,7 +51,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const check = await requireAdmin()
-  if (check.error) {
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
@@ -59,6 +59,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Get org context to tag the created course with its organization
+    const orgCtx = await getOrganizationContext(check.userId)
+
     const body = await request.json()
     const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseType, subjectCode, subjectName, gradeMin, gradeMax, curriculumId, courseDurationMonths } = body
 
@@ -83,7 +86,7 @@ export async function POST(request: NextRequest) {
         thumbnail,
         price: price ?? 0,
         pricePerSession: pricePerSession ?? null,
-        paymentType: finalPaymentType as any,
+        paymentType: finalPaymentType as 'PER_COURSE' | 'PER_SESSION',
         grade: grade || null,
         courseDurationMonths: courseDurationMonths ?? 18,
         courseType: finalCourseType,
@@ -93,12 +96,15 @@ export async function POST(request: NextRequest) {
         gradeMin: gradeMin ?? null,
         gradeMax: gradeMax ?? null,
         curriculumId: curriculumId || null,
+        // Org scoping — null means AvaB platform course
+        organizationId: orgCtx?.id ?? null,
       },
     })
 
     return NextResponse.json({ success: true, data: course }, { status: 201 })
-  } catch (error: any) {
-    if (error.code === 'P2002') {
+  } catch (error: unknown) {
+    const err = error as { code?: string }
+    if (err.code === 'P2002') {
       return NextResponse.json(
         { success: false, error: 'Mã khoá học đã tồn tại' },
         { status: 409 }

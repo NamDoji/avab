@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN')
-    return { error: 'Không có quyền truy cập', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  if ((session.user as { role?: string }).role !== 'ADMIN')
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  return { session, userId }
 }
 
 function generateSlug(title: string): string {
@@ -25,15 +27,22 @@ function generateSlug(title: string): string {
 
 export async function GET() {
   const check = await requireAdmin()
-  if (check.error) {
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
     )
   }
 
+  // Get org context — org admin sees their org's news + public (null) news
+  // Super admin sees everything
+  const orgCtx = await getOrganizationContext(check.userId)
+
   try {
     const news = await prisma.news.findMany({
+      where: orgCtx
+        ? { OR: [{ organizationId: orgCtx.id }, { organizationId: null }] }
+        : {},
       orderBy: { createdAt: 'desc' },
     })
 
@@ -49,12 +58,15 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const check = await requireAdmin()
-  if (check.error) {
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
     )
   }
+
+  // Get org context to tag the created article
+  const orgCtx = await getOrganizationContext(check.userId)
 
   try {
     const body = await request.json()
@@ -79,12 +91,14 @@ export async function POST(request: NextRequest) {
         thumbnail: thumbnail || null,
         isPublished: published,
         publishedAt: published ? new Date() : null,
+        organizationId: orgCtx?.id ?? null,
       },
     })
 
     return NextResponse.json({ success: true, data: article }, { status: 201 })
-  } catch (error: any) {
-    if (error.code === 'P2002') {
+  } catch (error: unknown) {
+    const err = error as { code?: string }
+    if (err.code === 'P2002') {
       return NextResponse.json(
         { success: false, error: 'Slug đã tồn tại, thử tiêu đề khác' },
         { status: 409 }

@@ -2,22 +2,33 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import * as XLSX from 'xlsx'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN') return { error: 'Không có quyền', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  if ((session.user as { role?: string }).role !== 'ADMIN') return { error: 'Không có quyền', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  return { session, userId }
 }
 
 export async function GET(req: NextRequest) {
   const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status as number })
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+
+  // Get org context — filter all export data by org
+  const orgCtx = await getOrganizationContext(check.userId)
+  const whereOrg = orgCtx ? { organizationId: orgCtx.id } : {}
+  // For TuitionPayment: filter via enrollment.course.organizationId
+  const wherePaymentsOrg = orgCtx
+    ? { enrollment: { course: { organizationId: orgCtx.id } } }
+    : {}
 
   const format = req.nextUrl.searchParams.get('format') ?? 'xlsx'
 
-  // Fetch all payments with full detail
+  // Fetch all payments (scoped to org) with full detail
   const payments = await prisma.tuitionPayment.findMany({
+    where: wherePaymentsOrg,
     orderBy: { createdAt: 'desc' },
     include: {
       collection: {
@@ -71,13 +82,19 @@ export async function GET(req: NextRequest) {
   }
 
   // ── XLSX export (default) ───────────────────────────────────────────────
+  // Courses scoped to org
   const courses = await prisma.course.findMany({
-    where: { isActive: true },
+    where: { isActive: true, ...whereOrg },
     select: { id: true, name: true, grade: true },
     orderBy: { name: 'asc' },
   })
 
+  // Collections scoped to org via course
+  const collectionsWhere = orgCtx
+    ? { course: { organizationId: orgCtx.id } }
+    : {}
   const collections = await prisma.tuitionCollection.findMany({
+    where: collectionsWhere,
     include: {
       payments: {
         include: {

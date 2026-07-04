@@ -58,7 +58,17 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { name, logo, domain, modules, settings } = body
+    const { name, logo, domain, type, modules, settings, description } = body
+
+    // Merge settings (description can come as top-level convenience field)
+    let mergedSettings = settings
+    if (description !== undefined) {
+      const existing = await prisma.organization.findUnique({ where: { id }, select: { settings: true } })
+      const existingSettings = (existing?.settings && typeof existing.settings === 'object' && !Array.isArray(existing.settings))
+        ? (existing.settings as Record<string, unknown>)
+        : {}
+      mergedSettings = { ...existingSettings, description, ...(settings ?? {}) }
+    }
 
     const org = await prisma.organization.update({
       where: { id },
@@ -66,8 +76,9 @@ export async function PUT(
         ...(name !== undefined && { name }),
         ...(logo !== undefined && { logo }),
         ...(domain !== undefined && { domain }),
+        ...(type !== undefined && { type }),
         ...(modules !== undefined && { modules }),
-        ...(settings !== undefined && { settings }),
+        ...(mergedSettings !== undefined && { settings: mergedSettings }),
       },
     })
 

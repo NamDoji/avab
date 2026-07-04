@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
   if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
   if ((session.user as { role?: string }).role !== 'ADMIN')
     return { error: 'Không có quyền truy cập', status: 403 as const }
-  return { session }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  return { session, userId }
 }
 
 export async function GET(request: NextRequest) {
@@ -16,13 +18,41 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
 
+  // Attendance model has no direct organizationId — scope via courseId
+  // Get courseIds belonging to this org first
+  const orgCtx = await getOrganizationContext(check.userId)
+
   const { searchParams } = new URL(request.url)
   const courseId = searchParams.get('courseId')
   const date = searchParams.get('date')
 
   try {
     const where: Record<string, unknown> = {}
-    if (courseId) where.courseId = courseId
+
+    if (orgCtx) {
+      if (courseId) {
+        // Verify the requested courseId belongs to this org
+        const course = await prisma.course.findFirst({
+          where: { id: courseId, organizationId: orgCtx.id },
+          select: { id: true },
+        })
+        if (!course) {
+          return NextResponse.json({ success: false, error: 'Không có quyền truy cập lớp học này' }, { status: 403 })
+        }
+        where.courseId = courseId
+      } else {
+        // Filter attendance by all courses belonging to this org
+        const orgCourses = await prisma.course.findMany({
+          where: { organizationId: orgCtx.id },
+          select: { id: true },
+        })
+        where.courseId = { in: orgCourses.map(c => c.id) }
+      }
+    } else {
+      // Super admin — no org filter, apply requested courseId if any
+      if (courseId) where.courseId = courseId
+    }
+
     if (date) {
       const d = new Date(date)
       where.date = d
@@ -53,12 +83,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: check.error }, { status: check.status })
   }
 
+  // Get org context to verify the courseId belongs to this org
+  const orgCtx = await getOrganizationContext(check.userId)
+
   try {
     const body = await request.json() as { courseId: string; date: string; records: AttendanceRecord[] }
     const { courseId, date, records } = body
 
     if (!courseId || !date || !Array.isArray(records)) {
       return NextResponse.json({ success: false, error: 'Thiếu thông tin bắt buộc' }, { status: 400 })
+    }
+
+    // Verify the courseId belongs to this org (for org admins)
+    if (orgCtx) {
+      const course = await prisma.course.findFirst({
+        where: { id: courseId, organizationId: orgCtx.id },
+        select: { id: true },
+      })
+      if (!course) {
+        return NextResponse.json({ success: false, error: 'Không có quyền điểm danh lớp học này' }, { status: 403 })
+      }
     }
 
     const dateObj = new Date(date)

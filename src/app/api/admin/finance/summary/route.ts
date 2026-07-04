@@ -1,20 +1,30 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN') return { error: 'Không có quyền', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  if ((session.user as { role?: string }).role !== 'ADMIN') return { error: 'Không có quyền', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  return { session, userId }
 }
 
 export async function GET() {
   const check = await requireAdmin()
-  if (check.error) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
-  // All payments
+  // Get org context — filter all finance data by org
+  const orgCtx = await getOrganizationContext(check.userId)
+  // For TuitionPayment: filter via enrollment.course.organizationId
+  const wherePayments = orgCtx
+    ? { enrollment: { course: { organizationId: orgCtx.id } } }
+    : {}
+
+  // All payments (scoped to org)
   const allPayments = await prisma.tuitionPayment.findMany({
+    where: wherePayments,
     select: {
       id: true, amount: true, isFree: true, isPaid: true, paidAt: true,
       collection: { select: { courseId: true, title: true } },
@@ -33,7 +43,11 @@ export async function GET() {
   const pendingRevenue = allPayments.filter(p => !p.isPaid && !p.isFree).reduce((s, p) => s + p.amount, 0)
   const freeCount = allPayments.filter(p => p.isFree).length
 
-  const activeEnrollments = await prisma.enrollment.count({ where: { status: { in: ['ACTIVE', 'APPROVED'] } } })
+  // Active enrollment count (scoped to org)
+  const whereEnrollments = orgCtx
+    ? { status: { in: ['ACTIVE', 'APPROVED'] }, course: { organizationId: orgCtx.id } }
+    : { status: { in: ['ACTIVE', 'APPROVED'] } }
+  const activeEnrollments = await prisma.enrollment.count({ where: whereEnrollments })
 
   // Monthly chart data (last 12 months)
   const monthlyMap: Record<string, { month: string; collected: number; pending: number }> = {}

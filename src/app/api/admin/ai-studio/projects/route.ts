@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
-// ─── GET — list projects for current user ──────────────────────────────────
+// ─── GET — list projects scoped to org ────────────────────────────────────
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,6 +15,11 @@ export async function GET(req: NextRequest) {
     const userId = (session.user as { id?: string })?.id
     if (!userId) return NextResponse.json({ error: 'No user id' }, { status: 401 })
 
+    // Get org context — scope all queries to current org
+    const orgCtx = await getOrganizationContext(userId)
+    // orgCtx = null → platform super admin (no filter, see all projects)
+    const whereOrg = orgCtx ? { organizationId: orgCtx.id } : {}
+
     const { searchParams } = new URL(req.url)
     const status  = searchParams.get('status') ?? undefined
     const grade   = searchParams.get('grade') ?? undefined
@@ -22,7 +28,7 @@ export async function GET(req: NextRequest) {
 
     const projects = await prisma.aIProject.findMany({
       where: {
-        createdBy: userId,
+        ...whereOrg,
         ...(status  ? { status }  : {}),
         ...(grade   ? { grade }   : {}),
         ...(subject ? { subject } : {}),
@@ -45,7 +51,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// ─── POST — create new project ────────────────────────────────────────────
+// ─── POST — create new project with org context ───────────────────────────
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,6 +63,9 @@ export async function POST(req: NextRequest) {
     const userId = (session.user as { id?: string })?.id
     if (!userId) return NextResponse.json({ error: 'No user id' }, { status: 401 })
 
+    // Get org context to tag the project
+    const orgCtx = await getOrganizationContext(userId)
+
     const body = await req.json()
     const { title, curriculum, grade, subject, subjectName, chapter, topic, objective, difficulty } = body
 
@@ -66,17 +75,18 @@ export async function POST(req: NextRequest) {
 
     const project = await prisma.aIProject.create({
       data: {
-        title:       title.trim(),
-        curriculum:  curriculum  ?? 'K12-VN',
+        title:          title.trim(),
+        curriculum:     curriculum  ?? 'K12-VN',
         grade,
         subject,
-        subjectName: subjectName ?? null,
-        chapter:     chapter?.trim()   ?? null,
-        topic:       topic.trim(),
-        objective:   objective?.trim() ?? null,
-        difficulty:  difficulty ?? 'medium',
-        status:      'draft',
-        createdBy:   userId,
+        subjectName:    subjectName ?? null,
+        chapter:        chapter?.trim()   ?? null,
+        topic:          topic.trim(),
+        objective:      objective?.trim() ?? null,
+        difficulty:     difficulty ?? 'medium',
+        status:         'draft',
+        createdBy:      userId,
+        organizationId: orgCtx?.id ?? null,
         // Create step 1 (Setup) as already done
         steps: {
           create: {

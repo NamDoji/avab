@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
 // ─── GET — single project + all steps ────────────────────────────────────
 
@@ -15,10 +16,16 @@ export async function GET(
     }
 
     const userId = (session.user as { id?: string })?.id
+    if (!userId) return NextResponse.json({ error: 'No user id' }, { status: 401 })
+
+    const orgCtx = await getOrganizationContext(userId)
     const { id } = await params
 
+    // Verify org ownership: org admin can only access their org's projects
+    const whereOrg = orgCtx ? { organizationId: orgCtx.id } : {}
+
     const project = await prisma.aIProject.findFirst({
-      where: { id, createdBy: userId! },
+      where: { id, ...whereOrg },
       include: { steps: { orderBy: { stepNum: 'asc' } } },
     })
 
@@ -44,11 +51,15 @@ export async function PUT(
     }
 
     const userId = (session.user as { id?: string })?.id
+    if (!userId) return NextResponse.json({ error: 'No user id' }, { status: 401 })
+
+    const orgCtx = await getOrganizationContext(userId)
     const { id } = await params
     const body   = await req.json()
 
-    // Verify ownership
-    const existing = await prisma.aIProject.findFirst({ where: { id, createdBy: userId! } })
+    // Verify org ownership before update
+    const whereOrg = orgCtx ? { organizationId: orgCtx.id } : {}
+    const existing = await prisma.aIProject.findFirst({ where: { id, ...whereOrg } })
     if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     const allowed = ['title', 'curriculum', 'grade', 'subject', 'subjectName', 'chapter', 'topic', 'objective', 'difficulty', 'status']
@@ -83,9 +94,14 @@ export async function DELETE(
     }
 
     const userId = (session.user as { id?: string })?.id
+    if (!userId) return NextResponse.json({ error: 'No user id' }, { status: 401 })
+
+    const orgCtx = await getOrganizationContext(userId)
     const { id } = await params
 
-    const existing = await prisma.aIProject.findFirst({ where: { id, createdBy: userId! } })
+    // Verify org ownership before delete
+    const whereOrg = orgCtx ? { organizationId: orgCtx.id } : {}
+    const existing = await prisma.aIProject.findFirst({ where: { id, ...whereOrg } })
     if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     await prisma.aIProject.delete({ where: { id } })

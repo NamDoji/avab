@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 }
-  if ((session.user as any).role !== 'ADMIN')
-    return { error: 'Không có quyền truy cập', status: 403 }
-  return { session }
+  if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
+  if ((session.user as { role?: string }).role !== 'ADMIN')
+    return { error: 'Không có quyền truy cập', status: 403 as const }
+  const userId = (session.user as { id?: string })?.id ?? ''
+  return { session, userId }
 }
 
 export async function GET(
@@ -15,7 +17,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const check = await requireAdmin()
-  if (check.error) {
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
@@ -24,6 +26,8 @@ export async function GET(
 
   try {
     const { id } = await params
+    const orgCtx = await getOrganizationContext(check.userId)
+
     const course = await prisma.course.findUnique({
       where: { id },
       include: {
@@ -48,6 +52,14 @@ export async function GET(
       )
     }
 
+    // Org admin can read their org's courses + platform courses (null orgId)
+    if (orgCtx && course.organizationId !== null && course.organizationId !== orgCtx.id) {
+      return NextResponse.json(
+        { success: false, error: 'Không có quyền truy cập khoá học này' },
+        { status: 403 }
+      )
+    }
+
     return NextResponse.json({ success: true, data: course })
   } catch (error) {
     console.error('Admin get course error:', error)
@@ -63,7 +75,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const check = await requireAdmin()
-  if (check.error) {
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
@@ -72,12 +84,31 @@ export async function PUT(
 
   try {
     const { id } = await params
+    const orgCtx = await getOrganizationContext(check.userId)
+
+    // Verify org ownership before update (write operations require strict ownership)
+    const existing = await prisma.course.findUnique({
+      where: { id },
+      select: { organizationId: true },
+    })
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, error: 'Không tìm thấy khoá học' },
+        { status: 404 }
+      )
+    }
+    if (orgCtx && existing.organizationId !== orgCtx.id) {
+      return NextResponse.json(
+        { success: false, error: 'Không có quyền chỉnh sửa khoá học này' },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseDurationMonths, isActive, courseType, subjectCode, subjectName, gradeMin, gradeMax, curriculumId } = body
 
-    const validCourseTypes = ['TOAN', 'TIENG_ANH', 'LAP_TRINH_THUAT_TOAN', 'LAP_TRINH_SCRATCH', 'LAP_TRINH_PYTHON', 'LAP_TRINH_CPP']
     const validPaymentTypes = ['PER_COURSE', 'PER_SESSION']
-    const updateData: any = { code, name, description, thumbnail, price, isActive }
+    const updateData: Record<string, unknown> = { code, name, description, thumbnail, price, isActive }
     // Legacy courseType kept for backward compat
     if (courseType) updateData.courseType = courseType
     // K12 generic fields
@@ -99,8 +130,9 @@ export async function PUT(
     })
 
     return NextResponse.json({ success: true, data: course })
-  } catch (error: any) {
-    if (error.code === 'P2025') {
+  } catch (error: unknown) {
+    const err = error as { code?: string }
+    if (err.code === 'P2025') {
       return NextResponse.json(
         { success: false, error: 'Không tìm thấy khoá học' },
         { status: 404 }
@@ -119,7 +151,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const check = await requireAdmin()
-  if (check.error) {
+  if ('error' in check) {
     return NextResponse.json(
       { success: false, error: check.error },
       { status: check.status }
@@ -128,10 +160,31 @@ export async function DELETE(
 
   try {
     const { id } = await params
+    const orgCtx = await getOrganizationContext(check.userId)
+
+    // Verify org ownership before delete
+    const existing = await prisma.course.findUnique({
+      where: { id },
+      select: { organizationId: true },
+    })
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, error: 'Không tìm thấy khoá học' },
+        { status: 404 }
+      )
+    }
+    if (orgCtx && existing.organizationId !== orgCtx.id) {
+      return NextResponse.json(
+        { success: false, error: 'Không có quyền xoá khoá học này' },
+        { status: 403 }
+      )
+    }
+
     await prisma.course.delete({ where: { id } })
     return NextResponse.json({ success: true, message: 'Đã xoá khoá học' })
-  } catch (error: any) {
-    if (error.code === 'P2025') {
+  } catch (error: unknown) {
+    const err = error as { code?: string }
+    if (err.code === 'P2025') {
       return NextResponse.json(
         { success: false, error: 'Không tìm thấy khoá học' },
         { status: 404 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { openai } from '@/lib/openai'
+import { getOrganizationContext } from '@/lib/organization'
 
 interface SlotAssignment {
   courseId: string
@@ -190,6 +191,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = (session.user as { id?: string })?.id ?? ''
+    // Get org context — verify campusId belongs to this org
+    const orgCtx = await getOrganizationContext(userId)
+
     const body: GenerateRequest = await req.json()
     const { campusId, semesterId } = body
     const numVersions = Math.min(3, Math.max(1, body.numVersions ?? 1)) as 1 | 2 | 3
@@ -204,6 +209,11 @@ export async function POST(req: NextRequest) {
     const campus = await prisma.campus.findUnique({ where: { id: campusId } })
     if (!campus) {
       return NextResponse.json({ error: 'Campus không tồn tại' }, { status: 404 })
+    }
+
+    // Verify the campus belongs to this org (for org admins)
+    if (orgCtx && campus.organizationId !== orgCtx.id) {
+      return NextResponse.json({ error: 'Không có quyền tạo TKB cho campus này' }, { status: 403 })
     }
 
     // 2. Load EducationLevelConfig from DB

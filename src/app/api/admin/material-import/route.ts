@@ -1,19 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
-  return session && (session.user as any)?.role === 'ADMIN' ? session : null
+  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') return null
+  const userId = (session.user as { id?: string })?.id ?? ''
+  return { session, userId }
 }
 
 export async function GET(_req: NextRequest) {
-  if (!await requireAdmin()) {
+  const adminCtx = await requireAdmin()
+  if (!adminCtx) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
 
+  // MaterialImportLog has no organizationId field — scope by importedBy for org admins
+  // Super admin sees all logs; org admin sees only their own imports
+  const orgCtx = await getOrganizationContext(adminCtx.userId)
+
+  // Best-effort org scoping: filter by the current user's imports when they have an org
+  // (MaterialImportLog.importedBy = userId)
+  const whereFilter = orgCtx
+    ? { importedBy: adminCtx.userId }
+    : {}
+
   try {
     const logs = await prisma.materialImportLog.findMany({
+      where: whereFilter,
       orderBy: { createdAt: 'desc' },
       take: 50,
       select: {

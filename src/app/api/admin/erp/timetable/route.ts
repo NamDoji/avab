@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrganizationContext } from '@/lib/organization'
 
-// GET — list timetable versions
+// GET — list timetable versions (scoped to org)
 export async function GET(req: NextRequest) {
   try {
     const session = await auth()
@@ -10,11 +11,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = (session.user as { id?: string })?.id ?? ''
+    const orgCtx = await getOrganizationContext(userId)
+
     const { searchParams } = new URL(req.url)
     const campusId = searchParams.get('campusId') ?? undefined
 
+    // Build where: always filter by org, optionally by campus
+    const whereOrg = orgCtx ? { organizationId: orgCtx.id } : {}
+    const where = {
+      ...whereOrg,
+      ...(campusId ? { campusId } : {}),
+    }
+
     const versions = await prisma.timetableVersion.findMany({
-      where: campusId ? { campusId } : undefined,
+      where: Object.keys(where).length > 0 ? where : undefined,
       orderBy: { generatedAt: 'desc' },
       take: 20,
     })
@@ -26,13 +37,16 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// PATCH — update version status (publish | archive | delete)
+// PATCH — update version status (publish | archive | draft)
 export async function PATCH(req: NextRequest) {
   try {
     const session = await auth()
     if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const userId = (session.user as { id?: string })?.id ?? ''
+    const orgCtx = await getOrganizationContext(userId)
 
     const { searchParams } = new URL(req.url)
     const versionId = searchParams.get('versionId')
@@ -49,6 +63,11 @@ export async function PATCH(req: NextRequest) {
     const existing = await prisma.timetableVersion.findUnique({ where: { id: versionId } })
     if (!existing) {
       return NextResponse.json({ error: 'Version không tồn tại' }, { status: 404 })
+    }
+
+    // Verify org ownership before modify
+    if (orgCtx && existing.organizationId !== orgCtx.id) {
+      return NextResponse.json({ error: 'Không có quyền chỉnh sửa version này' }, { status: 403 })
     }
 
     // If publishing, archive other published versions for same campus
@@ -92,6 +111,9 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = (session.user as { id?: string })?.id ?? ''
+    const orgCtx = await getOrganizationContext(userId)
+
     const { searchParams } = new URL(req.url)
     const versionId = searchParams.get('versionId')
 
@@ -102,6 +124,11 @@ export async function DELETE(req: NextRequest) {
     const existing = await prisma.timetableVersion.findUnique({ where: { id: versionId } })
     if (!existing) {
       return NextResponse.json({ error: 'Version không tồn tại' }, { status: 404 })
+    }
+
+    // Verify org ownership before delete
+    if (orgCtx && existing.organizationId !== orgCtx.id) {
+      return NextResponse.json({ error: 'Không có quyền xoá version này' }, { status: 403 })
     }
 
     if (existing.status === 'published') {
