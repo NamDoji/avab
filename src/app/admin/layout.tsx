@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { GlobalAIChat } from '@/components/admin/GlobalAIChat'
 import { CommandPalette } from '@/components/admin/CommandPalette'
 import { OrgSwitcher } from '@/components/admin/OrgSwitcher'
+import { NavSearchBar } from '@/components/admin/NavSearchBar'
 import { QuickActionDial } from '@/components/admin/QuickActionDial'
 import NotificationBell from '@/components/admin/NotificationBell'
 import { cookies } from 'next/headers'
@@ -83,6 +84,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           gap: 8,
         }}
       >
+        <NavSearchBar />
         <NotificationBell initialCount={notifCount} />
         {allOrgs.length > 0 && (
           <OrgSwitcher currentOrg={currentOrg} allOrgs={allOrgs} />
