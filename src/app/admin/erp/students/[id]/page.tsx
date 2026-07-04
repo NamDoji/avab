@@ -164,6 +164,8 @@ export default async function StudentDetailPage({
             <Link href="/admin/erp/students" className="hover:text-white transition-colors">Học sinh</Link>
             <span>/</span>
             <span>{student.name ?? student.phone}</span>
+            <span>/</span>
+            <Link href={`/admin/erp/students/${id}/analytics`} className="hover:text-white transition-colors">📊 Analytics</Link>
           </div>
           <h1 className="text-2xl font-black">{student.name ?? 'Chưa có tên'}</h1>
         </div>

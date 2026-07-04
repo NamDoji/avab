@@ -11,6 +11,40 @@ async function requireAdmin() {
   return { session, userId }
 }
 
+// ── PATCH — partial update: status, note, note2 (assignedTo) ─────────────
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const check = await requireAdmin()
+  if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
+
+  const orgCtx = await getOrganizationContext(check.userId)
+  const { id } = await params
+
+  const existing = await prisma.registration.findUnique({
+    where: { id },
+    select: { organizationId: true },
+  })
+  if (!existing) return NextResponse.json({ success: false, error: 'Không tìm thấy' }, { status: 404 })
+  if (orgCtx && existing.organizationId !== orgCtx.id) {
+    return NextResponse.json({ success: false, error: 'Không có quyền truy cập dữ liệu này' }, { status: 403 })
+  }
+
+  const body = await req.json() as { status?: string; note?: string; note2?: string }
+  const { status, note, note2 } = body
+
+  const updated = await prisma.registration.update({
+    where: { id },
+    data: {
+      ...(status  !== undefined ? { status }  : {}),
+      ...(note    !== undefined ? { note }    : {}),
+      ...(note2   !== undefined ? { note2 }   : {}),
+      updatedAt: new Date(),
+    },
+  })
+
+  return NextResponse.json({ success: true, data: updated })
+}
+
+// ── PUT — full status + note2 update (legacy) ──────────────────────────────
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const check = await requireAdmin()
   if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
