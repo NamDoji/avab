@@ -1201,3 +1201,135 @@ model Timesheet {
   @@index([userId, date])
   @@map("avab_timesheets")
 }
+
+// ── Finance ERP Phase 2 ─────────────────────────────────────────────────────
+
+model Voucher {
+  id             String    @id @default(cuid())
+  organizationId String?
+  code           String    @unique
+  name           String
+  type           String    // percent | fixed
+  value          Float     // % hoặc VNĐ
+  minOrderAmount Float?
+  maxUses        Int?
+  usedCount      Int       @default(0)
+  validFrom      DateTime?
+  validTo        DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+
+  @@map("avab_vouchers")
+}
+
+model Scholarship {
+  id             String    @id @default(cuid())
+  organizationId String?
+  name           String
+  description    String?
+  amount         Float     // fixed amount hoặc %
+  type           String    // fixed | percent
+  studentId      String
+  courseId       String?
+  reason         String?
+  approvedBy     String?
+  status         String    @default("active") // active | expired | cancelled
+  startDate      DateTime?
+  endDate        DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([studentId])
+  @@map("avab_scholarships")
+}
+
+model InstallmentPlan {
+  id             String    @id @default(cuid())
+  paymentId      String    // TuitionPayment.id
+  organizationId String?
+  totalAmount    Float
+  installments   Json      // [{ dueDate, amount, isPaid, paidAt }]
+  status         String    @default("active") // active | completed | overdue
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("avab_installment_plans")
+}
+
+// ── API Platform ─────────────────────────────────────────────────────────────
+
+model ApiKey {
+  id             String    @id @default(cuid())
+  organizationId String
+  name           String
+  key            String    @unique // "avab_sk_live_xxxx"
+  keyHash        String    // bcrypt hash for comparison
+  permissions    Json      // ["courses.read", "students.read", ...]
+  lastUsedAt     DateTime?
+  expiresAt      DateTime?
+  isActive       Boolean   @default(true)
+  createdBy      String
+  createdAt      DateTime  @default(now())
+
+  @@index([organizationId])
+  @@map("avab_api_keys")
+}
+
+model WebhookEndpoint {
+  id              String    @id @default(cuid())
+  organizationId  String
+  url             String
+  secret          String    // for HMAC signature
+  events          Json      // ["enrollment.created", "payment.received", ...]
+  isActive        Boolean   @default(true)
+  lastDeliveredAt DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([organizationId])
+  @@map("avab_webhook_endpoints")
+}
+
+model Equipment {
+  id            String   @id @default(cuid())
+  organizationId String?
+  campusId      String?
+  name          String
+  code          String?
+  category      String   @default("other")
+  quantity      Int      @default(1)
+  status        String   @default("active")
+  location      String?
+  purchaseDate  DateTime?
+  purchasePrice Float?
+  notes         String?
+  createdAt     DateTime @default(now())
+  @@index([campusId])
+  @@map("avab_equipment")
+}
+
+model AlumniRecord {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  organizationId String?
+  graduationYear Int
+  finalGrade     String?
+  nextSchool     String?
+  achievements   String?
+  contactEmail   String?
+  createdAt      DateTime @default(now())
+  @@map("avab_alumni_records")
+}
+
+model ClassTransfer {
+  id             String   @id @default(cuid())
+  studentId      String
+  fromCourseId   String
+  toCourseId     String
+  organizationId String?
+  reason         String?
+  transferDate   DateTime @default(now())
+  approvedBy     String?
+  status         String   @default("pending")
+  createdAt      DateTime @default(now())
+  @@index([organizationId])
+  @@map("avab_class_transfers")
+}
