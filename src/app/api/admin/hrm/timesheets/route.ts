@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma'
 async function requireAdmin() {
   const session = await auth()
   if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
-  if ((session.user as { role?: string })?.role !== 'ADMIN')
+  if (!['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? ''))
     return { error: 'Không có quyền truy cập', status: 403 as const }
   return { session }
 }

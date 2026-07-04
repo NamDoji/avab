@@ -11,7 +11,7 @@ type RouteContext = { searchParams: Promise<{ fromTemplate?: string }> }
 
 export default async function NewWorkflowPage({ searchParams }: RouteContext) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const { fromTemplate } = await searchParams
 

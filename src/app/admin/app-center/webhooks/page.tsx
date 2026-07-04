@@ -8,7 +8,7 @@ export const metadata = { title: '🔗 Webhooks — AvaB Admin' }
 
 export default async function WebhooksPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
     redirect('/dang-nhap')
   }
 

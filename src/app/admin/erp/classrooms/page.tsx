@@ -24,7 +24,7 @@ const typeLabel: Record<string, string> = {
 
 export default async function ClassroomsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const classrooms = await prisma.classRoom.findMany({
     orderBy: [{ building: 'asc' }, { floor: 'asc' }, { name: 'asc' }],

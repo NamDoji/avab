@@ -8,7 +8,7 @@ export const metadata = { title: 'Tasks — Collaboration — AvaB Admin' }
 
 export default async function CollabTasksPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const instances = await prisma.workflowInstance.findMany({
     include: {

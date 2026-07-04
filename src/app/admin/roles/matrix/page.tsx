@@ -31,7 +31,7 @@ const LEVEL_ORDER = ['SYSTEM', 'ORGANIZATION', 'ACADEMIC', 'OPERATION', 'END_USE
 
 export default async function PermissionMatrixPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
     redirect('/dang-nhap')
   }
 

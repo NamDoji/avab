@@ -5,7 +5,7 @@ import { getOrganizationContext } from '@/lib/organization'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') return null
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) return null
   const userId = (session.user as { id?: string })?.id ?? ''
   return { session, userId }
 }

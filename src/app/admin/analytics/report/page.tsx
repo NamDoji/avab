@@ -60,7 +60,7 @@ export default async function ReportPage({
   searchParams: Promise<{ period?: string }>
 }) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const { period: periodParam } = await searchParams
   const period = ['month', 'year', 'all'].includes(periodParam ?? '') ? periodParam! : 'month'

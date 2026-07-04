@@ -7,7 +7,7 @@ export const metadata = { title: 'Hồ sơ sức khỏe — School ERP' }
 
 export default async function HealthPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const healthRecords = await prisma.healthRecord.findMany({
     

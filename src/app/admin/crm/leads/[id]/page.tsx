@@ -25,7 +25,7 @@ const STATUS_MAP: Record<string, { label: string; bg: string; color: string; ico
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const { id } = await params
   const lead = await prisma.registration.findUnique({ where: { id } })

@@ -32,7 +32,7 @@ function calcDeduction(salary: number): number {
 
 export default async function HRMPayrollPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const now = new Date()
   const monthLabel = `Tháng ${now.getMonth() + 1}/${now.getFullYear()}`

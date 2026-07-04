@@ -12,7 +12,7 @@ export default async function AttendanceCourseDetailPage({
   params: Promise<{ courseId: string }>
 }) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const { courseId } = await params
 

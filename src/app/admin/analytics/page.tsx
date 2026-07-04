@@ -17,7 +17,7 @@ const MATERIAL_TYPE_LABELS: Record<string, string> = {
 
 export default async function AnalyticsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const [
     totalStudents,

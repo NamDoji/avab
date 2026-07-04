@@ -31,7 +31,7 @@ function StatusBadge({ status, hasOverdue }: { status: string; hasOverdue: boole
 
 export default async function InstallmentsPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   const plans = await prisma.installmentPlan.findMany({
     orderBy: { createdAt: 'desc' },

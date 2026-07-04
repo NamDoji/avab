@@ -6,7 +6,7 @@ export const metadata = { title: 'Khen thưởng — School ERP' }
 
 export default async function AwardsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   return (
     <div className="min-h-screen pt-14 flex items-center justify-center bg-gray-50">

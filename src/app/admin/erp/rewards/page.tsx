@@ -14,7 +14,7 @@ const categoryLabel: Record<string, string> = {
 
 export default async function RewardsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const records = await prisma.rewardDiscipline.findMany({
     orderBy: { createdAt: 'desc' },

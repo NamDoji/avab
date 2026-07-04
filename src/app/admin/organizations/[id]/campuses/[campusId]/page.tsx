@@ -11,7 +11,7 @@ export default async function CampusDetailPage({
   params: Promise<{ id: string; campusId: string }>
 }) {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   const { id, campusId } = await params
 

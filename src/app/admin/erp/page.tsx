@@ -8,7 +8,7 @@ export const metadata = { title: 'School ERP — AvaB Admin' }
 
 export default async function ERPHubPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   // Pending transfer count badge
   const pendingTransfers = await prisma.classTransfer.count({ where: { status: 'pending' } })

@@ -221,7 +221,7 @@ Trả về báo cáo QA theo format sau:
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-    if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+    if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

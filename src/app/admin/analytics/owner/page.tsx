@@ -15,7 +15,7 @@ function fmtVND(n: number) {
 
 export default async function OwnerDashboardPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)

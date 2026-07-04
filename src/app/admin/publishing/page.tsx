@@ -20,7 +20,7 @@ const MATERIAL_TYPES = [
 
 export default async function PublishingPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   // ── Fetch courses with their material type counts ───────────────────────
   const rawCourses = await prisma.course.findMany({

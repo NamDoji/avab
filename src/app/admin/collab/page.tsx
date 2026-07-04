@@ -14,7 +14,7 @@ const COLLAB_MODULES = [
 
 export default async function CollabPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   const now = new Date()

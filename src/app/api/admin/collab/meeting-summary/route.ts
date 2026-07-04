@@ -7,7 +7,7 @@ import { openai } from '@/lib/openai'
 // Returns: { success: true, data: { summary, actionItems } }
 export async function POST(request: NextRequest) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
 

@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 
 async function requireAdmin() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') return null
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) return null
   return session
 }
 

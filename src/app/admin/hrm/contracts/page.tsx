@@ -8,7 +8,7 @@ export const metadata = { title: 'Hợp đồng — HRM — AvaB Admin' }
 
 export default async function HRMContractsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const [contracts, staffList] = await Promise.all([
     prisma.contract.findMany({

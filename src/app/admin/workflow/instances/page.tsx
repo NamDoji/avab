@@ -50,7 +50,7 @@ interface PageProps {
 
 export default async function WorkflowInstancesPage({ searchParams }: PageProps) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const { tab = 'all', workflowId } = await searchParams
   const userId = (session.user as { id?: string }).id

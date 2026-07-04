@@ -10,7 +10,7 @@ const fmtVND = (n: number) =>
 
 export default async function FinanceReportsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? ''))
     redirect('/dang-nhap')
 
   const now            = new Date()

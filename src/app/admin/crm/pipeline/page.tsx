@@ -8,7 +8,7 @@ export const metadata = { title: 'CRM Pipeline — AvaB EOS' }
 
 export default async function PipelinePage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const leads = await prisma.registration.findMany({
     orderBy: { createdAt: 'desc' },

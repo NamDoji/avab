@@ -17,7 +17,7 @@ export default async function InvoiceDetailPage({
   params: Promise<{ id: string }>
 }) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? ''))
     redirect('/dang-nhap')
 
   const { id } = await params

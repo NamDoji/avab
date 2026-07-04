@@ -57,7 +57,7 @@ function BalanceBar({ value, max }: { value: number; max: number }) {
 
 export default async function WorkloadPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   // Find published version (or latest draft if none published)
   const org = await prisma.organization.findFirst({ where: { slug: 'ob-school' } })

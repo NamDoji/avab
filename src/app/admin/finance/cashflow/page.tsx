@@ -22,7 +22,7 @@ function getMonthLabel(year: number, month: number) {
 
 export default async function CashflowPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   // Get last 12 months
   const now = new Date()

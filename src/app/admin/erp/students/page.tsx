@@ -21,7 +21,7 @@ type SearchParams = Promise<{
 
 export default async function StudentsPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const userId = (session.user as { id?: string })?.id!
   const { search, filter, sort, sortOrder, page, pageSize, campusId } = await searchParams

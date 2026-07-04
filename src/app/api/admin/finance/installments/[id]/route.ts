@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
 function adminOnly(session: any) {
-  if (!session || (session.user as any)?.role !== 'ADMIN') {
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   return null

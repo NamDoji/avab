@@ -84,7 +84,7 @@ type SearchParams = Promise<{ grade?: string }>
 // ── Page ──────────────────────────────────────────────────────────
 export default async function ClassesPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const { grade: gradeFilter } = await searchParams
 

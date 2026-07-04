@@ -48,7 +48,7 @@ function TrendBadge({ current, prev, invertGood = true }: TrendProps) {
 
 export default async function AIDecisionPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const now = Date.now()
   const d7  = new Date(now - 7  * 86_400_000)

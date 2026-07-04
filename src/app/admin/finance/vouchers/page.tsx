@@ -9,7 +9,7 @@ export const metadata = { title: 'Vouchers — AvaB Finance' }
 
 export default async function VouchersPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   const vouchers = await prisma.voucher.findMany({
     orderBy: { createdAt: 'desc' },

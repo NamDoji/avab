@@ -45,7 +45,7 @@ function detectedTypeLabel(t: string | null) {
 
 export default async function MaterialImportHubPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   const logs = await prisma.materialImportLog.findMany({
     orderBy: { createdAt: 'desc' },

@@ -9,7 +9,7 @@ export const metadata = { title: 'Học Bổng — AvaB Finance' }
 
 export default async function ScholarshipsPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   // Load scholarships with enrichment
   const scholarships = await prisma.scholarship.findMany({

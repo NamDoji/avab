@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ filename: string }> }
 ) {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') {
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

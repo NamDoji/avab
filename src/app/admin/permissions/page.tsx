@@ -31,7 +31,7 @@ function getModuleGradient(module: string): string {
 
 export default async function PermissionsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
     redirect('/dang-nhap')
   }
 

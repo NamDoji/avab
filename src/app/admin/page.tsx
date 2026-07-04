@@ -119,7 +119,7 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 export default async function AdminPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   const userId = (session.user as { id?: string })?.id ?? ''
   const orgCtx = userId ? await getOrganizationContext(userId) : null

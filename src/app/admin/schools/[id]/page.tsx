@@ -10,7 +10,7 @@ type Params = { params: Promise<{ id: string }>; searchParams?: Promise<{ tab?: 
 
 export default async function SchoolDetailPage({ params, searchParams }: Params) {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
     redirect('/dang-nhap')
   }
 

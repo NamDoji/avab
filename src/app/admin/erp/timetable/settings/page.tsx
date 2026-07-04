@@ -63,7 +63,7 @@ type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string
 
 export default async function TimetableSettingsPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const org = await prisma.organization.findFirst({ where: { slug: 'ob-school' } })
   const organizationId = org?.id ?? 'ob-school'

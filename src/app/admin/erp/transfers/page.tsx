@@ -14,7 +14,7 @@ const STATUS_META: Record<string, { label: string; bg: string; color: string }> 
 
 export default async function TransfersPage() {
   const session = await auth()
-  if (!session || (session.user as { role?: string })?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) redirect('/dang-nhap')
 
   const transfers = await prisma.classTransfer.findMany({
     include: {

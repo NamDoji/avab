@@ -41,7 +41,7 @@ function fmt(d: Date | null): string {
 
 export default async function DataMigrationPage() {
   const session = await auth()
-  if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
+  if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   const logs = await prisma.migrationLog.findMany({
     orderBy: { createdAt: 'desc' },
