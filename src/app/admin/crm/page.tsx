@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { LeadsImportWrapper } from './LeadsImportWrapper'
 
 export const metadata = { title: 'CRM — AvaB EOS' }
 
@@ -69,6 +70,7 @@ export default async function CRMPage() {
               >
                 ➕ Thêm Lead
               </Link>
+              <LeadsImportWrapper />
             </div>
           </div>
         </div>

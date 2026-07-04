@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { TeachersImportWrapper } from './TeachersImportWrapper'
 
 export const metadata = { title: 'Giáo viên — AvaB ERP' }
 
@@ -90,13 +91,7 @@ export default async function TeachersPage() {
               >
                 ➕ Thêm GV
               </Link>
-              <Link
-                href="/admin/data-migration"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
-                style={{ background: 'rgba(255,255,255,0.15)', color: '#fff' }}
-              >
-                📦 Import
-              </Link>
+              <TeachersImportWrapper />
             </div>
           </div>
         </div>

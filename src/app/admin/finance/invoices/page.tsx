@@ -61,12 +61,22 @@ export default async function InvoicesPage() {
                 Quản lý các đợt thu học phí theo khóa học
               </p>
             </div>
-            <Link
-              href="/admin/courses"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-emerald-800 font-bold text-sm hover:bg-emerald-50 transition shadow"
-            >
-              <span>+</span> Tạo đợt thu mới
-            </Link>
+            <div className="flex items-center gap-2">
+              <a
+                href="/api/admin/finance/template"
+                download
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition shadow"
+                style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}
+              >
+                📄 Tải template học phí
+              </a>
+              <Link
+                href="/admin/courses"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-emerald-800 font-bold text-sm hover:bg-emerald-50 transition shadow"
+              >
+                <span>+</span> Tạo đợt thu mới
+              </Link>
+            </div>
           </div>
         </div>
       </div>

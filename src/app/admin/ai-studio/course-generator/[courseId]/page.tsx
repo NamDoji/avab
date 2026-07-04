@@ -9,6 +9,7 @@ import ApprovalBadge from './ApprovalBadge'
 import JobQueuePanel from './JobQueuePanel'
 import ReviewTab from './ReviewTab'
 import TabsClient from './TabsClient'
+import ContentVersionHistory from '@/components/admin/ContentVersionHistory'
 
 export const metadata = { title: 'Course Preview — AI Studio' }
 
@@ -149,6 +150,11 @@ export default async function CourseGeneratorResultPage({
                 Mô tả khóa học
               </h2>
               <p className="text-gray-600 text-sm leading-relaxed">{course.description}</p>
+              <ContentVersionHistory
+                entityId={course.id}
+                entityType="course"
+                currentContent={course.description}
+              />
             </div>
           )}
 

@@ -5,19 +5,35 @@ import Link from 'next/link'
 export default async function TeacherSessionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ page?: string; filter?: string }>
 }) {
   const session = await auth()
-  const userId = (session!.user as any).id as string
+  const userId = (session!.user as { id: string }).id
 
   const params = await searchParams
   const page = Math.max(1, parseInt(params.page ?? '1', 10))
+  const filter = (params.filter ?? 'all') as 'all' | 'week' | 'month'
   const pageSize = 20
 
+  const now = new Date()
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7))
+  weekStart.setHours(0, 0, 0, 0)
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+
+  const dateFilter =
+    filter === 'week'
+      ? { sessionDate: { gte: weekStart } }
+      : filter === 'month'
+      ? { sessionDate: { gte: monthStart } }
+      : {}
+
+  const baseWhere = { createdBy: userId, ...dateFilter }
+
   const [total, sessions] = await Promise.all([
-    prisma.sessionFeedback.count({ where: { createdBy: userId } }),
+    prisma.sessionFeedback.count({ where: baseWhere }),
     prisma.sessionFeedback.findMany({
-      where: { createdBy: userId },
+      where: baseWhere,
       orderBy: { sessionDate: 'desc' },
       skip: (page - 1) * pageSize,
       take: pageSize,
@@ -35,6 +51,27 @@ export default async function TeacherSessionsPage({
       <div className="mb-6">
         <h1 className="text-2xl font-black text-gray-900">📚 Buổi học của tôi</h1>
         <p className="text-gray-500 mt-1 text-sm">{total} buổi học</p>
+      </div>
+
+      {/* Filter tabs */}
+      <div className="flex gap-2 mb-5">
+        {([
+          { key: 'all', label: 'Tất cả' },
+          { key: 'week', label: 'Tuần này' },
+          { key: 'month', label: 'Tháng này' },
+        ] as const).map((tab) => (
+          <Link
+            key={tab.key}
+            href={`/giao-vien/buoi-hoc?filter=${tab.key}`}
+            className={`text-xs font-bold px-4 py-1.5 rounded-full transition-colors ${
+              filter === tab.key
+                ? 'bg-teal-500 text-white'
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-teal-50 hover:text-teal-700'
+            }`}
+          >
+            {tab.label}
+          </Link>
+        ))}
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

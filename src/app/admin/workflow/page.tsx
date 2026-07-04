@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import ApprovalActions from '@/components/admin/ApprovalActions'
 
 export const metadata = { title: 'Workflow Engine — AvaB Admin' }
 
@@ -60,7 +61,45 @@ export default async function WorkflowHubPage() {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  const [defs, runningInstances, templates, completedThisMonth] = await Promise.all([
+  // ── Seed sample workflow instances if none exist ────────────────────────
+  const instanceCount = await prisma.workflowInstance.count()
+  if (instanceCount === 0) {
+    const firstWorkflow = await prisma.workflowDef.findFirst()
+    const firstAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } })
+    if (firstWorkflow && firstAdmin) {
+      // Get first step id from workflow steps
+      const steps = firstWorkflow.steps as Array<{ id: string }>
+      const firstStepId = steps?.[0]?.id ?? 'review'
+      await prisma.workflowInstance.createMany({
+        data: [
+          {
+            workflowId: firstWorkflow.id,
+            status: 'running',
+            startedBy: firstAdmin.id,
+            currentStep: firstStepId,
+            title: 'Duyệt giáo án Toán 5A HK1',
+          },
+          {
+            workflowId: firstWorkflow.id,
+            status: 'running',
+            startedBy: firstAdmin.id,
+            currentStep: firstStepId,
+            title: 'Duyệt học liệu Tiếng Anh THCS',
+          },
+          {
+            workflowId: firstWorkflow.id,
+            status: 'completed',
+            startedBy: firstAdmin.id,
+            currentStep: firstStepId,
+            completedAt: new Date(),
+            title: 'Xuất bản khóa học Lập trình Scratch',
+          },
+        ],
+      })
+    }
+  }
+
+  const [defs, runningInstances, templates, completedThisMonth, pendingInstances] = await Promise.all([
     prisma.workflowDef.findMany({
       where: { isTemplate: false, isActive: true },
       include: { _count: { select: { instances: true } } },
@@ -79,6 +118,14 @@ export default async function WorkflowHubPage() {
     prisma.workflowInstance.count({
       where: { status: 'completed', completedAt: { gte: startOfMonth } },
     }),
+    prisma.workflowInstance.findMany({
+      where: { status: 'running' },
+      include: {
+        workflow: { select: { name: true, module: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    }),
   ])
 
   const stats = [
@@ -87,6 +134,15 @@ export default async function WorkflowHubPage() {
     { icon: '✅', label: 'Đã hoàn thành (tháng này)', value: completedThisMonth, color: '#059669' },
     { icon: '📋', label: 'Templates sẵn có',           value: templates.length, color: '#d97706' },
   ]
+
+  interface PendingInstance {
+    id: string
+    title: string
+    startedBy: string | null
+    currentStep: string
+    createdAt: Date
+    workflow: { name: string; module: string }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -109,6 +165,50 @@ export default async function WorkflowHubPage() {
       </div>
 
       <div className="container mx-auto max-w-6xl px-4 py-8 space-y-8">
+
+        {/* ── Active Approval Queue ──────────────────────────────────────── */}
+        {pendingInstances.length > 0 && (
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <p className="text-sm font-bold text-gray-700">🔔 Hàng đợi phê duyệt</p>
+              <span className="text-xs font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">
+                {pendingInstances.length}
+              </span>
+            </div>
+            <div className="space-y-3">
+              {(pendingInstances as PendingInstance[]).map((inst) => {
+                const mod = MODULE_CONFIG[inst.workflow.module] ?? MODULE_CONFIG.general
+                const timeAgo = (() => {
+                  const diff = Date.now() - new Date(inst.createdAt).getTime()
+                  const hours = Math.floor(diff / 3600000)
+                  if (hours < 1) return 'Vừa xong'
+                  if (hours < 24) return `${hours}g trước`
+                  return `${Math.floor(hours / 24)}d trước`
+                })()
+                return (
+                  <div
+                    key={inst.id}
+                    className="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 flex flex-col sm:flex-row sm:items-center gap-3"
+                  >
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0"
+                      style={{ background: `${mod.color}20` }}
+                    >
+                      {mod.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-black text-gray-900 truncate">{inst.title}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {inst.workflow.name} · {timeAgo}
+                      </p>
+                    </div>
+                    <ApprovalActions instanceId={inst.id} />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ── Stats ─────────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

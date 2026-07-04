@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { StaffImportWrapper } from './StaffImportWrapper'
 
 export const metadata = { title: 'Nhân viên — HRM — AvaB Admin' }
 
@@ -61,12 +62,15 @@ export default async function HRMStaffPage() {
               👨‍🏫 {staff.filter((s) => s.role === 'TEACHER').length} Giáo viên
             </span>
           </div>
-          <Link
-            href="/admin/users"
-            className="flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-4 py-2.5 text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm"
-          >
-            <span>+</span> Thêm nhân viên
-          </Link>
+          <div className="flex gap-2">
+            <StaffImportWrapper />
+            <Link
+              href="/admin/users"
+              className="flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-4 py-2.5 text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm"
+            >
+              <span>+</span> Thêm nhân viên
+            </Link>
+          </div>
         </div>
 
         {/* ── Table ───────────────────────────────────────────────────────── */}

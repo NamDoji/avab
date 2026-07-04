@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import StudentFilters from './StudentFilters'
+import { StudentsImportWrapper } from './StudentsImportWrapper'
 
 export const metadata = { title: 'Học sinh — AvaB ERP' }
 
@@ -137,13 +138,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Sea
               >
                 ➕ Thêm học sinh
               </Link>
-              <Link
-                href="/admin/data-migration"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
-                style={{ background: 'rgba(255,255,255,0.15)', color: '#fff' }}
-              >
-                📦 Import Excel
-              </Link>
+              <StudentsImportWrapper />
             </div>
           </div>
         </div>

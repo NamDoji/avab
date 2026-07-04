@@ -1045,3 +1045,97 @@ model Registration {
 
   @@map("avab_registrations")
 }
+
+// ── AI Timetable Engine ─────────────────────────────────────────
+
+model TimetableSlot {
+  id             String   @id @default(cuid())
+  organizationId String?
+  campusId       String?
+  versionId      String?  // FK → TimetableVersion
+  courseId       String   // lớp học
+  subjectId      String?  // môn học trong lớp
+  teacherId      String?  // giáo viên dạy
+  roomId         String?  // phòng học
+  dayOfWeek      Int      // 1=T2, 2=T3, 3=T4, 4=T5, 5=T6, 6=T7
+  period         Int      // tiết 1-10
+  semesterId     String?  // năm học / học kỳ
+  isLocked       Boolean  @default(false) // khóa tiết này, không regenerate
+  status         String   @default("active") // active | cancelled | makeup
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([campusId, dayOfWeek, period])
+  @@index([teacherId, dayOfWeek, period])
+  @@index([courseId])
+  @@index([versionId])
+  @@map("avab_timetable_slots")
+}
+
+model TimetableVersion {
+  id             String   @id @default(cuid())
+  organizationId String?
+  campusId       String?
+  semesterId     String?
+  name           String   // "TKB HK1 2025-2026 v2"
+  status         String   @default("draft") // draft | published | archived
+  score          Float?   // optimization score 0-100
+  conflicts      Int      @default(0)
+  generatedAt    DateTime @default(now())
+  publishedAt    DateTime?
+
+  @@index([campusId])
+  @@map("avab_timetable_versions")
+}
+
+// ── Timetable Configuration ──────────────────────────────────────────────────
+
+model EducationLevelConfig {
+  id              String   @id @default(cuid())
+  organizationId  String
+  level           String   // MN | TH | THCS | THPT
+  levelName       String
+  periodsPerDay   Int      @default(5)
+  periodDuration  Int      @default(45)  // minutes
+  breakAfterPeriod Int?
+  startTime       String   @default("07:30")
+  workingDays     Json?    // [1,2,3,4,5,6] — 1=Mon...7=Sun
+  periodSchedule  Json?    // [{period:1,start:"07:30",end:"08:15"},...]
+  subjectsPerWeek Json?    // {"MATH":5,"ENGLISH":4,...}
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([organizationId, level])
+  @@map("avab_education_level_configs")
+}
+
+model HolidayCalendar {
+  id              String   @id @default(cuid())
+  organizationId  String
+  campusId        String?
+  name            String
+  startDate       DateTime
+  endDate         DateTime
+  type            String   @default("holiday") // holiday|exam|event|makeup
+  isRecurring     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([organizationId, startDate])
+  @@map("avab_holiday_calendar")
+}
+
+model TimetableRule {
+  id              String   @id @default(cuid())
+  organizationId  String
+  campusId        String?
+  ruleType        String   // teacher_max_periods|no_double_subject|prefer_morning|...
+  ruleScope       String   @default("all") // all|level|teacher|class
+  scopeValue      String?
+  value           Json
+  isActive        Boolean  @default(true)
+  description     String?
+  createdAt       DateTime @default(now())
+
+  @@index([organizationId])
+  @@map("avab_timetable_rules")
+}

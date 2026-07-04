@@ -28,6 +28,18 @@ interface StudentCard {
   }>
   weekStats: { done: number; pct: number | null }
   lastSession: { date: string; subject: string } | null
+  gamification: {
+    xp: number
+    level: number
+    streak: number
+    badges: Array<{ id: string; name: string; icon: string; color: string }>
+  }
+  attendance: {
+    monthPresent: number
+    monthTotal: number
+    pct: number | null
+  }
+  paymentStatus: 'paid' | 'unpaid' | 'unknown'
 }
 
 export default function ParentDashboard() {
@@ -150,6 +162,52 @@ export default function ParentDashboard() {
                             <Calendar size={13} className="text-purple-500" />
                             <span className="text-xs font-semibold text-purple-700">
                               {new Date(s.lastSession.date).toLocaleDateString('vi-VN', { day: 'numeric', month: 'numeric' })} · {s.lastSession.subject}
+                            </span>
+                          </div>
+                        )}
+                        {/* Gamification XP */}
+                        {s.gamification && s.gamification.xp > 0 && (
+                          <div className="flex items-center gap-1.5 bg-yellow-50 rounded-xl px-3 py-1.5">
+                            <span className="text-xs">⭐</span>
+                            <span className="text-xs font-semibold text-yellow-700">
+                              {s.gamification.xp} XP · Lv.{s.gamification.level}
+                              {s.gamification.streak > 0 && ` · 🔥${s.gamification.streak} ngày`}
+                            </span>
+                          </div>
+                        )}
+                        {/* Badges */}
+                        {s.gamification?.badges?.length > 0 && (
+                          <div className="flex items-center gap-1 bg-indigo-50 rounded-xl px-3 py-1.5">
+                            {s.gamification.badges.slice(0, 3).map((b) => (
+                              <span key={b.id} title={b.name} className="text-sm">{b.icon}</span>
+                            ))}
+                          </div>
+                        )}
+                        {/* Attendance */}
+                        {s.attendance && s.attendance.monthTotal > 0 && (
+                          <div className="flex items-center gap-1.5 bg-green-50 rounded-xl px-3 py-1.5">
+                            <span className="text-xs">📊</span>
+                            <span className="text-xs font-semibold text-green-700">
+                              Đi học {s.attendance.pct}% tháng này
+                            </span>
+                          </div>
+                        )}
+                        {/* Payment */}
+                        {s.paymentStatus !== 'unknown' && (
+                          <div
+                            className="flex items-center gap-1.5 rounded-xl px-3 py-1.5"
+                            style={{
+                              background: s.paymentStatus === 'paid' ? '#f0fdf4' : '#fef2f2',
+                            }}
+                          >
+                            <span className="text-xs">
+                              {s.paymentStatus === 'paid' ? '✅' : '⚠️'}
+                            </span>
+                            <span
+                              className="text-xs font-semibold"
+                              style={{ color: s.paymentStatus === 'paid' ? '#15803d' : '#dc2626' }}
+                            >
+                              {s.paymentStatus === 'paid' ? 'Học phí đã đóng' : 'Chưa đóng học phí'}
                             </span>
                           </div>
                         )}

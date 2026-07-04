@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { DataMigrationImportSection } from './DataMigrationImportSection'
 
 export const metadata = { title: 'Data Migration Center — AvaB' }
 
@@ -173,25 +174,8 @@ export default async function DataMigrationPage() {
           )}
         </div>
 
-        {/* Template download */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-black text-gray-800 mb-4">📥 Tải template chuẩn AvaB</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Sử dụng template dưới đây để chuẩn bị dữ liệu theo đúng format của hệ thống
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {TEMPLATE_MODULES.map(m => (
-              <a
-                key={m.key}
-                href={`/api/admin/migration/template?module=${m.key}`}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition-all"
-              >
-                {m.label}
-                <span className="text-xs text-gray-400">.xlsx</span>
-              </a>
-            ))}
-          </div>
-        </div>
+        {/* Data Migration Import Section (client) */}
+        <DataMigrationImportSection />
 
       </div>
     </div>

@@ -1,20 +1,39 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 export default async function TeacherDashboard() {
   const session = await auth()
-  const userId = (session!.user as any).id as string
+  if (!session) redirect('/dang-nhap')
+  const userId = (session.user as { id: string }).id
+  const userRole = (session.user as { role?: string }).role
+
+  const now = new Date()
+  // Week start (Monday)
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7))
+  weekStart.setHours(0, 0, 0, 0)
+  // Month start
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
 
   // Load tất cả sessions (với records) để tính stats + recent 5
-  const allSessions = await prisma.sessionFeedback.findMany({
-    where: { createdBy: userId },
-    orderBy: { sessionDate: 'desc' },
-    include: {
-      subject: true,
-      records: { select: { id: true, aiComment: true, attendance: true } },
-    },
-  })
+  const [allSessions, sessionsThisWeek, sessionsThisMonth] = await Promise.all([
+    prisma.sessionFeedback.findMany({
+      where: { createdBy: userId },
+      orderBy: { sessionDate: 'desc' },
+      include: {
+        subject: true,
+        records: { select: { id: true, aiComment: true, attendance: true } },
+      },
+    }),
+    prisma.sessionFeedback.count({
+      where: { createdBy: userId, sessionDate: { gte: weekStart } },
+    }),
+    prisma.sessionFeedback.count({
+      where: { createdBy: userId, sessionDate: { gte: monthStart } },
+    }),
+  ])
 
   const recentSessions = allSessions.slice(0, 5)
   const totalSessions = allSessions.length
@@ -44,20 +63,40 @@ export default async function TeacherDashboard() {
         <p className="text-gray-500 mt-1 capitalize">{today}</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-          <p className="text-3xl font-black text-teal-600">{totalSessions}</p>
-          <p className="text-sm text-gray-500 mt-1">Buổi đã dạy</p>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div className="bg-white rounded-2xl p-4 border border-teal-100 shadow-sm">
+          <p className="text-2xl font-black text-teal-600">{sessionsThisWeek}</p>
+          <p className="text-xs text-gray-500 mt-1">Buổi dạy tuần này</p>
         </div>
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-          <p className="text-3xl font-black text-teal-600">{totalStudentsReviewed}</p>
-          <p className="text-sm text-gray-500 mt-1">Lượt nhận xét học sinh</p>
+        <div className="bg-white rounded-2xl p-4 border border-teal-100 shadow-sm">
+          <p className="text-2xl font-black text-teal-600">{sessionsThisMonth}</p>
+          <p className="text-xs text-gray-500 mt-1">Buổi dạy tháng này</p>
         </div>
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-          <p className="text-3xl font-black text-teal-600">{totalAIComments}</p>
-          <p className="text-sm text-gray-500 mt-1">Nhận xét AI đã tạo</p>
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+          <p className="text-2xl font-black text-teal-600">{totalStudentsReviewed}</p>
+          <p className="text-xs text-gray-500 mt-1">Lượt nhận xét</p>
         </div>
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+          <p className="text-2xl font-black text-teal-600">{totalAIComments}</p>
+          <p className="text-xs text-gray-500 mt-1">Nhận xét AI</p>
+        </div>
+      </div>
+
+      {/* Upcoming schedule placeholder */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+        <h2 className="font-black text-gray-900 mb-2 flex items-center gap-2">
+          📅 Lịch dạy tuần này
+        </h2>
+        <p className="text-sm text-gray-400 italic">Lịch dạy tuần này đang được phát triển. Vui lòng kiểm tra lại sau.</p>
+        {(userRole === 'ADMIN' || userRole === 'TEACHER') && (
+          <Link
+            href="/admin/erp/attendance"
+            className="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            ✅ Ghi điểm danh ngay →
+          </Link>
+        )}
       </div>
 
       {/* Recent sessions */}
