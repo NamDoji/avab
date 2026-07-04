@@ -158,6 +158,7 @@ export default async function AdminPage() {
 
   // Org filter — SUPER_ADMIN without org sees all, org admin sees only their org
   const orgFilter = orgCtx?.id ? { organizationId: orgCtx.id } : {}
+  const orgPaymentFilter = orgCtx?.id ? { enrollment: { course: { organizationId: orgCtx.id } } } : {}
   const courseOrgFilter = orgCtx?.id ? { organizationId: orgCtx.id, isActive: true } : { isActive: true }
 
   const [
@@ -176,14 +177,14 @@ export default async function AdminPage() {
     prisma.registration.count({ where: { status: 'NEW' } }),
     prisma.aIProject.count({ where: { ...orgFilter, status: 'in-progress' } }),
     prisma.course.count({ where: courseOrgFilter }),
-    prisma.tuitionPayment.count({ where: { ...orgFilter, isPaid: false, isFree: false } }),
+    prisma.tuitionPayment.count({ where: { ...orgPaymentFilter, isPaid: false, isFree: false } }),
     prisma.tuitionPayment.aggregate({
-      where: { ...orgFilter, isPaid: true, isFree: false, paidAt: { gte: thisMonthStart } },
+      where: { ...orgPaymentFilter, isPaid: true, isFree: false, paidAt: { gte: thisMonthStart } },
       _sum: { amount: true },
     }),
     prisma.aIProject.count({ where: { ...orgFilter, status: 'draft' } }),
     prisma.tuitionPayment.count({
-      where: { ...orgFilter, isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
+      where: { ...orgPaymentFilter, isPaid: false, isFree: false, createdAt: { lt: overdueThreshold } },
     }),
   ])
 
