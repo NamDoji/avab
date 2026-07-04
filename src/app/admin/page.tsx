@@ -39,6 +39,8 @@ const ALL_MODULE_GROUPS: NavGroup[] = [
       { href: '/admin/erp/alumni',         icon: '🎓', label: 'Alumni',        desc: 'Học sinh đã tốt nghiệp' },
       { href: '/admin/erp/transfers',      icon: '🔄', label: 'Chuyển lớp',   desc: 'Yêu cầu chuyển lớp' },
       { href: '/admin/erp/timetable',      icon: '📅', label: 'TKB',           desc: 'Thời khóa biểu AI' },
+      { href: '/admin/erp/bus-routes',       icon: '🚌', label: 'Xe tuyến',     desc: 'Xe đưa đón HS' },
+      { href: '/admin/erp/uniforms',         icon: '👕', label: 'Đồng phục',    desc: 'Quản lý đồng phục' },
     ],
   },
   {

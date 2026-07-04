@@ -101,6 +101,20 @@ export default async function ERPHubPage() {
       gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)',
       badge: 'New',
     },
+    {
+      href: '/admin/erp/bus-routes',
+      icon: '🚌',
+      label: 'Xe tuyến',
+      desc: 'Xe đưa đón học sinh',
+      gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+    },
+    {
+      href: '/admin/erp/uniforms',
+      icon: '👕',
+      label: 'Đồng phục',
+      desc: 'Quản lý đồng phục HS',
+      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+    },
   ]
 
   return (

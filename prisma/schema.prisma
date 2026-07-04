@@ -44,6 +44,8 @@ model User {
   contracts         Contract[]
   kpiRecords          KpiRecord[]
   homeworkSubmissions HomeworkSubmission[] @relation("SubmissionStudent")
+  busAssignments     BusAssignment[]
+  uniformOrders      UniformOrder[]
 
   @@map("avab_users")
 }
@@ -504,6 +506,9 @@ model Organization {
   organizationUsers OrganizationUser[]
   courses          Course[]     @relation("OrgCourses")
   aiProjects       AIProject[]  @relation("OrgAIProjects")
+  busRoutes        BusRoute[]
+  uniformItems     UniformItem[]
+  uniformOrders    UniformOrder[]
 
   @@map("avab_organizations")
 }
@@ -1430,3 +1435,91 @@ model HomeworkSubmission {
 }
 
 
+
+// ─── School Bus Routes ────────────────────────────────────────────────────────
+
+model BusRoute {
+  id             String   @id @default(cuid())
+  organizationId String
+  campusId       String?
+  name           String
+  code           String?
+  description    String?
+  stops          Json     @default("[]")
+  driverName     String?
+  driverPhone    String?
+  vehicleNumber  String?
+  capacity       Int      @default(45)
+  feePerMonth    Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignments  BusAssignment[]
+
+  @@index([organizationId])
+  @@map("avab_bus_routes")
+}
+
+model BusAssignment {
+  id          String    @id @default(cuid())
+  busRouteId  String
+  userId      String
+  enrolledAt  DateTime  @default(now())
+  note        String?
+  isPaid      Boolean   @default(false)
+
+  busRoute    BusRoute  @relation(fields: [busRouteId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([busRouteId, userId])
+  @@map("avab_bus_assignments")
+}
+
+// ─── School Uniforms ──────────────────────────────────────────────────────────
+
+model UniformItem {
+  id             String   @id @default(cuid())
+  organizationId String
+  campusId       String?
+  name           String
+  code           String?
+  type           String   @default("SHIRT")
+  color          String?
+  sizes          Json     @default("[]")
+  pricePerUnit   Int      @default(0)
+  stock          Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orders         UniformOrder[]
+
+  @@index([organizationId])
+  @@map("avab_uniform_items")
+}
+
+model UniformOrder {
+  id             String   @id @default(cuid())
+  organizationId String
+  uniformItemId  String
+  userId         String
+  size           String
+  quantity       Int      @default(1)
+  totalPrice     Int      @default(0)
+  status         String   @default("PENDING")
+  isPaid         Boolean  @default(false)
+  note           String?
+  orderedAt      DateTime @default(now())
+  deliveredAt    DateTime?
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uniformItem    UniformItem  @relation(fields: [uniformItemId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("avab_uniform_orders")
+}

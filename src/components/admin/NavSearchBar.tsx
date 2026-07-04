@@ -35,6 +35,8 @@ const ITEMS: SearchItem[] = [
   { id: 'settings',       label: 'Cài đặt',             description: 'Cấu hình hệ thống',     icon: '⚙️', href: '/admin/settings',                 keywords: ['setting','cài đặt','cấu hình'] },
   { id: 'gamification',   label: 'Gamification',        description: 'Điểm & bảng xếp hạng', icon: '🎮', href: '/admin/gamification',              keywords: ['game','điểm','leaderboard'] },
   { id: 'erp',            label: 'School ERP',          description: 'Quản lý nhà trường',    icon: '🏫', href: '/admin/erp',                       keywords: ['erp','trường'] },
+  { id: 'bus-routes',     label: 'Xe tuyến',            description: 'Quản lý xe đưa đón',    icon: '🚌', href: '/admin/erp/bus-routes',            keywords: ['xe tuyến','xe buýt','đưa đón','bus'] },
+  { id: 'uniforms',       label: 'Đồng phục',           description: 'Quản lý đồng phục HS',  icon: '👕', href: '/admin/erp/uniforms',              keywords: ['đồng phục','quần áo','uniform','áo'] },
 ]
 
 const QUICK_CHIPS = ['Học sinh', 'Tài chính', 'Điểm danh', 'Thời khóa biểu', 'Phân quyền']

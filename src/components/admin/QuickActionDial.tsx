@@ -39,6 +39,18 @@ const QUICK_ACTIONS: QuickAction[] = [
     href: '/admin/finance/invoices',
     color: '#f59e0b',
   },
+  {
+    icon: '🚌',
+    label: 'Xe tuyến',
+    href: '/admin/erp/bus-routes',
+    color: '#f97316',
+  },
+  {
+    icon: '👕',
+    label: 'Đồng phục',
+    href: '/admin/erp/uniforms',
+    color: '#8b5cf6',
+  },
 ]
 
 // ─────────────────────────────────────────────────────────────────────────────
