@@ -7,6 +7,7 @@ import { OrgSwitcher } from '@/components/admin/OrgSwitcher'
 import { NavSearchBar } from '@/components/admin/NavSearchBar'
 import { QuickActionDial } from '@/components/admin/QuickActionDial'
 import NotificationBell from '@/components/admin/NotificationBell'
+import { AdminMobileMenu } from '@/components/admin/AdminMobileMenu'
 import { cookies } from 'next/headers'
 import { CURRENT_ORG_COOKIE } from '@/lib/current-org'
 import { getOrgTheme } from '@/lib/org-theme'
@@ -115,13 +116,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </span>
         </a>
 
-        {/* Right actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
-        <NavSearchBar />
-        <NotificationBell initialCount={notifCount} />
-        {allOrgs.length > 0 && (
-          <OrgSwitcher currentOrg={currentOrg} allOrgs={allOrgs} />
-        )}
+        {/* Right: Bell + Lang + Hamburger — keep it minimal */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', flexShrink: 0 }}>
+          <NotificationBell initialCount={notifCount} />
+          <a
+            href="/"
+            title="Trang chủ / Home"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+              background: 'rgba(0,0,0,0.06)', border: '1.5px solid transparent',
+              cursor: 'pointer', fontSize: 15, textDecoration: 'none',
+              color: '#374151',
+            }}
+          >🌐</a>
+          <AdminMobileMenu currentOrg={currentOrg} allOrgs={allOrgs} />
         </div>
       </div>
 
