@@ -116,12 +116,12 @@ export default function TimetableAIGenerator() {
             </div>
             <div className="space-y-2">
               {classes.map((c, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div key={i} className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                   <input
                     value={c.name}
                     onChange={e => updateClass(i, 'name', e.target.value)}
                     placeholder="Tên lớp (vd: 10A1)"
-                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                    className="flex-1 min-w-[100px] border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
                   />
                   <select
                     value={c.grade}
@@ -144,7 +144,7 @@ export default function TimetableAIGenerator() {
               <h3 className="font-black text-gray-800 text-sm">📚 Môn học & Giáo viên</h3>
               <button onClick={addSubject} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 px-3 py-1.5 rounded-lg border border-indigo-200 hover:border-indigo-400 transition">+ Thêm môn</button>
             </div>
-            <div className="overflow-auto">
+            <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-xs text-gray-400 uppercase">
@@ -268,7 +268,7 @@ export default function TimetableAIGenerator() {
             </div>
 
             {/* Grid */}
-            <div className="overflow-auto">
+            <div className="overflow-x-auto">
               <table className="w-full text-xs min-w-max">
                 <thead>
                   <tr style={{ background: '#f8fafc' }}>
@@ -308,17 +308,17 @@ export default function TimetableAIGenerator() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => { setStep('config'); setTimetable(null) }}
-              className="flex-1 px-4 py-3 rounded-2xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
+              className="flex-1 min-w-[120px] px-4 py-3 rounded-2xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
             >
               ← Chỉnh sửa lại
             </button>
             <button
               onClick={generate}
               disabled={loading}
-              className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white transition disabled:opacity-50"
+              className="flex-1 min-w-[120px] px-4 py-3 rounded-2xl text-sm font-bold text-white transition disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg,#7c3aed,#4338ca)' }}
             >
               {loading ? '⚙️ Đang tạo lại...' : '🔄 Tạo lại'}
@@ -331,7 +331,7 @@ export default function TimetableAIGenerator() {
                 a.href = url; a.download = 'timetable.json'; a.click()
                 URL.revokeObjectURL(url)
               }}
-              className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white transition"
+              className="flex-1 min-w-[120px] px-4 py-3 rounded-2xl text-sm font-bold text-white transition"
               style={{ background: 'linear-gradient(135deg,#0f766e,#0369a1)' }}
             >
               ⬇️ Xuất JSON

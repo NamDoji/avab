@@ -62,7 +62,7 @@ export default async function AttendanceCourseDetailPage({
             <span>/</span>
             <span>{course.name}</span>
           </div>
-          <h1 className="text-2xl font-black mb-0.5">✅ {course.name}</h1>
+          <h1 className="text-xl sm:text-2xl font-black mb-0.5 break-words">✅ {course.name}</h1>
           <p className="text-green-200 text-sm">
             {gradeLabel && `${gradeLabel} · `}
             {course.subjectName ?? ''} · {students.length} học sinh

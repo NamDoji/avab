@@ -103,11 +103,11 @@ export default async function InstallmentsPage() {
     <main className="min-h-screen bg-gray-50 pt-14">
       {/* Header */}
       <div
-        className="px-6 py-8"
+        className="px-4 sm:px-6 py-8"
         style={{ background: 'linear-gradient(135deg, #92400e 0%, #d97706 100%)' }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-4">
               <Link
                 href="/admin/finance"
@@ -142,7 +142,7 @@ export default async function InstallmentsPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
         {/* Upcoming dues */}
         {upcomingDues.length > 0 && (

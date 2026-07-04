@@ -46,7 +46,7 @@ export default async function HRMPage() {
         {/* ── Stats ───────────────────────────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">📊 Tổng quan nhân sự</p>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               { icon: '👤', label: 'Tổng nhân viên', value: totalStaff,   gradient: 'from-purple-500 to-violet-600' },
               { icon: '🛡️', label: 'Quản trị viên',  value: adminCount,   gradient: 'from-indigo-500 to-blue-600' },
@@ -68,7 +68,7 @@ export default async function HRMPage() {
         {/* ── Module Cards ─────────────────────────────────────────────────── */}
         <div>
           <p className="text-sm font-bold text-gray-700 mb-3">🗂️ Phân hệ HRM</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {HRM_MODULES.map((mod) => {
               const badgeCount =
             mod.badge === 'pendingLeave'
@@ -107,7 +107,7 @@ export default async function HRMPage() {
         </div>
 
         {/* ── Quick link ───────────────────────────────────────────────────── */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <Link
             href="/admin/hrm/staff"
             className="flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-5 py-3 text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm"

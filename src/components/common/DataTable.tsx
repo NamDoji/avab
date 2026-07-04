@@ -637,8 +637,8 @@ export default function DataTable<T>({
       )}
 
       {/* ── Table ── */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <table className="min-w-full text-sm">
           <thead className={stickyHeader ? 'sticky top-0 z-20' : ''}>
             <tr style={{ background: '#f8fafc' }}>
               {/* Checkbox */}

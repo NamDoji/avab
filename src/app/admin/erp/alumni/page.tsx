@@ -47,12 +47,12 @@ export default async function AlumniPage() {
           </div>
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-black mb-1">🎓 Alumni</h1>
+              <h1 className="text-2xl sm:text-3xl font-black mb-1">🎓 Alumni</h1>
               <p className="text-teal-100 text-sm">Cựu học sinh đã hoàn thành khóa học</p>
             </div>
           </div>
 
-          <div className="flex gap-8 mt-5">
+          <div className="flex flex-wrap gap-6 sm:gap-8 mt-5">
             <div>
               <div className="text-3xl font-black">{alumni.length}</div>
               <div className="text-xs text-teal-100">Tổng cựu học sinh</div>

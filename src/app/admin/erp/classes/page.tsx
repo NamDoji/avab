@@ -131,7 +131,7 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-black mb-1">📋 Lớp học</h1>
+              <h1 className="text-2xl sm:text-3xl font-black mb-1">📋 Lớp học</h1>
               <p className="text-violet-200 text-sm">
                 {courses.length} lớp · {totalStudents} học viên
               </p>
@@ -209,7 +209,7 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="text-2xl mb-1">{meta.emoji}</div>
-                        <h3 className="font-black text-lg leading-tight">{course.name}</h3>
+                        <h3 className="font-black text-lg leading-tight line-clamp-2 break-words">{course.name}</h3>
                       </div>
                       {course.grade && (
                         <span
@@ -244,14 +244,14 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
                     <div className="flex gap-2">
                       <Link
                         href={`/admin/courses/${course.id}/students`}
-                        className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1 py-2.5 min-h-[44px] rounded-xl text-xs font-bold transition-colors"
                         style={{ background: '#f0fdf4', color: '#166534' }}
                       >
                         👥 Học viên
                       </Link>
                       <Link
                         href={`/admin/courses/${course.id}`}
-                        className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1 py-2.5 min-h-[44px] rounded-xl text-xs font-bold transition-colors"
                         style={{ background: '#f3f4f6', color: '#374151' }}
                       >
                         ✏️ Quản lý

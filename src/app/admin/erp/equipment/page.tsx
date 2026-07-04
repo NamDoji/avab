@@ -60,7 +60,7 @@ export default async function EquipmentPage() {
           </div>
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-black mb-1">💻 Thiết bị & Tài sản</h1>
+              <h1 className="text-2xl sm:text-3xl font-black mb-1">💻 Thiết bị & Tài sản</h1>
               <p className="text-indigo-100 text-sm">Quản lý trang thiết bị, tài sản nhà trường</p>
             </div>
             <Link
@@ -72,7 +72,7 @@ export default async function EquipmentPage() {
             </Link>
           </div>
 
-          <div className="flex gap-8 mt-5">
+          <div className="flex flex-wrap gap-6 sm:gap-8 mt-5">
             <div>
               <div className="text-3xl font-black">{totalQty}</div>
               <div className="text-xs text-indigo-100">Tổng số lượng</div>

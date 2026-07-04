@@ -107,7 +107,7 @@ function BulkTransferModal({
       style={{ background: 'rgba(0,0,0,0.5)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center gap-3 mb-4">
           <span className="text-3xl">🔄</span>
           <div>
@@ -225,7 +225,7 @@ function NotifyModal({
       style={{ background: 'rgba(0,0,0,0.5)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center gap-3 mb-4">
           <span className="text-3xl">📧</span>
           <div>
@@ -247,7 +247,7 @@ function NotifyModal({
           <>
             <div className="mb-3">
               <label className="text-xs font-bold text-gray-600 uppercase mb-1 block">Loại thông báo</label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {[{v:'INFO',l:'📢 Thông báo'},{v:'WARNING',l:'⚠️ Cảnh báo'},{v:'SUCCESS',l:'✅ Khen thưởng'}].map(t => (
                   <button key={t.v} onClick={() => setType(t.v)} className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${type===t.v ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>{t.l}</button>
                 ))}
@@ -486,7 +486,7 @@ export default function StudentsTable({
         rowActions={(row) => (
           <Link
             href={`/admin/erp/students/${row.id}`}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:opacity-90 transition"
+            className="inline-flex items-center gap-1 px-3 py-2 min-h-[36px] rounded-lg text-xs font-bold text-white hover:opacity-90 transition"
             style={{ background: 'linear-gradient(135deg, #0f766e, #0369a1)' }}
           >
             Xem →

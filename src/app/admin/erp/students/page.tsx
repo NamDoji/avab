@@ -115,7 +115,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Sea
     <div className="min-h-screen pt-14 bg-gray-50">
       {/* ── Header ── */}
       <div
-        className="relative overflow-hidden text-white py-10"
+        className="relative overflow-hidden text-white py-8 sm:py-10"
         style={{ background: 'linear-gradient(135deg, #0f766e 0%, #0369a1 100%)' }}
       >
         <div
@@ -134,7 +134,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Sea
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-black mb-1">👥 Học sinh</h1>
+              <h1 className="text-2xl sm:text-3xl font-black mb-1">👥 Học sinh</h1>
               <p className="text-teal-200 text-sm">
                 {totalCount.toLocaleString('vi-VN')} học sinh
                 {activeCampusName && (

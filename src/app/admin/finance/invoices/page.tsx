@@ -82,7 +82,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
     <main className="min-h-screen bg-gray-50 pt-14">
       {/* Header */}
       <div
-        className="px-6 py-8"
+        className="px-4 sm:px-6 py-8"
         style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)' }}
       >
         <div className="max-w-6xl mx-auto">
@@ -120,7 +120,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div

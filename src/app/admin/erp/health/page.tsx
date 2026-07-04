@@ -49,9 +49,9 @@ export default async function HealthPage() {
             <span>/</span>
             <span>Hồ sơ sức khỏe</span>
           </div>
-          <h1 className="text-3xl font-black mb-1">🏥 Hồ sơ sức khỏe</h1>
+          <h1 className="text-2xl sm:text-3xl font-black mb-1">🏥 Hồ sơ sức khỏe</h1>
           <p className="text-green-100 text-sm mb-4">Quản lý thông tin y tế, bảo hiểm học sinh</p>
-          <div className="flex gap-8">
+          <div className="flex flex-wrap gap-6 sm:gap-8">
             <div>
               <div className="text-3xl font-black">{healthRecords.length}</div>
               <div className="text-xs text-green-100">Tổng hồ sơ</div>

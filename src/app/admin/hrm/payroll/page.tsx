@@ -182,8 +182,8 @@ export default async function HRMPayrollPage() {
                 ✅ Dữ liệu thực từ hợp đồng
               </span>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="min-w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50">
                     <th className="text-left px-5 py-3 font-bold text-gray-600 text-xs">Nhân viên</th>

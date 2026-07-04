@@ -196,7 +196,7 @@ export default function AttendanceSheet({ students, courseId, courseName }: Prop
               <div key={student.id} className="px-4 py-3 flex items-center gap-3 flex-wrap">
                 <div className="text-xs text-gray-400 w-6">{idx + 1}</div>
                 <MiniAvatar name={student.name} />
-                <div className="flex-1 min-w-0 min-w-28">
+                <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm text-gray-900 truncate">
                     {student.name ?? '—'}
                   </div>
@@ -209,7 +209,7 @@ export default function AttendanceSheet({ students, courseId, courseName }: Prop
                     <button
                       key={opt.value}
                       onClick={() => setStatus(student.id, opt.value)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+                      className="px-3 py-2 min-h-[36px] rounded-xl text-xs font-bold transition-all"
                       style={
                         currentStatus === opt.value
                           ? { background: opt.color, color: '#fff' }

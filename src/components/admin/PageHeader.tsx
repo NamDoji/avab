@@ -66,7 +66,7 @@ export default function PageHeader({
 
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-black leading-tight">
               {icon && <span className="mr-2">{icon}</span>}
               {title}
             </h1>

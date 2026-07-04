@@ -58,11 +58,11 @@ export default async function ScholarshipsPage() {
     <main className="min-h-screen bg-gray-50 pt-14">
       {/* Header */}
       <div
-        className="px-6 py-8"
+        className="px-4 sm:px-6 py-8"
         style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)' }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-4">
               <Link
                 href="/admin/finance"

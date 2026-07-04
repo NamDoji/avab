@@ -64,7 +64,7 @@ export default async function AttendanceSelectorPage() {
             <span>/</span>
             <span>Điểm danh</span>
           </div>
-          <h1 className="text-3xl font-black mb-1">✅ Điểm danh</h1>
+          <h1 className="text-2xl sm:text-3xl font-black mb-1">✅ Điểm danh</h1>
           <p className="text-green-200 text-sm">
             {courses.length} lớp · {totalStudents} học viên — Chọn lớp để điểm danh nhanh
           </p>
@@ -72,11 +72,11 @@ export default async function AttendanceSelectorPage() {
       </div>
 
       <div className="container-custom py-6">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <h2 className="font-bold text-gray-700">Chọn lớp điểm danh</h2>
           <Link
             href="/admin/erp/attendance/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
             style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
           >
             ✏️ Điểm danh tuỳ chỉnh

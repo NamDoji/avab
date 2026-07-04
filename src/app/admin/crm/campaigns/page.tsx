@@ -140,7 +140,7 @@ export default async function CampaignsPage() {
       <div className="container-custom py-6 space-y-6">
 
         {/* ── Funnel KPIs ──────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
             { label: 'Tổng leads',       value: totalLeads,    icon: '📋', color: '#7c3aed', bg: '#f5f3ff' },
             { label: 'Mới',              value: totalNew,      icon: '✨', color: '#2563eb', bg: '#eff6ff' },
@@ -199,7 +199,7 @@ export default async function CampaignsPage() {
               <p>Chưa có dữ liệu registration</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-gray-50 overflow-x-auto">
               {sourceStat.map(s => {
                 const cfg = SOURCE_CONFIG[s.source] ?? SOURCE_CONFIG.other
                 const barPct = Math.round((s.leads / maxLeads) * 100)

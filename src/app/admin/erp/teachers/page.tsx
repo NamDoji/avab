@@ -101,7 +101,7 @@ export default async function TeachersPage({ searchParams }: { searchParams: Sea
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-black mb-1">👨‍🏫 Giáo viên</h1>
+              <h1 className="text-2xl sm:text-3xl font-black mb-1">👨‍🏫 Giáo viên</h1>
               <p className="text-sky-200 text-sm">
                 {totalCount.toLocaleString('vi-VN')} giáo viên · {totalCampuses} cơ sở
               </p>
@@ -121,6 +121,7 @@ export default async function TeachersPage({ searchParams }: { searchParams: Sea
       </div>
 
       <div className="container-custom py-6">
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         <Suspense
           fallback={
             <div className="bg-white rounded-2xl p-4 shadow-sm h-64 animate-pulse" />
@@ -152,6 +153,7 @@ export default async function TeachersPage({ searchParams }: { searchParams: Sea
             sortOrder={(sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc'}
           />
         </Suspense>
+        </div>
       </div>
     </div>
   )

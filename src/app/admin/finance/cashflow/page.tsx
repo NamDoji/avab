@@ -75,11 +75,11 @@ export default async function CashflowPage() {
     <main className="min-h-screen bg-gray-50 pt-14">
       {/* Header */}
       <div
-        className="px-6 py-8"
+        className="px-4 sm:px-6 py-8"
         style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%)' }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-4">
               <Link
                 href="/admin/finance"
@@ -105,7 +105,7 @@ export default async function CashflowPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -151,7 +151,7 @@ export default async function CashflowPage() {
               <h2 className="font-black text-gray-900 text-lg">📊 Thu nhập theo tháng</h2>
               <p className="text-xs text-gray-500 mt-0.5">12 tháng gần nhất — học phí thu được</p>
             </div>
-            <div className="flex gap-4 text-xs">
+            <div className="flex gap-4 text-xs flex-wrap">
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-sm inline-block" style={{ background: 'linear-gradient(135deg, #4338ca, #6366f1)' }} />
                 <span className="text-gray-600 font-medium">Thu vào</span>
@@ -235,8 +235,8 @@ export default async function CashflowPage() {
           <div className="px-6 py-5 border-b border-gray-100">
             <h2 className="font-black text-gray-900 text-lg">📋 Chi tiết theo tháng</h2>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="min-w-full text-sm">
               <thead>
                 <tr className="text-xs text-gray-500 font-semibold uppercase tracking-wide bg-gray-50">
                   <th className="text-left px-6 py-3">Tháng</th>

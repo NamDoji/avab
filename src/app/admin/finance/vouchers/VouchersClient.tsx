@@ -104,9 +104,9 @@ export default function VouchersClient({ initialVouchers }: Props) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       {/* Toolbar */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="text-sm text-gray-500">{vouchers.length} voucher trong hệ thống</p>
         </div>
@@ -259,8 +259,8 @@ export default function VouchersClient({ initialVouchers }: Props) {
             <p>Chưa có voucher nào. Tạo voucher đầu tiên!</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="min-w-full text-sm">
               <thead>
                 <tr className="text-xs text-gray-500 font-semibold uppercase tracking-wide bg-gray-50">
                   <th className="text-left px-6 py-3">Mã / Tên</th>
