@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
-import { getOrganizationContext } from '@/lib/organization'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
 async function requireAdmin() {
   const session = await auth()
@@ -15,8 +16,9 @@ export async function GET(req: NextRequest) {
   const check = await requireAdmin()
   if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
-  // Get org context — scope all queries to current org
-  const orgCtx = await getOrganizationContext(check.userId)
+  // Get org context — honour active-org cookie, fall back to default org
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(check.userId, cookieOrgId)
   // orgCtx = null → platform super admin (no org filter)
   const whereOrg = orgCtx ? { organizationId: orgCtx.id } : {}
 
@@ -41,7 +43,8 @@ export async function POST(req: NextRequest) {
   if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
   // Get org context to scope the created record
-  const orgCtx = await getOrganizationContext(check.userId)
+  const cookieOrgId = req.cookies.get('avab-current-org')?.value ?? null
+  const orgCtx = await getCurrentOrgFromSession(check.userId, cookieOrgId)
 
   const body = await req.json() as { name?: string; phone?: string; email?: string; note?: string; type?: string }
   const { name, phone, email, note, type } = body

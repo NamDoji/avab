@@ -101,6 +101,57 @@ export async function getOrganizationByDomain(
 }
 
 /**
+ * Get organization context for the current authenticated user,
+ * honouring the "active org" cookie set by the org switcher.
+ *
+ * Priority:
+ *   1. cookieOrgId — if provided AND the user belongs to it → use that org
+ *   2. Fallback to getOrganizationContext (user's default org)
+ *
+ * Returns null for platform super-admins (no org membership).
+ */
+export async function getCurrentOrgFromSession(
+  userId: string,
+  cookieOrgId?: string | null,
+): Promise<OrganizationContext | null> {
+  if (cookieOrgId) {
+    // Verify the user actually belongs to the requested org
+    const orgUser = await prisma.organizationUser.findFirst({
+      where: { userId, organizationId: cookieOrgId },
+      include: { organization: true },
+    })
+
+    if (orgUser && orgUser.organization.isActive && !orgUser.organization.deletedAt) {
+      const campusUsers = await prisma.campusUser.findMany({
+        where:  { userId },
+        select: { campusId: true },
+      })
+
+      const org = orgUser.organization
+      const modules  = Array.isArray(org.modules) ? (org.modules as string[]) : []
+      const settings = (org.settings && typeof org.settings === 'object' && !Array.isArray(org.settings))
+        ? (org.settings as Record<string, unknown>)
+        : {}
+
+      return {
+        id:        org.id,
+        name:      org.name,
+        slug:      org.slug,
+        type:      org.type,
+        modules,
+        settings,
+        filter:    { organizationId: org.id },
+        campusIds: campusUsers.map(c => c.campusId),
+        orgRole:   orgUser.orgRole,
+      }
+    }
+  }
+
+  // Fallback: user's default org (or null for super-admin)
+  return getOrganizationContext(userId)
+}
+
+/**
  * Check if user has access to an organization.
  */
 export async function userBelongsToOrg(

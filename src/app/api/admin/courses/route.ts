@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getOrganizationContext } from '@/lib/organization'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
 async function requireAdmin() {
   const session = await auth()
@@ -12,7 +13,7 @@ async function requireAdmin() {
   return { session, userId }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const check = await requireAdmin()
   if ('error' in check) {
     return NextResponse.json(
@@ -22,8 +23,9 @@ export async function GET() {
   }
 
   try {
-    // Use getOrganizationContext for consistent org scoping
-    const orgCtx = await getOrganizationContext(check.userId)
+    // Honour active-org cookie, fall back to default org
+    const cookieOrgId = getCurrentOrgFromRequest(request)
+    const orgCtx = await getCurrentOrgFromSession(check.userId, cookieOrgId)
 
     // Org admin → see their org's courses + AvaB public courses (isPublic = true)
     // Super admin (orgCtx = null) → see all
@@ -60,7 +62,8 @@ export async function POST(request: NextRequest) {
 
   try {
     // Get org context to tag the created course with its organization
-    const orgCtx = await getOrganizationContext(check.userId)
+    const cookieOrgId = request.cookies.get('avab-current-org')?.value ?? null
+    const orgCtx = await getCurrentOrgFromSession(check.userId, cookieOrgId)
 
     const body = await request.json()
     const { code, name, description, thumbnail, price, pricePerSession, paymentType, grade, courseType, subjectCode, subjectName, gradeMin, gradeMax, curriculumId, courseDurationMonths } = body

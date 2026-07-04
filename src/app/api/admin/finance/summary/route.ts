@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getOrganizationContext } from '@/lib/organization'
+import { getCurrentOrgFromSession } from '@/lib/organization'
+import { getCurrentOrgFromRequest } from '@/lib/current-org'
 
 async function requireAdmin() {
   const session = await auth()
@@ -11,12 +12,13 @@ async function requireAdmin() {
   return { session, userId }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const check = await requireAdmin()
   if ('error' in check) return NextResponse.json({ success: false, error: check.error }, { status: check.status })
 
-  // Get org context — filter all finance data by org
-  const orgCtx = await getOrganizationContext(check.userId)
+  // Honour active-org cookie, fall back to default org
+  const cookieOrgId = getCurrentOrgFromRequest(req)
+  const orgCtx = await getCurrentOrgFromSession(check.userId, cookieOrgId)
   // For TuitionPayment: filter via enrollment.course.organizationId
   const wherePayments = orgCtx
     ? { enrollment: { course: { organizationId: orgCtx.id } } }
