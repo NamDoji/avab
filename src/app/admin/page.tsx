@@ -236,9 +236,25 @@ export default async function AdminPage() {
   if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as any)?.role ?? '')) redirect('/dang-nhap')
 
   const userId = (session.user as { id?: string })?.id ?? ''
-  const orgCtx = userId ? await getOrganizationContext(userId) : null
   const userRole = (session.user as { role?: string })?.role ?? ''
   const isSuperAdmin = userRole === 'SUPER_ADMIN'
+
+  // SUPER_ADMIN luôn hoạt động trong context của AvaB org nội bộ
+  let orgCtx = userId ? await getOrganizationContext(userId) : null
+  if (isSuperAdmin && !orgCtx) {
+    // Fallback: lấy AvaB org nếu SUPER_ADMIN chưa được gắn org
+    const avabOrg = await prisma.organization.findFirst({ where: { slug: 'avab' } })
+    if (avabOrg) {
+      orgCtx = {
+        id: avabOrg.id, name: avabOrg.name, slug: avabOrg.slug,
+        type: avabOrg.type, orgRole: 'OWNER',
+        modules: (avabOrg.modules as string[]) ?? [],
+        settings: (avabOrg.settings as Record<string,unknown>) ?? {},
+        filter: { organizationId: avabOrg.id },
+        campusIds: [],
+      }
+    }
+  }
 
   const allOrgUsers = userId
     ? await prisma.organizationUser.findMany({

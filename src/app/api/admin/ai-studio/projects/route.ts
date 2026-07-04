@@ -2,10 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getOrganizationContext } from '@/lib/organization'
+import { checkModuleAccess } from '@/lib/module-gate'
 
 // ─── GET — list projects scoped to org ────────────────────────────────────
 
 export async function GET(req: NextRequest) {
+
+  // ── Module gate: org phải có module 'ai' ─────────────────────────────
+  const gate = await checkModuleAccess(req, 'ai')
+  if ('error' in gate) return NextResponse.json({ error: gate.error }, { status: gate.status })
+
   try {
     const session = await auth()
     if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {

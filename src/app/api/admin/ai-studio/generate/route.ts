@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { openai } from '@/lib/openai'
+import { checkModuleAccess } from '@/lib/module-gate'
 
 // ─── Prompt builders ─────────────────────────────────────────────────────────
 
@@ -219,6 +220,11 @@ Trả về báo cáo QA theo format sau:
 // ─── POST handler ──────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+
+  // ── Module gate: org phải có module 'ai' ─────────────────────────────
+  const gate = await checkModuleAccess(req, 'ai')
+  if ('error' in gate) return NextResponse.json({ error: gate.error }, { status: gate.status })
+
   try {
     const session = await auth()
     if (!session || !['ADMIN','SUPER_ADMIN'].includes((session.user as { role?: string })?.role ?? '')) {
