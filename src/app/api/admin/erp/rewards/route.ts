@@ -23,9 +23,25 @@ export async function GET(request: NextRequest) {
     const records = await prisma.rewardDiscipline.findMany({
       where: type ? { type } : undefined,
       orderBy: { createdAt: 'desc' },
-      take: 50,
+      take: 100,
     })
-    return NextResponse.json({ success: true, data: records })
+
+    // Enrich with user info
+    const userIds = [...new Set(records.map((r) => r.userId))]
+    const users = userIds.length
+      ? await prisma.user.findMany({
+          where: { id: { in: userIds } },
+          select: { id: true, name: true, phone: true },
+        })
+      : []
+    const userMap = Object.fromEntries(users.map((u) => [u.id, u]))
+
+    const enriched = records.map((r) => ({
+      ...r,
+      user: userMap[r.userId] ?? null,
+    }))
+
+    return NextResponse.json({ success: true, data: enriched })
   } catch (error) {
     console.error('Rewards GET error:', error)
     return NextResponse.json({ success: false, error: 'Không thể tải dữ liệu' }, { status: 500 })
