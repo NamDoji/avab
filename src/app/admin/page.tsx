@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import QuickNav, { type NavGroup } from '@/components/admin/QuickNav'
+import { getOrganizationContext } from '@/lib/organization'
 
 export const metadata = { title: 'Admin Dashboard — AvaB' }
 
@@ -97,6 +98,18 @@ export default async function AdminPage() {
   const session = await auth()
   if (!session || (session.user as any)?.role !== 'ADMIN') redirect('/dang-nhap')
 
+  // ── Org context ──────────────────────────────────────────────────────────
+  const userId = (session.user as { id?: string })?.id ?? ''
+  const orgCtx = userId ? await getOrganizationContext(userId) : null
+
+  // Orgs switcher: all orgs this user belongs to
+  const allOrgUsers = userId
+    ? await prisma.organizationUser.findMany({
+        where: { userId },
+        include: { organization: { select: { id: true, name: true, slug: true } } },
+      })
+    : []
+
   // ── Zone A data: today's operational snapshot ────────────────────────────
   const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
 
@@ -175,8 +188,48 @@ export default async function AdminPage() {
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
             📅 Hôm nay
           </p>
-          <h1 className="text-2xl font-black text-gray-900 leading-tight">Admin Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Tình trạng vận hành nền tảng AvaB</p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-black text-gray-900 leading-tight">Admin Dashboard</h1>
+            {orgCtx ? (
+              <span
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold text-white"
+                style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+              >
+                🏢 {orgCtx.name}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                ⚙️ AvaB Platform Admin
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-gray-500 mt-0.5">
+            {orgCtx
+              ? `${orgCtx.name} · Vai trò: ${orgCtx.orgRole}`
+              : 'Tình trạng vận hành nền tảng AvaB'
+            }
+          </p>
+
+          {/* Org switcher (shown when user belongs to multiple orgs) */}
+          {allOrgUsers.length > 1 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="text-xs font-semibold text-gray-400 self-center">Chuyển org:</span>
+              {allOrgUsers.map(ou => (
+                <Link
+                  key={ou.organization.id}
+                  href={`/admin/organizations/${ou.organization.id}/settings`}
+                  className="text-xs font-bold px-3 py-1 rounded-full border transition-colors"
+                  style={{
+                    borderColor: orgCtx?.id === ou.organization.id ? '#7c3aed' : '#e5e7eb',
+                    color: orgCtx?.id === ou.organization.id ? '#7c3aed' : '#6b7280',
+                    background: orgCtx?.id === ou.organization.id ? '#f5f3ff' : '#fff',
+                  }}
+                >
+                  {ou.organization.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
