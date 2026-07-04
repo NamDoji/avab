@@ -6,7 +6,8 @@ import { getOrganizationContext } from '@/lib/organization'
 async function requireAdmin() {
   const session = await auth()
   if (!session?.user) return { error: 'Vui lòng đăng nhập', status: 401 as const }
-  if ((session.user as { role?: string }).role !== 'ADMIN')
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'SUPER_ADMIN')
     return { error: 'Không có quyền truy cập', status: 403 as const }
   const userId = (session.user as { id?: string })?.id ?? ''
   return { session, userId }
