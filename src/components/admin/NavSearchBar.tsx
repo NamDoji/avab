@@ -58,6 +58,12 @@ const ITEMS: SearchItem[] = [
   { id: 'uniforms',       label: 'Đồng phục',           description: 'Quản lý đồng phục HS',  icon: '👕', href: '/admin/erp/uniforms',              keywords: ['đồng phục','quần áo','uniform','áo'] },
   { id: 'canteen',        label: 'Căng tin',             description: 'Suất ăn & thực đơn',     icon: '🍽️', href: '/admin/erp/canteen',              keywords: ['căng tin','suất ăn','thực đơn','ăn trưa','bữa ăn','canteen'] },
   { id: 'library',        label: 'Thư viện',             description: 'Sách & mượn trả',          icon: '📖', href: '/admin/erp/library',              keywords: ['thư viện','sách','mượn sách','library','book'] },
+  { id: 'content-studio',  label: 'Content Studio',       description: 'Soạn bài giảng AI',          icon: '📝', href: '/admin/content-studio',           keywords: ['content studio','bài giảng','soạn','lesson','content'] },
+  { id: 'analytics-owner', label: 'Owner Dashboard',      description: 'Tổng quan toàn hệ thống',     icon: '👑', href: '/admin/analytics/owner',          keywords: ['owner','chủ trường','tổng quan','dashboard'] },
+  { id: 'analytics-report',label: 'Báo cáo in',           description: 'Print-ready PDF report',      icon: '🖨️', href: '/admin/analytics/report',         keywords: ['báo cáo','in','report','pdf','print'] },
+  { id: 'collab-hub',      label: 'Collab Hub',           description: 'Trung tâm cộng tác nhóm',    icon: '🤝', href: '/admin/collab',                   keywords: ['collab','cộng tác','collaboration','hub'] },
+  { id: 'erp-rewards',     label: 'Điểm thưởng ERP',      description: 'Gamification & tích điểm',    icon: '🎮', href: '/admin/erp/rewards',              keywords: ['điểm thưởng','gamification','tích điểm','xp','reward'] },
+  { id: 'webhooks',        label: 'Webhooks',             description: 'Webhook & integration',       icon: '🔗', href: '/admin/webhooks',                 keywords: ['webhook','tích hợp','integration','api hook'] },
 ]
 
 const QUICK_CHIPS = ['Học sinh', 'Tài chính', 'Điểm danh', 'Thời khóa biểu', 'Phân quyền']

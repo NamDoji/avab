@@ -70,6 +70,8 @@ const COMMANDS: CommandItem[] = [
   { id: 'notifications', label: 'Notifications', description: 'Trung tâm thông báo', icon: '🔔', href: '/admin/notifications', category: 'System', keywords: ['notification','thông báo'] },
   { id: 'settings', label: 'Cài đặt', description: 'Cài đặt hệ thống', icon: '⚙️', href: '/admin/settings', category: 'System', keywords: ['settings','cài đặt','config'] },
   { id: 'app-center', label: 'App Center', description: 'Tích hợp & API', icon: '🔌', href: '/admin/app-center', category: 'System', keywords: ['app','api','webhook','tích hợp','integration'] },
+  { id: 'content-studio', label: 'Content Studio',      description: 'Soạn bài giảng AI',       icon: '📝', href: '/admin/content-studio',            category: 'AI',    keywords: ['content','studio','bài giảng','soạn','lesson'] },
+  { id: 'erp-rewards',    label: 'Điểm thưởng ERP',     description: 'Gamification & tích điểm', icon: '🎮', href: '/admin/erp/rewards',               category: 'ERP',   keywords: ['điểm thưởng','reward','xp','tích điểm','gamification'] },
   // Portals
   { id: 'portal-teacher', label: 'Portal Giáo viên', description: 'Xem như giáo viên', icon: '👨‍🏫', href: '/giao-vien', category: 'Portals', keywords: ['portal','giáo viên','teacher'] },
   { id: 'portal-student', label: 'Portal Học sinh', description: 'Xem như học sinh', icon: '👦', href: '/hoc-vien', category: 'Portals', keywords: ['portal','học sinh','student'] },

@@ -69,6 +69,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
         { href: '/admin/erp/classrooms',         icon: '🚪', label: 'Phòng học',    desc: 'Quản lý phòng học' },
         { href: '/admin/erp/health',             icon: '🏥', label: 'Sức khỏe',     desc: 'Hồ sơ y tế HS' },
         { href: '/admin/erp/equipment',          icon: '💻', label: 'Thiết bị',     desc: 'Tài sản nhà trường' },
+        { href: '/admin/erp/rewards',           icon: '🎮', label: 'Điểm thưởng',  desc: 'Gamification & tích điểm' },
         { href: '/admin/erp/awards',             icon: '🏆', label: 'Khen thưởng',  desc: 'Giải thưởng HS' },
         { href: '/admin/erp/reports',            icon: '📊', label: 'Báo cáo ERP',  desc: 'Báo cáo học vụ' },
         { href: '/admin/erp/bus-routes',         icon: '🚌', label: 'Xe tuyến',     desc: 'Xe đưa đón HS' },
@@ -97,6 +98,8 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
         { href: '/admin/finance/forecast',       icon: '📉', label: 'Dự báo DT',   desc: 'Dự báo doanh thu' },
         { href: '/admin/finance/reports',        icon: '📰', label: 'Báo cáo TC',  desc: 'Báo cáo tài chính' },
         { href: '/admin/analytics',              icon: '📈', label: 'Phân tích',   desc: 'Báo cáo & phân tích' },
+        { href: '/admin/analytics/owner',        icon: '👑', label: 'Owner Report', desc: 'Tổng quan toàn hệ thống' },
+        { href: '/admin/analytics/report',       icon: '🖨️', label: 'Báo cáo in',   desc: 'Print-ready PDF report' },
       ],
     })
   }
@@ -141,6 +144,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
     groups.push({
       id: 'collab', icon: '🤝', label: 'Cộng tác',
       modules: [
+        { href: '/admin/collab',          icon: '🤝', label: 'Collab Hub', desc: 'Trung tâm cộng tác' },
         { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks',    desc: 'Quản lý công việc' },
         { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar', desc: 'Lịch nhóm' },
         { href: '/admin/collab/meetings', icon: '🎥', label: 'Meetings', desc: 'Họp trực tuyến' },
@@ -176,6 +180,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
         { href: '/admin/education-standards',        icon: '📖', label: 'AvaB Standards',   desc: 'K12/Cambridge/IB' },
         { href: '/admin/publishing',                 icon: '📤', label: 'Publishing',       desc: 'Xuất Word/PDF/Slide' },
         { href: '/admin/gamification',               icon: '🎮', label: 'Gamification',     desc: 'Điểm · huy hiệu · XH' },
+        { href: '/admin/content-studio',             icon: '📝', label: 'Content Studio',   desc: 'Soạn bài giảng AI' },
       ],
     })
   } else {
@@ -191,6 +196,7 @@ function buildModuleGroups(isSuperAdmin: boolean, orgModules: string[]): NavGrou
         { href: '/admin/question-bank',              icon: '🗃️', label: 'Question Bank',   desc: 'Ngân hàng câu hỏi AI' },
         { href: '/admin/publishing',                 icon: '📤', label: 'Publishing',       desc: 'Xuất Word/PDF/Slide' },
         { href: '/admin/gamification',               icon: '🎮', label: 'Gamification',     desc: 'Điểm · huy hiệu · Xếp hạng' },
+        { href: '/admin/content-studio',             icon: '📝', label: 'Content Studio',   desc: 'Soạn bài giảng AI' },
       ],
     })
   }

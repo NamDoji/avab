@@ -58,6 +58,8 @@ const NAV = [
     { href: '/admin/finance/forecast',        icon: '📉', label: 'Dự báo DT' },
     { href: '/admin/finance/reports',         icon: '📰', label: 'Báo cáo TC' },
     { href: '/admin/analytics',               icon: '📈', label: 'Phân tích' },
+    { href: '/admin/analytics/owner',          icon: '👑', label: 'Owner Report' },
+    { href: '/admin/analytics/report',         icon: '🖨️', label: 'Báo cáo in' },
   ]},
   // ── 5. CRM ────────────────────────────────────────────────────────────────
   { group: '📊 CRM', items: [
@@ -79,6 +81,7 @@ const NAV = [
   // ── 7. AI & Nội dung ──────────────────────────────────────────────────────
   { group: '🤖 AI & Nội dung', items: [
     { href: '/admin/ai-studio',           icon: '✨', label: 'AI Studio' },
+    { href: '/admin/content-studio',      icon: '📝', label: 'Content Studio' },
     { href: '/admin/ai-decision',         icon: '🧠', label: 'AI Decision' },
     { href: '/admin/question-bank',       icon: '🗃️', label: 'Question Bank' },
     { href: '/admin/material-import',     icon: '📥', label: 'Material Import' },
@@ -89,6 +92,7 @@ const NAV = [
   // ── 7. ✨ AI Studio (Premium — Add-on) ───────────────────────────────────
   { group: '✨ AI Studio (Premium)', items: [
     { href: '/admin/ai-studio',                  icon: '✨', label: 'AI Studio' },
+    { href: '/admin/content-studio',             icon: '📝', label: 'Content Studio' },
     { href: '/admin/ai-studio/course-generator', icon: '🚀', label: 'Course Generator' },
     { href: '/admin/ai-decision',                icon: '🧠', label: 'AI Decision' },
     { href: '/admin/material-import',            icon: '📥', label: 'Material Import' },
@@ -99,6 +103,7 @@ const NAV = [
   ]},
   // ── 8. Cộng tác ───────────────────────────────────────────────────────────
   { group: '🤝 Cộng tác', items: [
+    { href: '/admin/collab',          icon: '🤝', label: 'Collab Hub' },
     { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks' },
     { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar' },
     { href: '/admin/collab/meetings', icon: '🎥', label: 'Meetings' },
