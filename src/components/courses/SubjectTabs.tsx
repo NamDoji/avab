@@ -505,6 +505,43 @@ const MC_COLORS = [
   },
 ]
 
+// ── Nút tải DOCX (chỉ admin) ─────────────────────────────────────────────────
+function AdminDownloadBtn({ subjectId, type, label }: { subjectId: string; type: 'lessons' | 'homework' | 'answers'; label: string }) {
+  const [loading, setLoading] = useState(false)
+  const handleDownload = async () => {
+    if (loading) return
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/subjects/${subjectId}/export?type=${type}`)
+      if (!res.ok) { alert('Không tải được file. Thử lại sau.'); return }
+      const blob = await res.blob()
+      const dispo = res.headers.get('Content-Disposition') || ''
+      const m = dispo.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i)
+      const fname = m ? decodeURIComponent(m[1]) : `${type}.docx`
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url; a.download = fname
+      document.body.appendChild(a); a.click(); a.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('Có lỗi khi tải file.')
+    } finally {
+      setLoading(false)
+    }
+  }
+  return (
+    <button
+      onClick={handleDownload}
+      disabled={loading}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50 transition shadow-sm"
+      title="Chỉ admin nhìn thấy — tải tài liệu định dạng Word (.docx)"
+    >
+      {loading ? <Loader2 size={14} className="animate-spin" /> : <span>⬇️</span>}
+      {loading ? 'Đang tạo...' : label}
+    </button>
+  )
+}
+
 // ── Main Component ──────────────────────────────────────────────────────────
 export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0, homeworkSets, isAdmin = false }: Props) {
   const hasIDE = courseType && IDE_COURSE_TYPES.includes(courseType)
@@ -1410,6 +1447,11 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* ── BTVN ── */}
           {activeTab === 'homework' && (
             <div>
+              {isAdmin && (
+                <div className="flex justify-end mb-3">
+                  <AdminDownloadBtn subjectId={subject.id} type="homework" label="Tải BTVN (DOCX)" />
+                </div>
+              )}
               {/* Sub-tabs BTVN — hiển khi có ≥ 2 nhóm (named sets + orphan) */}
               {allBTVNSets.length > 1 && (
                 <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
@@ -1799,6 +1841,11 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* ── BÀI GIẢNG ── */}
           {activeTab === 'theory' && (
             <div>
+              {isAdmin && (
+                <div className="flex justify-end mb-3">
+                  <AdminDownloadBtn subjectId={subject.id} type="lessons" label="Tải Bài giảng (DOCX)" />
+                </div>
+              )}
               {allLectureMaterials.length > 0 ? (
                 <>
                   {/* Sub-tabs — hiển người dùng dù chỉ 1 file */}
@@ -2051,6 +2098,11 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* ── ĐÁP ÁN ── */}
           {activeTab === 'answer' && (
             <div>
+              {isAdmin && (
+                <div className="flex justify-end mb-3">
+                  <AdminDownloadBtn subjectId={subject.id} type="answers" label="Tải Đáp án (DOCX)" />
+                </div>
+              )}
               {/* Sub-tabs đề BTVN — để chọn xem đáp án của đề nào */}
               {allBTVNSets.length > 1 && (
                 <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
