@@ -451,6 +451,46 @@ const IDE_TAB_LABEL: Partial<Record<CourseType, { label: string; emoji: string }
   LAP_TRINH_THUAT_TOAN: { label: 'Robot',       emoji: '🤖' },
 }
 
+// ── Quizizz types ─────────────────────────────────────────────────────────────
+interface QuizQuestionData {
+  id: string
+  order: number
+  content: string
+  options: Array<{ key: string; text: string }> | null
+  correctKey: string
+  explanation?: string | null
+  difficulty: string
+}
+
+interface QuizAttemptResult {
+  id: string
+  score: number
+  maxScore: number
+  submittedAt: string | null
+  answers: Array<{ questionId: string; selectedKey: string | null; isCorrect: boolean; score: number }>
+}
+
+interface QuizSetData {
+  id: string
+  title: string
+  status: string
+  openedAt: string | null
+  closedAt: string | null
+  questions: QuizQuestionData[]
+  myAttempt?: QuizAttemptResult
+}
+
+interface LeaderboardEntry {
+  rank: number
+  userId: string
+  name: string
+  score: number | null
+  maxScore: number
+  submittedAt: string | null
+  status: 'submitted' | 'absent'
+  isMe: boolean
+}
+
 interface Props {
   subject: { id: string; name: string; courseId: string }
   materials: Material[]
@@ -465,6 +505,8 @@ interface Props {
   myTotalScore?: number
   maxScore?: number
   isAdmin?: boolean
+  quizSets?: QuizSetData[]
+  showQuizTab?: boolean
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────────
@@ -543,11 +585,12 @@ function AdminDownloadBtn({ subjectId, type, label }: { subjectId: string; type:
 }
 
 // ── Main Component ──────────────────────────────────────────────────────────
-export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0, homeworkSets, isAdmin = false }: Props) {
+export function SubjectTabs({ subject, materials, questions, answersMap, top5, userId, userName, courseType, mySubjectScore = 0, myTotalScore = 0, maxScore = 0, homeworkSets, isAdmin = false, quizSets = [], showQuizTab = false }: Props) {
   const hasIDE = courseType && IDE_COURSE_TYPES.includes(courseType)
+  const QUIZ_TAB = { id: 'quizizz', label: 'Quizizz', emoji: '⚡' }
   const TABS = hasIDE
-    ? [...BASE_TABS.slice(0,3), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, BASE_TABS[3]]
-    : [...BASE_TABS.slice(0,3), NOTEBOOK_TAB, BASE_TABS[3]]
+    ? [...BASE_TABS.slice(0,3), { id: 'ide', ...(IDE_TAB_LABEL[courseType!] ?? { label: 'IDE', emoji: '💻' }) }, BASE_TABS[3], ...(showQuizTab ? [QUIZ_TAB] : [])]
+    : [...BASE_TABS.slice(0,3), NOTEBOOK_TAB, BASE_TABS[3], ...(showQuizTab ? [QUIZ_TAB] : [])]
   const [activeTab, setActiveTab] = useState('theory')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [videoCollapsed, setVideoCollapsed] = useState(false)
@@ -2273,6 +2316,15 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               </div>
             </div>
           )}
+
+          {/* ── QUIZIZZ ── */}
+          {activeTab === 'quizizz' && showQuizTab && (
+            <QuizizzTabContent
+              quizSets={quizSets}
+              userId={userId}
+              userName={userName}
+            />
+          )}
         </div>
       </div>
 
@@ -2314,5 +2366,337 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
 
     </div>
     </>
+  )
+}
+
+// ── QuizizzTabContent ──────────────────────────────────────────────────────────
+function QuizizzTabContent({
+  quizSets, userId, userName,
+}: {
+  quizSets: QuizSetData[]
+  userId: string
+  userName: string
+}) {
+  const [activeQuiz, setActiveQuiz] = useState<QuizSetData | null>(null)
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [myAttempt, setMyAttempt] = useState<QuizAttemptResult | null>(null)
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
+  const [loadingLb, setLoadingLb] = useState(false)
+
+  const openQuiz = (qs: QuizSetData) => {
+    setActiveQuiz(qs)
+    setSelectedAnswers({})
+    setSubmitted(!!qs.myAttempt)
+    setMyAttempt(qs.myAttempt ?? null)
+    setLeaderboard([]); setShowLeaderboard(false)
+  }
+
+  const loadLeaderboard = async (quizId: string) => {
+    if (loadingLb) return
+    setLoadingLb(true)
+    try {
+      const res = await fetch(`/api/quiz-sets/${quizId}/leaderboard`)
+      const data = await res.json()
+      if (data.success) {
+        setLeaderboard(data.data.leaderboard.map((e: any) => ({ ...e, isMe: e.userId === userId })))
+        setShowLeaderboard(true)
+      }
+    } finally { setLoadingLb(false) }
+  }
+
+  const handleSelect = (questionId: string, key: string) => {
+    if (submitted) return
+    setSelectedAnswers(prev => ({ ...prev, [questionId]: key }))
+  }
+
+  const handleSubmit = async () => {
+    if (!activeQuiz) return
+    if (!confirm('Nộp bài? Không thể thay đổi sau khi nộp.')) return
+    setSubmitting(true)
+    const answers = activeQuiz.questions.map(q => ({
+      questionId: q.id,
+      selectedKey: selectedAnswers[q.id] ?? null,
+    }))
+    const res = await fetch(`/api/quiz-sets/${activeQuiz.id}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      setMyAttempt(data.data)
+      setSubmitted(true)
+    } else {
+      alert(data.error || 'Nộp thất bại. Thử lại sau.')
+    }
+    setSubmitting(false)
+  }
+
+  // ── List view ──
+  if (!activeQuiz) {
+    if (quizSets.length === 0) {
+      return (
+        <div className="text-center py-16 text-gray-400">
+          <p className="text-5xl mb-3">⚡</p>
+          <p className="font-bold text-gray-600 text-lg">Chưa có Quizizz</p>
+          <p className="text-sm mt-1 text-gray-400">Thầy/cô sẽ mở khi đến buổi học</p>
+        </div>
+      )
+    }
+    return (
+      <div className="space-y-4">
+        <h3 className="font-black text-gray-800 text-xl mb-2">⚡ Quizizz buổi học</h3>
+        <p className="text-sm text-gray-500 -mt-2">Đúng: <strong>10đ</strong> · Sai: <strong>2đ</strong> · Không làm: <strong>0đ</strong></p>
+        {quizSets.map(qs => {
+          const isClosed = qs.status === 'closed'
+          const isOpen = qs.status === 'open'
+          const hasAttempt = !!qs.myAttempt
+          const borderColor = isOpen ? 'border-green-400' : isClosed ? 'border-indigo-300' : 'border-gray-200'
+          const bgColor = isOpen ? 'bg-green-50' : isClosed ? 'bg-indigo-50' : 'bg-gray-50'
+          return (
+            <div key={qs.id} className={`border-2 rounded-2xl overflow-hidden ${borderColor}`}>
+              <div className={`p-4 ${bgColor}`}>
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="font-black text-gray-800 text-base">{qs.title}</span>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        isOpen ? 'bg-green-500 text-white' :
+                        isClosed ? 'bg-indigo-600 text-white' : 'bg-gray-300 text-gray-700'
+                      }`}>
+                        {isOpen ? '🟢 Đang mở' : isClosed ? '✅ Đã xong' : '⏸️ Chưa mở'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500">{qs.questions?.length ?? 0} câu hỏi</p>
+                    {hasAttempt && qs.myAttempt && (
+                      <p className="text-sm font-bold text-indigo-700 mt-1">
+                        Điểm của bạn: <span className="text-2xl text-indigo-600">{qs.myAttempt.score}</span>/{qs.myAttempt.maxScore}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2 items-end">
+                    {(isOpen || isClosed) && (
+                      <button onClick={() => openQuiz(qs)}
+                        className={`text-white text-sm px-5 py-2.5 rounded-xl font-bold transition shadow ${
+                          isOpen ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'
+                        }`}>
+                        {isOpen ? (hasAttempt ? '📊 Kết quả' : '▶ Vào làm') : '📊 Xem & Xếp hạng'}
+                      </button>
+                    )}
+                    {qs.status === 'draft' && (
+                      <p className="text-xs text-gray-400 italic">Chờ thầy/cô mở...</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // ── Detail / Quiz view ──
+  const isClosed = activeQuiz.status === 'closed'
+  const questions = activeQuiz.questions ?? []
+  const answered = Object.keys(selectedAnswers).length
+  const attemptAnswerMap = myAttempt
+    ? Object.fromEntries(myAttempt.answers.map(a => [a.questionId, a]))
+    : {}
+
+  return (
+    <div>
+      <button onClick={() => setActiveQuiz(null)}
+        className="flex items-center gap-1 text-sm text-gray-500 hover:text-purple-600 mb-5 font-semibold transition">
+        ← Quay lại danh sách
+      </button>
+
+      {/* Quiz header */}
+      <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-5 text-white mb-5">
+        <h3 className="font-black text-xl mb-0.5">{activeQuiz.title}</h3>
+        <p className="text-white/70 text-sm">{questions.length} câu · Đúng: 10đ · Sai: 2đ · Không làm: 0đ</p>
+        {submitted && myAttempt && (
+          <div className="mt-4 bg-white/20 rounded-2xl p-4 flex items-center gap-4">
+            <div>
+              <p className="text-5xl font-black text-yellow-300">{myAttempt.score}</p>
+              <p className="text-white/70 text-sm">/{myAttempt.maxScore} điểm</p>
+            </div>
+            <div>
+              <p className="text-white font-bold">Đã nộp!</p>
+              {myAttempt.submittedAt && (
+                <p className="text-white/60 text-xs">{new Date(myAttempt.submittedAt).toLocaleTimeString('vi-VN')}</p>
+              )}
+            </div>
+          </div>
+        )}
+        {!submitted && activeQuiz.status === 'open' && (
+          <p className="text-white/70 text-sm mt-2">Chọn đáp án rồi bấm Nộp bài</p>
+        )}
+        {activeQuiz.status === 'draft' && (
+          <p className="text-yellow-300 text-sm mt-2 font-bold">⏸️ Quizizz chưa mở</p>
+        )}
+      </div>
+
+      {/* Questions */}
+      <div className="space-y-5 mb-6">
+        {questions.map((q, qi) => {
+          const myAns = attemptAnswerMap[q.id]
+          const selected = selectedAnswers[q.id]
+          const hasOptions = Array.isArray(q.options) && q.options.length > 0
+          return (
+            <div key={q.id} className="bg-white rounded-3xl border-2 border-gray-100 p-5 shadow-sm">
+              {/* Question header */}
+              <div className="flex items-start gap-3 mb-4">
+                <span className="w-9 h-9 flex-shrink-0 bg-indigo-100 text-indigo-700 font-black text-sm rounded-full flex items-center justify-center">
+                  {qi + 1}
+                </span>
+                <div className="flex-1">
+                  <RichContent text={q.content} className="text-gray-800 font-semibold text-base" />
+                </div>
+              </div>
+
+              {/* Options */}
+              {hasOptions ? (
+                <div className="ml-12 space-y-2">
+                  {q.options!.map((opt, oi) => {
+                    const isSelected = submitted ? myAns?.selectedKey === opt.key : selected === opt.key
+                    const isCorrectAns = isClosed && opt.key === q.correctKey
+                    const isWrongSel = submitted && myAns?.selectedKey === opt.key && !myAns.isCorrect
+                    const c = MC_COLORS[oi % 4]
+                    let cls = `flex items-center gap-3 border-2 rounded-2xl px-4 py-3 text-sm transition select-none `
+                    if (isCorrectAns) cls += 'border-green-500 bg-green-50 text-green-900 font-bold '
+                    else if (isWrongSel) cls += 'border-red-400 bg-red-50 text-red-900 '
+                    else if (isSelected) cls += `${c.sel} `
+                    else cls += `${c.base} ${!submitted ? 'cursor-pointer' : 'cursor-default'} `
+                    return (
+                      <div key={opt.key} className={cls} onClick={() => !submitted && handleSelect(q.id, opt.key)}>
+                        <span className={`w-7 h-7 flex-shrink-0 rounded-full flex items-center justify-center font-black text-xs ${isSelected ? c.keySel : c.keyBase}`}>
+                          {opt.key}
+                        </span>
+                        <span className="flex-1">{opt.text}</span>
+                        {isCorrectAns && <span className="text-green-600 font-bold text-xs ml-1">✓ Đúng</span>}
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                // Open-ended
+                <div className="ml-12">
+                  {!submitted ? (
+                    <input
+                      type="text"
+                      placeholder="Nhập đáp án..."
+                      value={selectedAnswers[q.id] ?? ''}
+                      onChange={e => handleSelect(q.id, e.target.value)}
+                      disabled={activeQuiz.status !== 'open'}
+                      className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-400 disabled:bg-gray-50"
+                    />
+                  ) : (
+                    <div className={`rounded-2xl px-4 py-3 text-sm border-2 ${myAns?.isCorrect ? 'bg-green-50 border-green-400 text-green-900' : 'bg-red-50 border-red-300 text-red-900'}`}>
+                      <span className="font-semibold">Bạn trả lời:</span> {myAns?.selectedKey ?? <em className="text-gray-500">Không trả lời</em>}
+                      {isClosed && (
+                        <span className="ml-3 text-gray-600">· <span className="font-semibold">Đáp án:</span> {q.correctKey}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Explanation (chỉ khi quiz closed) */}
+              {isClosed && q.explanation && (
+                <div className="ml-12 mt-3 bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                  <p className="text-xs font-black text-amber-700 mb-1 uppercase tracking-wide">💡 Lời giải</p>
+                  <RichContent text={q.explanation} className="text-gray-700 text-sm" />
+                </div>
+              )}
+
+              {/* Score badge */}
+              {submitted && myAns && (
+                <div className="ml-12 mt-2">
+                  <span className={`inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full ${
+                    myAns.score >= 10 ? 'bg-green-100 text-green-700' :
+                    myAns.score > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    +{myAns.score} điểm
+                  </span>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Submit bar */}
+      {!submitted && activeQuiz.status === 'open' && (
+        <div className="sticky bottom-4 bg-white rounded-2xl shadow-xl border-2 border-indigo-200 p-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm text-gray-600">Đã chọn <strong className="text-indigo-700">{answered}/{questions.length}</strong> câu</p>
+            <p className="text-xs text-gray-400">Câu chưa chọn = 0 điểm</p>
+          </div>
+          <button onClick={handleSubmit} disabled={submitting}
+            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-8 py-3 rounded-xl font-black text-base transition shadow-lg">
+            {submitting ? '⏳ Đang nộp...' : '📤 Nộp bài'}
+          </button>
+        </div>
+      )}
+
+      {/* Leaderboard */}
+      {(submitted || isClosed) && (
+        <div className="mt-6">
+          <button
+            onClick={() => showLeaderboard ? setShowLeaderboard(false) : loadLeaderboard(activeQuiz.id)}
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl py-3 font-bold transition hover:from-indigo-700 hover:to-purple-700 shadow-md">
+            {loadingLb ? '⏳ Đang tải...' : showLeaderboard ? '▲ Ẩn xếp hạng' : '🏆 Xem bảng xếp hạng'}
+          </button>
+
+          {showLeaderboard && leaderboard.length > 0 && (
+            <div className="mt-4 bg-white rounded-3xl border-2 border-indigo-100 overflow-hidden shadow-sm">
+              <div className="bg-gradient-to-r from-indigo-600 to-purple-700 px-5 py-4">
+                <h4 className="text-white font-black text-lg">🏆 Bảng xếp hạng</h4>
+                <p className="text-white/60 text-xs">{activeQuiz.title}</p>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {leaderboard.map(entry => (
+                  <div key={entry.userId}
+                    className={`flex items-center gap-3 px-5 py-3.5 ${entry.isMe ? 'bg-indigo-50' : 'hover:bg-gray-50'} ${entry.status === 'absent' ? 'opacity-50' : ''}`}>
+                    <div className={`w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full font-black text-sm ${
+                      entry.rank === 1 ? 'bg-yellow-400 text-yellow-900' :
+                      entry.rank === 2 ? 'bg-gray-300 text-gray-700' :
+                      entry.rank === 3 ? 'bg-amber-600 text-white' :
+                      entry.status === 'absent' ? 'bg-red-100 text-red-600' :
+                      'bg-gray-100 text-gray-600'
+                    }`}>
+                      {entry.status === 'absent' ? '—' : entry.rank}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`font-semibold text-sm truncate ${entry.isMe ? 'text-indigo-700' : 'text-gray-800'}`}>
+                        {entry.name} {entry.isMe && <span className="text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full ml-1">bạn</span>}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {entry.status === 'absent' ? 'Vắng mặt' :
+                          `Nộp lúc ${entry.submittedAt ? new Date(entry.submittedAt).toLocaleTimeString('vi-VN', {hour:'2-digit',minute:'2-digit'}) : ''}`}
+                      </p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      {entry.status === 'absent' ? (
+                        <span className="text-sm font-bold text-red-400">Vắng</span>
+                      ) : (
+                        <>
+                          <p className={`text-xl font-black ${entry.rank <= 3 ? 'text-indigo-700' : 'text-gray-700'}`}>{entry.score}</p>
+                          <p className="text-xs text-gray-400">/{entry.maxScore}đ</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 }

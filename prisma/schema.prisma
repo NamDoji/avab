@@ -46,6 +46,7 @@ model User {
   homeworkSubmissions HomeworkSubmission[] @relation("SubmissionStudent")
   busAssignments     BusAssignment[]
   uniformOrders      UniformOrder[]
+  quizAttempts       QuizAttempt[] @relation("QuizAttempts")
 
   @@map("avab_users")
 }
@@ -189,6 +190,7 @@ model Subject {
   homeworkSets        HomeworkSet[]
   sessionFeedbacks    SessionFeedback[]
   homeworkSubmissions HomeworkSubmission[] @relation("SubmissionSubject")
+  quizSets            QuizSet[]
 
   @@map("avab_subjects")
 }
@@ -519,6 +521,7 @@ model Organization {
   busRoutes        BusRoute[]
   uniformItems     UniformItem[]
   uniformOrders    UniformOrder[]
+  quizSets         QuizSet[]     @relation("OrgQuizSets")
 
   @@map("avab_organizations")
 }
@@ -1535,4 +1538,83 @@ model UniformOrder {
 
   @@index([organizationId])
   @@map("avab_uniform_orders")
+}
+
+// ── Quizizz — Kiểm tra trực tiếp (khoá PER_SESSION) ──────────────────────
+
+// Một phiên Quizizz gắn với Subject
+model QuizSet {
+  id             String    @id @default(cuid())
+  subjectId      String
+  organizationId String?
+  title          String
+  description    String?
+  // status: draft | open | closed
+  // draft = chưa mở; open = đang làm; closed = đã hoàn thành (unlock bài giảng + lời giải)
+  status         String    @default("draft")
+  openedAt       DateTime?
+  closedAt       DateTime?
+  sourceType     String    @default("upload") // upload | theory_extract
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  organization Organization? @relation("OrgQuizSets", fields: [organizationId], references: [id], onDelete: SetNull)
+  questions    QuizQuestion[]
+  attempts     QuizAttempt[]
+
+  @@map("avab_quiz_sets")
+}
+
+// Câu hỏi trong QuizSet (ABCD hoặc tự luận)
+model QuizQuestion {
+  id          String   @id @default(cuid())
+  quizSetId   String
+  order       Int      @default(0)
+  content     String
+  options     Json?    // [{key:"A",text:"..."}, ...] — null = tự luận
+  correctKey  String   // "A"/"B"/"C"/"D" hoặc đáp án text (tự luận)
+  explanation String?
+  difficulty  String   @default("medium") // easy | medium | hard
+  createdAt   DateTime @default(now())
+
+  quizSet QuizSet      @relation(fields: [quizSetId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+
+  @@map("avab_quiz_questions")
+}
+
+// Bài làm của học sinh (1 per student per QuizSet)
+model QuizAttempt {
+  id          String    @id @default(cuid())
+  quizSetId   String
+  userId      String
+  score       Int       @default(0)
+  maxScore    Int       @default(0)
+  submittedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  quizSet QuizSet    @relation(fields: [quizSetId], references: [id], onDelete: Cascade)
+  user    User       @relation("QuizAttempts", fields: [userId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+
+  @@unique([quizSetId, userId])
+  @@map("avab_quiz_attempts")
+}
+
+// Từng câu trả lời trong 1 bài làm
+model QuizAnswer {
+  id          String   @id @default(cuid())
+  attemptId   String
+  questionId  String
+  selectedKey String?  // null = không làm
+  isCorrect   Boolean  @default(false)
+  score       Int      @default(0) // đúng=10, sai=2, không làm=0
+  createdAt   DateTime @default(now())
+
+  attempt  QuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@map("avab_quiz_answers")
 }

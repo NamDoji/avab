@@ -63,7 +63,7 @@ export default async function SubjectDetailPage({
     }).catch(() => null),
     prisma.course.findUnique({
       where: { id: courseId },
-      select: { id: true, name: true, courseType: true, subjectCode: true },
+      select: { id: true, name: true, courseType: true, subjectCode: true, paymentType: true },
     }).catch(() => null),
   ])
 
@@ -105,6 +105,55 @@ export default async function SubjectDetailPage({
     score: t._sum.score || 0,
     isMe: t.userId === userId,
   }))
+
+  // ── Quizizz (chỉ với khoá thu tiền theo buổi PER_SESSION) ──
+  const isPerSession = (course as any)?.paymentType === 'PER_SESSION'
+  const rawQuizSets = isPerSession
+    ? await prisma.quizSet.findMany({
+        where: { subjectId },
+        orderBy: { createdAt: 'asc' },
+        include: { questions: { orderBy: { order: 'asc' } } },
+      }).catch(() => [])
+    : []
+
+  const myQuizAttempts = rawQuizSets.length > 0
+    ? await prisma.quizAttempt.findMany({
+        where: { quizSetId: { in: rawQuizSets.map((s) => s.id) }, userId },
+        include: { answers: true },
+      }).catch(() => [])
+    : []
+
+  const quizSets = rawQuizSets.map((s) => {
+    const myAttempt = myQuizAttempts.find((a) => a.quizSetId === s.id)
+    // Ẩn đáp án/lời giải nếu quiz chưa closed
+    const questions = s.status !== 'closed'
+      ? s.questions.map((q) => ({
+          id: q.id, order: q.order, content: q.content,
+          options: (q.options as any) ?? null,
+          correctKey: '', explanation: null, difficulty: q.difficulty,
+        }))
+      : s.questions.map((q) => ({
+          id: q.id, order: q.order, content: q.content,
+          options: (q.options as any) ?? null,
+          correctKey: q.correctKey, explanation: q.explanation, difficulty: q.difficulty,
+        }))
+    return {
+      id: s.id, title: s.title, status: s.status,
+      openedAt: s.openedAt?.toISOString() ?? null,
+      closedAt: s.closedAt?.toISOString() ?? null,
+      questions,
+      myAttempt: myAttempt
+        ? {
+            id: myAttempt.id, score: myAttempt.score, maxScore: myAttempt.maxScore,
+            submittedAt: myAttempt.submittedAt?.toISOString() ?? null,
+            answers: myAttempt.answers.map((a) => ({
+              questionId: a.questionId, selectedKey: a.selectedKey,
+              isCorrect: a.isCorrect, score: a.score,
+            })),
+          }
+        : undefined,
+    }
+  })
 
   const answersMap = Object.fromEntries(userAnswers.map((a) => [a.questionId, a]))
 
@@ -227,6 +276,8 @@ export default async function SubjectDetailPage({
           myTotalScore={myTotalScore}
           maxScore={maxScore}
           isAdmin={isAdmin}
+          quizSets={quizSets}
+          showQuizTab={isPerSession}
         />
       </div>
     </div>

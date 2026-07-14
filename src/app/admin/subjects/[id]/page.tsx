@@ -83,6 +83,16 @@ interface SubjectDetail {
   homeworkSets: HomeworkSet[]
 }
 
+interface QuizSetAdmin {
+  id: string
+  title: string
+  status: string
+  openedAt: string | null
+  closedAt: string | null
+  createdAt: string
+  _count: { questions: number; attempts: number }
+}
+
 type MaterialType = 'THEORY' | 'VIDEO' | 'ANSWER'
 type InputMode = 'url' | 'upload'
 
@@ -205,6 +215,14 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
   const [dapAnFile, setDapAnFile] = useState<File | null>(null)
   const [savingDapAn, setSavingDapAn] = useState(false)
 
+  // ── Quizizz ──
+  const [quizSets, setQuizSets] = useState<QuizSetAdmin[]>([])
+  const [quizUploadFile, setQuizUploadFile] = useState<File | null>(null)
+  const [quizTitle, setQuizTitle] = useState('')
+  const [quizParsing, setQuizParsing] = useState(false)
+  const [quizSaving, setQuizSaving] = useState(false)
+  const [quizParseResult, setQuizParseResult] = useState<{ parsed: number; questions: any[] } | null>(null)
+
   // ── Notifications ──
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const showMsg = (type: 'success' | 'error', text: string) => {
@@ -214,9 +232,14 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
 
   const load = async () => {
     setLoading(true)
-    const res = await fetch(`/api/admin/subjects/${id}`)
+    const [res, qRes] = await Promise.all([
+      fetch(`/api/admin/subjects/${id}`),
+      fetch(`/api/admin/subjects/${id}/quiz-sets`),
+    ])
     const data = await res.json()
     if (data.success) setSubject(data.data)
+    const qData = await qRes.json()
+    if (qData.success) setQuizSets(qData.data)
     setLoading(false)
   }
 
@@ -515,6 +538,63 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
         else showMsg('error', r.error || 'Upload thất bại')
       }
     } finally { setSavingDapAn(false) }
+  }
+
+  // ── Quizizz handlers ──
+  const loadQuizSets = async () => {
+    const r = await fetch(`/api/admin/subjects/${id}/quiz-sets`)
+    if (r.ok) { const d = await r.json(); if (d.success) setQuizSets(d.data) }
+  }
+
+  const handleQuizPreview = async () => {
+    if (!quizUploadFile) return
+    setQuizParsing(true); setQuizParseResult(null)
+    const fd = new FormData()
+    fd.append('file', quizUploadFile)
+    fd.append('setTitle', quizTitle || quizUploadFile.name)
+    fd.append('save', 'false')
+    const res = await fetch(`/api/admin/subjects/${id}/parse-quizizz`, { method: 'POST', body: fd })
+    const data = await res.json()
+    if (data.success) setQuizParseResult(data.data)
+    else showMsg('error', data.error || 'Parse thất bại')
+    setQuizParsing(false)
+  }
+
+  const handleQuizSave = async () => {
+    if (!quizUploadFile) return
+    setQuizSaving(true)
+    const fd = new FormData()
+    fd.append('file', quizUploadFile)
+    fd.append('setTitle', quizTitle || quizUploadFile.name)
+    fd.append('save', 'true')
+    const res = await fetch(`/api/admin/subjects/${id}/parse-quizizz`, { method: 'POST', body: fd })
+    const data = await res.json()
+    if (data.success) {
+      showMsg('success', `Đã tạo Quizizz "${quizTitle || quizUploadFile.name}" — ${data.data.parsed} câu!`)
+      setQuizUploadFile(null); setQuizTitle(''); setQuizParseResult(null)
+      await loadQuizSets()
+    } else showMsg('error', data.error || 'Lưu thất bại')
+    setQuizSaving(false)
+  }
+
+  const handleQuizStatus = async (quizId: string, action: 'open' | 'close') => {
+    const res = await fetch(`/api/admin/quiz-sets/${quizId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      showMsg('success', action === 'open' ? 'Đã mở Quizizz! Học sinh có thể vào làm.' : 'Đã hoàn thành! Học sinh xem lại bài và bài giảng được mở.')
+      await loadQuizSets()
+    } else showMsg('error', data.error)
+  }
+
+  const handleDeleteQuizSet = async (quizId: string, title: string) => {
+    if (!confirm(`Xóa Quizizz "${title}"? Toàn bộ bài nộp sẽ bị xóa.`)) return
+    await fetch(`/api/admin/quiz-sets/${quizId}`, { method: 'DELETE' })
+    setQuizSets(prev => prev.filter(q => q.id !== quizId))
+    showMsg('success', 'Đã xóa Quizizz')
   }
 
   const getMaterials = (type: MaterialType) =>
@@ -1649,6 +1729,113 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
             <p className="text-sm text-gray-500">
               Học viên tự viết bài giải tự luận → AI tự động chấm điểm và đưa ra nhận xét cá nhân hoá.
               Không cần admin upload nội dung.
+            </p>
+          </div>
+
+          {/* ── 7. QUIZIZZ ── */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <CheckSquare className="w-5 h-5 text-indigo-600" />
+              ⚡ Quizizz (Kiểm tra trực tiếp)
+              <span className="text-xs font-normal text-gray-400 ml-1">— Dành cho khoá thu tiền theo buổi</span>
+            </h2>
+
+            {/* Danh sách quiz sets */}
+            {quizSets.length > 0 && (
+              <div className="mb-5 space-y-3">
+                {quizSets.map(qs => (
+                  <div key={qs.id} className="border rounded-xl overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-3 bg-indigo-50">
+                      <div>
+                        <span className="font-semibold text-indigo-800 text-sm">{qs.title}</span>
+                        <span className="ml-2 text-xs text-indigo-600">{qs._count.questions} câu · {qs._count.attempts} lượt nộp</span>
+                        <span className={`ml-2 text-xs font-bold px-2 py-0.5 rounded-full ${
+                          qs.status === 'open' ? 'bg-green-100 text-green-700' :
+                          qs.status === 'closed' ? 'bg-gray-200 text-gray-600' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {qs.status === 'open' ? '🟢 Đang mở' : qs.status === 'closed' ? '✅ Đã xong' : '⏸️ Bản nháp'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {qs.status === 'draft' && (
+                          <button onClick={() => handleQuizStatus(qs.id, 'open')}
+                            className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">
+                            ▶ Mở
+                          </button>
+                        )}
+                        {qs.status === 'open' && (
+                          <button onClick={() => handleQuizStatus(qs.id, 'close')}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">
+                            ✅ Hoàn thành
+                          </button>
+                        )}
+                        <button onClick={() => handleDeleteQuizSet(qs.id, qs.title)}
+                          className="p-1.5 text-gray-400 hover:text-red-500 transition">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    {qs.closedAt && (
+                      <div className="px-4 py-2 bg-gray-50 text-xs text-gray-500">
+                        Hoàn thành: {new Date(qs.closedAt).toLocaleString('vi-VN')}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Upload form */}
+            <input type="text" placeholder="Tên Quizizz (VD: Buổi 1 — Python cơ bản)"
+              value={quizTitle} onChange={e => setQuizTitle(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+
+            <div className="flex gap-3 flex-wrap">
+              <label className="flex-1 min-w-48">
+                <input type="file" accept=".docx,.pdf,.txt"
+                  onChange={e => { setQuizUploadFile(e.target.files?.[0] ?? null); setQuizParseResult(null) }}
+                  className="hidden" />
+                <div className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition ${quizUploadFile ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}`}>
+                  <CheckSquare className="w-7 h-7 mx-auto mb-1 text-gray-400" />
+                  <p className="text-sm text-gray-500">{quizUploadFile ? quizUploadFile.name : 'Chọn file DOCX Quizizz'}</p>
+                </div>
+              </label>
+              <div className="flex flex-col gap-2">
+                <button onClick={handleQuizPreview} disabled={!quizUploadFile || quizParsing}
+                  className="bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+                  {quizParsing ? 'Đang đọc...' : '🔍 Preview'}
+                </button>
+                {quizParseResult && (
+                  <button onClick={handleQuizSave} disabled={quizSaving}
+                    className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+                    {quizSaving ? 'Đang lưu...' : `⚡ Tạo Quizizz (${quizParseResult.parsed} câu)`}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {quizParseResult && (
+              <div className="mt-4 p-4 bg-indigo-50 rounded-xl">
+                <p className="font-semibold text-indigo-700 mb-2">Preview: {quizParseResult.parsed} câu</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {quizParseResult.questions.slice(0, 8).map((q: any, i: number) => (
+                    <div key={i} className="bg-white rounded-lg p-3 text-sm">
+                      <p className="font-medium text-gray-800">{q.order}. {String(q.content).substring(0, 100)}{String(q.content).length > 100 ? '...' : ''}</p>
+                      <p className="text-indigo-600 mt-1 text-xs">
+                        {q.options ? `ABCD · ĐA: ${q.correctKey}` : `Tự luận · ĐA: ${String(q.correctKey).substring(0, 40)}`}
+                      </p>
+                    </div>
+                  ))}
+                  {quizParseResult.parsed > 8 && (
+                    <p className="text-xs text-gray-400 text-center">...và {quizParseResult.parsed - 8} câu nữa</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <p className="text-xs text-gray-400 mt-2">
+              💡 Hỗ trợ DOCX có format ABCD (A. B. C. D. → Đáp án: A) hoặc tự luận (Câu N → Đáp án → Lời giải)
             </p>
           </div>
 
