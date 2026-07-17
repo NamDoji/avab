@@ -204,8 +204,8 @@ export default async function TeacherEnhancedDashboard() {
             <p className="text-xs text-gray-500 mt-1">Tuần này</p>
             <p className="text-xs text-gray-300 mt-0.5">Từ thứ 2</p>
           </div>
-          <div className="bg-white rounded-2xl p-4 border border-purple-100 shadow-sm col-span-2 sm:col-span-1">
-            <p className="text-3xl font-black text-purple-600">{sessionsThisMonth}</p>
+          <div className="bg-white rounded-2xl p-4 border border-cherry-100 shadow-sm col-span-2 sm:col-span-1">
+            <p className="text-3xl font-black text-cherry-600">{sessionsThisMonth}</p>
             <p className="text-xs text-gray-500 mt-1">Tháng này</p>
             <p className="text-xs text-gray-300 mt-0.5">Từ đầu tháng</p>
           </div>

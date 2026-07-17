@@ -22,7 +22,7 @@ const roleLabels: Record<string, string> = {
 }
 
 const roleColors: Record<string, string> = {
-  ADMIN: 'bg-purple-100 text-purple-700',
+  ADMIN: 'bg-cherry-100 text-cherry-700',
   TEACHER: 'bg-teal-100 text-teal-700',
   STUDENT: 'bg-blue-100 text-blue-700',
   PARENT: 'bg-yellow-100 text-yellow-700',
@@ -158,13 +158,13 @@ export default function AdminUsersPage() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Users className="w-6 h-6 text-purple-600" />
+            <Users className="w-6 h-6 text-cherry-600" />
             Quản lý người dùng
           </h1>
           {/* Feature 7: Create user button */}
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition"
+            className="flex items-center gap-1.5 bg-cherry-600 hover:bg-cherry-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition"
           >
             <Plus className="w-4 h-4" /> Tạo tài khoản
           </button>
@@ -187,12 +187,12 @@ export default function AdminUsersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Tìm theo tên, SĐT, email..."
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
               />
             </div>
             <button
               type="submit"
-              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition"
+              className="bg-cherry-600 hover:bg-cherry-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition"
             >
               Tìm
             </button>
@@ -201,7 +201,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
+            className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 bg-white"
           >
             <option value="">Tất cả vai trò</option>
             <option value="ADMIN">Admin</option>
@@ -247,7 +247,7 @@ export default function AdminUsersPage() {
                       <span className="text-xs text-gray-400">{new Date(user.createdAt).toLocaleDateString('vi-VN')} · {user._count.enrollments} đăng ký</span>
                       <div className="flex items-center gap-1.5">
                         <button onClick={() => openEditModal(user)}
-                          className="flex items-center gap-1 text-xs text-purple-600 px-2.5 py-1.5 rounded-lg border border-purple-200 hover:bg-purple-50 transition">
+                          className="flex items-center gap-1 text-xs text-cherry-600 px-2.5 py-1.5 rounded-lg border border-cherry-200 hover:bg-cherry-50 transition">
                           <Edit2 className="w-3 h-3" /> Sửa
                         </button>
                         <button onClick={() => handleResetPassword(user)}
@@ -301,7 +301,7 @@ export default function AdminUsersPage() {
                         <td className="p-4">
                           <div className="flex items-center gap-1.5">
                             <button onClick={() => openEditModal(user)}
-                              className="flex items-center gap-1 text-xs text-purple-600 hover:bg-purple-50 px-2.5 py-1.5 rounded-lg transition border border-purple-200">
+                              className="flex items-center gap-1 text-xs text-cherry-600 hover:bg-cherry-50 px-2.5 py-1.5 rounded-lg transition border border-cherry-200">
                               <Edit2 className="w-3.5 h-3.5" /> Sửa
                             </button>
                             <button onClick={() => handleResetPassword(user)}
@@ -335,7 +335,7 @@ export default function AdminUsersPage() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                <Edit2 className="w-5 h-5 text-purple-600" /> Sửa thông tin
+                <Edit2 className="w-5 h-5 text-cherry-600" /> Sửa thông tin
               </h2>
               <button onClick={() => { setShowEditModal(false); setEditMsg(null) }} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
@@ -351,24 +351,24 @@ export default function AdminUsersPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Tên</label>
                 <input type="text" value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="Nguyễn Văn A"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">SĐT *</label>
                 <input type="tel" required value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))}
                   placeholder="0912345678"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
                 <input type="email" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))}
                   placeholder="email@gmail.com"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Vai trò</label>
                 <select value={editForm.role} onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white">
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 bg-white">
                   <option value="STUDENT">Học viên</option>
                   <option value="TEACHER">Giáo viên</option>
                   <option value="PARENT">Phụ huynh</option>
@@ -383,7 +383,7 @@ export default function AdminUsersPage() {
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={editing}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition">
+                  className="flex-1 bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition">
                   {editing ? 'Đang lưu...' : 'Lưu thay đổi'}
                 </button>
                 <button type="button" onClick={() => { setShowEditModal(false); setEditMsg(null) }}
@@ -402,7 +402,7 @@ export default function AdminUsersPage() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                <Plus className="w-5 h-5 text-purple-600" /> Tạo tài khoản mới
+                <Plus className="w-5 h-5 text-cherry-600" /> Tạo tài khoản mới
               </h2>
               <button
                 onClick={() => { setShowCreateModal(false); setCreateMsg(null) }}
@@ -426,7 +426,7 @@ export default function AdminUsersPage() {
                   value={createForm.name}
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
                   placeholder="Nguyễn Văn A"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -438,7 +438,7 @@ export default function AdminUsersPage() {
                   value={createForm.phone}
                   onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
                   placeholder="0912345678"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -450,7 +450,7 @@ export default function AdminUsersPage() {
                   value={createForm.email}
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="email@gmail.com"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -459,7 +459,7 @@ export default function AdminUsersPage() {
                 <select
                   value={createForm.role}
                   onChange={(e) => setCreateForm((f) => ({ ...f, role: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 bg-white"
                 >
                   <option value="STUDENT">Học viên</option>
                   <option value="TEACHER">Giáo viên</option>
@@ -476,7 +476,7 @@ export default function AdminUsersPage() {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition"
+                  className="flex-1 bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition"
                 >
                   {creating ? 'Đang tạo...' : 'Tạo tài khoản'}
                 </button>

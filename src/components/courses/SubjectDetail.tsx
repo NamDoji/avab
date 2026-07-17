@@ -49,8 +49,8 @@ export function SubjectDetail({ subject }: Props) {
               flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm whitespace-nowrap
               transition-all duration-200 min-h-[48px]
               ${activeTab === tab.id
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-200'
-                : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-purple-200 hover:text-purple-600'
+                ? 'bg-cherry-600 text-white shadow-lg shadow-cherry-200'
+                : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-cherry-200 hover:text-cherry-600'
               }
             `}
           >
@@ -61,14 +61,14 @@ export function SubjectDetail({ subject }: Props) {
       </div>
 
       {/* Tab content */}
-      <div className="bg-white rounded-4xl border-2 border-purple-50 p-6 md:p-8">
+      <div className="bg-white rounded-4xl border-2 border-cherry-50 p-6 md:p-8">
         {activeTab === 'theory' && (
           <div>
             <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
               📖 Lý thuyết — {subject.name}
             </h2>
             <div className="prose max-w-none text-gray-700 leading-relaxed">
-              <div className="bg-purple-50 rounded-3xl p-6 mb-4">
+              <div className="bg-cherry-50 rounded-3xl p-6 mb-4">
                 <p className="text-gray-500 italic text-sm">
                   📂 Tài liệu lý thuyết sẽ được hiển thị ở đây sau khi giáo viên tải lên.
                   File PDF hoặc Word sẽ được nhúng trực tiếp để xem thuận tiện.

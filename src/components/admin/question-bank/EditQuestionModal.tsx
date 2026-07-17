@@ -22,12 +22,12 @@ export interface Question {
 
 const Q_TYPE_BADGE: Record<string, { label: string; color: string }> = {
   MULTIPLE_CHOICE: { label: 'Trắc nghiệm',    color: 'bg-blue-100 text-blue-700'     },
-  OPEN:            { label: 'Tự luận',          color: 'bg-purple-100 text-purple-700'  },
+  OPEN:            { label: 'Tự luận',          color: 'bg-cherry-100 text-cherry-700'  },
   TRUE_FALSE:      { label: 'Đúng/Sai',         color: 'bg-green-100 text-green-700'    },
   MATCHING:        { label: 'Nối đáp',           color: 'bg-orange-100 text-orange-700'  },
   FILL_BLANK:      { label: 'Điền khuyết',       color: 'bg-teal-100 text-teal-700'      },
   NUMBER_INPUT:    { label: 'Số học',            color: 'bg-red-100 text-red-700'        },
-  SHORT_ANSWER:    { label: 'Trả lời ngắn',      color: 'bg-indigo-100 text-indigo-700'  },
+  SHORT_ANSWER:    { label: 'Trả lời ngắn',      color: 'bg-cherry-100 text-cherry-700'  },
   SORT_WORDS:      { label: 'Sắp xếp từ',        color: 'bg-pink-100 text-pink-700'      },
   GROUP_CLASSIFY:  { label: 'Phân loại',          color: 'bg-yellow-100 text-yellow-700'  },
   MULTI_BLANK:     { label: 'Nhiều chỗ trống',   color: 'bg-cyan-100 text-cyan-700'      },

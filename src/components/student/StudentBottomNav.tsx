@@ -45,7 +45,7 @@ export default function StudentBottomNav() {
                 key={item.href}
                 href={item.href}
                 className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-all active:scale-95 ${
-                  isActive ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'
+                  isActive ? 'text-cherry-600' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
                 <span className={`text-xl transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -53,13 +53,13 @@ export default function StudentBottomNav() {
                 </span>
                 <span
                   className={`text-[10px] font-bold leading-none ${
-                    isActive ? 'text-indigo-600' : 'text-gray-400'
+                    isActive ? 'text-cherry-600' : 'text-gray-400'
                   }`}
                 >
                   {item.label}
                 </span>
                 {isActive && (
-                  <span className="w-1 h-1 rounded-full bg-indigo-500 mt-0.5" />
+                  <span className="w-1 h-1 rounded-full bg-cherry-500 mt-0.5" />
                 )}
               </Link>
             )
@@ -81,7 +81,7 @@ export default function StudentBottomNav() {
               href={item.href}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                  ? 'bg-cherry-600 text-white shadow-md shadow-cherry-200'
                   : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
               }`}
             >
@@ -94,7 +94,7 @@ export default function StudentBottomNav() {
           href="/hoc-vien/thong-ke"
           className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
             pathname.startsWith('/hoc-vien/thong-ke')
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+              ? 'bg-cherry-600 text-white shadow-md shadow-cherry-200'
               : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
           }`}
         >

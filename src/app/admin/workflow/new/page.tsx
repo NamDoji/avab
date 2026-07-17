@@ -38,10 +38,10 @@ export default async function NewWorkflowPage({ searchParams }: RouteContext) {
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-8 px-6"
-        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #BE3659 100%)' }}
       >
         <div className="container mx-auto max-w-3xl">
-          <p className="text-indigo-200 text-sm font-semibold mb-1">
+          <p className="text-cherry-200 text-sm font-semibold mb-1">
             <Link href="/admin" className="hover:underline">← Admin</Link>
             {' / '}
             <Link href="/admin/workflow" className="hover:underline">Workflow Engine</Link>
@@ -50,7 +50,7 @@ export default async function NewWorkflowPage({ searchParams }: RouteContext) {
           <h1 className="text-2xl font-black">
             {fromTemplate ? '📋 Tạo từ Template' : '➕ Workflow mới'}
           </h1>
-          <p className="text-indigo-200 text-sm mt-1">
+          <p className="text-cherry-200 text-sm mt-1">
             Định nghĩa quy trình phê duyệt, xem xét hoặc xử lý tự động
           </p>
         </div>

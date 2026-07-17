@@ -162,9 +162,9 @@ export default async function ERPReportsPage() {
             <p className="text-xs text-cyan-200 mt-2">{teacherWorkload.length} đã dạy buổi học</p>
           </div>
           <div className="rounded-3xl p-6 text-white shadow-sm" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)' }}>
-            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide mb-1">📚 Lớp học</p>
+            <p className="text-xs font-semibold text-cherry-200 uppercase tracking-wide mb-1">📚 Lớp học</p>
             <p className="text-3xl font-black">{classCount.toLocaleString('vi-VN')}</p>
-            <p className="text-xs text-indigo-200 mt-2">Lớp đang hoạt động</p>
+            <p className="text-xs text-cherry-200 mt-2">Lớp đang hoạt động</p>
           </div>
           <div
             className="rounded-3xl p-6 text-white shadow-sm"
@@ -254,7 +254,7 @@ export default async function ERPReportsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-bold text-gray-800 truncate">{t.name}</span>
-                      <span className="text-sm font-black text-indigo-700 ml-2 flex-shrink-0">{t.sessions} buổi</span>
+                      <span className="text-sm font-black text-cherry-700 ml-2 flex-shrink-0">{t.sessions} buổi</span>
                     </div>
                     <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                       <div
@@ -298,11 +298,11 @@ export default async function ERPReportsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {courseOccupancy.map((c) => (
-                    <tr key={c.id} className="hover:bg-indigo-50/30 transition">
+                    <tr key={c.id} className="hover:bg-cherry-50/30 transition">
                       <td className="px-6 py-4">
                         <Link
                           href={`/admin/courses/${c.id}`}
-                          className="font-semibold text-gray-800 hover:text-indigo-700 transition"
+                          className="font-semibold text-gray-800 hover:text-cherry-700 transition"
                         >
                           {c.name}
                         </Link>

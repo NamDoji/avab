@@ -129,7 +129,7 @@ export default function NotificationBell({ initialCount, initialRecent = [] }: P
             <Link
               href="/admin/notifications"
               onClick={() => setOpen(false)}
-              className="block text-center text-sm font-bold text-violet-600 hover:text-violet-700 transition-colors"
+              className="block text-center text-sm font-bold text-cherry-600 hover:text-cherry-700 transition-colors"
             >
               Xem tất cả →
             </Link>

@@ -36,7 +36,7 @@ interface WorkflowBuilderProps {
 const STEP_TYPES: { value: StepType; label: string; icon: string; color: string }[] = [
   { value: 'approve',    label: 'Phê duyệt',   icon: '✅', color: 'bg-green-100 text-green-700'   },
   { value: 'review',     label: 'Xem xét',      icon: '🔍', color: 'bg-blue-100 text-blue-700'     },
-  { value: 'sign',       label: 'Ký số',        icon: '✍️', color: 'bg-purple-100 text-purple-700' },
+  { value: 'sign',       label: 'Ký số',        icon: '✍️', color: 'bg-cherry-100 text-cherry-700' },
   { value: 'notify',     label: 'Thông báo',    icon: '🔔', color: 'bg-yellow-100 text-yellow-700' },
   { value: 'form_input', label: 'Nhập liệu',    icon: '📝', color: 'bg-orange-100 text-orange-700' },
   { value: 'auto',       label: 'Tự động',      icon: '⚙️', color: 'bg-gray-100 text-gray-700'    },
@@ -83,7 +83,7 @@ function StepCard({
 
   return (
     <div className={`bg-white rounded-2xl border shadow-sm transition-all ${
-      expanded ? 'border-indigo-200' : 'border-gray-100'
+      expanded ? 'border-cherry-200' : 'border-gray-100'
     }`}>
       {/* Header */}
       <div
@@ -94,7 +94,7 @@ function StepCard({
           <GripVertical size={16} />
         </div>
 
-        <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-black flex items-center justify-center flex-shrink-0">
+        <span className="w-6 h-6 rounded-full bg-cherry-100 text-cherry-700 text-xs font-black flex items-center justify-center flex-shrink-0">
           {index + 1}
         </span>
 
@@ -145,7 +145,7 @@ function StepCard({
                 value={step.name}
                 onChange={e => onUpdate(step.id, { name: e.target.value })}
                 placeholder="VD: Phê duyệt giám đốc"
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300"
               />
             </div>
             <div>
@@ -153,7 +153,7 @@ function StepCard({
               <select
                 value={step.type}
                 onChange={e => onUpdate(step.id, { type: e.target.value as StepType })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 bg-white"
               >
                 {STEP_TYPES.map(t => (
                   <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
@@ -169,7 +169,7 @@ function StepCard({
               <select
                 value={step.assigneeRole ?? ''}
                 onChange={e => onUpdate(step.id, { assigneeRole: e.target.value || undefined })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 bg-white"
               >
                 <option value="">Không chỉ định</option>
                 {ROLES.map(r => (
@@ -184,7 +184,7 @@ function StepCard({
                 value={step.description ?? ''}
                 onChange={e => onUpdate(step.id, { description: e.target.value || undefined })}
                 placeholder="Mô tả ngắn..."
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300"
               />
             </div>
           </div>
@@ -299,7 +299,7 @@ export default function WorkflowTemplateBuilder({
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 px-5 py-4 border-b border-gray-100">
+      <div className="bg-gradient-to-r from-cherry-50 to-cherry-50 px-5 py-4 border-b border-gray-100">
         <h3 className="font-black text-gray-900 text-sm">
           {workflowId ? '✏️ Chỉnh sửa Workflow' : '➕ Tạo Workflow mới'}
         </h3>
@@ -318,7 +318,7 @@ export default function WorkflowTemplateBuilder({
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="VD: Quy trình duyệt giáo án"
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300"
             />
           </div>
           <div>
@@ -326,7 +326,7 @@ export default function WorkflowTemplateBuilder({
             <select
               value={module}
               onChange={e => setModule(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 bg-white"
             >
               {MODULES.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
             </select>
@@ -340,7 +340,7 @@ export default function WorkflowTemplateBuilder({
             value={desc}
             onChange={e => setDesc(e.target.value)}
             placeholder="Mô tả ngắn về workflow này..."
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300"
           />
         </div>
 
@@ -352,7 +352,7 @@ export default function WorkflowTemplateBuilder({
             </label>
             <button
               onClick={addStep}
-              className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition"
+              className="flex items-center gap-1.5 text-xs font-bold text-cherry-600 bg-cherry-50 hover:bg-cherry-100 px-3 py-1.5 rounded-xl transition"
             >
               <Plus size={13} />
               Thêm bước
@@ -364,7 +364,7 @@ export default function WorkflowTemplateBuilder({
               <p className="text-gray-400 text-sm mb-3">Chưa có bước nào</p>
               <button
                 onClick={addStep}
-                className="flex items-center gap-1.5 text-sm font-bold text-indigo-600 mx-auto hover:text-indigo-800"
+                className="flex items-center gap-1.5 text-sm font-bold text-cherry-600 mx-auto hover:text-cherry-800"
               >
                 <Plus size={15} /> Thêm bước đầu tiên
               </button>
@@ -426,7 +426,7 @@ export default function WorkflowTemplateBuilder({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 transition disabled:opacity-60 min-h-[44px]"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cherry-600 text-white font-bold text-sm hover:bg-cherry-700 transition disabled:opacity-60 min-h-[44px]"
           >
             {saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
             {saving ? 'Đang lưu...' : workflowId ? 'Cập nhật Workflow' : 'Tạo Workflow'}

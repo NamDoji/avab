@@ -29,7 +29,7 @@ interface StaffTableProps {
 // ─── Role config ──────────────────────────────────────────────────────────────
 
 const ROLE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  ADMIN:   { label: 'Quản trị viên', color: '#7c3aed', bg: '#f5f3ff' },
+  ADMIN:   { label: 'Quản trị viên', color: '#951F3D', bg: '#FFF7F9' },
   TEACHER: { label: 'Giáo viên',     color: '#0369a1', bg: '#e0f2fe' },
 }
 
@@ -47,7 +47,7 @@ const columns: ColumnDef<StaffRow>[] = [
         <div className="flex items-center gap-3">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black flex-shrink-0 overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
+            style={{ background: 'linear-gradient(135deg, #951F3D, #4f46e5)' }}
           >
             {row.avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -172,7 +172,7 @@ export default function StaffTable({
       rowActions={() => (
         <Link
           href="/admin/users"
-          className="text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors"
+          className="text-xs font-bold text-cherry-600 hover:text-cherry-800 transition-colors"
         >
           Xem →
         </Link>
@@ -184,7 +184,7 @@ export default function StaffTable({
           <p className="text-gray-400 text-sm">Thêm Admin hoặc Teacher trong phần quản lý người dùng</p>
           <Link
             href="/admin/users"
-            className="inline-flex items-center gap-2 mt-4 bg-purple-600 text-white rounded-2xl px-5 py-3 text-sm font-bold hover:bg-purple-700 transition-colors"
+            className="inline-flex items-center gap-2 mt-4 bg-cherry-600 text-white rounded-2xl px-5 py-3 text-sm font-bold hover:bg-cherry-700 transition-colors"
           >
             + Quản lý người dùng
           </Link>

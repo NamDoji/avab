@@ -63,7 +63,7 @@ const DAY_LABELS: Record<number, string> = {
 
 function AvatarInitial({ name, size = 48 }: { name: string | null; size?: number }) {
   const letter = (name ?? '?')[0]?.toUpperCase() ?? '?'
-  const bgs = ['#0f766e', '#0369a1', '#7c3aed', '#db2777', '#ea580c']
+  const bgs = ['#0f766e', '#0369a1', '#951F3D', '#db2777', '#ea580c']
   const bg = bgs[(letter.charCodeAt(0) ?? 0) % bgs.length]
   return (
     <div

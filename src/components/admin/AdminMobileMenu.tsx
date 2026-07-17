@@ -226,10 +226,10 @@ export function AdminMobileMenu({ currentOrg, allOrgs = [] }: Props) {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8, width: '100%',
                   padding: '7px 8px', borderRadius: 8, border: 'none',
-                  background: org.id === currentOrg?.id ? '#ede9fe' : 'transparent',
+                  background: org.id === currentOrg?.id ? '#FDECF0' : 'transparent',
                   cursor: switching ? 'wait' : 'pointer', marginBottom: 2,
                   fontSize: 13, fontWeight: org.id === currentOrg?.id ? 700 : 400,
-                  color: org.id === currentOrg?.id ? '#6d28d9' : '#374151',
+                  color: org.id === currentOrg?.id ? '#7B1933' : '#374151',
                   textAlign: 'left',
                 }}
               >
@@ -246,11 +246,11 @@ export function AdminMobileMenu({ currentOrg, allOrgs = [] }: Props) {
             style={{
               display: 'flex', alignItems: 'center', gap: 10,
               padding: '11px 16px', textDecoration: 'none',
-              background: pathname === '/admin' ? '#ede9fe' : 'transparent',
+              background: pathname === '/admin' ? '#FDECF0' : 'transparent',
               borderBottom: '1px solid #f9fafb',
             }}>
             <span style={{ fontSize: 18 }}>🏠</span>
-            <span style={{ fontSize: 14, fontWeight: pathname === '/admin' ? 700 : 500, color: pathname === '/admin' ? '#6d28d9' : '#374151' }}>Dashboard</span>
+            <span style={{ fontSize: 14, fontWeight: pathname === '/admin' ? 700 : 500, color: pathname === '/admin' ? '#7B1933' : '#374151' }}>Dashboard</span>
           </Link>
 
           {filtered.map(g => (
@@ -265,11 +265,11 @@ export function AdminMobileMenu({ currentOrg, allOrgs = [] }: Props) {
                     style={{
                       display: 'flex', alignItems: 'center', gap: 10,
                       padding: '9px 16px 9px 22px', textDecoration: 'none',
-                      background: active ? '#ede9fe' : 'transparent',
-                      borderLeft: `3px solid ${active ? '#7c3aed' : 'transparent'}`,
+                      background: active ? '#FDECF0' : 'transparent',
+                      borderLeft: `3px solid ${active ? '#951F3D' : 'transparent'}`,
                     }}>
                     <span style={{ fontSize: 16 }}>{item.icon}</span>
-                    <span style={{ fontSize: 13, fontWeight: active ? 700 : 400, color: active ? '#6d28d9' : '#374151' }}>
+                    <span style={{ fontSize: 13, fontWeight: active ? 700 : 400, color: active ? '#7B1933' : '#374151' }}>
                       {item.label}
                     </span>
                   </Link>

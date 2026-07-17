@@ -86,11 +86,11 @@ export default function AdminContactsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <h1 className="text-2xl font-black text-gray-800 flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-purple-600" />
+            <MessageSquare className="w-6 h-6 text-cherry-600" />
             Quản lý Liên hệ
           </h1>
           <button onClick={() => load(filterStatus === 'ALL' ? undefined : filterStatus)}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-purple-600 border border-gray-200 px-3 py-1.5 rounded-lg hover:border-purple-300 transition">
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-cherry-600 border border-gray-200 px-3 py-1.5 rounded-lg hover:border-cherry-300 transition">
             <RefreshCw className="w-4 h-4" /> Làm mới
           </button>
         </div>
@@ -101,8 +101,8 @@ export default function AdminContactsPage() {
             <button key={s} onClick={() => { setFilter(s); load(s === 'ALL' ? undefined : s) }}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold border transition ${
                 filterStatus === s
-                  ? 'bg-purple-600 text-white border-purple-600 shadow-md'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-purple-300'
+                  ? 'bg-cherry-600 text-white border-cherry-600 shadow-md'
+                  : 'bg-white text-gray-600 border-gray-200 hover:border-cherry-300'
               }`}>
               {s === 'ALL' ? '📋 Tất cả' : STATUS_CONFIG[s as Status].label}
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${filterStatus === s ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'}`}>
@@ -139,11 +139,11 @@ export default function AdminContactsPage() {
 
                   {/* Contact info */}
                   <div className="space-y-1.5 mb-4 text-sm text-gray-600">
-                    <a href={`tel:${c.phone}`} className="flex items-center gap-2 hover:text-purple-600">
+                    <a href={`tel:${c.phone}`} className="flex items-center gap-2 hover:text-cherry-600">
                       <Phone className="w-4 h-4 text-gray-400" /> {c.phone}
                     </a>
                     {c.email && (
-                      <a href={`mailto:${c.email}`} className="flex items-center gap-2 hover:text-purple-600">
+                      <a href={`mailto:${c.email}`} className="flex items-center gap-2 hover:text-cherry-600">
                         <Mail className="w-4 h-4 text-gray-400" /> {c.email}
                       </a>
                     )}
@@ -163,11 +163,11 @@ export default function AdminContactsPage() {
                         onChange={e => setEditNote(e.target.value)}
                         placeholder="Ghi chú xử lý..."
                         rows={2}
-                        className="w-full border border-purple-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                        className="w-full border border-cherry-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none"
                       />
                       <div className="flex gap-2 mt-1.5">
                         <button onClick={() => saveNote(c.id)} disabled={saving}
-                          className="flex-1 py-1.5 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 disabled:opacity-50 transition">
+                          className="flex-1 py-1.5 bg-cherry-600 text-white text-xs font-bold rounded-lg hover:bg-cherry-700 disabled:opacity-50 transition">
                           {saving ? 'Đang lưu...' : 'Lưu ghi chú'}
                         </button>
                         <button onClick={() => setEditingId(null)}
@@ -177,17 +177,17 @@ export default function AdminContactsPage() {
                       </div>
                     </div>
                   ) : c.note2 ? (
-                    <div className="flex items-start gap-2 bg-purple-50 rounded-xl p-2.5 mb-3 cursor-pointer hover:bg-purple-100"
+                    <div className="flex items-start gap-2 bg-cherry-50 rounded-xl p-2.5 mb-3 cursor-pointer hover:bg-cherry-100"
                       onClick={() => { setEditingId(c.id); setEditNote(c.note2 || '') }}>
-                      <StickyNote className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-                      <p className="text-purple-800 text-xs">{c.note2}</p>
+                      <StickyNote className="w-4 h-4 text-cherry-500 shrink-0 mt-0.5" />
+                      <p className="text-cherry-800 text-xs">{c.note2}</p>
                     </div>
                   ) : null}
 
                   {/* Action buttons */}
                   <div className="grid grid-cols-2 gap-2">
                     <button onClick={() => { setEditingId(c.id); setEditNote(c.note2 || '') }}
-                      className="flex items-center justify-center gap-1.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:border-purple-300 hover:text-purple-600 transition">
+                      className="flex items-center justify-center gap-1.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:border-cherry-300 hover:text-cherry-600 transition">
                       <StickyNote className="w-3.5 h-3.5" /> Ghi chú
                     </button>
                     <button onClick={() => updateStatus(c.id, 'FOLLOWUP')}

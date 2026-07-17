@@ -219,7 +219,7 @@ export default async function CollabCalendarPage() {
             <div className="bg-white rounded-3xl shadow-sm p-5">
               <h3 className="font-black text-sm text-gray-800 mb-3 flex items-center gap-2">
                 📅 Thời khóa biểu đang áp dụng
-                <Link href="/admin/erp/timetable" className="ml-auto text-xs text-indigo-600 font-bold hover:text-indigo-800">Xem →</Link>
+                <Link href="/admin/erp/timetable" className="ml-auto text-xs text-cherry-600 font-bold hover:text-cherry-800">Xem →</Link>
               </h3>
 
               {timetableVersions.length === 0 ? (
@@ -240,7 +240,7 @@ export default async function CollabCalendarPage() {
                     <Link
                       key={v.id}
                       href="/admin/erp/timetable"
-                      className="block p-3 rounded-2xl hover:bg-indigo-50 transition-colors"
+                      className="block p-3 rounded-2xl hover:bg-cherry-50 transition-colors"
                       style={{ background: '#f8fafc' }}
                     >
                       <p className="font-black text-sm text-gray-800 truncate">{v.name}</p>

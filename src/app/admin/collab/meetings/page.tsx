@@ -49,11 +49,11 @@ export default async function CollabMeetingsPage() {
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden text-white py-12"
-        style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #400B19 0%, #951F3D 100%)' }}
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-purple-200 text-sm font-semibold mb-3">
+          <div className="flex items-center gap-2 text-cherry-200 text-sm font-semibold mb-3">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
             <span>›</span>
             <Link href="/admin/collab" className="hover:text-white transition-colors">Collaboration</Link>
@@ -61,7 +61,7 @@ export default async function CollabMeetingsPage() {
             <span className="text-white">Meeting</span>
           </div>
           <h1 className="text-3xl font-black mb-1">🎥 Meeting Center</h1>
-          <p className="text-purple-100 text-sm">
+          <p className="text-cherry-100 text-sm">
             {totalSessions} buổi học/họp · AI tóm tắt biên bản tự động
           </p>
         </div>
@@ -87,7 +87,7 @@ export default async function CollabMeetingsPage() {
                     <Link
                       key={m.id}
                       href={`/admin/workflow/instances/${m.id}`}
-                      className="flex items-center gap-4 px-6 py-4 hover:bg-purple-50/50 transition"
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-cherry-50/50 transition"
                     >
                       <div
                         className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl shrink-0"
@@ -142,7 +142,7 @@ export default async function CollabMeetingsPage() {
                         {/* Date avatar */}
                         <div
                           className="w-10 h-10 rounded-2xl flex flex-col items-center justify-center shrink-0 text-white"
-                          style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+                          style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
                         >
                           <span className="text-xs font-black leading-none">
                             {new Date(s.sessionDate).getDate()}
@@ -185,16 +185,16 @@ export default async function CollabMeetingsPage() {
             {/* Stats */}
             <div
               className="rounded-3xl p-5 text-white"
-              style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #400B19 0%, #951F3D 100%)' }}
             >
-              <h3 className="font-black text-sm mb-4 text-purple-100">📊 Thống kê</h3>
+              <h3 className="font-black text-sm mb-4 text-cherry-100">📊 Thống kê</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-purple-200 text-sm">Buổi học gần đây</span>
+                  <span className="text-cherry-200 text-sm">Buổi học gần đây</span>
                   <span className="font-black text-xl">{totalSessions}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-purple-200 text-sm">Cuộc họp workflow</span>
+                  <span className="text-cherry-200 text-sm">Cuộc họp workflow</span>
                   <span className="font-black text-xl">{meetingWorkflows.length}</span>
                 </div>
               </div>
@@ -230,14 +230,14 @@ export default async function CollabMeetingsPage() {
             </div>
 
             {/* Workflow link */}
-            <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
-              <p className="text-xs font-bold text-purple-800 mb-1">💡 Tạo cuộc họp có workflow</p>
-              <p className="text-xs text-purple-600 mb-3">
+            <div className="bg-cherry-50 border border-cherry-100 rounded-2xl p-4">
+              <p className="text-xs font-bold text-cherry-800 mb-1">💡 Tạo cuộc họp có workflow</p>
+              <p className="text-xs text-cherry-600 mb-3">
                 Tạo workflow với entityType=meeting để theo dõi quá trình phê duyệt
               </p>
               <Link
                 href="/admin/workflow"
-                className="text-xs font-bold text-purple-700 hover:text-purple-900 transition"
+                className="text-xs font-bold text-cherry-700 hover:text-cherry-900 transition"
               >
                 Tới Workflow Engine →
               </Link>

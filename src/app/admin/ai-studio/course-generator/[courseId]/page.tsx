@@ -196,7 +196,7 @@ export default async function CourseGeneratorResultPage({
                         <div className="flex-shrink-0 flex gap-2">
                           <Link
                             href={`/admin/ai-studio/new?subject=${course.subjectCode}&grade=${course.gradeMin ?? ''}&curriculum=${course.curriculumId ?? 'K12-VN'}&topic=${encodeURIComponent(subject.name)}`}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-100 text-purple-700 text-xs font-bold hover:bg-purple-200 transition-colors whitespace-nowrap"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cherry-100 text-cherry-700 text-xs font-bold hover:bg-cherry-200 transition-colors whitespace-nowrap"
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -261,7 +261,7 @@ export default async function CourseGeneratorResultPage({
                         key={exp.type}
                         href={`/api/admin/ai-studio/course-generator/${courseId}/export?format=docx&type=${exp.type}`}
                         download
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 text-sm font-semibold hover:bg-indigo-100 transition-colors border border-indigo-100"
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cherry-50 text-cherry-700 text-sm font-semibold hover:bg-cherry-100 transition-colors border border-cherry-100"
                       >
                         ⬇️ {exp.label}
                       </a>

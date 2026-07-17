@@ -35,7 +35,7 @@ export default function SubjectHomeworkButton({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="px-5 py-3 rounded-2xl bg-indigo-600 text-white font-black text-sm hover:bg-indigo-700 active:scale-95 transition"
+        className="px-5 py-3 rounded-2xl bg-cherry-600 text-white font-black text-sm hover:bg-cherry-700 active:scale-95 transition"
       >
         {isSubmitted ? '✏️ Nộp lại bài' : '📝 Làm bài tập'}
       </button>

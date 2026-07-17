@@ -86,7 +86,7 @@ export default async function QuizPage({
           <p className="text-gray-500 mb-6">Khoá học này chưa có câu hỏi kiểm tra nào.</p>
           <a
             href={`/hoc-vien/khoa-hoc/${courseId}`}
-            className="inline-block bg-purple-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-purple-700 transition"
+            className="inline-block bg-cherry-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-cherry-700 transition"
           >
             ← Về khoá học
           </a>
@@ -96,7 +96,7 @@ export default async function QuizPage({
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-indigo-50 to-gray-50 pt-20">
+    <main className="min-h-screen bg-gradient-to-b from-cherry-50 to-gray-50 pt-20">
       <QuizPlayer
         courseId={courseId}
         courseName={course.name}

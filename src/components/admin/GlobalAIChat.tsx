@@ -11,14 +11,14 @@ interface Message {
 // Context label per page section
 function useContextLabel(pathname: string): { label: string; icon: string; color: string } {
   if (pathname.includes('/ai-studio/course-generator')) return { label: 'Course Generator', icon: '🚀', color: 'from-emerald-500 to-teal-600' }
-  if (pathname.includes('/ai-studio'))    return { label: 'AI Studio',         icon: '✨', color: 'from-violet-500 to-purple-600' }
+  if (pathname.includes('/ai-studio'))    return { label: 'AI Studio',         icon: '✨', color: 'from-cherry-500 to-cherry-600' }
   if (pathname.includes('/roles') || pathname.includes('/permissions') || pathname.includes('/audit'))
-                                          return { label: 'RBAC',              icon: '🛡️', color: 'from-indigo-500 to-blue-600' }
-  if (pathname.includes('/courses'))      return { label: 'Courses',           icon: '📚', color: 'from-purple-500 to-indigo-600' }
+                                          return { label: 'RBAC',              icon: '🛡️', color: 'from-cherry-500 to-blue-600' }
+  if (pathname.includes('/courses'))      return { label: 'Courses',           icon: '📚', color: 'from-cherry-500 to-cherry-600' }
   if (pathname.includes('/analytics'))   return { label: 'Analytics',         icon: '📊', color: 'from-orange-500 to-amber-600' }
   if (pathname.includes('/finance'))     return { label: 'Finance',           icon: '💰', color: 'from-green-500 to-emerald-600' }
   if (pathname.includes('/users'))       return { label: 'Users',             icon: '👥', color: 'from-teal-500 to-cyan-600' }
-  return                                          { label: 'Admin',            icon: '🧭', color: 'from-violet-500 to-purple-600' }
+  return                                          { label: 'Admin',            icon: '🧭', color: 'from-cherry-500 to-cherry-600' }
 }
 
 // Quick commands per page section
@@ -166,7 +166,7 @@ export function GlobalAIChat() {
                   key={cmd.text}
                   onClick={() => send(cmd.text)}
                   disabled={loading}
-                  className="text-xs bg-gray-50 text-gray-700 border border-gray-200 rounded-lg px-2.5 py-1 hover:bg-violet-50 hover:border-violet-300 hover:text-violet-700 transition-colors disabled:opacity-40 font-medium"
+                  className="text-xs bg-gray-50 text-gray-700 border border-gray-200 rounded-lg px-2.5 py-1 hover:bg-cherry-50 hover:border-cherry-300 hover:text-cherry-700 transition-colors disabled:opacity-40 font-medium"
                 >
                   {cmd.label}
                 </button>
@@ -192,7 +192,7 @@ export function GlobalAIChat() {
               <div className="flex justify-start">
                 <div className="bg-gray-50 border border-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
                   <span className="flex items-center gap-2 text-gray-400 text-sm">
-                    <span className="inline-block w-3.5 h-3.5 border-2 border-gray-300 border-t-violet-500 rounded-full animate-spin" />
+                    <span className="inline-block w-3.5 h-3.5 border-2 border-gray-300 border-t-cherry-500 rounded-full animate-spin" />
                     Đang suy nghĩ...
                   </span>
                 </div>
@@ -212,7 +212,7 @@ export function GlobalAIChat() {
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
                 placeholder="Nhập câu hỏi hoặc lệnh..."
                 disabled={loading}
-                className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-violet-400 focus:bg-white transition-colors disabled:opacity-60 placeholder:text-gray-400"
+                className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-cherry-400 focus:bg-white transition-colors disabled:opacity-60 placeholder:text-gray-400"
               />
               <button
                 onClick={() => send()}

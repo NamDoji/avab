@@ -66,9 +66,9 @@ export default function DoiMatKhauPage() {
   }
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-purple-50 to-teal-50 flex items-center justify-center p-4">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-cherry-50 to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-4xl shadow-xl border border-purple-100 overflow-hidden">
+        <div className="bg-white rounded-4xl shadow-xl border border-cherry-100 overflow-hidden">
           {/* Header */}
           <div className="gradient-hero text-white p-6 text-center">
             <KeyRound className="mx-auto mb-2" size={36} />
@@ -94,7 +94,7 @@ export default function DoiMatKhauPage() {
                 value={form.currentPassword}
                 onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
                 placeholder="Nhập mật khẩu hiện tại"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
             </div>
 
@@ -109,7 +109,7 @@ export default function DoiMatKhauPage() {
                 value={form.newPassword}
                 onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
                 placeholder="Tối thiểu 6 ký tự"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
             </div>
 
@@ -123,7 +123,7 @@ export default function DoiMatKhauPage() {
                 value={form.confirmPassword}
                 onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
                 placeholder="Nhập lại mật khẩu mới"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
             </div>
 

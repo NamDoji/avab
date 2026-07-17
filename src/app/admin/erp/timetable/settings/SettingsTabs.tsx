@@ -68,7 +68,7 @@ const TABS = [
 const LEVEL_META: Record<string, { icon: string; color: string; bg: string }> = {
   MN: { icon: '🌱', color: '#16a34a', bg: '#f0fdf4' },
   TH: { icon: '📗', color: '#2563eb', bg: '#eff6ff' },
-  THCS: { icon: '📘', color: '#7c3aed', bg: '#f5f3ff' },
+  THCS: { icon: '📘', color: '#951F3D', bg: '#FFF7F9' },
   THPT: { icon: '📙', color: '#ea580c', bg: '#fff7ed' },
 }
 

@@ -10,7 +10,7 @@ export const metadata = { title: 'Hồ sơ học sinh — AvaB ERP' }
 // ── Avatar ───────────────────────────────────────────────────────
 function Avatar({ name, size = 64 }: { name: string | null; size?: number }) {
   const letter = name ? name.trim()[0]?.toUpperCase() ?? '?' : '?'
-  const colors = ['#0f766e', '#0369a1', '#7c3aed', '#db2777', '#ea580c', '#65a30d']
+  const colors = ['#0f766e', '#0369a1', '#951F3D', '#db2777', '#ea580c', '#65a30d']
   const color  = colors[(letter.charCodeAt(0) ?? 0) % colors.length]
   return (
     <div
@@ -294,7 +294,7 @@ export default async function StudentDetailPage({
             {/* Homework link */}
             <Link
               href={`/admin/erp/students/${id}/homework`}
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-cherry-700 bg-cherry-50 hover:bg-cherry-100 transition-colors"
             >
               📝 Xem bài tập nộp
             </Link>

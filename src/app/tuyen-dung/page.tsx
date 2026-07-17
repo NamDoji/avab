@@ -26,7 +26,7 @@ function TypeBadge({ type }: { type: 'TEACHER' | 'AGENT' }) {
     <span
       className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full ${
         type === 'TEACHER'
-          ? 'bg-purple-100 text-purple-700'
+          ? 'bg-cherry-100 text-cherry-700'
           : 'bg-teal-100 text-teal-700'
       }`}
     >
@@ -55,7 +55,7 @@ export default async function TuyenDungPage() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-6 mb-12">
           {[
-            { label: 'Giáo viên đang dạy', value: '50+', color: 'text-purple-600' },
+            { label: 'Giáo viên đang dạy', value: '50+', color: 'text-cherry-600' },
             { label: 'Đại lý toàn quốc', value: '120+', color: 'text-teal-600' },
             { label: 'Tỉnh thành phủ sóng', value: '15+', color: 'text-blue-600' },
           ].map((stat) => (
@@ -108,7 +108,7 @@ export default async function TuyenDungPage() {
                         <ul className="space-y-1">
                           {job.benefits.split('\n').filter(Boolean).map((b, i) => (
                             <li key={i} className="flex items-start gap-2 text-gray-600 text-sm">
-                              <CheckCircle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
+                              <CheckCircle className="w-4 h-4 text-cherry-500 mt-0.5 flex-shrink-0" />
                               {b}
                             </li>
                           ))}
@@ -119,7 +119,7 @@ export default async function TuyenDungPage() {
                     <div className="mt-5 pt-4 border-t border-gray-100">
                       <a
                         href="mailto:tuyen-dung@avab.vn"
-                        className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition"
+                        className="inline-block bg-cherry-600 hover:bg-cherry-700 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition"
                       >
                         Ứng tuyển ngay
                       </a>

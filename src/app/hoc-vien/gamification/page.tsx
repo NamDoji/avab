@@ -24,8 +24,8 @@ const BADGE_COLOR_MAP: Record<string, { bg: string; border: string; text: string
   gold:   { bg: '#fffbeb', border: '#fcd34d', text: '#92400e' },
   amber:  { bg: '#fffbeb', border: '#fcd34d', text: '#92400e' },
   orange: { bg: '#fff7ed', border: '#fed7aa', text: '#c2410c' },
-  purple: { bg: '#faf5ff', border: '#e9d5ff', text: '#7e22ce' },
-  violet: { bg: '#f5f3ff', border: '#ddd6fe', text: '#6d28d9' },
+  purple: { bg: '#FFF7F9', border: '#e9d5ff', text: '#7e22ce' },
+  violet: { bg: '#FFF7F9', border: '#F9CCD6', text: '#7B1933' },
   indigo: { bg: '#eef2ff', border: '#c7d2fe', text: '#3730a3' },
   teal:   { bg: '#f0fdfa', border: '#99f6e4', text: '#0f766e' },
   cyan:   { bg: '#ecfeff', border: '#a5f3fc', text: '#0e7490' },
@@ -96,13 +96,13 @@ export default async function GamificationPage() {
   const xpPct = Math.round((xpProgress / xpRequired) * 100)
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-violet-50 to-indigo-50 pt-20 pb-16">
+    <main className="min-h-screen bg-gradient-to-b from-cherry-50 to-cherry-50 pt-20 pb-16">
       <div className="max-w-4xl mx-auto px-4 space-y-6">
 
         {/* ── Hero Card ─────────────────────────────────────────────────── */}
         <div
           className="rounded-3xl p-6 text-white relative overflow-hidden shadow-xl"
-          style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #1d4ed8 100%)' }}
+          style={{ background: 'linear-gradient(135deg, #951F3D 0%, #1d4ed8 100%)' }}
         >
           <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none" />
@@ -274,7 +274,7 @@ export default async function GamificationPage() {
                                 width: `${pct}%`,
                                 background: um.completed
                                   ? 'linear-gradient(90deg, #34d399, #10b981)'
-                                  : 'linear-gradient(90deg, #a78bfa, #6366f1)',
+                                  : 'linear-gradient(90deg, #DC607D, #6366f1)',
                               }}
                             />
                           </div>
@@ -329,7 +329,7 @@ export default async function GamificationPage() {
                     key={ts.id}
                     className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-colors ${
                       isMe
-                        ? 'bg-violet-50 border-2 border-violet-200'
+                        ? 'bg-cherry-50 border-2 border-cherry-200'
                         : 'bg-gray-50 hover:bg-gray-100'
                     }`}
                   >
@@ -343,7 +343,7 @@ export default async function GamificationPage() {
                     ) : (
                       <div
                         className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black flex-shrink-0"
-                        style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
+                        style={{ background: 'linear-gradient(135deg, #951F3D, #4f46e5)' }}
                       >
                         {name.charAt(0).toUpperCase()}
                       </div>
@@ -351,15 +351,15 @@ export default async function GamificationPage() {
 
                     {/* Name */}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-bold truncate ${isMe ? 'text-violet-700' : 'text-gray-800'}`}>
-                        {name} {isMe && <span className="text-xs font-semibold text-violet-500">(bạn)</span>}
+                      <p className={`text-sm font-bold truncate ${isMe ? 'text-cherry-700' : 'text-gray-800'}`}>
+                        {name} {isMe && <span className="text-xs font-semibold text-cherry-500">(bạn)</span>}
                       </p>
                       <p className="text-[10px] text-gray-400">Level {lv}</p>
                     </div>
 
                     {/* XP */}
                     <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-black text-violet-600">{ts.xp.toLocaleString('vi-VN')}</p>
+                      <p className="text-sm font-black text-cherry-600">{ts.xp.toLocaleString('vi-VN')}</p>
                       <p className="text-[10px] text-gray-400">XP</p>
                     </div>
                   </div>

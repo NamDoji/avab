@@ -101,7 +101,7 @@ export default async function InvoiceDetailPage({
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div
             className="rounded-2xl p-5 text-white shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+            style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
           >
             <p className="text-xs font-semibold opacity-75 mb-1">👥 Tổng học sinh</p>
             <p className="text-3xl font-black">{collection._count.payments}</p>
@@ -168,7 +168,7 @@ export default async function InvoiceDetailPage({
           <Link
             href={`/admin/courses/${collection.course.id}/tuition`}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white font-bold text-sm hover:opacity-90 transition"
-            style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+            style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
           >
             ⚙️ Quản lý đợt thu trong Course
           </Link>

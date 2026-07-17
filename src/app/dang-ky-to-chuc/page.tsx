@@ -81,7 +81,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
               width: 32, height: 32, borderRadius: '50%',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 700, fontSize: 13,
-              background: done ? '#10b981' : active ? '#7c3aed' : '#e5e7eb',
+              background: done ? '#10b981' : active ? '#951F3D' : '#e5e7eb',
               color: done || active ? '#fff' : '#9ca3af',
               transition: 'all 0.2s',
             }}>
@@ -268,12 +268,12 @@ export default function DangKyToChucPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f3ff 0%, #eff6ff 100%)', padding: '40px 16px' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #FFF7F9 0%, #eff6ff 100%)', padding: '40px 16px' }}>
       <div style={{ maxWidth: 560, margin: '0 auto' }}>
 
         {/* Logo + header */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Link href="/" style={{ fontSize: 28, fontWeight: 900, color: '#7c3aed', textDecoration: 'none' }}>
+          <Link href="/" style={{ fontSize: 28, fontWeight: 900, color: '#951F3D', textDecoration: 'none' }}>
             AvaB
           </Link>
           <h1 style={{ fontSize: 22, fontWeight: 900, color: '#111827', marginTop: 12, marginBottom: 4 }}>
@@ -318,9 +318,9 @@ export default function DangKyToChucPage() {
                       onClick={() => set('orgType', t.value)}
                       style={{
                         flex: 1, padding: '10px 8px', borderRadius: 10, cursor: 'pointer',
-                        border: `2px solid ${form.orgType === t.value ? '#7c3aed' : '#e5e7eb'}`,
-                        background: form.orgType === t.value ? '#f5f3ff' : '#fff',
-                        fontWeight: 700, fontSize: 12, color: form.orgType === t.value ? '#7c3aed' : '#6b7280',
+                        border: `2px solid ${form.orgType === t.value ? '#951F3D' : '#e5e7eb'}`,
+                        background: form.orgType === t.value ? '#FFF7F9' : '#fff',
+                        fontWeight: 700, fontSize: 12, color: form.orgType === t.value ? '#951F3D' : '#6b7280',
                         transition: 'all 0.15s',
                       }}
                     >
@@ -354,10 +354,10 @@ export default function DangKyToChucPage() {
                       onClick={() => set('orgSize', s)}
                       style={{
                         padding: '8px 14px', borderRadius: 8, cursor: 'pointer',
-                        border: `1.5px solid ${form.orgSize === s ? '#7c3aed' : '#e5e7eb'}`,
-                        background: form.orgSize === s ? '#f5f3ff' : '#fff',
+                        border: `1.5px solid ${form.orgSize === s ? '#951F3D' : '#e5e7eb'}`,
+                        background: form.orgSize === s ? '#FFF7F9' : '#fff',
                         fontWeight: 600, fontSize: 12,
-                        color: form.orgSize === s ? '#7c3aed' : '#6b7280',
+                        color: form.orgSize === s ? '#951F3D' : '#6b7280',
                       }}
                     >
                       {s}
@@ -371,7 +371,7 @@ export default function DangKyToChucPage() {
                 onClick={handleNext}
                 style={{
                   width: '100%', padding: '14px', borderRadius: 12, border: 'none',
-                  background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
+                  background: 'linear-gradient(135deg, #951F3D, #2563eb)',
                   color: '#fff', fontWeight: 800, fontSize: 15, cursor: 'pointer',
                 }}
               >
@@ -477,7 +477,7 @@ export default function DangKyToChucPage() {
                   onClick={handleNext}
                   style={{
                     flex: 2, padding: '14px', borderRadius: 12, border: 'none',
-                    background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
+                    background: 'linear-gradient(135deg, #951F3D, #2563eb)',
                     color: '#fff', fontWeight: 800, fontSize: 15, cursor: 'pointer',
                   }}
                 >
@@ -527,7 +527,7 @@ export default function DangKyToChucPage() {
                   background: '#f8fafc', border: '1px solid #e5e7eb',
                   fontSize: 13, color: '#6b7280',
                 }}>
-                  🔗 Preview: <strong style={{ color: '#7c3aed' }}>{form.slug || 'ten-truong'}.avab.vn</strong>
+                  🔗 Preview: <strong style={{ color: '#951F3D' }}>{form.slug || 'ten-truong'}.avab.vn</strong>
                 </div>
 
                 {slugStatus === 'taken' && slugSuggestion && (
@@ -536,7 +536,7 @@ export default function DangKyToChucPage() {
                     <button
                       type="button"
                       onClick={() => set('slug', slugSuggestion)}
-                      style={{ color: '#7c3aed', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                      style={{ color: '#951F3D', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     >
                       Dùng &quot;{slugSuggestion}&quot;?
                     </button>
@@ -562,14 +562,14 @@ export default function DangKyToChucPage() {
                         style={{
                           display: 'flex', alignItems: 'center', gap: 12,
                           padding: '12px 14px', borderRadius: 10, cursor: 'pointer',
-                          border: `1.5px solid ${on ? '#7c3aed' : '#e5e7eb'}`,
-                          background: on ? '#f5f3ff' : '#fafafa',
+                          border: `1.5px solid ${on ? '#951F3D' : '#e5e7eb'}`,
+                          background: on ? '#FFF7F9' : '#fafafa',
                           textAlign: 'left', width: '100%',
                           transition: 'all 0.15s',
                         }}
                       >
                         <span style={{ fontSize: 20 }}>{mod.icon}</span>
-                        <span style={{ flex: 1, fontWeight: 700, fontSize: 13, color: on ? '#7c3aed' : '#374151' }}>
+                        <span style={{ flex: 1, fontWeight: 700, fontSize: 13, color: on ? '#951F3D' : '#374151' }}>
                           {mod.label}
                         </span>
                         <span style={{ fontSize: 16 }}>{on ? '✅' : '❌'}</span>
@@ -606,7 +606,7 @@ export default function DangKyToChucPage() {
                   disabled={submitting || slugStatus === 'taken' || slugStatus === 'checking'}
                   style={{
                     flex: 2, padding: '14px', borderRadius: 12, border: 'none',
-                    background: submitting ? '#c4b5fd' : 'linear-gradient(135deg, #7c3aed, #2563eb)',
+                    background: submitting ? '#EF9AAF' : 'linear-gradient(135deg, #951F3D, #2563eb)',
                     color: '#fff', fontWeight: 800, fontSize: 15,
                     cursor: submitting ? 'not-allowed' : 'pointer',
                     opacity: submitting ? 0.8 : 1,
@@ -621,7 +621,7 @@ export default function DangKyToChucPage() {
 
         <p style={{ textAlign: 'center', marginTop: 16, fontSize: 13, color: '#9ca3af' }}>
           Đã có tài khoản?{' '}
-          <Link href="/dang-nhap" style={{ color: '#7c3aed', fontWeight: 700 }}>
+          <Link href="/dang-nhap" style={{ color: '#951F3D', fontWeight: 700 }}>
             Đăng nhập
           </Link>
         </p>

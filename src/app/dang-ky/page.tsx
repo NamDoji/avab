@@ -63,10 +63,10 @@ export default function DangKyPage() {
   }
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-purple-50 to-teal-50 flex items-center justify-center p-4">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-cherry-50 to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Card */}
-        <div className="bg-white rounded-4xl shadow-xl border border-purple-100 overflow-hidden">
+        <div className="bg-white rounded-4xl shadow-xl border border-cherry-100 overflow-hidden">
           {/* Header */}
           <div className="gradient-hero text-white p-6 text-center">
             <UserPlus className="mx-auto mb-2" size={36} />
@@ -92,7 +92,7 @@ export default function DangKyPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder="Nguyễn Văn A"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
             </div>
 
@@ -106,7 +106,7 @@ export default function DangKyPage() {
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 placeholder="0912345678"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
               <p className="text-xs text-gray-400 mt-1">{vi ? 'SĐT dùng làm tên đăng nhập' : 'Phone number is your login ID'}</p>
             </div>
@@ -121,7 +121,7 @@ export default function DangKyPage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="email@gmail.com"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
             </div>
 
@@ -149,7 +149,7 @@ export default function DangKyPage() {
           <div className="px-6 pb-6 text-center">
             <p className="text-gray-500 text-sm">
               {vi ? 'Đã có tài khoản?' : 'Already have an account?'}{' '}
-              <Link href="/dang-nhap" className="text-purple-600 font-bold hover:underline">
+              <Link href="/dang-nhap" className="text-cherry-600 font-bold hover:underline">
                 {vi ? 'Đăng nhập' : 'Sign in'}
               </Link>
             </p>

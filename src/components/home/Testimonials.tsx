@@ -53,10 +53,10 @@ export function Testimonials() {
   ]
 
   return (
-    <section className="section-padding bg-gradient-to-br from-purple-50 to-teal-50">
+    <section className="section-padding bg-gradient-to-br from-cherry-50 to-teal-50">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">
+          <span className="text-cherry-600 font-bold uppercase text-sm tracking-wider">
             {vi ? 'Phụ huynh nói gì' : 'What parents say'}
           </span>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">
@@ -68,7 +68,7 @@ export function Testimonials() {
 
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map((t) => (
-            <div key={t.name} className="bg-white rounded-3xl p-6 shadow-sm border border-purple-50 card-hover">
+            <div key={t.name} className="bg-white rounded-3xl p-6 shadow-sm border border-cherry-50 card-hover">
               <div className="flex gap-1 mb-4">
                 {Array.from({ length: t.stars }).map((_, i) => (
                   <span key={i} className="text-yellow-400 text-xl">⭐</span>

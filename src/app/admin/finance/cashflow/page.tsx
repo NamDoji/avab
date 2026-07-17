@@ -76,7 +76,7 @@ export default async function CashflowPage() {
       {/* Header */}
       <div
         className="px-4 sm:px-6 py-8"
-        style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #29050F 0%, #4338ca 100%)' }}
       >
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -89,7 +89,7 @@ export default async function CashflowPage() {
               </Link>
               <div>
                 <h1 className="text-2xl font-black text-white">📈 Dòng Tiền</h1>
-                <p className="text-indigo-200 text-sm mt-0.5">
+                <p className="text-cherry-200 text-sm mt-0.5">
                   Thu – Chi 12 tháng gần nhất
                 </p>
               </div>
@@ -110,7 +110,7 @@ export default async function CashflowPage() {
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-3xl p-6 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)' }}>
-            <p className="text-xs font-semibold text-indigo-200 uppercase tracking-wide mb-1">📈 Tháng này</p>
+            <p className="text-xs font-semibold text-cherry-200 uppercase tracking-wide mb-1">📈 Tháng này</p>
             <p className="text-2xl font-black leading-tight">{fmtVND(currentMonthIncome)}</p>
             <div className="mt-3">
               <span className="text-xs font-bold bg-white/20 text-white px-2 py-0.5 rounded-full">
@@ -202,7 +202,7 @@ export default async function CashflowPage() {
                     {/* Month label */}
                     <span
                       className={`text-xs font-semibold ${
-                        isCurrentMonth ? 'text-indigo-600' : 'text-gray-400'
+                        isCurrentMonth ? 'text-cherry-600' : 'text-gray-400'
                       }`}
                       style={{ fontSize: '10px' }}
                     >
@@ -257,12 +257,12 @@ export default async function CashflowPage() {
                   return (
                     <tr
                       key={d.key}
-                      className={`hover:bg-indigo-50/30 transition ${isCurrentMonth ? 'bg-indigo-50/20' : ''}`}
+                      className={`hover:bg-cherry-50/30 transition ${isCurrentMonth ? 'bg-cherry-50/20' : ''}`}
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           {isCurrentMonth && (
-                            <span className="text-xs font-black text-indigo-600 bg-indigo-100 px-1.5 py-0.5 rounded-md">Hiện tại</span>
+                            <span className="text-xs font-black text-cherry-600 bg-cherry-100 px-1.5 py-0.5 rounded-md">Hiện tại</span>
                           )}
                           <span className="font-semibold text-gray-800">{d.label}</span>
                         </div>
@@ -273,7 +273,7 @@ export default async function CashflowPage() {
                       <td className="px-4 py-4 text-right text-gray-400">
                         <span className="text-xs italic">N/A</span>
                       </td>
-                      <td className="px-4 py-4 text-right font-bold text-indigo-700">
+                      <td className="px-4 py-4 text-right font-bold text-cherry-700">
                         {d.income > 0 ? fmtVND(d.income) : <span className="text-gray-300">—</span>}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -310,7 +310,7 @@ export default async function CashflowPage() {
           <Link
             href="/admin/finance/reports"
             className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+            style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
           >
             📊 Xem báo cáo chi tiết
           </Link>

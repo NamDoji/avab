@@ -8,32 +8,32 @@ import { SubjectTabs } from '@/components/courses/SubjectTabs'
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 
 const COURSE_TYPE_HEADER: Record<CourseType, { gradient: string; mascot: string }> = {
-  TOAN:                 { gradient: 'from-purple-600 via-indigo-600 to-blue-600', mascot: '🦊' },
+  TOAN:                 { gradient: 'from-cherry-600 via-cherry-600 to-blue-600', mascot: '🦊' },
   TIENG_ANH:            { gradient: 'from-green-500 via-teal-500 to-cyan-600',    mascot: '🦜' },
   LAP_TRINH_THUAT_TOAN: { gradient: 'from-yellow-400 via-orange-500 to-red-500',  mascot: '🤖' },
   LAP_TRINH_SCRATCH:    { gradient: 'from-orange-400 via-pink-500 to-rose-600',   mascot: '🐱' },
   LAP_TRINH_PYTHON:     { gradient: 'from-teal-500 via-cyan-500 to-blue-600',     mascot: '🐍' },
-  LAP_TRINH_CPP:        { gradient: 'from-violet-600 via-purple-700 to-indigo-800', mascot: '⚡' },
+  LAP_TRINH_CPP:        { gradient: 'from-cherry-600 via-cherry-700 to-cherry-800', mascot: '⚡' },
 }
 
 const K12_SUBJECT_HEADER: Record<string, { gradient: string; mascot: string }> = {
-  THINKING_MATH: { gradient: 'from-purple-600 via-indigo-600 to-blue-600',   mascot: '🧠' },
-  MATH:          { gradient: 'from-blue-600 via-indigo-600 to-blue-700',     mascot: '📐' },
+  THINKING_MATH: { gradient: 'from-cherry-600 via-cherry-600 to-blue-600',   mascot: '🧠' },
+  MATH:          { gradient: 'from-blue-600 via-cherry-600 to-blue-700',     mascot: '📐' },
   VIETNAMESE:    { gradient: 'from-red-500 via-orange-500 to-yellow-500',    mascot: '✏️' },
   ENGLISH:       { gradient: 'from-green-500 via-teal-500 to-cyan-600',      mascot: '🦜' },
   SCIENCE:       { gradient: 'from-cyan-500 via-teal-500 to-blue-600',       mascot: '🔬' },
-  PHYSICS:       { gradient: 'from-violet-600 via-purple-600 to-indigo-700', mascot: '⚛️' },
+  PHYSICS:       { gradient: 'from-cherry-600 via-cherry-600 to-cherry-700', mascot: '⚛️' },
   CHEMISTRY:     { gradient: 'from-lime-500 via-green-500 to-teal-600',      mascot: '🧪' },
   BIOLOGY:       { gradient: 'from-emerald-500 via-green-500 to-teal-600',   mascot: '🌿' },
   HISTORY:       { gradient: 'from-amber-500 via-orange-500 to-red-500',     mascot: '📜' },
   GEOGRAPHY:     { gradient: 'from-emerald-500 via-teal-500 to-cyan-600',    mascot: '🌍' },
-  INFORMATICS:   { gradient: 'from-sky-500 via-blue-500 to-indigo-600',      mascot: '💻' },
-  CIVIC:         { gradient: 'from-indigo-500 via-blue-500 to-cyan-600',     mascot: '⚖️' },
+  INFORMATICS:   { gradient: 'from-sky-500 via-blue-500 to-cherry-600',      mascot: '💻' },
+  CIVIC:         { gradient: 'from-cherry-500 via-blue-500 to-cyan-600',     mascot: '⚖️' },
   ALGO:          { gradient: 'from-yellow-400 via-orange-500 to-red-500',    mascot: '🤖' },
   SCRATCH:       { gradient: 'from-orange-400 via-pink-500 to-rose-600',     mascot: '🐱' },
   PYTHON:        { gradient: 'from-teal-500 via-cyan-500 to-blue-600',       mascot: '🐍' },
-  CPP:           { gradient: 'from-violet-600 via-purple-700 to-indigo-800', mascot: '⚡' },
-  IELTS:         { gradient: 'from-sky-500 via-blue-500 to-indigo-600',      mascot: '📝' },
+  CPP:           { gradient: 'from-cherry-600 via-cherry-700 to-cherry-800', mascot: '⚡' },
+  IELTS:         { gradient: 'from-sky-500 via-blue-500 to-cherry-600',      mascot: '📝' },
   CAMBRIDGE:     { gradient: 'from-rose-500 via-pink-500 to-fuchsia-600',    mascot: '🎓' },
 }
 

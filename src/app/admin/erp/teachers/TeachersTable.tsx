@@ -41,7 +41,7 @@ interface TeachersTableProps {
 
 function Avatar({ name, size = 36 }: { name: string | null; size?: number }) {
   const letter = name ? name.trim()[0]?.toUpperCase() ?? '?' : '?'
-  const colors = ['#0c4a6e', '#0369a1', '#7c3aed', '#db2777', '#ea580c', '#65a30d']
+  const colors = ['#0c4a6e', '#0369a1', '#951F3D', '#db2777', '#ea580c', '#65a30d']
   const color = colors[(letter.charCodeAt(0) ?? 0) % colors.length]
   return (
     <div

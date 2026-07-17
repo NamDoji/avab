@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const PRESET_COLORS = [
-  '#7c3aed', // violet
+  '#951F3D', // violet
   '#2563eb', // blue
   '#0891b2', // cyan
   '#059669', // emerald
@@ -30,7 +30,7 @@ export default function NewSchoolPage() {
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
   const [slugManual, setSlugManual] = useState(false)
-  const [primaryColor, setPrimaryColor] = useState('#7c3aed')
+  const [primaryColor, setPrimaryColor] = useState('#951F3D')
   const [logo, setLogo] = useState('')
   const [domain, setDomain] = useState('')
   const [description, setDescription] = useState('')

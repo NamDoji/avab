@@ -14,7 +14,7 @@ function gradeLabel(grade: string | null): string {
 
 // ── Subject colour map (small subset for cards) ───────────────────
 const SUBJECT_COLORS: Record<string, string> = {
-  THINKING_MATH: '#7c3aed',
+  THINKING_MATH: '#951F3D',
   MATH:          '#2563eb',
   ENGLISH:       '#059669',
   VIETNAMESE:    '#dc2626',

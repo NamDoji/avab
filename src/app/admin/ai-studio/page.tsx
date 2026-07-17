@@ -147,7 +147,7 @@ function ProjectCard({ project, showOrg }: {
   return (
     <Link
       href={`/admin/ai-studio/${project.id}`}
-      className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all p-5"
+      className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-cherry-200 transition-all p-5"
     >
       <div className="flex items-start justify-between mb-2">
         <span className="text-3xl">{emoji}</span>
@@ -159,7 +159,7 @@ function ProjectCard({ project, showOrg }: {
         </div>
       </div>
 
-      <h3 className="font-black text-gray-900 text-sm leading-tight mb-1 group-hover:text-purple-700 transition-colors line-clamp-2">
+      <h3 className="font-black text-gray-900 text-sm leading-tight mb-1 group-hover:text-cherry-700 transition-colors line-clamp-2">
         {project.title}
       </h3>
       <p className="text-xs text-gray-400 mb-1">
@@ -173,11 +173,11 @@ function ProjectCard({ project, showOrg }: {
       <div className="mt-3 mb-3">
         <div className="flex justify-between text-xs mb-1">
           <span className="text-gray-400">Bước {doneCount}/{total}</span>
-          <span className="font-bold text-purple-600">{pct}%</span>
+          <span className="font-bold text-cherry-600">{pct}%</span>
         </div>
         <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${pct === 100 ? 'bg-green-500' : 'bg-purple-500'}`}
+            className={`h-full rounded-full transition-all ${pct === 100 ? 'bg-green-500' : 'bg-cherry-500'}`}
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -194,7 +194,7 @@ function ProjectCard({ project, showOrg }: {
       <div className="flex gap-2">
         <span className={`flex-1 text-center text-xs font-bold py-2 rounded-xl transition-all ${
           isActive
-            ? 'bg-purple-600 text-white group-hover:bg-purple-700'
+            ? 'bg-cherry-600 text-white group-hover:bg-cherry-700'
             : isPublished
             ? 'bg-emerald-100 text-emerald-700 group-hover:bg-emerald-200'
             : 'bg-gray-100 text-gray-600 group-hover:bg-gray-200'
@@ -265,11 +265,11 @@ export default async function AIStudioPage({
     : null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/10 to-blue-50/10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-cherry-50/10 to-blue-50/10">
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-r from-gray-900 via-indigo-900 to-gray-900 text-white py-10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+      <div className="bg-gradient-to-r from-gray-900 via-cherry-900 to-gray-900 text-white py-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cherry-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
           <div className="flex items-center gap-2 text-sm mb-4 text-gray-400">
             <a href="/admin" className="hover:text-white transition-colors">← Admin</a>
@@ -278,15 +278,15 @@ export default async function AIStudioPage({
           </div>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-400 via-indigo-400 to-pink-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg flex-shrink-0">
+              <div className="w-14 h-14 bg-gradient-to-br from-cherry-400 via-cherry-400 to-pink-400 rounded-2xl flex items-center justify-center text-3xl shadow-lg flex-shrink-0">
                 ✨
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
                   <h1 className="text-3xl font-black">AI Studio</h1>
-                  <span className="bg-purple-500 text-white text-xs font-black px-2 py-0.5 rounded-full">NEW</span>
+                  <span className="bg-cherry-500 text-white text-xs font-black px-2 py-0.5 rounded-full">NEW</span>
                 </div>
-                <p className="text-indigo-300 text-sm">Workspace thông minh cho đội học liệu</p>
+                <p className="text-cherry-300 text-sm">Workspace thông minh cho đội học liệu</p>
                 {isSuperAdmin && (
                   <p className="text-yellow-400 text-xs mt-0.5 font-bold">⚡ Super Admin Mode</p>
                 )}
@@ -303,7 +303,7 @@ export default async function AIStudioPage({
               </Link>
               <Link
                 href="/admin/ai-studio/new"
-                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-5 py-3 rounded-xl font-bold shadow hover:from-purple-600 hover:to-indigo-600 transition-all min-h-[44px]"
+                className="flex items-center gap-2 bg-gradient-to-r from-cherry-500 to-cherry-500 text-white px-5 py-3 rounded-xl font-bold shadow hover:from-cherry-600 hover:to-cherry-600 transition-all min-h-[44px]"
               >
                 <Plus size={18} />
                 Dự án mới
@@ -336,7 +336,7 @@ export default async function AIStudioPage({
               <>
                 <div className="w-px bg-gray-700" />
                 <div className="text-center">
-                  <div className="text-2xl font-black text-purple-400">{avgProgress}%</div>
+                  <div className="text-2xl font-black text-cherry-400">{avgProgress}%</div>
                   <div className="text-xs text-gray-400">Tiến độ TB</div>
                 </div>
               </>
@@ -353,7 +353,7 @@ export default async function AIStudioPage({
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
-                <Building2 size={16} className="text-purple-600" />
+                <Building2 size={16} className="text-cherry-600" />
                 Lọc theo tổ chức:
               </div>
               <div className="flex flex-wrap gap-2">
@@ -361,7 +361,7 @@ export default async function AIStudioPage({
                   href="/admin/ai-studio"
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
                     !filterOrgId
-                      ? 'bg-purple-600 text-white'
+                      ? 'bg-cherry-600 text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -373,7 +373,7 @@ export default async function AIStudioPage({
                     href={`/admin/ai-studio?orgId=${org.id}`}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
                       filterOrgId === org.id
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-cherry-600 text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
@@ -382,7 +382,7 @@ export default async function AIStudioPage({
                 ))}
               </div>
               {activeOrgName && (
-                <span className="text-sm text-purple-600 font-semibold ml-auto">
+                <span className="text-sm text-cherry-600 font-semibold ml-auto">
                   📍 {activeOrgName}
                 </span>
               )}
@@ -442,7 +442,7 @@ export default async function AIStudioPage({
             </p>
             <Link
               href="/admin/ai-studio/new"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white px-6 py-3 rounded-xl font-bold hover:from-cherry-700 hover:to-cherry-700 transition-all shadow-lg"
             >
               <Plus size={20} />
               Tạo dự án đầu tiên
@@ -465,12 +465,12 @@ export default async function AIStudioPage({
               {/* New project card */}
               <Link
                 href="/admin/ai-studio/new"
-                className="block bg-white rounded-2xl border-2 border-dashed border-gray-200 hover:border-purple-300 hover:bg-purple-50/30 transition-all p-5 flex flex-col items-center justify-center text-center min-h-[200px] group"
+                className="block bg-white rounded-2xl border-2 border-dashed border-gray-200 hover:border-cherry-300 hover:bg-cherry-50/30 transition-all p-5 flex flex-col items-center justify-center text-center min-h-[200px] group"
               >
-                <div className="w-12 h-12 bg-purple-100 group-hover:bg-purple-200 rounded-2xl flex items-center justify-center mb-3 transition-colors">
-                  <Plus size={24} className="text-purple-600" />
+                <div className="w-12 h-12 bg-cherry-100 group-hover:bg-cherry-200 rounded-2xl flex items-center justify-center mb-3 transition-colors">
+                  <Plus size={24} className="text-cherry-600" />
                 </div>
-                <div className="font-bold text-gray-500 group-hover:text-purple-700 transition-colors text-sm">
+                <div className="font-bold text-gray-500 group-hover:text-cherry-700 transition-colors text-sm">
                   Dự án mới
                 </div>
                 <div className="text-xs text-gray-400 mt-1">Bắt đầu tạo học liệu</div>
@@ -529,7 +529,7 @@ export default async function AIStudioPage({
             <p className="text-gray-400 text-sm mb-4">Tạo dự án mới để bắt đầu</p>
             <Link
               href="/admin/ai-studio/new"
-              className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-purple-700 transition"
+              className="inline-flex items-center gap-2 bg-cherry-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-cherry-700 transition"
             >
               <Plus size={16} />
               Dự án mới

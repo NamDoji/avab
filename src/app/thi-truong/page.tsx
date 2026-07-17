@@ -124,7 +124,7 @@ export default async function ThiTruongPage({ searchParams }: PageProps) {
               <button
                 type="submit"
                 className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
               >
                 🔍 Tìm
               </button>
@@ -165,9 +165,9 @@ export default async function ThiTruongPage({ searchParams }: PageProps) {
                 href={filterHref(f.key ? { subject: f.key } : { subject: '' })}
                 className="px-3.5 py-1.5 rounded-xl text-sm font-semibold transition"
                 style={{
-                  background: subjectFilter === f.key ? '#7c3aed' : '#fff',
+                  background: subjectFilter === f.key ? '#951F3D' : '#fff',
                   color: subjectFilter === f.key ? '#fff' : '#6b7280',
-                  border: `1.5px solid ${subjectFilter === f.key ? '#7c3aed' : '#e5e7eb'}`,
+                  border: `1.5px solid ${subjectFilter === f.key ? '#951F3D' : '#e5e7eb'}`,
                 }}
               >
                 {f.label}
@@ -222,7 +222,7 @@ export default async function ThiTruongPage({ searchParams }: PageProps) {
                   style={{
                     background: course.thumbnail
                       ? `url(${course.thumbnail}) center/cover`
-                      : 'linear-gradient(135deg, #ede9fe 0%, #dbeafe 100%)',
+                      : 'linear-gradient(135deg, #FDECF0 0%, #dbeafe 100%)',
                   }}
                 >
                   {!course.thumbnail && '📚'}
@@ -235,7 +235,7 @@ export default async function ThiTruongPage({ searchParams }: PageProps) {
                       {gradeLabel(course.grade)}
                     </span>
                     {course.subjectName && (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 truncate max-w-[100px]">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-cherry-50 text-cherry-700 truncate max-w-[100px]">
                         {course.subjectName}
                       </span>
                     )}
@@ -266,7 +266,7 @@ export default async function ThiTruongPage({ searchParams }: PageProps) {
                     <Link
                       href={`/dang-ky?courseId=${course.id}`}
                       className="text-xs font-bold px-3 py-1.5 rounded-xl text-white transition hover:opacity-90 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                      style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
                     >
                       Đăng ký
                     </Link>

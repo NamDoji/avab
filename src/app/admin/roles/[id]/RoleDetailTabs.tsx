@@ -87,7 +87,7 @@ export default function RoleDetailTabs({ role }: { role: RoleData }) {
           onClick={() => setActiveTab('permissions')}
           className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
             activeTab === 'permissions'
-              ? 'bg-violet-600 text-white shadow-sm'
+              ? 'bg-cherry-600 text-white shadow-sm'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
           }`}
         >
@@ -97,7 +97,7 @@ export default function RoleDetailTabs({ role }: { role: RoleData }) {
           onClick={() => setActiveTab('users')}
           className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
             activeTab === 'users'
-              ? 'bg-violet-600 text-white shadow-sm'
+              ? 'bg-cherry-600 text-white shadow-sm'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
           }`}
         >
@@ -113,7 +113,7 @@ export default function RoleDetailTabs({ role }: { role: RoleData }) {
               <strong className="text-gray-900">{role.permissions.length}</strong> permissions đã gán
               {' · '}
               <span>Read-only — </span>
-              <Link href={`/admin/roles/${role.id}/edit`} className="text-violet-600 hover:underline font-semibold">
+              <Link href={`/admin/roles/${role.id}/edit`} className="text-cherry-600 hover:underline font-semibold">
                 Sửa trong Edit page
               </Link>
             </p>
@@ -159,14 +159,14 @@ export default function RoleDetailTabs({ role }: { role: RoleData }) {
               📋 Tất cả permissions ({role.permissions.length})
             </h3>
             {role.permissions.length === 0 ? (
-              <p className="text-gray-400 text-sm">Chưa có permission nào. <Link href={`/admin/roles/${role.id}/edit`} className="text-violet-600 hover:underline">Thêm ngay →</Link></p>
+              <p className="text-gray-400 text-sm">Chưa có permission nào. <Link href={`/admin/roles/${role.id}/edit`} className="text-cherry-600 hover:underline">Thêm ngay →</Link></p>
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {role.permissions.map(perm => (
                   <span
                     key={perm.key}
                     title={perm.name}
-                    className="bg-violet-50 text-violet-700 text-xs font-mono font-semibold px-2 py-1 rounded-lg border border-violet-100"
+                    className="bg-cherry-50 text-cherry-700 text-xs font-mono font-semibold px-2 py-1 rounded-lg border border-cherry-100"
                   >
                     {perm.key}
                   </span>
@@ -186,7 +186,7 @@ export default function RoleDetailTabs({ role }: { role: RoleData }) {
             </p>
             <button
               onClick={() => setShowAssignModal(true)}
-              className="bg-violet-600 hover:bg-violet-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm"
+              className="bg-cherry-600 hover:bg-cherry-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm"
             >
               ➕ Gán User
             </button>
@@ -199,7 +199,7 @@ export default function RoleDetailTabs({ role }: { role: RoleData }) {
                 <p>Chưa có user nào được gán role này</p>
                 <button
                   onClick={() => setShowAssignModal(true)}
-                  className="mt-3 text-violet-600 hover:underline text-xs font-semibold"
+                  className="mt-3 text-cherry-600 hover:underline text-xs font-semibold"
                 >
                   + Gán user ngay
                 </button>
@@ -220,7 +220,7 @@ export default function RoleDetailTabs({ role }: { role: RoleData }) {
                       <tr key={ur.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 bg-gradient-to-br from-violet-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0">
+                            <div className="w-9 h-9 bg-gradient-to-br from-cherry-400 to-cherry-500 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0">
                               {ur.user.name?.charAt(0)?.toUpperCase() ?? '?'}
                             </div>
                             <div>

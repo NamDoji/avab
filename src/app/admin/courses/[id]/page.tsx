@@ -15,15 +15,15 @@ const COURSE_TYPE_OPTIONS: { value: string; label: string; emoji: string; color:
   { value: 'LAP_TRINH_THUAT_TOAN', label: 'Lập trình thuật toán', emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
   { value: 'LAP_TRINH_SCRATCH',    label: 'Lập trình Scratch',    emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
   { value: 'LAP_TRINH_PYTHON',     label: 'Lập trình Python',     emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
-  { value: 'LAP_TRINH_CPP',        label: 'Lập trình C++',        emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+  { value: 'LAP_TRINH_CPP',        label: 'Lập trình C++',        emoji: '⚡', color: 'bg-cherry-50 text-cherry-700' },
   // K12 generic codes
-  { value: 'THINKING_MATH', label: 'Toán Tư Duy',  emoji: '🧠', color: 'bg-indigo-50 text-indigo-700' },
+  { value: 'THINKING_MATH', label: 'Toán Tư Duy',  emoji: '🧠', color: 'bg-cherry-50 text-cherry-700' },
   { value: 'ENGLISH',       label: 'Tiếng Anh',    emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
   { value: 'MATH',          label: 'Toán',          emoji: '📐', color: 'bg-blue-50 text-blue-700' },
   { value: 'ALGO',          label: 'Thuật toán',   emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
   { value: 'SCRATCH',       label: 'Scratch',       emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
   { value: 'PYTHON',        label: 'Python',        emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
-  { value: 'CPP',           label: 'C++',           emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+  { value: 'CPP',           label: 'C++',           emoji: '⚡', color: 'bg-cherry-50 text-cherry-700' },
   { value: 'SCIENCE',       label: 'Khoa học',     emoji: '🔬', color: 'bg-cyan-50 text-cyan-700' },
   { value: 'IELTS',         label: 'IELTS',         emoji: '🇸🇦', color: 'bg-sky-50 text-sky-700' },
   { value: 'GENERAL',       label: 'Tổng hợp',     emoji: '📚', color: 'bg-gray-50 text-gray-700' },
@@ -467,7 +467,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
               <input
                 value={editCourseForm.name}
                 onChange={(e) => setEditCourseForm((f) => ({ ...f, name: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 placeholder="Tên khoá học"
               />
               {/* Course Type Selector */}
@@ -479,8 +479,8 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                       onClick={() => setEditCourseForm(f => ({ ...f, courseType: opt.value }))}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm font-semibold transition ${
                         editCourseForm.courseType === opt.value
-                          ? 'border-purple-500 bg-purple-50 text-purple-700'
-                          : 'border-gray-200 text-gray-600 hover:border-purple-300'
+                          ? 'border-cherry-500 bg-cherry-50 text-cherry-700'
+                          : 'border-gray-200 text-gray-600 hover:border-cherry-300'
                       }`}>
                       <span>{opt.emoji}</span> {opt.label}
                     </button>
@@ -490,7 +490,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
               <textarea
                 value={editCourseForm.description}
                 onChange={(e) => setEditCourseForm((f) => ({ ...f, description: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 placeholder="Mô tả khoá học"
                 rows={3}
               />
@@ -502,7 +502,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                     onClick={() => setEditCourseForm(f => ({ ...f, paymentType: 'PER_COURSE' }))}
                     className={`flex-1 px-3 py-2 rounded-lg border-2 text-sm font-semibold transition ${
                       editCourseForm.paymentType === 'PER_COURSE'
-                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                        ? 'border-cherry-500 bg-cherry-50 text-cherry-700'
                         : 'border-gray-200 text-gray-600'
                     }`}>
                     🏦 Thu theo khoá (18 tháng)
@@ -527,7 +527,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                       value={editCourseForm.price}
                       onChange={(e) => setEditCourseForm((f) => ({ ...f, price: e.target.value }))}
                       placeholder="1500000"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                 ) : (
@@ -566,7 +566,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
               </div>
               <div className="flex gap-2">
                 <button onClick={handleSaveCourse} disabled={savingCourse}
-                  className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm px-4 py-2 rounded-lg transition disabled:opacity-50">
+                  className="flex items-center gap-1.5 bg-cherry-600 hover:bg-cherry-700 text-white text-sm px-4 py-2 rounded-lg transition disabled:opacity-50">
                   <Check className="w-4 h-4" /> {savingCourse ? 'Đang lưu...' : 'Lưu'}
                 </button>
                 <button onClick={() => setEditingCourse(false)}
@@ -600,7 +600,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
           <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-gray-50 text-sm text-gray-500">
             {/* Sửa + Trạng thái — chuyển xuống đây */}
             <button onClick={handleStartEditCourse}
-              className="flex items-center gap-1.5 border border-gray-200 hover:border-purple-300 text-gray-500 hover:text-purple-600 text-sm px-3 py-1.5 rounded-lg transition">
+              className="flex items-center gap-1.5 border border-gray-200 hover:border-cherry-300 text-gray-500 hover:text-cherry-600 text-sm px-3 py-1.5 rounded-lg transition">
               <Edit2 className="w-4 h-4" /> Sửa
             </button>
             <button
@@ -619,10 +619,10 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
               }
             </button>
             <span className="text-gray-300">|</span>
-            <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4 text-purple-600" />{course.subjects.length} chuyên đề</span>
+            <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4 text-cherry-600" />{course.subjects.length} chuyên đề</span>
             <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-teal-600" />{students.length} học viên</span>
             <Link href={`/admin/courses/${id}/tuition`}
-              className="flex items-center gap-1.5 text-purple-600 hover:text-purple-800 font-semibold border border-purple-200 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-lg transition">
+              className="flex items-center gap-1.5 text-cherry-600 hover:text-cherry-800 font-semibold border border-cherry-200 bg-cherry-50 hover:bg-cherry-100 px-3 py-1 rounded-lg transition">
               💰 Thu học phí
             </Link>
           </div>
@@ -632,38 +632,38 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-bold text-gray-800 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-purple-600" /> Chuyên đề
+              <BookOpen className="w-5 h-5 text-cherry-600" /> Chuyên đề
             </h2>
             <button onClick={() => setShowSubjectForm(!showSubjectForm)}
-              className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm px-3 py-2 rounded-lg transition">
+              className="flex items-center gap-1.5 bg-cherry-600 hover:bg-cherry-700 text-white text-sm px-3 py-2 rounded-lg transition">
               <Plus className="w-4 h-4" /> Thêm chuyên đề
             </button>
           </div>
 
           {showSubjectForm && (
-            <form onSubmit={handleAddSubject} className="grid md:grid-cols-2 gap-3 mb-5 p-4 bg-purple-50 rounded-xl">
+            <form onSubmit={handleAddSubject} className="grid md:grid-cols-2 gap-3 mb-5 p-4 bg-cherry-50 rounded-xl">
               <input required placeholder="Tên chuyên đề"
                 value={subjectForm.name}
                 onChange={(e) => setSubjectForm((f) => ({ ...f, name: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cherry-400 text-sm"
               />
               <input placeholder="Icon (emoji, vd: 📘)"
                 value={subjectForm.icon}
                 onChange={(e) => setSubjectForm((f) => ({ ...f, icon: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cherry-400 text-sm"
               />
               <input placeholder="Mô tả"
                 value={subjectForm.description}
                 onChange={(e) => setSubjectForm((f) => ({ ...f, description: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cherry-400 text-sm"
               />
               <input type="number" placeholder="Thứ tự"
                 value={subjectForm.order}
                 onChange={(e) => setSubjectForm((f) => ({ ...f, order: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cherry-400 text-sm"
               />
               <button type="submit" disabled={saving}
-                className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-2 font-semibold text-sm transition disabled:opacity-50">
+                className="bg-cherry-600 hover:bg-cherry-700 text-white rounded-lg py-2 font-semibold text-sm transition disabled:opacity-50">
                 {saving ? 'Đang lưu...' : 'Thêm'}
               </button>
               <button type="button" onClick={() => setShowSubjectForm(false)}
@@ -678,40 +678,40 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
           ) : (
             <div className="space-y-2">
               {course.subjects.map((subject) => (
-                <div key={subject.id} className="border border-gray-100 rounded-xl hover:border-purple-100 overflow-hidden">
+                <div key={subject.id} className="border border-gray-100 rounded-xl hover:border-cherry-100 overflow-hidden">
                   {editingSubjectId === subject.id ? (
                     /* ── Inline edit mode ── */
-                    <div className="p-3 bg-purple-50 space-y-2">
+                    <div className="p-3 bg-cherry-50 space-y-2">
                       <div className="grid grid-cols-2 gap-2">
                         <input
                           placeholder="Tên chuyên đề"
                           value={editSubjectForm.name}
                           onChange={e => setEditSubjectForm(f => ({ ...f, name: e.target.value }))}
-                          className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                         />
                         <input
                           placeholder="Icon (emoji, vd: 📘)"
                           value={editSubjectForm.icon}
                           onChange={e => setEditSubjectForm(f => ({ ...f, icon: e.target.value }))}
-                          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                         />
                         <input
                           type="number"
                           placeholder="Thứ tự"
                           value={editSubjectForm.order}
                           onChange={e => setEditSubjectForm(f => ({ ...f, order: e.target.value }))}
-                          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                         />
                         <input
                           placeholder="Mô tả ngắn"
                           value={editSubjectForm.description}
                           onChange={e => setEditSubjectForm(f => ({ ...f, description: e.target.value }))}
-                          className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                          className="col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                         />
                       </div>
                       <div className="flex gap-2">
                         <button onClick={handleSaveSubject} disabled={savingSubject}
-                          className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white text-sm px-3 py-1.5 rounded-lg transition disabled:opacity-50">
+                          className="flex items-center gap-1 bg-cherry-600 hover:bg-cherry-700 text-white text-sm px-3 py-1.5 rounded-lg transition disabled:opacity-50">
                           <Check className="w-3.5 h-3.5" /> {savingSubject ? 'Lưu...' : 'Lưu'}
                         </button>
                         <button onClick={() => setEditingSubjectId(null)}
@@ -749,7 +749,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                           👁 Xem thử
                         </button>
                         <button onClick={() => handleStartEditSubject(subject)}
-                          className="p-1.5 text-gray-400 hover:text-purple-600 transition" title="Sửa tên/mô tả">
+                          className="p-1.5 text-gray-400 hover:text-cherry-600 transition" title="Sửa tên/mô tả">
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <Link href={`/admin/subjects/${subject.id}`}
@@ -757,7 +757,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ id
                           <BookOpen className="w-4 h-4" />
                         </Link>
                         <Link href={`/admin/subjects/${subject.id}/feedback`}
-                          className="p-1.5 text-gray-400 hover:text-violet-600 transition" title="Nhận xét buổi học">
+                          className="p-1.5 text-gray-400 hover:text-cherry-600 transition" title="Nhận xét buổi học">
                           <MessageSquare className="w-4 h-4" />
                         </Link>
                         <button onClick={() => handleDeleteSubject(subject.id)}

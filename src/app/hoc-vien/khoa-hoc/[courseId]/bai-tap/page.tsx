@@ -84,9 +84,9 @@ export default async function StudentHomeworkPage({
   }))
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-indigo-50 to-gray-50 pt-20">
+    <main className="min-h-screen bg-gradient-to-b from-cherry-50 to-gray-50 pt-20">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
+      <div className="bg-gradient-to-br from-cherry-600 to-cherry-700 text-white">
         <div className="max-w-3xl mx-auto px-4 py-8">
           <Link
             href={`/hoc-vien/khoa-hoc/${courseId}`}

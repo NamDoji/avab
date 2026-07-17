@@ -152,7 +152,7 @@ function CreateKeyModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ví dụ: Production App"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
             />
           </div>
 
@@ -166,10 +166,10 @@ function CreateKeyModal({
                     type="checkbox"
                     checked={permissions.includes(p.value)}
                     onChange={() => togglePermission(p.value)}
-                    className="w-4 h-4 accent-indigo-600"
+                    className="w-4 h-4 accent-cherry-600"
                   />
                   <span className="text-sm text-gray-700">
-                    <span className="font-mono text-indigo-600 text-xs mr-1">{p.group}</span>
+                    <span className="font-mono text-cherry-600 text-xs mr-1">{p.group}</span>
                     {p.label.split('—')[1]?.trim()}
                   </span>
                 </label>
@@ -184,7 +184,7 @@ function CreateKeyModal({
               type="date"
               value={expiresAt}
               onChange={(e) => setExpiresAt(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
             />
           </div>
 
@@ -198,7 +198,7 @@ function CreateKeyModal({
               type="submit"
               disabled={loading}
               className="flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-bold transition disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+              style={{ background: 'linear-gradient(135deg, #6366f1, #BE3659)' }}
             >
               {loading ? 'Đang tạo...' : 'Tạo API Key'}
             </button>
@@ -243,7 +243,7 @@ function NewKeyDisplayModal({ rawKey, onClose }: { rawKey: string; onClose: () =
             <button
               onClick={copyKey}
               className="flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-bold transition"
-              style={{ background: copied ? '#10b981' : 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+              style={{ background: copied ? '#10b981' : 'linear-gradient(135deg, #6366f1, #BE3659)' }}
             >
               {copied ? '✅ Đã sao chép!' : '📋 Sao chép key'}
             </button>
@@ -304,8 +304,8 @@ export default function ApiPlatformClient({ apiKeys: initialKeys, orgId }: Props
           className="relative overflow-hidden text-white py-12"
           style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}
         >
-          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cherry-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-cherry-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
           <div className="container-custom relative">
             <p className="text-slate-400 text-sm font-semibold mb-1">
               🧭 AvaB Admin &rsaquo;{' '}
@@ -324,12 +324,12 @@ export default function ApiPlatformClient({ apiKeys: initialKeys, orgId }: Props
               <div className="flex items-center gap-2">
                 <span className="text-xl">🗝️</span>
                 <h2 className="text-lg font-black text-gray-800">API Keys</h2>
-                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">{keys.length}</span>
+                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-cherry-100 text-cherry-700">{keys.length}</span>
               </div>
               <button
                 onClick={() => setShowCreate(true)}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold transition hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                style={{ background: 'linear-gradient(135deg, #6366f1, #BE3659)' }}
               >
                 + Tạo API Key mới
               </button>
@@ -365,7 +365,7 @@ export default function ApiPlatformClient({ apiKeys: initialKeys, orgId }: Props
                         <td className="px-5 py-3.5 hidden md:table-cell">
                           <div className="flex flex-wrap gap-1">
                             {k.permissions.slice(0, 3).map((p) => (
-                              <span key={p} className="px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-600">
+                              <span key={p} className="px-1.5 py-0.5 rounded text-xs font-medium bg-cherry-50 text-cherry-600">
                                 {p}
                               </span>
                             ))}
@@ -407,7 +407,7 @@ export default function ApiPlatformClient({ apiKeys: initialKeys, orgId }: Props
               <div className="px-6 py-4 bg-slate-50 border-b border-gray-100">
                 <p className="text-sm text-gray-600">
                   Xác thực bằng header:{' '}
-                  <code className="font-mono text-xs bg-slate-200 text-indigo-700 px-2 py-0.5 rounded">
+                  <code className="font-mono text-xs bg-slate-200 text-cherry-700 px-2 py-0.5 rounded">
                     Authorization: Bearer avab_sk_live_xxxx
                   </code>
                 </p>
@@ -442,8 +442,8 @@ export default function ApiPlatformClient({ apiKeys: initialKeys, orgId }: Props
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {ALL_PERMISSIONS.map((p) => (
                 <div key={p.value} className="bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
-                    <span className="text-indigo-600 text-xs font-black">{p.value.includes('.write') ? 'W' : 'R'}</span>
+                  <div className="w-8 h-8 rounded-lg bg-cherry-50 flex items-center justify-center flex-shrink-0">
+                    <span className="text-cherry-600 text-xs font-black">{p.value.includes('.write') ? 'W' : 'R'}</span>
                   </div>
                   <code className="font-mono text-xs text-gray-700">{p.value}</code>
                 </div>

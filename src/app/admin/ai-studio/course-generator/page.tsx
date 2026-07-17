@@ -242,22 +242,22 @@ export default function CourseGeneratorPage() {
               </div>
 
               {/* Bài tập về nhà */}
-              <div className="bg-violet-50 border border-violet-100 rounded-2xl p-3">
-                <label className="block text-xs font-bold text-violet-700 mb-2 text-center">
+              <div className="bg-cherry-50 border border-cherry-100 rounded-2xl p-3">
+                <label className="block text-xs font-bold text-cherry-700 mb-2 text-center">
                   📝 Bài trong BTVN
                 </label>
                 <div className="flex items-center gap-2">
                   <button type="button"
                     onClick={() => setForm(f => ({ ...f, homeworkCount: Math.max(1, f.homeworkCount - 1) }))}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-violet-200 text-violet-600 hover:border-violet-400 font-bold transition-all text-sm"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-cherry-200 text-cherry-600 hover:border-cherry-400 font-bold transition-all text-sm"
                   >−</button>
-                  <span className="flex-1 text-center text-xl font-black text-violet-700">{form.homeworkCount}</span>
+                  <span className="flex-1 text-center text-xl font-black text-cherry-700">{form.homeworkCount}</span>
                   <button type="button"
                     onClick={() => setForm(f => ({ ...f, homeworkCount: Math.min(50, f.homeworkCount + 1) }))}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-violet-200 text-violet-600 hover:border-violet-400 font-bold transition-all text-sm"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border-2 border-cherry-200 text-cherry-600 hover:border-cherry-400 font-bold transition-all text-sm"
                   >+</button>
                 </div>
-                <p className="text-xs text-violet-400 text-center mt-1">câu/chuyên đề</p>
+                <p className="text-xs text-cherry-400 text-center mt-1">câu/chuyên đề</p>
               </div>
 
               {/* Đề kiểm tra */}

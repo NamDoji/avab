@@ -113,10 +113,10 @@ export default async function WorkflowInstanceDetailPage({ params }: RouteContex
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-8 px-6"
-        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #BE3659 100%)' }}
       >
         <div className="container mx-auto max-w-6xl">
-          <p className="text-indigo-200 text-sm font-semibold mb-1">
+          <p className="text-cherry-200 text-sm font-semibold mb-1">
             <Link href="/admin" className="hover:underline">← Admin</Link>
             {' / '}
             <Link href="/admin/workflow" className="hover:underline">Workflow Engine</Link>
@@ -127,7 +127,7 @@ export default async function WorkflowInstanceDetailPage({ params }: RouteContex
           <div className="flex items-start gap-3 flex-wrap">
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl font-black truncate">{instance.title}</h1>
-              <p className="text-indigo-200 text-sm mt-0.5">{instance.workflow.name}</p>
+              <p className="text-cherry-200 text-sm mt-0.5">{instance.workflow.name}</p>
             </div>
             <span
               className="text-sm font-bold px-3 py-1 rounded-full flex-shrink-0"
@@ -178,11 +178,11 @@ export default async function WorkflowInstanceDetailPage({ params }: RouteContex
 
             {/* Current step */}
             {currentStep && isActive && (
-              <div className="bg-white rounded-2xl p-5 shadow-sm border border-indigo-100">
+              <div className="bg-white rounded-2xl p-5 shadow-sm border border-cherry-100">
                 <h3 className="font-black text-sm text-gray-800 mb-3">📍 Bước hiện tại</h3>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">{STEP_TYPE_ICON[currentStep.type] ?? '⬜'}</span>
-                  <span className="font-bold text-sm text-indigo-700">{currentStep.name}</span>
+                  <span className="font-bold text-sm text-cherry-700">{currentStep.name}</span>
                 </div>
                 {currentStep.assigneeRole && (
                   <p className="text-xs text-gray-400">
@@ -205,7 +205,7 @@ export default async function WorkflowInstanceDetailPage({ params }: RouteContex
                       key={step.id}
                       className={`flex items-center gap-2 p-2 rounded-xl text-xs transition-colors ${
                         isCurrent
-                          ? 'bg-indigo-50 border border-indigo-200'
+                          ? 'bg-cherry-50 border border-cherry-200'
                           : isDone
                           ? 'bg-green-50'
                           : 'bg-gray-50'
@@ -220,7 +220,7 @@ export default async function WorkflowInstanceDetailPage({ params }: RouteContex
                         {isDone && !isCurrent ? '✓' : i + 1}
                       </span>
                       <span className={`flex-1 truncate font-semibold ${
-                        isCurrent ? 'text-indigo-700' : isDone ? 'text-green-700' : 'text-gray-400'
+                        isCurrent ? 'text-cherry-700' : isDone ? 'text-green-700' : 'text-gray-400'
                       }`}>
                         {step.name}
                       </span>

@@ -34,8 +34,8 @@ const FEATURES = [
     title: 'AI Studio',
     subtitle: 'Giáo án · Bài tập · Đề thi',
     desc: 'Tạo giáo án, bài tập, đề thi bằng AI trong vài giây. Phân tích học lực, gợi ý cải thiện, chatbot hỗ trợ học 24/7.',
-    color: '#7c3aed',
-    bg: 'linear-gradient(135deg,#f5f3ff,#ede9fe)',
+    color: '#951F3D',
+    bg: 'linear-gradient(135deg,#FFF7F9,#FDECF0)',
     href: '/admin/ai-studio',
     tags: ['Giáo án AI', 'Đề thi tự động', 'Chatbot học tập'],
   },
@@ -94,12 +94,12 @@ export default async function HomePage() {
       ═══════════════════════════════════════════════════════════════ */}
       <section
         className="relative min-h-screen flex items-center overflow-hidden pt-20"
-        style={{ background: 'linear-gradient(135deg, #3b0764 0%, #7c3aed 40%, #1d4ed8 80%, #0ea5e9 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #3b0764 0%, #951F3D 40%, #1d4ed8 80%, #0ea5e9 100%)' }}
       >
         {/* Animated blobs */}
         <div
           className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl animate-pulse"
-          style={{ background: 'radial-gradient(circle,#a78bfa,transparent)' }}
+          style={{ background: 'radial-gradient(circle,#DC607D,transparent)' }}
         />
         <div
           className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl"
@@ -218,7 +218,7 @@ export default async function HomePage() {
       <section id="features" className="py-20 bg-gray-50">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1.5 rounded-full text-sm font-bold text-purple-700 bg-purple-100 mb-4">
+            <span className="inline-block px-4 py-1.5 rounded-full text-sm font-bold text-cherry-700 bg-cherry-100 mb-4">
               ✨ Tính năng cốt lõi
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
@@ -305,7 +305,7 @@ export default async function HomePage() {
       ═══════════════════════════════════════════════════════════════ */}
       <section
         className="py-24 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg,#3b0764 0%,#7c3aed 50%,#1d4ed8 100%)' }}
+        style={{ background: 'linear-gradient(135deg,#3b0764 0%,#951F3D 50%,#1d4ed8 100%)' }}
       >
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
           <div className="absolute top-10 left-10 text-6xl opacity-5">🏆</div>

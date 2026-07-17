@@ -32,7 +32,7 @@ export function CtaSection() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/khoa-hoc"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-purple-700 font-extrabold text-lg py-4 px-10 rounded-3xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    className="inline-flex items-center justify-center gap-2 bg-white text-cherry-700 font-extrabold text-lg py-4 px-10 rounded-3xl shadow-xl hover:scale-105 active:scale-95 transition-all">
                     {vi ? '📚 Tiếp tục học' : '📚 Continue Learning'}
                   </Link>
                   <Link href="/hoc-vien"
@@ -53,7 +53,7 @@ export function CtaSection() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/dang-ky"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-purple-700 font-extrabold text-lg py-4 px-10 rounded-3xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    className="inline-flex items-center justify-center gap-2 bg-white text-cherry-700 font-extrabold text-lg py-4 px-10 rounded-3xl shadow-xl hover:scale-105 active:scale-95 transition-all">
                     {vi ? 'Đăng ký miễn phí ngay ✨' : 'Sign up free now ✨'}
                   </Link>
                   <Link href="/khoa-hoc"

@@ -12,23 +12,23 @@ export function StartupStory() {
     { value: '🥇', label: 'Giải Nhất', sub: 'Vòng Trường', color: 'from-yellow-500 to-yellow-600' },
     { value: '🥈', label: 'Giải Nhì', sub: 'Cụm Nam–Bắc Từ Liêm', color: 'from-gray-400 to-gray-500' },
     { value: '🥉', label: 'Giải Ba', sub: 'TP Hà Nội', color: 'from-orange-500 to-orange-600' },
-    { value: '5', label: 'Học sinh sáng lập', sub: 'Lớp 10G0 Newton', color: 'from-purple-500 to-purple-700' },
+    { value: '5', label: 'Học sinh sáng lập', sub: 'Lớp 10G0 Newton', color: 'from-cherry-500 to-cherry-700' },
     { value: '500+', label: 'Phụ huynh', sub: 'Tin tưởng mỗi năm', color: 'from-teal-500 to-teal-700' },
     { value: '3', label: 'Đối tác chiến lược', sub: 'ITSOL · Techainer · Newton', color: 'from-blue-500 to-blue-700' },
   ] : [
     { value: '🥇', label: '1st Place', sub: 'School Round', color: 'from-yellow-500 to-yellow-600' },
     { value: '🥈', label: '2nd Place', sub: 'Nam–Bắc Từ Liêm Cluster', color: 'from-gray-400 to-gray-500' },
     { value: '🥉', label: '3rd Place', sub: 'Hanoi City', color: 'from-orange-500 to-orange-600' },
-    { value: '5', label: 'Student founders', sub: 'Grade 10G0 Newton', color: 'from-purple-500 to-purple-700' },
+    { value: '5', label: 'Student founders', sub: 'Grade 10G0 Newton', color: 'from-cherry-500 to-cherry-700' },
     { value: '500+', label: 'Parents', sub: 'Trusting us each year', color: 'from-teal-500 to-teal-700' },
     { value: '3', label: 'Strategic partners', sub: 'ITSOL · Techainer · Newton', color: 'from-blue-500 to-blue-700' },
   ]
 
   return (
-    <section className="section-padding bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white relative overflow-hidden">
+    <section className="section-padding bg-gradient-to-br from-gray-900 via-cherry-900 to-gray-900 text-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-purple-400 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-20 w-96 h-96 bg-cherry-400 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-20 w-64 h-64 bg-teal-400 rounded-full blur-3xl" />
       </div>
 
@@ -69,7 +69,7 @@ export function StartupStory() {
             </p>
             <Link
               href="/gioi-thieu"
-              className="inline-flex items-center gap-2 bg-white text-purple-800 font-extrabold px-6 py-3 rounded-2xl hover:scale-105 transition-all shadow-lg"
+              className="inline-flex items-center gap-2 bg-white text-cherry-800 font-extrabold px-6 py-3 rounded-2xl hover:scale-105 transition-all shadow-lg"
             >
               {vi ? 'Đọc câu chuyện đầy đủ' : 'Read the full story'} <ArrowRight size={16} />
             </Link>

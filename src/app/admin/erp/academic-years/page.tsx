@@ -64,7 +64,7 @@ export default function AcademicYearsPage() {
           <button
             onClick={() => setShowForm(v => !v)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white min-h-[40px]"
-            style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
+            style={{ background: 'linear-gradient(135deg,#6366f1,#BE3659)' }}
           >
             ➕ Thêm năm học
           </button>
@@ -81,17 +81,17 @@ export default function AcademicYearsPage() {
                 <label className="block text-xs font-bold text-gray-500 mb-1">Tên năm học</label>
                 <input value={form.name} onChange={e => setForm(f=>({...f, name:e.target.value}))}
                   placeholder="Năm học 2026-2027" required
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400" />
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cherry-400" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 mb-1">Ngày bắt đầu</label>
                 <input type="date" value={form.startDate} onChange={e => setForm(f=>({...f, startDate:e.target.value}))} required
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400" />
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cherry-400" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 mb-1">Ngày kết thúc</label>
                 <input type="date" value={form.endDate} onChange={e => setForm(f=>({...f, endDate:e.target.value}))} required
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400" />
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cherry-400" />
               </div>
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -102,7 +102,7 @@ export default function AcademicYearsPage() {
             {error && <div className="p-2 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">❌ {error}</div>}
             <div className="flex gap-2">
               <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50">Hủy</button>
-              <button type="submit" disabled={saving} className="px-6 py-2 rounded-xl text-sm font-bold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+              <button type="submit" disabled={saving} className="px-6 py-2 rounded-xl text-sm font-bold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg,#6366f1,#BE3659)' }}>
                 {saving ? '⏳ Đang lưu...' : '✅ Tạo'}
               </button>
             </div>
@@ -137,7 +137,7 @@ export default function AcademicYearsPage() {
                 {!y.isCurrent && (
                   <button
                     onClick={() => setCurrentYear(y.id)}
-                    className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700 transition-all min-h-[40px]"
+                    className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-cherry-50 hover:border-cherry-300 hover:text-cherry-700 transition-all min-h-[40px]"
                   >
                     Đặt hiện tại
                   </button>

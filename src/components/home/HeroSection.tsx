@@ -17,7 +17,7 @@ export function HeroSection() {
       {/* Decorative circles */}
       <div className="absolute top-20 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cherry-500/10 rounded-full blur-3xl" />
 
       {/* Floating math symbols */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -55,7 +55,7 @@ export function HeroSection() {
               <>
                 Con Tự Tin
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-teal-300 to-purple-300">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-teal-300 to-cherry-300">
                   Chinh Phục
                 </span>
                 <br />
@@ -65,7 +65,7 @@ export function HeroSection() {
               <>
                 Your Child
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-teal-300 to-purple-300">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-teal-300 to-cherry-300">
                   Conquers
                 </span>
                 <br />
@@ -85,7 +85,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link
               href="/khoa-hoc"
-              className="inline-flex items-center justify-center gap-2 bg-white text-purple-700 font-extrabold text-lg py-4 px-8 rounded-3xl shadow-2xl hover:shadow-white/30 hover:scale-105 active:scale-95 transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 bg-white text-cherry-700 font-extrabold text-lg py-4 px-8 rounded-3xl shadow-2xl hover:shadow-white/30 hover:scale-105 active:scale-95 transition-all duration-200"
             >
               <Sparkles size={20} />
               {session

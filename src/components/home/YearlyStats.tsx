@@ -8,9 +8,9 @@ const years = [
     members: '468+',
     buyers:  '135',
     zalo:    'https://zalo.me/g/bzcsls045',
-    color:   'from-purple-500 to-purple-700',
-    badge:   'bg-purple-100 text-purple-700',
-    dot:     'bg-purple-500',
+    color:   'from-cherry-500 to-cherry-700',
+    badge:   'bg-cherry-100 text-cherry-700',
+    dot:     'bg-cherry-500',
   },
   {
     year:    '2025 – 2026',
@@ -41,7 +41,7 @@ export function YearlyStats() {
       <div className="container-custom max-w-5xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <span className="inline-block bg-purple-100 text-purple-700 text-xs font-black px-4 py-1.5 rounded-full mb-3 uppercase tracking-wider">
+          <span className="inline-block bg-cherry-100 text-cherry-700 text-xs font-black px-4 py-1.5 rounded-full mb-3 uppercase tracking-wider">
             {lang === 'vi' ? '📊 Số liệu thực tế' : '📊 Real Numbers'}
           </span>
           <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">
@@ -57,7 +57,7 @@ export function YearlyStats() {
         {/* Timeline */}
         <div className="relative">
           {/* Vertical line (desktop) */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-200 via-teal-200 to-blue-200 -translate-x-1/2" />
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cherry-200 via-teal-200 to-blue-200 -translate-x-1/2" />
 
           <div className="space-y-8 md:space-y-0">
             {years.map((y, i) => (
@@ -116,7 +116,7 @@ export function YearlyStats() {
         </div>
 
         {/* Tổng cộng */}
-        <div className="mt-8 bg-gradient-to-r from-purple-600 to-teal-600 rounded-3xl p-6 md:p-8 text-white text-center">
+        <div className="mt-8 bg-gradient-to-r from-cherry-600 to-teal-600 rounded-3xl p-6 md:p-8 text-white text-center">
           <p className="text-white/70 text-sm mb-3 uppercase tracking-wider font-semibold">
             {lang === 'vi' ? 'Tổng 3 năm hoạt động' : '3-year total'}
           </p>

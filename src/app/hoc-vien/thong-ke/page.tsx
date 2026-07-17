@@ -158,17 +158,17 @@ export default async function HocVienThongKePage() {
     : 0
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-gray-50 pt-20">
+    <main className="min-h-screen bg-gradient-to-b from-cherry-50 to-gray-50 pt-20">
       <div className="max-w-4xl mx-auto px-4 py-8">
 
         {/* ── Header ─────────────────────────────────────────── */}
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-          <Link href="/hoc-vien" className="hover:text-purple-600 transition-colors">← Học viên</Link>
+          <Link href="/hoc-vien" className="hover:text-cherry-600 transition-colors">← Học viên</Link>
           <span>/</span>
           <span className="text-gray-600 font-semibold">Thống kê</span>
         </div>
 
-        <div className="relative bg-gradient-to-br from-purple-600 via-indigo-600 to-teal-600 rounded-3xl p-7 text-white mb-6 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-cherry-600 via-cherry-600 to-teal-600 rounded-3xl p-7 text-white mb-6 overflow-hidden">
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-16 translate-x-16 pointer-events-none" />
           <div className="relative">
             <p className="text-white/70 text-sm font-semibold mb-1">📊 Thống kê học tập của tôi</p>
@@ -199,7 +199,7 @@ export default async function HocVienThongKePage() {
               <p className="text-xs text-gray-400">Mỗi ô xanh = ngày có làm bài tập</p>
             </div>
             <div className="ml-auto">
-              <span className="text-sm font-bold text-purple-600">
+              <span className="text-sm font-bold text-cherry-600">
                 {activeCount} / 30 ngày
               </span>
             </div>
@@ -389,7 +389,7 @@ export default async function HocVienThongKePage() {
               </p>
               <Link
                 href="/hoc-vien/gamification"
-                className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-bold hover:bg-purple-700 transition"
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-cherry-600 text-white text-sm font-bold hover:bg-cherry-700 transition"
               >
                 🎮 Xem nhiệm vụ
               </Link>
@@ -442,7 +442,7 @@ export default async function HocVienThongKePage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: 'XP tổng', value: stats.xp.toLocaleString('vi-VN'), icon: '⚡', color: '#7c3aed' },
+                { label: 'XP tổng', value: stats.xp.toLocaleString('vi-VN'), icon: '⚡', color: '#951F3D' },
                 { label: 'Level', value: `Lv.${stats.level}`, icon: '🏆', color: '#0f766e' },
                 { label: 'Streak', value: `${stats.streak} ngày`, icon: '🔥', color: '#ea580c' },
                 { label: 'Xu', value: stats.coin.toLocaleString('vi-VN'), icon: '💰', color: '#d97706' },
@@ -465,28 +465,28 @@ export default async function HocVienThongKePage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <Link
             href="/hoc-vien"
-            className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-purple-200 hover:shadow-md transition-all group"
+            className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-cherry-200 hover:shadow-md transition-all group"
           >
             <span className="text-2xl">🏠</span>
-            <span className="font-bold text-gray-700 text-sm group-hover:text-purple-700 transition-colors">
+            <span className="font-bold text-gray-700 text-sm group-hover:text-cherry-700 transition-colors">
               Dashboard
             </span>
           </Link>
           <Link
             href="/hoc-vien/gamification"
-            className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-purple-200 hover:shadow-md transition-all group"
+            className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-cherry-200 hover:shadow-md transition-all group"
           >
             <span className="text-2xl">🎮</span>
-            <span className="font-bold text-gray-700 text-sm group-hover:text-purple-700 transition-colors">
+            <span className="font-bold text-gray-700 text-sm group-hover:text-cherry-700 transition-colors">
               Nhiệm vụ
             </span>
           </Link>
           <Link
             href="/bang-vang"
-            className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-purple-200 hover:shadow-md transition-all group"
+            className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-cherry-200 hover:shadow-md transition-all group"
           >
             <span className="text-2xl">🏆</span>
-            <span className="font-bold text-gray-700 text-sm group-hover:text-purple-700 transition-colors">
+            <span className="font-bold text-gray-700 text-sm group-hover:text-cherry-700 transition-colors">
               Bảng xếp hạng
             </span>
           </Link>

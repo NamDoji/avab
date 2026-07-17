@@ -23,7 +23,7 @@ const PIPELINE: { type: ContentType; label: string; icon: string; description: s
     label: 'Lý thuyết',
     icon: '📖',
     description: 'Nội dung bài giảng + ví dụ',
-    color: 'from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600',
+    color: 'from-blue-500 to-cherry-500 hover:from-blue-600 hover:to-cherry-600',
     jobType: 'generate-lessons',
   },
   {
@@ -31,7 +31,7 @@ const PIPELINE: { type: ContentType; label: string; icon: string; description: s
     label: 'Bài tập về nhà',
     icon: '📝',
     description: '30 câu / chuyên đề',
-    color: 'from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600',
+    color: 'from-cherry-500 to-cherry-500 hover:from-cherry-600 hover:to-cherry-600',
     jobType: 'generate-homework',
   },
   {
@@ -288,15 +288,15 @@ export default function CourseActions({ courseId, isActive, isPublic: initialIsP
 
 {/* ── Pipeline label ─────────────────────────────────────────────── */}
       <div className="pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-2.5 mb-3 bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 rounded-xl px-3 py-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-base flex-shrink-0">
+        <div className="flex items-center gap-2.5 mb-3 bg-gradient-to-r from-cherry-50 to-cherry-50 border border-cherry-200 rounded-xl px-3 py-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cherry-500 to-cherry-600 flex items-center justify-center text-base flex-shrink-0">
             🤖
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-black text-gray-900 text-sm leading-none">AI Content Pipeline</p>
-            <p className="text-violet-500 text-xs mt-0.5">Sinh tự động từng bước — chạy theo thứ tự</p>
+            <p className="text-cherry-500 text-xs mt-0.5">Sinh tự động từng bước — chạy theo thứ tự</p>
           </div>
-          <span className="flex-shrink-0 text-xs bg-violet-500 text-white font-bold px-2 py-0.5 rounded-full">6 bước</span>
+          <span className="flex-shrink-0 text-xs bg-cherry-500 text-white font-bold px-2 py-0.5 rounded-full">6 bước</span>
         </div>
 
         <div className="flex flex-col gap-2">

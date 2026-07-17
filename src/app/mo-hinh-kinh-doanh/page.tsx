@@ -80,7 +80,7 @@ export default function MoHinhKinhDoanhPage() {
       <div className="container-custom py-16 space-y-14 max-w-4xl mx-auto">
 
         {/* Core product */}
-        <section className="bg-gradient-to-br from-purple-50 to-teal-50 rounded-4xl p-8 md:p-10 border border-purple-100">
+        <section className="bg-gradient-to-br from-cherry-50 to-teal-50 rounded-4xl p-8 md:p-10 border border-cherry-100">
           <div className="text-center mb-8">
             <div className="text-5xl mb-3">🏆</div>
             <h2 className="text-2xl md:text-3xl font-black text-gray-900">{ui.coreProductTitle}</h2>
@@ -96,7 +96,7 @@ export default function MoHinhKinhDoanhPage() {
               </p>
               <ul className="space-y-1.5 text-sm text-gray-600">
                 {['Lương Thế Vinh','Nguyễn Siêu','Vinschool','THCS Ngô Sĩ Liên','Và nhiều trường khác'].map(s => (
-                  <li key={s} className="flex items-center gap-2"><span className="text-purple-400">✓</span>{s}</li>
+                  <li key={s} className="flex items-center gap-2"><span className="text-cherry-400">✓</span>{s}</li>
                 ))}
               </ul>
             </div>
@@ -107,8 +107,8 @@ export default function MoHinhKinhDoanhPage() {
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
                 {ui.onlineDesc}
               </p>
-              <div className="bg-purple-50 rounded-2xl p-4 text-center">
-                <div className="text-3xl font-black text-purple-700">1,5 triệu</div>
+              <div className="bg-cherry-50 rounded-2xl p-4 text-center">
+                <div className="text-3xl font-black text-cherry-700">1,5 triệu</div>
                 <div className="text-gray-500 text-sm">{ui.priceLabel}</div>
               </div>
             </div>
@@ -126,8 +126,8 @@ export default function MoHinhKinhDoanhPage() {
                 num: '01',
                 title: ui.rev1Title,
                 icon: '👨‍👩‍👧',
-                color: 'border-purple-200 bg-purple-50',
-                numColor: 'text-purple-500',
+                color: 'border-cherry-200 bg-cherry-50',
+                numColor: 'text-cherry-500',
                 desc: ui.rev1Desc,
                 items: ui.rev1Items,
               },
@@ -179,7 +179,7 @@ export default function MoHinhKinhDoanhPage() {
           <p className="text-white/80 mb-5 max-w-lg mx-auto">
             {ui.ctaDesc}
           </p>
-          <Link href="/lien-he" className="inline-block bg-white text-purple-700 font-extrabold px-8 py-3 rounded-2xl hover:scale-105 transition-all">
+          <Link href="/lien-he" className="inline-block bg-white text-cherry-700 font-extrabold px-8 py-3 rounded-2xl hover:scale-105 transition-all">
             {ui.ctaBtn}
           </Link>
         </div>

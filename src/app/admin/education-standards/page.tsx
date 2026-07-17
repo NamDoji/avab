@@ -21,11 +21,11 @@ const STANDARDS: StandardConfig[] = [
     version: 'v1.0',
     status: 'stable',
     aiModel: 'gpt-4o',
-    gradient: 'from-purple-500 to-indigo-600',
-    bg: 'bg-purple-50',
-    textColor: 'text-purple-700',
-    borderColor: 'border-purple-200',
-    dotColor: 'bg-purple-500',
+    gradient: 'from-cherry-500 to-cherry-600',
+    bg: 'bg-cherry-50',
+    textColor: 'text-cherry-700',
+    borderColor: 'border-cherry-200',
+    dotColor: 'bg-cherry-500',
     category: 'Core',
   },
   {
@@ -133,11 +133,11 @@ const STANDARDS: StandardConfig[] = [
     version: 'v1.0',
     status: 'experimental',
     aiModel: 'gpt-4o',
-    gradient: 'from-violet-500 to-purple-600',
-    bg: 'bg-violet-50',
-    textColor: 'text-violet-700',
-    borderColor: 'border-violet-200',
-    dotColor: 'bg-violet-500',
+    gradient: 'from-cherry-500 to-cherry-600',
+    bg: 'bg-cherry-50',
+    textColor: 'text-cherry-700',
+    borderColor: 'border-cherry-200',
+    dotColor: 'bg-cherry-500',
     category: 'AI',
   },
 ]
@@ -185,12 +185,12 @@ function MdView({ content }: { content: string }) {
         if (line.startsWith('- ') || line.startsWith('* '))
           return <li key={i} className="ml-4 text-sm text-gray-600 my-0.5 list-disc">{line.slice(2)}</li>
         if (line.startsWith('> '))
-          return <blockquote key={i} className="border-l-4 border-purple-300 pl-3 my-2 text-sm text-purple-700 bg-purple-50 py-1 rounded-r">{line.slice(2)}</blockquote>
+          return <blockquote key={i} className="border-l-4 border-cherry-300 pl-3 my-2 text-sm text-cherry-700 bg-cherry-50 py-1 rounded-r">{line.slice(2)}</blockquote>
         if (line.trim() === '---') return <hr key={i} className="my-4 border-gray-200" />
         if (line.trim() === '')    return <div key={`sp-${i}`} className="h-2" />
         if (line.startsWith('|'))
           return <div key={i} className="font-mono text-xs text-gray-600 bg-gray-50 px-2 border-b border-gray-100">{line}</div>
-        const html = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="bg-gray-100 text-purple-700 px-1 rounded text-xs">$1</code>')
+        const html = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="bg-gray-100 text-cherry-700 px-1 rounded text-xs">$1</code>')
         return <p key={i} className="text-sm text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: html }} />
       })}
     </div>
@@ -215,7 +215,7 @@ function StandardCard({ std, onOpen }: { std: StandardConfig; onOpen: () => void
         </div>
 
         {/* Name + desc */}
-        <h3 className="font-black text-gray-900 text-sm mb-1 group-hover:text-purple-700 transition-colors">
+        <h3 className="font-black text-gray-900 text-sm mb-1 group-hover:text-cherry-700 transition-colors">
           {std.name}
         </h3>
         <p className="text-xs text-gray-500 leading-snug line-clamp-2 mb-4">{std.desc}</p>
@@ -319,7 +319,7 @@ function ConfigTab({ std }: { std: StandardConfig }) {
                 <div className="text-sm font-bold text-gray-800">{label}</div>
                 <div className="text-xs text-gray-400 mt-0.5">{type === 'range' ? 'Creativity / Precision balance' : 'Current value'}</div>
               </div>
-              <div className="text-sm font-mono text-purple-700 bg-purple-50 px-3 py-1 rounded-lg">
+              <div className="text-sm font-mono text-cherry-700 bg-cherry-50 px-3 py-1 rounded-lg">
                 {val}
               </div>
             </div>
@@ -387,14 +387,14 @@ function GenerateTab({ std }: { std: StandardConfig }) {
     <div className="space-y-4">
       <div className="bg-white border border-gray-200 rounded-xl p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Wand2 size={18} className="text-purple-600" />
+          <Wand2 size={18} className="text-cherry-600" />
           <span className="font-bold text-gray-800">Generate Content</span>
         </div>
         <div className="space-y-3">
           <div>
             <label className="text-xs font-bold text-gray-500 mb-1 block">Topic / Chủ đề</label>
             <textarea
-              className="w-full border border-gray-200 rounded-xl p-3 text-sm resize-none focus:ring-2 focus:ring-purple-300 focus:border-transparent outline-none"
+              className="w-full border border-gray-200 rounded-xl p-3 text-sm resize-none focus:ring-2 focus:ring-cherry-300 focus:border-transparent outline-none"
               rows={3}
               placeholder={`Nhập chủ đề cần generate theo ${std.name}...`}
               value={input}
@@ -404,7 +404,7 @@ function GenerateTab({ std }: { std: StandardConfig }) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-bold text-gray-500 mb-1 block">Khối lớp</label>
-              <select className="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-purple-300 outline-none">
+              <select className="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-cherry-300 outline-none">
                 <option value="">Chọn lớp</option>
                 <option>Mầm non</option>
                 {Array.from({ length: 12 }, (_, i) => <option key={i+1}>Lớp {i + 1}</option>)}
@@ -412,7 +412,7 @@ function GenerateTab({ std }: { std: StandardConfig }) {
             </div>
             <div>
               <label className="text-xs font-bold text-gray-500 mb-1 block">Môn học</label>
-              <select className="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-purple-300 outline-none">
+              <select className="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-cherry-300 outline-none">
                 <option>Toán Tư Duy</option>
                 <option>Toán</option>
                 <option>Tiếng Anh</option>
@@ -424,7 +424,7 @@ function GenerateTab({ std }: { std: StandardConfig }) {
           <button
             onClick={handleGenerate}
             disabled={!input.trim() || generating}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white font-bold py-3 rounded-xl hover:from-cherry-700 hover:to-cherry-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {generating ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
             {generating ? 'Đang generate...' : 'Generate'}
@@ -435,7 +435,7 @@ function GenerateTab({ std }: { std: StandardConfig }) {
       {result && (
         <div className="bg-gray-900 rounded-2xl p-5">
           <div className="text-gray-400 text-xs mb-3 flex items-center gap-2">
-            <Sparkles size={12} className="text-purple-400" /> OUTPUT
+            <Sparkles size={12} className="text-cherry-400" /> OUTPUT
           </div>
           <pre className="text-gray-100 text-sm whitespace-pre-wrap leading-relaxed">{result}</pre>
         </div>
@@ -475,8 +475,8 @@ function VersionTab({ std }: { std: StandardConfig }) {
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                <GitBranch size={16} className="text-purple-600" />
+              <div className="w-8 h-8 bg-cherry-100 rounded-lg flex items-center justify-center">
+                <GitBranch size={16} className="text-cherry-600" />
               </div>
               <div>
                 <div className="font-bold text-gray-900 text-sm">{std.version} — Current</div>
@@ -569,19 +569,19 @@ function DocsTab({ std, files }: { std: StandardConfig; files: FileInfo[] }) {
             <button
               key={f.name}
               onClick={() => loadFile(f.name)}
-              className="w-full text-left bg-white border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover:bg-purple-50/30 transition-all group"
+              className="w-full text-left bg-white border border-gray-200 rounded-xl p-4 hover:border-cherry-300 hover:bg-cherry-50/30 transition-all group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <FileText size={16} className="text-gray-400 group-hover:text-purple-500 transition-colors" />
+                  <FileText size={16} className="text-gray-400 group-hover:text-cherry-500 transition-colors" />
                   <div>
-                    <p className="text-sm font-semibold text-gray-800 group-hover:text-purple-700">
+                    <p className="text-sm font-semibold text-gray-800 group-hover:text-cherry-700">
                       {f.name.replace('AvaB-', '').replace('-v1.0', '').replace('.md', '').replace(/-/g, ' ')}
                     </p>
                     <p className="text-xs text-gray-400">{f.sizeKb} KB</p>
                   </div>
                 </div>
-                <ArrowRight size={14} className="text-gray-300 group-hover:text-purple-400 transition-colors" />
+                <ArrowRight size={14} className="text-gray-300 group-hover:text-cherry-400 transition-colors" />
               </div>
             </button>
           ))}
@@ -650,7 +650,7 @@ function WorkspaceView({
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-4 py-3.5 text-xs font-bold whitespace-nowrap border-b-2 transition-all ${
                   activeTab === tab.id
-                    ? 'border-purple-600 text-purple-700'
+                    ? 'border-cherry-600 text-cherry-700'
                     : 'border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300'
                 }`}
               >
@@ -698,22 +698,22 @@ function DashboardView({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-purple-900 to-indigo-900 text-white px-6 py-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+      <div className="bg-gradient-to-r from-gray-900 via-cherry-900 to-cherry-900 text-white px-6 py-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cherry-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <a href="/admin" className="flex items-center gap-1 text-white/50 text-sm mb-5 hover:text-white transition-colors relative">
           <ChevronLeft size={14} /> Admin
         </a>
         <div className="relative flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-400 via-indigo-400 to-violet-400 rounded-2xl flex items-center justify-center text-3xl shadow-xl">
+            <div className="w-14 h-14 bg-gradient-to-br from-cherry-400 via-cherry-400 to-cherry-400 rounded-2xl flex items-center justify-center text-3xl shadow-xl">
               <Cpu size={28} className="text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <h1 className="text-2xl font-black">AI Engine</h1>
-                <span className="text-[10px] bg-purple-500 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wide">Admin</span>
+                <span className="text-[10px] bg-cherry-500 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wide">Admin</span>
               </div>
-              <p className="text-indigo-300 text-sm">Cấu hình và quản trị Standards — không phải thư viện tài liệu</p>
+              <p className="text-cherry-300 text-sm">Cấu hình và quản trị Standards — không phải thư viện tài liệu</p>
             </div>
           </div>
           <button
@@ -736,7 +736,7 @@ function DashboardView({
           ].map(({ icon: Icon, label, val }) => (
             <div key={label} className="bg-white/10 backdrop-blur rounded-xl p-3">
               <div className="flex items-center gap-1.5 mb-1">
-                <Icon size={13} className="text-indigo-300" />
+                <Icon size={13} className="text-cherry-300" />
                 <span className="text-xs text-white/50">{label}</span>
               </div>
               <div className="font-black text-white text-sm">{val}</div>

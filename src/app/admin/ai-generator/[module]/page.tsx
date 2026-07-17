@@ -24,8 +24,8 @@ const MODULES: Record<string, {
   'education-standard': {
     name: 'Education Standard', icon: '📚',
     desc: 'Sinh và quản lý tiêu chuẩn giáo dục toàn hệ thống AvaB',
-    status: 'active', version: '1.0', gradient: 'from-purple-500 to-purple-700',
-    color: 'purple', badge: 'bg-purple-100 text-purple-700',
+    status: 'active', version: '1.0', gradient: 'from-cherry-500 to-cherry-700',
+    color: 'purple', badge: 'bg-cherry-100 text-cherry-700',
     inputs: ['Subject domain', 'Grade level', 'Framework type', 'Competency focus'],
     outputs: ['Standard document', 'Competency matrix', 'Assessment criteria', 'Implementation guide'],
     workflow: ['Define Scope', '→', 'AI Draft', '→', 'Expert Review', '→', 'Finalize', '→', 'Publish'],
@@ -143,7 +143,7 @@ const STATUS_LABEL = { active: 'Active', beta: 'Beta', soon: 'Coming Soon' }
 const RESULT_STATUS: Record<string, { icon: any; label: string; cls: string }> = {
   generated: { icon: CheckCircle2, label: 'Generated', cls: 'text-blue-600 bg-blue-50' },
   qa_pass: { icon: CheckSquare, label: 'QA Pass', cls: 'text-green-600 bg-green-50' },
-  published: { icon: Upload, label: 'Published', cls: 'text-purple-600 bg-purple-50' },
+  published: { icon: Upload, label: 'Published', cls: 'text-cherry-600 bg-cherry-50' },
   failed: { icon: XCircle, label: 'Failed', cls: 'text-red-600 bg-red-50' },
 }
 
@@ -351,7 +351,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
               </label>
               {field.type === 'select' ? (
                 <select
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 bg-gray-50"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 focus:border-cherry-400 bg-gray-50"
                   value={formData[field.id] ?? ''}
                   onChange={e => setFormData(d => ({ ...d, [field.id]: e.target.value }))}
                 >
@@ -361,7 +361,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
               ) : field.type === 'textarea' ? (
                 <textarea
                   rows={3}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 bg-gray-50 resize-none"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 focus:border-cherry-400 bg-gray-50 resize-none"
                   placeholder={field.placeholder}
                   value={formData[field.id] ?? ''}
                   onChange={e => setFormData(d => ({ ...d, [field.id]: e.target.value }))}
@@ -369,7 +369,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
               ) : (
                 <input
                   type={field.type}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 bg-gray-50"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 focus:border-cherry-400 bg-gray-50"
                   placeholder={field.placeholder}
                   value={formData[field.id] ?? ''}
                   onChange={e => setFormData(d => ({ ...d, [field.id]: e.target.value }))}
@@ -485,7 +485,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
         <div className="text-center py-10">
           <button
             onClick={loadStandard}
-            className="px-5 py-2.5 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700"
+            className="px-5 py-2.5 bg-cherry-600 text-white rounded-xl font-bold hover:bg-cherry-700"
           >
             📖 Load Standard Document
           </button>
@@ -500,11 +500,11 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
       {standardContent && (
         <div className="bg-white rounded-2xl border border-gray-100 p-5 prose prose-sm max-w-none">
           {standardContent.split('\n').map((line, i) => {
-            if (line.startsWith('# ')) return <h1 key={i} className="text-xl font-black text-purple-800 mt-4 mb-2 pb-1 border-b border-purple-200">{line.slice(2)}</h1>
-            if (line.startsWith('## ')) return <h2 key={i} className="text-lg font-bold text-purple-700 mt-4 mb-1">{line.slice(3)}</h2>
+            if (line.startsWith('# ')) return <h1 key={i} className="text-xl font-black text-cherry-800 mt-4 mb-2 pb-1 border-b border-cherry-200">{line.slice(2)}</h1>
+            if (line.startsWith('## ')) return <h2 key={i} className="text-lg font-bold text-cherry-700 mt-4 mb-1">{line.slice(3)}</h2>
             if (line.startsWith('### ')) return <h3 key={i} className="text-base font-bold text-gray-800 mt-3 mb-1">{line.slice(4)}</h3>
             if (line.startsWith('- ') || line.startsWith('* ')) return <li key={i} className="ml-4 text-sm text-gray-700">{line.slice(2)}</li>
-            if (line.startsWith('> ')) return <blockquote key={i} className="border-l-4 border-purple-300 pl-3 text-sm text-purple-700 bg-purple-50 my-2 py-1">{line.slice(2)}</blockquote>
+            if (line.startsWith('> ')) return <blockquote key={i} className="border-l-4 border-cherry-300 pl-3 text-sm text-cherry-700 bg-cherry-50 my-2 py-1">{line.slice(2)}</blockquote>
             if (line.trim() === '') return <div key={i} className="h-2" />
             const bold = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             return <p key={i} className="text-sm text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: bold }} />
@@ -527,7 +527,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
           { ver: 'v0.5', date: '2025-05-01', note: 'Alpha — proof of concept' },
         ].map(v => (
           <div key={v.ver} className="flex items-start gap-3 py-2.5 border-b border-gray-50 last:border-0">
-            <span className="text-xs font-black text-purple-600 bg-purple-50 px-2 py-0.5 rounded-lg shrink-0">{v.ver}</span>
+            <span className="text-xs font-black text-cherry-600 bg-cherry-50 px-2 py-0.5 rounded-lg shrink-0">{v.ver}</span>
             <div>
               <div className="text-sm font-semibold text-gray-800">{v.note}</div>
               <div className="text-xs text-gray-400">{v.date}</div>
@@ -608,7 +608,7 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
         {/* ── Action Panel ───────────────────────────────────────────────────── */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 mb-6">
           <p className="text-sm font-bold text-gray-700 mb-4 flex items-center gap-1.5">
-            <Zap size={12} className="text-purple-500" /> Quick Actions
+            <Zap size={12} className="text-cherry-500" /> Quick Actions
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
             {ACTION_BUTTONS.map((btn) => (
@@ -641,13 +641,13 @@ export default function ModuleWorkspacePage({ params }: { params: Promise<{ modu
                     if (tab === 'Standard') loadStandard()
                   }}
                   className={`px-4 py-2.5 text-sm font-semibold rounded-t-xl whitespace-nowrap transition-all border-b-2 -mb-px ${activeTab === tab
-                    ? `border-b-2 border-purple-600 text-purple-700 bg-purple-50/50`
+                    ? `border-b-2 border-cherry-600 text-cherry-700 bg-cherry-50/50`
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                     }`}
                 >
                   {tab}
                   {tab === 'Results' && results.length > 0 && (
-                    <span className="ml-1.5 bg-purple-100 text-purple-700 text-xs px-1.5 py-0.5 rounded-full">{results.length}</span>
+                    <span className="ml-1.5 bg-cherry-100 text-cherry-700 text-xs px-1.5 py-0.5 rounded-full">{results.length}</span>
                   )}
                 </button>
               ))}

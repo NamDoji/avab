@@ -222,9 +222,9 @@ Trả lời ngắn gọn, bằng tiếng Việt, không quá 200 từ.`,
       label: 'học sinh điểm thấp < 50%',
       href: '/admin/erp/students',
       bg: lowScoreStudents > 5
-        ? 'linear-gradient(135deg,#7c3aed 0%,#5b21b6 100%)'
+        ? 'linear-gradient(135deg,#951F3D 0%,#5F1227 100%)'
         : lowScoreStudents > 0
-        ? 'linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%)'
+        ? 'linear-gradient(135deg,#BE3659 0%,#951F3D 100%)'
         : 'linear-gradient(135deg,#374151 0%,#1f2937 100%)',
       trendCurrent: lowScoreStudents,
       trendPrev: 0,
@@ -460,11 +460,11 @@ Trả lời ngắn gọn, bằng tiếng Việt, không quá 200 từ.`,
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 12 }}>
           {([
             { icon: '💰', label: 'Finance',    href: '/admin/finance',       color: '#059669' },
-            { icon: '👥', label: 'Students',   href: '/admin/erp/students',  color: '#7c3aed' },
+            { icon: '👥', label: 'Students',   href: '/admin/erp/students',  color: '#951F3D' },
             { icon: '📋', label: 'Attendance', href: '/admin/erp/attendance',color: '#f97316' },
             { icon: '🤖', label: 'AI Studio',  href: '/admin/ai-studio',     color: '#0284c7' },
             { icon: '👩‍🏫', label: 'HRM',       href: '/admin/hrm',           color: '#0d9488' },
-            { icon: '📊', label: 'Dashboard',  href: '/admin',               color: '#6d28d9' },
+            { icon: '📊', label: 'Dashboard',  href: '/admin',               color: '#7B1933' },
           ] as const).map((a) => (
             <Link
               key={a.href}

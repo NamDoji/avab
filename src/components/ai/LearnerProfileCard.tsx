@@ -131,8 +131,8 @@ export function LearnerProfileCard() {
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition"
       >
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-indigo-100 rounded-2xl flex items-center justify-center shrink-0">
-            <User size={18} className="text-indigo-600" />
+          <div className="w-9 h-9 bg-cherry-100 rounded-2xl flex items-center justify-center shrink-0">
+            <User size={18} className="text-cherry-600" />
           </div>
           <div className="text-left">
             <p className="font-bold text-gray-900 text-sm">Hồ sơ người học (P_i + G_i)</p>
@@ -150,7 +150,7 @@ export function LearnerProfileCard() {
         <div className="flex items-center gap-2">
           {!editing && (
             <button onClick={e => { e.stopPropagation(); openEdit() }}
-              className="text-xs text-purple-600 hover:underline px-2 py-1 rounded-lg hover:bg-purple-50 transition">
+              className="text-xs text-cherry-600 hover:underline px-2 py-1 rounded-lg hover:bg-cherry-50 transition">
               Sửa
             </button>
           )}
@@ -169,7 +169,7 @@ export function LearnerProfileCard() {
                 <div className="grid grid-cols-3 gap-2">
                   {BG_LEVELS.map(opt => (
                     <button key={opt.value} type="button" onClick={() => setForm(f => ({ ...f, backgroundLevel: opt.value }))}
-                      className={`p-3 rounded-2xl border-2 text-left transition ${form.backgroundLevel === opt.value ? 'border-indigo-500 bg-indigo-50' : 'border-gray-100 hover:border-indigo-200'}`}>
+                      className={`p-3 rounded-2xl border-2 text-left transition ${form.backgroundLevel === opt.value ? 'border-cherry-500 bg-cherry-50' : 'border-gray-100 hover:border-cherry-200'}`}>
                       <p className="font-bold text-xs text-gray-900">{opt.label}</p>
                       <p className="text-xs text-gray-400 mt-0.5">{opt.desc}</p>
                     </button>
@@ -183,7 +183,7 @@ export function LearnerProfileCard() {
                 <div className="grid grid-cols-2 gap-2">
                   {STYLES.map(opt => (
                     <button key={opt.value} type="button" onClick={() => setForm(f => ({ ...f, learningStyle: opt.value }))}
-                      className={`p-3 rounded-2xl border-2 text-left transition ${form.learningStyle === opt.value ? 'border-purple-500 bg-purple-50' : 'border-gray-100 hover:border-purple-200'}`}>
+                      className={`p-3 rounded-2xl border-2 text-left transition ${form.learningStyle === opt.value ? 'border-cherry-500 bg-cherry-50' : 'border-gray-100 hover:border-cherry-200'}`}>
                       <p className="font-bold text-sm">{opt.label}</p>
                       <p className="text-xs text-gray-400">{opt.desc}</p>
                     </button>
@@ -250,7 +250,7 @@ export function LearnerProfileCard() {
                   <label className="block text-xs font-bold text-gray-500 mb-1">⏱️ Giờ học/tuần</label>
                   <input type="number" min={1} max={30} value={form.weeklyHours ?? 5}
                     onChange={e => setForm(f => ({ ...f, weeklyHours: Number(e.target.value) }))}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400" />
                 </div>
               </div>
 
@@ -259,12 +259,12 @@ export function LearnerProfileCard() {
                 <label className="block text-xs font-bold text-gray-500 mb-1">📝 Ghi chú thêm (tuỳ chọn)</label>
                 <textarea rows={2} placeholder="VD: Con bị ADHD nhẹ, thích làm bài có hình ảnh, sợ toán đếm..."
                   value={form.additionalNotes ?? ''} onChange={e => setForm(f => ({ ...f, additionalNotes: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none" />
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none" />
               </div>
 
               <div className="flex gap-2">
                 <button onClick={handleSave} disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold transition">
+                  className="flex-1 flex items-center justify-center gap-2 bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-bold transition">
                   {saving ? <><Loader2 size={14} className="animate-spin" /> Đang lưu...</> : <><Check size={14} /> Lưu hồ sơ</>}
                 </button>
                 {profile && (

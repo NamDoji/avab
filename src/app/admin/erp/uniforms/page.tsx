@@ -155,14 +155,14 @@ export default function UniformsPage() {
       {/* ─── Header ─────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden text-white py-10"
-        style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #BE3659 0%, #7B1933 100%)' }}
       >
         <div
           className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
           style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%, -50%)' }}
         />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-purple-100 text-sm mb-1">
+          <div className="flex items-center gap-2 text-cherry-100 text-sm mb-1">
             <Link href="/admin/erp" className="hover:text-white transition-colors">School ERP</Link>
             <span>/</span>
             <span>Đồng phục</span>
@@ -170,7 +170,7 @@ export default function UniformsPage() {
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black mb-1">👕 Đồng phục</h1>
-              <p className="text-purple-100 text-sm">Quản lý danh mục & đơn hàng đồng phục học sinh</p>
+              <p className="text-cherry-100 text-sm">Quản lý danh mục & đơn hàng đồng phục học sinh</p>
             </div>
             {tab === 'items' && (
               <button
@@ -186,17 +186,17 @@ export default function UniformsPage() {
           <div className="flex flex-wrap gap-6 sm:gap-8 mt-5">
             <div>
               <div className="text-3xl font-black">{items.length}</div>
-              <div className="text-xs text-purple-100">Sản phẩm</div>
+              <div className="text-xs text-cherry-100">Sản phẩm</div>
             </div>
             <div>
               <div className="text-3xl font-black text-yellow-200">{orders.length}</div>
-              <div className="text-xs text-purple-100">Đơn hàng</div>
+              <div className="text-xs text-cherry-100">Đơn hàng</div>
             </div>
             <div>
               <div className="text-3xl font-black text-green-200">
                 {orders.filter((o) => o.isPaid).length}
               </div>
-              <div className="text-xs text-purple-100">Đã thanh toán</div>
+              <div className="text-xs text-cherry-100">Đã thanh toán</div>
             </div>
           </div>
         </div>
@@ -212,7 +212,7 @@ export default function UniformsPage() {
               className="px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
               style={
                 tab === t
-                  ? { background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', color: 'white' }
+                  ? { background: 'linear-gradient(135deg, #BE3659, #7B1933)', color: 'white' }
                   : { color: '#6b7280' }
               }
             >
@@ -235,7 +235,7 @@ export default function UniformsPage() {
                 <button
                   onClick={() => setShowModal(true)}
                   className="mt-4 px-5 py-2.5 rounded-xl font-bold text-sm text-white"
-                  style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}
+                  style={{ background: 'linear-gradient(135deg, #BE3659, #7B1933)' }}
                 >
                   + Thêm sản phẩm đầu tiên
                 </button>
@@ -274,7 +274,7 @@ export default function UniformsPage() {
                             <td className="px-4 py-3">
                               <div className="flex flex-wrap gap-1">
                                 {(item.sizes as string[]).map((s) => (
-                                  <span key={s} className="text-xs bg-purple-50 text-purple-700 font-bold px-1.5 py-0.5 rounded-md">{s}</span>
+                                  <span key={s} className="text-xs bg-cherry-50 text-cherry-700 font-bold px-1.5 py-0.5 rounded-md">{s}</span>
                                 ))}
                               </div>
                             </td>
@@ -295,7 +295,7 @@ export default function UniformsPage() {
                               )}
                             </td>
                             <td className="px-4 py-3">
-                              <span className="font-bold text-purple-700">{item._count.orders}</span>
+                              <span className="font-bold text-cherry-700">{item._count.orders}</span>
                             </td>
                           </tr>
                         )
@@ -315,7 +315,7 @@ export default function UniformsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-purple-400"
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cherry-400"
               >
                 <option value="">Tất cả trạng thái</option>
                 {Object.entries(STATUS_STYLES).map(([k, v]) => (
@@ -372,7 +372,7 @@ export default function UniformsPage() {
                               )}
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-xs bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded-md">{order.size}</span>
+                              <span className="text-xs bg-cherry-50 text-cherry-700 font-bold px-2 py-0.5 rounded-md">{order.size}</span>
                             </td>
                             <td className="px-4 py-3 font-bold text-gray-800">{order.quantity}</td>
                             <td className="px-4 py-3 font-semibold text-gray-700">
@@ -426,10 +426,10 @@ export default function UniformsPage() {
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
             <div
               className="px-6 py-4 flex items-center justify-between text-white"
-              style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}
+              style={{ background: 'linear-gradient(135deg, #BE3659, #7B1933)' }}
             >
               <h2 className="text-lg font-black">👕 Thêm sản phẩm đồng phục</h2>
-              <button onClick={() => setShowModal(false)} className="text-purple-100 hover:text-white text-xl font-bold leading-none">✕</button>
+              <button onClick={() => setShowModal(false)} className="text-cherry-100 hover:text-white text-xl font-bold leading-none">✕</button>
             </div>
 
             <form onSubmit={handleCreateItem} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
@@ -445,7 +445,7 @@ export default function UniformsPage() {
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     placeholder="VD: Áo đồng phục mùa hè"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                   />
                 </div>
                 <div>
@@ -454,7 +454,7 @@ export default function UniformsPage() {
                     value={form.code}
                     onChange={(e) => setForm({ ...form, code: e.target.value })}
                     placeholder="DP-001"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                   />
                 </div>
                 <div>
@@ -462,7 +462,7 @@ export default function UniformsPage() {
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                   >
                     {Object.entries(TYPE_LABELS).map(([k, v]) => (
                       <option key={k} value={k}>{v.icon} {v.label}</option>
@@ -475,7 +475,7 @@ export default function UniformsPage() {
                     value={form.color}
                     onChange={(e) => setForm({ ...form, color: e.target.value })}
                     placeholder="Trắng, Xanh navy..."
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                   />
                 </div>
                 <div>
@@ -484,7 +484,7 @@ export default function UniformsPage() {
                     value={form.sizes}
                     onChange={(e) => setForm({ ...form, sizes: e.target.value })}
                     placeholder="S,M,L,XL,XXL"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                   />
                 </div>
                 <div>
@@ -494,7 +494,7 @@ export default function UniformsPage() {
                     min={0}
                     value={form.pricePerUnit}
                     onChange={(e) => setForm({ ...form, pricePerUnit: Number(e.target.value) })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                   />
                 </div>
                 <div>
@@ -504,7 +504,7 @@ export default function UniformsPage() {
                     min={0}
                     value={form.stock}
                     onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                   />
                 </div>
               </div>
@@ -521,7 +521,7 @@ export default function UniformsPage() {
                   type="submit"
                   disabled={saving}
                   className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-opacity disabled:opacity-60"
-                  style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }}
+                  style={{ background: 'linear-gradient(135deg, #BE3659, #7B1933)' }}
                 >
                   {saving ? 'Đang lưu...' : 'Thêm sản phẩm'}
                 </button>

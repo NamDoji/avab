@@ -63,8 +63,8 @@ export function WhyAvab() {
         {/* Solutions */}
         <div>
           <div className="flex items-center gap-2 mb-3 justify-center">
-            <Lightbulb className="text-purple-600" size={24} />
-            <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">
+            <Lightbulb className="text-cherry-600" size={24} />
+            <span className="text-cherry-600 font-bold uppercase text-sm tracking-wider">
               Giải pháp AvaB
             </span>
           </div>
@@ -77,7 +77,7 @@ export function WhyAvab() {
             {solutions.map((item) => (
               <div
                 key={item.title}
-                className="bg-white rounded-3xl p-6 shadow-sm border border-purple-50 card-hover"
+                className="bg-white rounded-3xl p-6 shadow-sm border border-cherry-50 card-hover"
               >
                 <div className="text-4xl mb-4">{item.icon}</div>
                 <h3 className="font-bold text-gray-900 text-lg mb-2">{item.title}</h3>
@@ -88,7 +88,7 @@ export function WhyAvab() {
         </div>
 
         {/* Origin story */}
-        <div className="mt-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-4xl p-8 md:p-12 text-white text-center">
+        <div className="mt-16 bg-gradient-to-br from-cherry-600 to-cherry-800 rounded-4xl p-8 md:p-12 text-white text-center">
           <div className="text-5xl mb-4">🎓</div>
           <h3 className="text-2xl md:text-3xl font-black mb-4">
             {vi ? 'Câu chuyện khởi đầu của AvaB' : 'The AvaB Story'}

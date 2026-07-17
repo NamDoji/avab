@@ -198,14 +198,14 @@ export default async function FinanceReportsPage() {
           {/* KPI 2: This year total */}
           <div
             className="rounded-3xl p-6 text-white shadow-md"
-            style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+            style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
           >
-            <p className="text-xs font-semibold text-purple-200 uppercase tracking-wide mb-1">
+            <p className="text-xs font-semibold text-cherry-200 uppercase tracking-wide mb-1">
               📅 Thu năm {thisYear}
             </p>
             <p className="text-2xl font-black leading-tight">{fmtVND(yearTotal)}</p>
             <div className="mt-3">
-              <span className="text-xs text-purple-200">Từ đầu năm đến nay</span>
+              <span className="text-xs text-cherry-200">Từ đầu năm đến nay</span>
             </div>
           </div>
 
@@ -415,7 +415,7 @@ export default async function FinanceReportsPage() {
               href="/api/admin/finance/export?period=year"
               download
               className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm"
-              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
             >
               📥 Xuất báo cáo năm nay (.xlsx)
             </a>

@@ -42,7 +42,7 @@ export function AIPageContent({ userId, userName }: Props) {
   const t = content[lang]
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-purple-50 via-white to-teal-50">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-cherry-50 via-white to-teal-50">
       {/* Hero */}
       <div className="gradient-hero text-white py-14">
         <div className="container-custom text-center">
@@ -62,11 +62,11 @@ export function AIPageContent({ userId, userName }: Props) {
         {/* 4 bài toán AI giáo dục */}
         <div className="grid sm:grid-cols-2 gap-4 mb-8">
           {t.features.map((f, i) => (
-            <div key={f.title} className="bg-white rounded-3xl p-5 border border-purple-50 shadow-sm flex gap-3">
+            <div key={f.title} className="bg-white rounded-3xl p-5 border border-cherry-50 shadow-sm flex gap-3">
               <span className="text-3xl shrink-0">{f.icon}</span>
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
-                  <span className="text-xs font-bold text-purple-400 bg-purple-50 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-cherry-400 bg-cherry-50 px-2 py-0.5 rounded-full">
                     Bài toán {i + 1}
                   </span>
                 </div>

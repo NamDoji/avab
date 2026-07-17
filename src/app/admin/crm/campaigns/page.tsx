@@ -25,7 +25,7 @@ const SOURCE_CONFIG: Record<string, { label: string; icon: string; color: string
   website:  { label: 'Website',   icon: '🌐', color: '#1d4ed8', bg: '#dbeafe' },
   zalo:     { label: 'Zalo',      icon: '💚', color: '#166534', bg: '#dcfce7' },
   facebook: { label: 'Facebook',  icon: '📘', color: '#1877f2', bg: '#eff6ff' },
-  referral: { label: 'Giới thiệu', icon: '🤝', color: '#7c3aed', bg: '#fae8ff' },
+  referral: { label: 'Giới thiệu', icon: '🤝', color: '#951F3D', bg: '#fae8ff' },
   tiktok:   { label: 'TikTok',    icon: '🎵', color: '#111827', bg: '#f3f4f6' },
   other:    { label: 'Khác',       icon: '📋', color: '#6b7280', bg: '#f9fafb' },
 }
@@ -144,7 +144,7 @@ export default async function CampaignsPage() {
         {/* ── Funnel KPIs ──────────────────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
-            { label: 'Tổng leads',       value: totalLeads,    icon: '📋', color: '#7c3aed', bg: '#f5f3ff' },
+            { label: 'Tổng leads',       value: totalLeads,    icon: '📋', color: '#951F3D', bg: '#FFF7F9' },
             { label: 'Mới',              value: totalNew,      icon: '✨', color: '#2563eb', bg: '#eff6ff' },
             { label: 'Follow-up',        value: totalFollowup, icon: '📞', color: '#d97706', bg: '#fffbeb' },
             { label: 'Đã đăng ký (Won)', value: totalWon,      icon: '✅', color: '#16a34a', bg: '#f0fdf4' },
@@ -166,7 +166,7 @@ export default async function CampaignsPage() {
           <h2 className="text-sm font-black text-gray-800 mb-4">🔽 Conversion Funnel (tổng hợp)</h2>
           <div className="flex flex-col gap-2 max-w-lg">
             {[
-              { label: 'Leads vào', count: totalLeads,    color: '#7c3aed', pct: 100 },
+              { label: 'Leads vào', count: totalLeads,    color: '#951F3D', pct: 100 },
               { label: 'Follow-up', count: totalFollowup, color: '#d97706', pct: pct(totalFollowup, totalLeads) },
               { label: 'Đăng ký',   count: totalWon,      color: '#16a34a', pct: pct(totalWon, totalLeads) },
             ].map(row => (
@@ -242,7 +242,7 @@ export default async function CampaignsPage() {
                         </div>
                         <div>
                           <p className="text-gray-400">Conv.</p>
-                          <p className="font-black text-purple-600">{s.convRate}%</p>
+                          <p className="font-black text-cherry-600">{s.convRate}%</p>
                         </div>
                       </div>
                     </div>

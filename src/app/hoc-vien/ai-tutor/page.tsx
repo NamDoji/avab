@@ -79,7 +79,7 @@ export default function AITutorPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-indigo-50 to-gray-50 pt-16 pb-0 flex flex-col">
+    <main className="min-h-screen bg-gradient-to-b from-cherry-50 to-gray-50 pt-16 pb-0 flex flex-col">
       {/* ── Header ──────────────────────────────────────────────── */}
       <div className="bg-white border-b border-gray-100 shadow-sm sticky top-16 z-20">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -90,7 +90,7 @@ export default function AITutorPage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-2.5 flex-1">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-cherry-500 to-cherry-600 flex items-center justify-center shadow-sm">
               <Bot className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -123,14 +123,14 @@ export default function AITutorPage() {
               className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0 shadow-sm mt-1">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cherry-500 to-cherry-600 flex items-center justify-center shrink-0 shadow-sm mt-1">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
               )}
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-indigo-600 text-white rounded-br-none'
+                    ? 'bg-cherry-600 text-white rounded-br-none'
                     : 'bg-white text-gray-800 rounded-bl-none shadow-sm border border-gray-100'
                 }`}
                 dangerouslySetInnerHTML={{ __html: formatContent(msg.content) }}
@@ -140,14 +140,14 @@ export default function AITutorPage() {
 
           {loading && (
             <div className="flex gap-3 justify-start">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0 shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cherry-500 to-cherry-600 flex items-center justify-center shrink-0 shadow-sm">
                 <Loader2 className="w-4 h-4 text-white animate-spin" />
               </div>
               <div className="bg-white rounded-2xl rounded-bl-none px-4 py-3 shadow-sm border border-gray-100">
                 <span className="flex gap-1">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-cherry-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-cherry-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-cherry-400 animate-bounce" style={{ animationDelay: '300ms' }} />
                 </span>
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function AITutorPage() {
                 key={qp.label}
                 onClick={() => void send(qp.text)}
                 disabled={loading}
-                className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition disabled:opacity-40"
+                className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-cherry-50 text-cherry-700 border border-cherry-200 hover:bg-cherry-100 transition disabled:opacity-40"
               >
                 {qp.label}
               </button>
@@ -176,7 +176,7 @@ export default function AITutorPage() {
 
         {/* ── Input ────────────────────────────────────────────────── */}
         <div className="max-w-2xl mx-auto px-4 pb-safe pb-4">
-          <div className="flex gap-2 items-center bg-gray-50 border border-gray-200 rounded-2xl px-3 py-2 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition">
+          <div className="flex gap-2 items-center bg-gray-50 border border-gray-200 rounded-2xl px-3 py-2 focus-within:border-cherry-400 focus-within:ring-2 focus-within:ring-cherry-100 transition">
             <input
               ref={inputRef}
               type="text"
@@ -190,7 +190,7 @@ export default function AITutorPage() {
             <button
               onClick={() => void send()}
               disabled={loading || !input.trim()}
-              className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center hover:bg-indigo-700 transition disabled:opacity-40 shrink-0"
+              className="w-8 h-8 rounded-xl bg-cherry-600 flex items-center justify-center hover:bg-cherry-700 transition disabled:opacity-40 shrink-0"
             >
               <Send className="w-4 h-4 text-white" />
             </button>

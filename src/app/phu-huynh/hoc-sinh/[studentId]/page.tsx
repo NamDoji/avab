@@ -165,7 +165,7 @@ export default function StudentDetailPage() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50">
 
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white px-4 pt-6 pb-8">
+      <div className="bg-gradient-to-br from-blue-600 to-cherry-700 text-white px-4 pt-6 pb-8">
         <div className="max-w-4xl mx-auto">
           <Link href="/phu-huynh" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-5 transition">
             <ArrowLeft size={15} /> Quay lại
@@ -256,7 +256,7 @@ export default function StudentDetailPage() {
             {student.learnerProfile && (
               <div className="bg-white rounded-2xl border border-gray-100 p-5">
                 <h2 className="font-black text-gray-900 mb-4 flex items-center gap-2">
-                  <Brain size={16} className="text-purple-500" /> Hồ sơ người học
+                  <Brain size={16} className="text-cherry-500" /> Hồ sơ người học
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                   {[
@@ -292,8 +292,8 @@ export default function StudentDetailPage() {
                   <p className="text-2xl font-black text-blue-700">{stats.weekCorrect}</p>
                   <p className="text-xs text-gray-400">Câu đúng</p>
                 </div>
-                <div className="text-center bg-purple-50 rounded-xl p-3">
-                  <p className="text-2xl font-black text-purple-700">{stats.weekPct !== null ? `${stats.weekPct}%` : '–'}</p>
+                <div className="text-center bg-cherry-50 rounded-xl p-3">
+                  <p className="text-2xl font-black text-cherry-700">{stats.weekPct !== null ? `${stats.weekPct}%` : '–'}</p>
                   <p className="text-xs text-gray-400">Tỷ lệ đúng</p>
                 </div>
               </div>
@@ -365,7 +365,7 @@ export default function StudentDetailPage() {
                 return (
                   <div key={record.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                     {/* Session header */}
-                    <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+                    <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-cherry-50 border-b border-gray-100">
                       <span className="text-xl shrink-0">{record.subjectIcon ?? '📚'}</span>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-gray-800 text-sm truncate">{record.subjectName}</p>
@@ -395,7 +395,7 @@ export default function StudentDetailPage() {
                           </span>
                         )}
                         {record.comprehension && (
-                          <span className="text-xs bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full font-semibold">
+                          <span className="text-xs bg-cherry-50 text-cherry-700 px-2.5 py-1 rounded-full font-semibold">
                             📚 Hiểu bài: {record.comprehension}/5
                           </span>
                         )}

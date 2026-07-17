@@ -74,7 +74,7 @@ export function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-purple-100/50' : 'bg-white/80 backdrop-blur-sm'
+      scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-cherry-100/50' : 'bg-white/80 backdrop-blur-sm'
     }`}>
       <div className="container-custom">
         <div className="flex items-center justify-between h-16 md:h-20">
@@ -96,7 +96,7 @@ export function Navbar() {
               <button
                 onClick={() => setAboutOpen(v => !v)}
                 className={`flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  isAboutActive ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:text-purple-700 hover:bg-purple-50'
+                  isAboutActive ? 'bg-cherry-100 text-cherry-700' : 'text-gray-600 hover:text-cherry-700 hover:bg-cherry-50'
                 }`}>
                 {lang === 'vi' ? 'Về chúng tôi' : 'About Us'}
                 <ChevronDown size={14} className={`transition-transform duration-200 ${aboutOpen ? 'rotate-180' : ''}`} />
@@ -104,14 +104,14 @@ export function Navbar() {
 
               {/* Dropdown panel */}
               {aboutOpen && (
-                <div className="absolute top-full left-0 mt-1 w-52 bg-white rounded-2xl shadow-xl border border-purple-100 py-2 z-50">
+                <div className="absolute top-full left-0 mt-1 w-52 bg-white rounded-2xl shadow-xl border border-cherry-100 py-2 z-50">
                   {aboutLinks.map(link => (
                     <Link key={link.href} href={link.href}
                       onClick={() => setAboutOpen(false)}
                       className={`flex items-center px-4 py-2.5 text-sm font-semibold transition-colors ${
                         isActive(link.href)
-                          ? 'text-purple-700 bg-purple-50'
-                          : 'text-gray-600 hover:text-purple-700 hover:bg-purple-50'
+                          ? 'text-cherry-700 bg-cherry-50'
+                          : 'text-gray-600 hover:text-cherry-700 hover:bg-cherry-50'
                       }`}>
                       {lang === 'vi' ? link.label : link.labelEn}
                     </Link>
@@ -126,7 +126,7 @@ export function Navbar() {
                 <Link key={link.href} href={link.href}
                   className="px-6 py-2.5 rounded-full text-sm font-extrabold text-white whitespace-nowrap border-none overflow-hidden"
                   style={{
-                    background: 'linear-gradient(135deg, #6d28d9 0%, #7c3aed 60%, #8b5cf6 100%)',
+                    background: 'linear-gradient(135deg, #7B1933 0%, #951F3D 60%, #BE3659 100%)',
                     boxShadow: '0 4px 20px rgba(109,40,217,0.45)',
                     transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
                   }}
@@ -138,8 +138,8 @@ export function Navbar() {
                 <Link key={link.href} href={link.href}
                   className={`px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                     isActive(link.href)
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'text-gray-600 hover:text-purple-700 hover:bg-purple-50'
+                      ? 'bg-cherry-100 text-cherry-700'
+                      : 'text-gray-600 hover:text-cherry-700 hover:bg-cherry-50'
                   }`}>
                   {lang === 'vi' ? link.label : link.labelEn}
                 </Link>
@@ -151,7 +151,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             {/* Language */}
             <button onClick={() => setLang(lang === 'vi' ? 'en' : 'vi')}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+              className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-cherry-50 hover:text-cherry-700 transition-all">
               <Globe size={16} />
               <span>{lang.toUpperCase()}</span>
             </button>
@@ -159,7 +159,7 @@ export function Navbar() {
             {session ? (
               <div className="flex items-center gap-2">
                 <Link href="/hoc-vien"
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-50 text-purple-700 text-sm font-semibold hover:bg-purple-100 transition-all">
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cherry-50 text-cherry-700 text-sm font-semibold hover:bg-cherry-100 transition-all">
                   <User size={16} />
                   <span className="max-w-[100px] truncate">{session.user?.name || 'Học viên'}</span>
                 </Link>
@@ -183,7 +183,7 @@ export function Navbar() {
             <Link href="/khoa-hoc"
               className="lg:hidden px-4 py-2 rounded-full text-sm font-extrabold text-white border-none"
               style={{
-                background: 'linear-gradient(135deg, #6d28d9 0%, #7c3aed 60%, #8b5cf6 100%)',
+                background: 'linear-gradient(135deg, #7B1933 0%, #951F3D 60%, #BE3659 100%)',
                 boxShadow: '0 4px 14px rgba(109,40,217,0.45)',
               }}>
               {lang === 'vi' ? 'Khoá học' : 'Courses'}
@@ -191,7 +191,7 @@ export function Navbar() {
 
             {/* Mobile toggle */}
             <button id="mobile-menu-toggle" onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-xl text-gray-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+              className="lg:hidden p-2 rounded-xl text-gray-600 hover:bg-cherry-50 hover:text-cherry-700 transition-all">
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -200,26 +200,26 @@ export function Navbar() {
 
       {/* ── Mobile menu ── */}
       {isOpen && (
-        <div id="mobile-menu-panel" className="lg:hidden bg-white border-t border-purple-100 shadow-xl">
+        <div id="mobile-menu-panel" className="lg:hidden bg-white border-t border-cherry-100 shadow-xl">
           <div className="container-custom py-4 flex flex-col gap-1">
 
             {/* Về chúng tôi group */}
             <button
               onClick={() => setAboutMobile(v => !v)}
               className={`flex items-center justify-between px-4 py-3 rounded-2xl text-base font-semibold transition-all ${
-                isAboutActive ? 'bg-purple-100 text-purple-700' : 'text-gray-700 hover:bg-purple-50'
+                isAboutActive ? 'bg-cherry-100 text-cherry-700' : 'text-gray-700 hover:bg-cherry-50'
               }`}>
               <span>{lang === 'vi' ? 'Về chúng tôi' : 'About Us'}</span>
               <ChevronDown size={16} className={`transition-transform duration-200 ${aboutMobile ? 'rotate-180' : ''}`} />
             </button>
 
             {aboutMobile && (
-              <div className="ml-4 border-l-2 border-purple-200 pl-3 flex flex-col gap-1">
+              <div className="ml-4 border-l-2 border-cherry-200 pl-3 flex flex-col gap-1">
                 {aboutLinks.map(link => (
                   <Link key={link.href} href={link.href}
                     onClick={() => { setIsOpen(false); setAboutMobile(false) }}
                     className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                      isActive(link.href) ? 'bg-purple-100 text-purple-700' : 'text-gray-600 hover:bg-purple-50'
+                      isActive(link.href) ? 'bg-cherry-100 text-cherry-700' : 'text-gray-600 hover:bg-cherry-50'
                     }`}>
                     {lang === 'vi' ? link.label : link.labelEn}
                   </Link>
@@ -234,10 +234,10 @@ export function Navbar() {
                 className={`px-4 py-3 rounded-2xl text-base font-semibold transition-all ${
                   link.highlight
                     ? 'text-white font-black rounded-2xl'
-                    : isActive(link.href) ? 'bg-purple-100 text-purple-700'
-                    : 'text-gray-700 hover:bg-purple-50'
+                    : isActive(link.href) ? 'bg-cherry-100 text-cherry-700'
+                    : 'text-gray-700 hover:bg-cherry-50'
                 }`}
-                style={link.highlight ? { background: 'linear-gradient(135deg, #7c3aed, #5b21b6)' } : {}}>
+                style={link.highlight ? { background: 'linear-gradient(135deg, #951F3D, #5F1227)' } : {}}>
                 {lang === 'vi' ? link.label : link.labelEn}
               </Link>
             ))}
@@ -251,7 +251,7 @@ export function Navbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={lang === 'vi' ? 'Tìm khoá học, bài học...' : 'Search courses, lessons...'}
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cherry-300"
                 />
               </div>
             </form>
@@ -271,7 +271,7 @@ export function Navbar() {
                     key={portal.href}
                     href={portal.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-gray-50 hover:bg-purple-50 hover:text-purple-700 transition-all text-center"
+                    className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl bg-gray-50 hover:bg-cherry-50 hover:text-cherry-700 transition-all text-center"
                   >
                     <span className="text-xl">{portal.icon}</span>
                     <span className="text-[11px] font-bold text-gray-700">{portal.label}</span>

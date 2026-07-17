@@ -160,7 +160,7 @@ export default function LienKetPage() {
             <div className="space-y-3">
               {students.map((s) => (
                 <div key={s.id} className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">
-                  <div className="w-11 h-11 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0">
+                  <div className="w-11 h-11 bg-gradient-to-br from-blue-400 to-cherry-500 rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0">
                     {s.name?.[0]?.toUpperCase() ?? '?'}
                   </div>
                   <div className="flex-1 min-w-0">

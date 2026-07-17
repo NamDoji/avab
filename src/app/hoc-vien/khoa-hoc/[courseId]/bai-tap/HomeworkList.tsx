@@ -62,8 +62,8 @@ export default function HomeworkList({ subjects }: Props) {
           const canSubmit = !isGraded
 
           const colors = [
-            'from-purple-400 to-purple-600',
-            'from-indigo-400 to-indigo-600',
+            'from-cherry-400 to-cherry-600',
+            'from-cherry-400 to-cherry-600',
             'from-blue-400 to-blue-600',
             'from-teal-400 to-teal-600',
             'from-green-400 to-green-600',
@@ -130,7 +130,7 @@ export default function HomeworkList({ subjects }: Props) {
                 <div className="px-4 pb-4">
                   <button
                     onClick={() => setActiveSubject(s)}
-                    className="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-black hover:bg-indigo-700 active:scale-95 transition"
+                    className="w-full py-2.5 rounded-xl bg-cherry-600 text-white text-sm font-black hover:bg-cherry-700 active:scale-95 transition"
                   >
                     {isSubmitted ? '✏️ Nộp lại bài' : '📤 Nộp bài'}
                   </button>

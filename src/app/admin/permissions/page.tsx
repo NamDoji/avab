@@ -7,8 +7,8 @@ export const metadata = { title: 'Permissions Catalog — AvaB Admin' }
 
 // Module gradient colors
 const MODULE_GRADIENT: Record<string, string> = {
-  course:     'from-violet-500 to-purple-600',
-  lesson:     'from-indigo-500 to-blue-600',
+  course:     'from-cherry-500 to-cherry-600',
+  lesson:     'from-cherry-500 to-blue-600',
   homework:   'from-blue-500 to-cyan-600',
   student:    'from-teal-500 to-emerald-600',
   teacher:    'from-emerald-500 to-green-600',
@@ -18,11 +18,11 @@ const MODULE_GRADIENT: Record<string, string> = {
   content:    'from-red-500 to-rose-600',
   news:       'from-rose-500 to-pink-600',
   analytics:  'from-pink-500 to-fuchsia-600',
-  role:       'from-fuchsia-500 to-violet-600',
+  role:       'from-fuchsia-500 to-cherry-600',
   audit:      'from-slate-500 to-gray-600',
   system:     'from-gray-600 to-slate-700',
   question:   'from-cyan-500 to-sky-600',
-  enrollment: 'from-sky-500 to-indigo-600',
+  enrollment: 'from-sky-500 to-cherry-600',
 }
 
 function getModuleGradient(module: string): string {
@@ -131,7 +131,7 @@ export default async function PermissionsPage() {
                         {perm.key}
                       </code>
                       <span className="text-xs text-gray-400 shrink-0 w-20 truncate">{perm.name}</span>
-                      <span className={`text-xs font-bold shrink-0 ${perm._count.rolePermissions > 0 ? 'text-violet-700 bg-violet-50' : 'text-gray-400 bg-gray-50'} px-1.5 py-0.5 rounded-full`}>
+                      <span className={`text-xs font-bold shrink-0 ${perm._count.rolePermissions > 0 ? 'text-cherry-700 bg-cherry-50' : 'text-gray-400 bg-gray-50'} px-1.5 py-0.5 rounded-full`}>
                         {perm._count.rolePermissions}r
                       </span>
                     </div>

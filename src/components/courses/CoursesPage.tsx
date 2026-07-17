@@ -7,7 +7,7 @@ import { ChevronLeft } from 'lucide-react'
 
 // 25 chuyên đề thực tế từ file Danh sách chuyên đề.xlsx
 const subjectList = [
-  { id: '1',  icon: '➕', name: 'Phép cộng, phép trừ có nhớ',           color: 'from-purple-400 to-purple-600', done: false },
+  { id: '1',  icon: '➕', name: 'Phép cộng, phép trừ có nhớ',           color: 'from-cherry-400 to-cherry-600', done: false },
   { id: '2',  icon: '⚡', name: 'Bài toán tính nhanh',                   color: 'from-blue-400 to-blue-600',   done: false },
   { id: '3',  icon: '➡️', name: 'Bài toán tính xuôi',                   color: 'from-teal-400 to-teal-600',   done: false },
   { id: '4',  icon: '⬅️', name: 'Bài toán tính ngược',                  color: 'from-cyan-400 to-cyan-600',   done: false },
@@ -16,21 +16,21 @@ const subjectList = [
   { id: '7',  icon: '🔄', name: 'Bài toán so sánh thay thế',            color: 'from-yellow-400 to-yellow-600', done: false },
   { id: '8',  icon: '⚖️', name: 'Bài toán cân thăng bằng',             color: 'from-red-400 to-red-600',     done: false },
   { id: '9',  icon: '🚶', name: 'Bài toán xếp hàng',                   color: 'from-pink-400 to-pink-600',   done: false },
-  { id: '10', icon: '🧠', name: 'Bài toán Logic',                       color: 'from-indigo-400 to-indigo-600', done: false },
+  { id: '10', icon: '🧠', name: 'Bài toán Logic',                       color: 'from-cherry-400 to-cherry-600', done: false },
   { id: '11', icon: '🐔', name: 'Bài toán Gà - Thỏ',                   color: 'from-rose-400 to-rose-600',   done: false },
-  { id: '12', icon: '📊', name: 'Bài toán nhiều hơn, ít hơn, bằng nhau', color: 'from-violet-400 to-violet-600', done: false },
+  { id: '12', icon: '📊', name: 'Bài toán nhiều hơn, ít hơn, bằng nhau', color: 'from-cherry-400 to-cherry-600', done: false },
   { id: '13', icon: '📐', name: 'Bài toán vẽ sơ đồ',                   color: 'from-sky-400 to-sky-600',     done: false },
-  { id: '14', icon: '🔵', name: 'Bài toán biểu đồ Venn',               color: 'from-blue-500 to-indigo-600', done: false },
-  { id: '15', icon: '🎱', name: 'Bài toán bốc bi',                     color: 'from-purple-500 to-purple-700', done: false },
+  { id: '14', icon: '🔵', name: 'Bài toán biểu đồ Venn',               color: 'from-blue-500 to-cherry-600', done: false },
+  { id: '15', icon: '🎱', name: 'Bài toán bốc bi',                     color: 'from-cherry-500 to-cherry-700', done: false },
   { id: '16', icon: '📏', name: 'Bài toán chênh lệch',                 color: 'from-teal-500 to-teal-700',   done: false },
   { id: '17', icon: '🎨', name: 'Bài toán tô màu',                     color: 'from-orange-500 to-orange-700', done: false },
   { id: '18', icon: '🧩', name: 'Bài toán IQ',                         color: 'from-red-500 to-red-700',     done: false },
   { id: '19', icon: '🔡', name: 'Bài toán thay số bằng chữ',           color: 'from-green-500 to-green-700', done: false },
   { id: '20', icon: '🔢', name: 'Bài toán quy luật số',                color: 'from-yellow-500 to-amber-600', done: false },
   { id: '21', icon: '🔷', name: 'Bài toán quy luật hình',              color: 'from-pink-500 to-pink-700',   done: false },
-  { id: '22', icon: '🔲', name: 'Bài toán số chẵn, số lẻ',            color: 'from-indigo-500 to-indigo-700', done: false },
+  { id: '22', icon: '🔲', name: 'Bài toán số chẵn, số lẻ',            color: 'from-cherry-500 to-cherry-700', done: false },
   { id: '23', icon: '🔣', name: 'Bài toán định nghĩa phép toán mới',  color: 'from-cyan-500 to-cyan-700',   done: false },
-  { id: '24', icon: '🗺️', name: 'Bài toán đếm cách đi',              color: 'from-violet-500 to-violet-700', done: false },
+  { id: '24', icon: '🗺️', name: 'Bài toán đếm cách đi',              color: 'from-cherry-500 to-cherry-700', done: false },
   { id: '25', icon: '📅', name: 'Bài toán thứ trong tuần',            color: 'from-rose-500 to-rose-700',   done: false },
 ]
 
@@ -70,7 +70,7 @@ export function CoursesPage() {
                 <li>📚 <strong>Tài liệu thiếu hệ thống</strong> — mua nhiều sách nhưng con học không ra tư duy?</li>
                 <li>⏰ <strong>Thời gian chuẩn bị ngắn</strong> — cần một lộ trình rõ ràng, hiệu quả ngay?</li>
               </ul>
-              <div className="mt-4 flex items-center gap-2 text-purple-700 font-bold">
+              <div className="mt-4 flex items-center gap-2 text-cherry-700 font-bold">
                 <span>✅</span>
                 <span>AvaB có đầy đủ 25 chuyên đề — từ nền tảng đến nâng cao, theo đúng cấu trúc đề thi các trường hàng đầu Hà Nội.</span>
               </div>
@@ -107,7 +107,7 @@ export function CoursesPage() {
           <>
             <button
               onClick={() => setSelectedSubject(null)}
-              className="flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold mb-6 transition-colors"
+              className="flex items-center gap-2 text-cherry-600 hover:text-cherry-800 font-semibold mb-6 transition-colors"
             >
               <ChevronLeft size={20} />
               Quay lại danh sách chuyên đề

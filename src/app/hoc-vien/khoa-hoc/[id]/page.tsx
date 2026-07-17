@@ -9,12 +9,12 @@ export const metadata = { title: 'Chi tiết khoá học — AvaB Học viên' }
 
 // ── Course type themes (reused from public course page) ─────────────────────
 const K12_SUBJECT_THEME: Record<string, { gradient: string; emoji: string }> = {
-  THINKING_MATH: { gradient: 'from-purple-600 to-indigo-600', emoji: '🧠' },
-  MATH:          { gradient: 'from-blue-600 to-indigo-600',   emoji: '📐' },
+  THINKING_MATH: { gradient: 'from-cherry-600 to-cherry-600', emoji: '🧠' },
+  MATH:          { gradient: 'from-blue-600 to-cherry-600',   emoji: '📐' },
   VIETNAMESE:    { gradient: 'from-red-500 to-orange-500',    emoji: '📖' },
   ENGLISH:       { gradient: 'from-green-500 to-teal-600',    emoji: '🇬🇧' },
   SCIENCE:       { gradient: 'from-cyan-500 to-teal-600',     emoji: '🔬' },
-  PHYSICS:       { gradient: 'from-violet-600 to-indigo-700', emoji: '⚛️' },
+  PHYSICS:       { gradient: 'from-cherry-600 to-cherry-700', emoji: '⚛️' },
   CHEMISTRY:     { gradient: 'from-lime-500 to-green-600',    emoji: '🧪' },
   BIOLOGY:       { gradient: 'from-emerald-500 to-teal-600',  emoji: '🧬' },
   HISTORY:       { gradient: 'from-amber-500 to-orange-500',  emoji: '🏰' },
@@ -23,19 +23,19 @@ const K12_SUBJECT_THEME: Record<string, { gradient: string; emoji: string }> = {
   ALGO:          { gradient: 'from-yellow-400 to-orange-500', emoji: '🤖' },
   SCRATCH:       { gradient: 'from-orange-400 to-pink-500',   emoji: '🐱' },
   PYTHON:        { gradient: 'from-teal-500 to-cyan-600',     emoji: '🐍' },
-  CPP:           { gradient: 'from-violet-600 to-purple-700', emoji: '⚡' },
+  CPP:           { gradient: 'from-cherry-600 to-cherry-700', emoji: '⚡' },
   IELTS:         { gradient: 'from-sky-500 to-blue-600',      emoji: '📝' },
   CAMBRIDGE:     { gradient: 'from-rose-500 to-fuchsia-600',  emoji: '🎓' },
   GENERAL:       { gradient: 'from-gray-600 to-slate-700',    emoji: '📚' },
 }
 
 const LEGACY_THEME: Record<string, { gradient: string; emoji: string }> = {
-  TOAN:                 { gradient: 'from-purple-600 to-indigo-600', emoji: '📐' },
+  TOAN:                 { gradient: 'from-cherry-600 to-cherry-600', emoji: '📐' },
   TIENG_ANH:            { gradient: 'from-green-500 to-teal-600',    emoji: '🇬🇧' },
   LAP_TRINH_THUAT_TOAN: { gradient: 'from-yellow-400 to-orange-500', emoji: '🤖' },
   LAP_TRINH_SCRATCH:    { gradient: 'from-orange-400 to-pink-500',   emoji: '🐱' },
   LAP_TRINH_PYTHON:     { gradient: 'from-teal-500 to-cyan-600',     emoji: '🐍' },
-  LAP_TRINH_CPP:        { gradient: 'from-violet-600 to-purple-700', emoji: '⚡' },
+  LAP_TRINH_CPP:        { gradient: 'from-cherry-600 to-cherry-700', emoji: '⚡' },
 }
 
 function getTheme(subjectCode: string | null, courseType: string | null) {
@@ -157,7 +157,7 @@ export default async function StudentCourseDetailPage({
   const recentScores = Array.from(recentByDay.values()).slice(0, 5)
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-indigo-50 to-gray-50 pt-20">
+    <main className="min-h-screen bg-gradient-to-b from-cherry-50 to-gray-50 pt-20">
       {/* Hero Header */}
       <div className={`bg-gradient-to-br ${theme.gradient} text-white`}>
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -195,19 +195,19 @@ export default async function StudentCourseDetailPage({
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* ── Quiz CTA Card ──────────────────────────────────────── */}
-        <div className="bg-gradient-to-r from-indigo-900 to-purple-900 rounded-3xl p-6 text-white">
+        <div className="bg-gradient-to-r from-cherry-900 to-cherry-900 rounded-3xl p-6 text-white">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Target className="w-5 h-5 text-indigo-300" />
+                <Target className="w-5 h-5 text-cherry-300" />
                 <h2 className="font-black text-lg">Làm bài kiểm tra</h2>
               </div>
-              <p className="text-indigo-300 text-sm mb-4">
+              <p className="text-cherry-300 text-sm mb-4">
                 {quizLimit} câu hỏi ngẫu nhiên • 15 phút • 20 XP/câu đúng
               </p>
               {/* Today progress */}
               <div className="mb-2">
-                <div className="flex justify-between text-xs text-indigo-300 mb-1">
+                <div className="flex justify-between text-xs text-cherry-300 mb-1">
                   <span>Hôm nay</span>
                   <span>
                     {todayTotal}/{quizLimit} câu đã làm
@@ -215,7 +215,7 @@ export default async function StudentCourseDetailPage({
                 </div>
                 <div className="bg-white/10 rounded-full h-2 overflow-hidden w-full max-w-[12rem]">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-cherry-400 to-cherry-400 transition-all"
                     style={{ width: `${Math.min(100, todayPct)}%` }}
                   />
                 </div>
@@ -224,7 +224,7 @@ export default async function StudentCourseDetailPage({
 
             <Link
               href={`/hoc-vien/khoa-hoc/${courseId}/quiz`}
-              className="shrink-0 bg-white text-indigo-800 font-black px-6 py-3 rounded-2xl hover:bg-indigo-50 transition active:scale-95 text-sm min-h-[44px] flex items-center"
+              className="shrink-0 bg-white text-cherry-800 font-black px-6 py-3 rounded-2xl hover:bg-cherry-50 transition active:scale-95 text-sm min-h-[44px] flex items-center"
             >
               🎯 Làm bài kiểm tra →
             </Link>
@@ -243,10 +243,10 @@ export default async function StudentCourseDetailPage({
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="w-4 h-4 text-purple-500" />
+              <TrendingUp className="w-4 h-4 text-cherry-500" />
               <span className="text-xs text-gray-500">Tỉ lệ chính xác</span>
             </div>
-            <div className="text-2xl font-black text-purple-600">{allAccuracy}%</div>
+            <div className="text-2xl font-black text-cherry-600">{allAccuracy}%</div>
             <div className="text-xs text-gray-400">{allTotal} tổng câu</div>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
@@ -273,7 +273,7 @@ export default async function StudentCourseDetailPage({
         {recentScores.length > 0 && (
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
             <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-purple-500" />
+              <TrendingUp className="w-5 h-5 text-cherry-500" />
               Kết quả gần đây
             </h2>
             <div className="space-y-3">
@@ -328,7 +328,7 @@ export default async function StudentCourseDetailPage({
             </h2>
             <Link
               href={`/khoa-hoc/${courseId}`}
-              className="text-sm font-semibold text-purple-600 hover:text-purple-700"
+              className="text-sm font-semibold text-cherry-600 hover:text-cherry-700"
             >
               Xem tất cả →
             </Link>
@@ -343,8 +343,8 @@ export default async function StudentCourseDetailPage({
             <div className="grid sm:grid-cols-2 gap-3">
               {course.subjects.map((subject, idx) => {
                 const colors = [
-                  'from-purple-400 to-purple-600',
-                  'from-indigo-400 to-indigo-600',
+                  'from-cherry-400 to-cherry-600',
+                  'from-cherry-400 to-cherry-600',
                   'from-blue-400 to-blue-600',
                   'from-teal-400 to-teal-600',
                   'from-green-400 to-green-600',
@@ -355,7 +355,7 @@ export default async function StudentCourseDetailPage({
                   <Link
                     key={subject.id}
                     href={`/hoc-vien/khoa-hoc/${courseId}/${subject.id}`}
-                    className="flex items-center gap-3 p-3 rounded-2xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/30 transition group"
+                    className="flex items-center gap-3 p-3 rounded-2xl border border-gray-100 hover:border-cherry-200 hover:bg-cherry-50/30 transition group"
                   >
                     <div
                       className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-105 transition`}
@@ -370,7 +370,7 @@ export default async function StudentCourseDetailPage({
                         {subject._count.questions} câu hỏi
                       </p>
                     </div>
-                    <span className="text-gray-300 group-hover:text-purple-400 transition text-xs">→</span>
+                    <span className="text-gray-300 group-hover:text-cherry-400 transition text-xs">→</span>
                   </Link>
                 )
               })}
@@ -389,7 +389,7 @@ export default async function StudentCourseDetailPage({
           </Link>
           <Link
             href={`/hoc-vien/khoa-hoc/${courseId}/bai-tap`}
-            className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl p-4 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition"
+            className="bg-gradient-to-br from-cherry-500 to-cherry-600 text-white rounded-2xl p-4 flex flex-col items-center gap-2 text-center hover:opacity-90 active:scale-95 transition"
           >
             <span className="text-2xl">📝</span>
             <span className="text-xs font-black">Bài tập</span>

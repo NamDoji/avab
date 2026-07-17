@@ -8,28 +8,28 @@ import { AIDashboard } from '@/components/ai/AIDashboard'
 type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCRATCH' | 'LAP_TRINH_PYTHON' | 'LAP_TRINH_CPP'
 
 const COURSE_TYPE_META: Record<string, { emoji: string; label: string; gradient: string }> = {
-  TOAN:                 { emoji: '📐', label: 'Toán',             gradient: 'from-purple-500 to-indigo-600' },
+  TOAN:                 { emoji: '📐', label: 'Toán',             gradient: 'from-cherry-500 to-cherry-600' },
   TIENG_ANH:            { emoji: '🇬🇧', label: 'Tiếng Anh',       gradient: 'from-green-400 to-teal-600' },
   LAP_TRINH_THUAT_TOAN: { emoji: '🤖', label: 'Lập trình tư duy', gradient: 'from-yellow-400 to-orange-500' },
   LAP_TRINH_SCRATCH:    { emoji: '🐱', label: 'Scratch',          gradient: 'from-orange-400 to-pink-500' },
   LAP_TRINH_PYTHON:     { emoji: '🐍', label: 'Python',           gradient: 'from-teal-400 to-cyan-600' },
-  LAP_TRINH_CPP:        { emoji: '⚡', label: 'C++',              gradient: 'from-violet-500 to-purple-700' },
-  THINKING_MATH: { emoji: '🧠', label: 'Toán Tư Duy',  gradient: 'from-purple-500 to-indigo-600' },
-  MATH:          { emoji: '📐', label: 'Toán',          gradient: 'from-blue-500 to-indigo-600' },
+  LAP_TRINH_CPP:        { emoji: '⚡', label: 'C++',              gradient: 'from-cherry-500 to-cherry-700' },
+  THINKING_MATH: { emoji: '🧠', label: 'Toán Tư Duy',  gradient: 'from-cherry-500 to-cherry-600' },
+  MATH:          { emoji: '📐', label: 'Toán',          gradient: 'from-blue-500 to-cherry-600' },
   VIETNAMESE:    { emoji: '📖', label: 'Tiếng Việt',    gradient: 'from-red-500 to-orange-500' },
   ENGLISH:       { emoji: '🇬🇧', label: 'Tiếng Anh',    gradient: 'from-green-400 to-teal-600' },
   SCIENCE:       { emoji: '🔬', label: 'Khoa học',      gradient: 'from-cyan-500 to-teal-600' },
-  PHYSICS:       { emoji: '⚛️', label: 'Vật lý',        gradient: 'from-violet-500 to-indigo-700' },
+  PHYSICS:       { emoji: '⚛️', label: 'Vật lý',        gradient: 'from-cherry-500 to-cherry-700' },
   CHEMISTRY:     { emoji: '🧪', label: 'Hóa học',       gradient: 'from-lime-500 to-green-600' },
   BIOLOGY:       { emoji: '🧬', label: 'Sinh học',      gradient: 'from-emerald-500 to-teal-600' },
   HISTORY:       { emoji: '🏰', label: 'Lịch sử',       gradient: 'from-amber-500 to-orange-600' },
   GEOGRAPHY:     { emoji: '🌍', label: 'Địa lý',        gradient: 'from-emerald-400 to-cyan-600' },
   INFORMATICS:   { emoji: '💻', label: 'Tin học',       gradient: 'from-sky-500 to-blue-600' },
-  CIVIC:         { emoji: '⚖️', label: 'GDCD',          gradient: 'from-indigo-500 to-blue-600' },
+  CIVIC:         { emoji: '⚖️', label: 'GDCD',          gradient: 'from-cherry-500 to-blue-600' },
   ALGO:          { emoji: '🤖', label: 'Thuật toán',    gradient: 'from-yellow-400 to-orange-500' },
   SCRATCH:       { emoji: '🐱', label: 'Scratch',       gradient: 'from-orange-400 to-pink-500' },
   PYTHON:        { emoji: '🐍', label: 'Python',        gradient: 'from-teal-400 to-cyan-600' },
-  CPP:           { emoji: '⚡', label: 'C++',            gradient: 'from-violet-500 to-purple-700' },
+  CPP:           { emoji: '⚡', label: 'C++',            gradient: 'from-cherry-500 to-cherry-700' },
   IELTS:         { emoji: '📝', label: 'IELTS',         gradient: 'from-sky-500 to-blue-600' },
   CAMBRIDGE:     { emoji: '🎓', label: 'Cambridge',     gradient: 'from-rose-500 to-pink-600' },
   GENERAL:       { emoji: '📚', label: 'Tổng hợp',      gradient: 'from-gray-500 to-slate-600' },
@@ -326,11 +326,11 @@ export default async function HocVienPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 to-gray-50 pt-20">
+    <main className="min-h-screen bg-gradient-to-b from-cherry-50 to-gray-50 pt-20">
       <div className="max-w-5xl mx-auto px-4 py-8">
 
         {/* ── Hero welcome card ──────────────────────────────── */}
-        <div className="relative bg-gradient-to-br from-purple-600 via-indigo-600 to-teal-600 rounded-3xl p-7 text-white mb-6 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-cherry-600 via-cherry-600 to-teal-600 rounded-3xl p-7 text-white mb-6 overflow-hidden">
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
           <div className="absolute bottom-0 left-20 w-24 h-24 bg-white/10 rounded-full translate-y-8" />
           <div className="relative flex items-start justify-between gap-4">
@@ -411,19 +411,19 @@ export default async function HocVienPage() {
               {todaySlots.map(slot => (
                 <div
                   key={`${slot.period}`}
-                  className="flex items-start gap-3 p-3 rounded-2xl border border-purple-100"
-                  style={{ background: 'linear-gradient(135deg,#faf5ff 0%,#f5f3ff 100%)' }}
+                  className="flex items-start gap-3 p-3 rounded-2xl border border-cherry-100"
+                  style={{ background: 'linear-gradient(135deg,#FFF7F9 0%,#FFF7F9 100%)' }}
                 >
                   <div className="text-center min-w-[48px]">
-                    <div className="text-sm font-black text-purple-700">{slot.time}</div>
-                    <div className="text-xs text-purple-400">Tiết {slot.period}</div>
+                    <div className="text-sm font-black text-cherry-700">{slot.time}</div>
+                    <div className="text-xs text-cherry-400">Tiết {slot.period}</div>
                   </div>
-                  <div className="w-px bg-purple-200 self-stretch" />
+                  <div className="w-px bg-cherry-200 self-stretch" />
                   <div className="flex-1">
                     <p className="font-bold text-gray-800 text-sm">{slot.subjectName ?? slot.courseName}</p>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {slot.teacherName && (
-                        <span className="text-xs text-purple-600 font-semibold">
+                        <span className="text-xs text-cherry-600 font-semibold">
                           👩‍🏫 {slot.teacherName}
                         </span>
                       )}
@@ -465,9 +465,9 @@ export default async function HocVienPage() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-purple-50 border border-purple-100">
+            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-cherry-50 border border-cherry-100">
               <span className="text-2xl">💪</span>
-              <p className="font-semibold text-purple-700 text-sm">
+              <p className="font-semibold text-cherry-700 text-sm">
                 Hãy bắt đầu streak hôm nay — học đều đặn mỗi ngày!
               </p>
             </div>
@@ -475,13 +475,13 @@ export default async function HocVienPage() {
 
           {/* Upcoming tests/sessions badge */}
           {upcomingSubjectSlots.length > 0 && (
-            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-50 border border-indigo-200">
+            <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-cherry-50 border border-cherry-200">
               <span className="text-2xl">🎯</span>
               <div className="flex-1">
-                <p className="font-black text-indigo-800 text-sm">
+                <p className="font-black text-cherry-800 text-sm">
                   Bạn có {upcomingSubjectSlots.length} buổi học sắp tới
                 </p>
-                <p className="text-xs text-indigo-500 mt-0.5">
+                <p className="text-xs text-cherry-500 mt-0.5">
                   {upcomingSubjectSlots
                     .map(s => `${s.subjectName}`)
                     .join(' · ')}
@@ -495,7 +495,7 @@ export default async function HocVienPage() {
         {quizTarget && (
           <div
             className="rounded-3xl p-6 mb-6 overflow-hidden"
-            style={{ background: 'linear-gradient(135deg,#312e81 0%,#1e1b4b 100%)' }}
+            style={{ background: 'linear-gradient(135deg,#400B19 0%,#29050F 100%)' }}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -503,7 +503,7 @@ export default async function HocVienPage() {
                   <span className="text-2xl">🎯</span>
                   <h2 className="font-black text-white text-lg">Luyện tập ngay</h2>
                 </div>
-                <p className="text-indigo-300 text-sm mb-1">
+                <p className="text-cherry-300 text-sm mb-1">
                   {quizTarget.subjectName}
                 </p>
                 <div className="flex items-center gap-2 mt-3">
@@ -514,7 +514,7 @@ export default async function HocVienPage() {
                   </div>
                   {quizTarget.totalQuestions > 0 && (
                     <div className="bg-white/10 rounded-xl px-3 py-1.5">
-                      <span className="text-indigo-200 text-sm font-semibold">
+                      <span className="text-cherry-200 text-sm font-semibold">
                         {quizTarget.totalQuestions} câu hỏi
                       </span>
                     </div>
@@ -523,7 +523,7 @@ export default async function HocVienPage() {
               </div>
               <Link
                 href={`/khoa-hoc/${quizTarget.courseId}`}
-                className="shrink-0 bg-white text-indigo-700 font-black px-5 py-3 rounded-2xl text-sm hover:bg-indigo-50 transition"
+                className="shrink-0 bg-white text-cherry-700 font-black px-5 py-3 rounded-2xl text-sm hover:bg-cherry-50 transition"
               >
                 Vào học →
               </Link>
@@ -532,13 +532,13 @@ export default async function HocVienPage() {
             {/* Progress bar */}
             {quizTarget.totalQuestions > 0 && (
               <div className="mt-5">
-                <div className="flex justify-between text-xs text-indigo-300 mb-1.5">
+                <div className="flex justify-between text-xs text-cherry-300 mb-1.5">
                   <span>Hôm nay</span>
                   <span>{todayAnswerCount}/{Math.min(quizTarget.totalQuestions, 20)} câu</span>
                 </div>
                 <div className="bg-white/10 rounded-full h-2 overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-cherry-400 to-cherry-400 transition-all"
                     style={{ width: `${Math.min(100, (todayAnswerCount / Math.min(quizTarget.totalQuestions, 20)) * 100)}%` }}
                   />
                 </div>
@@ -551,10 +551,10 @@ export default async function HocVienPage() {
         <div className="bg-white rounded-3xl shadow-sm p-6 mb-6 border border-gray-100">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-purple-600" />
+              <BookOpen className="w-5 h-5 text-cherry-600" />
               Khoá học của tôi
             </h2>
-            <Link href="/khoa-hoc" className="text-sm font-semibold text-purple-600 hover:text-purple-700">
+            <Link href="/khoa-hoc" className="text-sm font-semibold text-cherry-600 hover:text-cherry-700">
               + Thêm khoá học
             </Link>
           </div>
@@ -564,7 +564,7 @@ export default async function HocVienPage() {
               <div className="text-6xl mb-4">🎓</div>
               <p className="text-gray-500 font-semibold mb-2">Chưa có khoá học nào</p>
               <p className="text-gray-400 text-sm mb-5">Đăng ký khoá học để bắt đầu học tập!</p>
-              <Link href="/khoa-hoc" className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-2xl font-black text-sm transition">
+              <Link href="/khoa-hoc" className="inline-flex items-center gap-2 bg-cherry-600 hover:bg-cherry-700 text-white px-6 py-3 rounded-2xl font-black text-sm transition">
                 📚 Xem khoá học ngay
               </Link>
             </div>
@@ -577,7 +577,7 @@ export default async function HocVienPage() {
                   ? COURSE_TYPE_META[subjectCode]
                   : (COURSE_TYPE_META[cType] ?? COURSE_TYPE_META.TOAN)
                 return (
-                  <div key={enrollment.id} className="relative rounded-2xl border-2 border-gray-100 overflow-hidden hover:border-purple-200 transition group">
+                  <div key={enrollment.id} className="relative rounded-2xl border-2 border-gray-100 overflow-hidden hover:border-cherry-200 transition group">
                     <div className={`h-1.5 bg-gradient-to-r ${meta.gradient}`} />
                     <div className="p-4">
                       <div className="flex items-start justify-between gap-3 mb-3">
@@ -628,7 +628,7 @@ export default async function HocVienPage() {
               {leaderboard.map((item, idx) => {
                 const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`
                 const initials  = item.name?.[0]?.toUpperCase() ?? '?'
-                const bgColors  = ['#0f766e', '#0369a1', '#7c3aed', '#db2777', '#ea580c']
+                const bgColors  = ['#0f766e', '#0369a1', '#951F3D', '#db2777', '#ea580c']
                 const avatarBg  = bgColors[(initials.charCodeAt(0) ?? 0) % bgColors.length]
                 return (
                   <div
@@ -636,9 +636,9 @@ export default async function HocVienPage() {
                     className="flex items-center gap-3 p-3 rounded-2xl transition"
                     style={{
                       background: item.isMe
-                        ? 'linear-gradient(135deg,#faf5ff 0%,#ede9fe 100%)'
+                        ? 'linear-gradient(135deg,#FFF7F9 0%,#FDECF0 100%)'
                         : '#f8fafc',
-                      border: item.isMe ? '2px solid #a78bfa' : '1px solid #f1f5f9',
+                      border: item.isMe ? '2px solid #DC607D' : '1px solid #f1f5f9',
                     }}
                   >
                     <span className="text-xl w-8 text-center">{rankEmoji}</span>
@@ -650,7 +650,7 @@ export default async function HocVienPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-gray-800 text-sm truncate">
-                        {item.name ?? 'Học sinh'}{item.isMe && <span className="text-purple-600 ml-1 text-xs">(Bạn)</span>}
+                        {item.name ?? 'Học sinh'}{item.isMe && <span className="text-cherry-600 ml-1 text-xs">(Bạn)</span>}
                       </p>
                       <p className="text-xs text-gray-400">Level {item.level}</p>
                     </div>
@@ -664,7 +664,7 @@ export default async function HocVienPage() {
 
             <Link
               href="/bang-vang"
-              className="mt-4 flex items-center justify-center gap-2 text-sm font-bold text-purple-600 hover:text-purple-700 py-2"
+              className="mt-4 flex items-center justify-center gap-2 text-sm font-bold text-cherry-600 hover:text-cherry-700 py-2"
             >
               Xem bảng xếp hạng đầy đủ →
             </Link>
@@ -693,14 +693,14 @@ export default async function HocVienPage() {
 
                 return (
                   <div key={record.id} className="border border-gray-100 rounded-2xl overflow-hidden">
-                    <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-gray-100">
+                    <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-cherry-50 to-cherry-50 border-b border-gray-100">
                       <span className="text-xl shrink-0">{subject.icon ?? '📚'}</span>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-gray-800 text-sm truncate">{subject.name}</p>
                         <p className="text-xs text-gray-400">{subject.course.name}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-xs font-semibold text-purple-600">
+                        <p className="text-xs font-semibold text-cherry-600">
                           {sessionDate.toLocaleDateString('vi-VN', { weekday: 'short', day: 'numeric', month: 'numeric' })}
                         </p>
                         {record.hwScore !== null && (
@@ -720,7 +720,7 @@ export default async function HocVienPage() {
                           </span>
                         )}
                         {record.focusLevel != null && (
-                          <span className="text-xs bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full font-semibold">
+                          <span className="text-xs bg-cherry-50 text-cherry-700 px-2.5 py-1 rounded-full font-semibold">
                             🧠 Tập trung: {record.focusLevel}/5
                           </span>
                         )}
@@ -749,11 +749,11 @@ export default async function HocVienPage() {
                         </div>
                       )}
                       <details className="group">
-                        <summary className="text-xs text-purple-600 font-semibold cursor-pointer hover:text-purple-700 list-none flex items-center gap-1">
+                        <summary className="text-xs text-cherry-600 font-semibold cursor-pointer hover:text-cherry-700 list-none flex items-center gap-1">
                           <span className="group-open:hidden">▶ Xem nhận xét đầy đủ</span>
                           <span className="hidden group-open:inline">▼ Ẩn bớt</span>
                         </summary>
-                        <div className="mt-2 bg-purple-50 rounded-xl px-3 py-3 text-xs text-gray-700 leading-relaxed whitespace-pre-line">
+                        <div className="mt-2 bg-cherry-50 rounded-xl px-3 py-3 text-xs text-gray-700 leading-relaxed whitespace-pre-line">
                           {record.aiComment}
                         </div>
                       </details>
@@ -771,7 +771,7 @@ export default async function HocVienPage() {
         {/* ── Quick Links ───────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
           {[
-            { href: '/khoa-hoc',     label: 'Khám phá khoá học', emoji: '📚', gradient: 'from-purple-500 to-indigo-600' },
+            { href: '/khoa-hoc',     label: 'Khám phá khoá học', emoji: '📚', gradient: 'from-cherry-500 to-cherry-600' },
             { href: '/bang-vang',    label: 'Bảng xếp hạng',    emoji: '🏆', gradient: 'from-yellow-400 to-orange-500' },
             { href: '/tin-tuc',      label: 'Tin tức',           emoji: '📰', gradient: 'from-teal-400 to-cyan-600' },
             { href: '/doi-mat-khau', label: 'Đổi mật khẩu',     emoji: '🔑', gradient: 'from-gray-500 to-gray-700' },

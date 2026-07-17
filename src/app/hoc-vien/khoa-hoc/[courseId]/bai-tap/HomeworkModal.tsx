@@ -88,7 +88,7 @@ export default function HomeworkModal({
                 Câu trả lời / Bài làm của bạn
               </label>
               <textarea
-                className="w-full border border-gray-200 rounded-2xl p-4 text-sm text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition placeholder:text-gray-400"
+                className="w-full border border-gray-200 rounded-2xl p-4 text-sm text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-cherry-400 focus:border-transparent transition placeholder:text-gray-400"
                 rows={8}
                 placeholder="Viết câu trả lời, giải thích hoặc dán nội dung bài làm của bạn vào đây..."
                 value={content}
@@ -123,7 +123,7 @@ export default function HomeworkModal({
             <button
               onClick={handleSubmit}
               disabled={loading || !content.trim()}
-              className="flex-1 py-3 rounded-2xl bg-indigo-600 text-white text-sm font-black hover:bg-indigo-700 active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 py-3 rounded-2xl bg-cherry-600 text-white text-sm font-black hover:bg-cherry-700 active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <><Loader2 size={16} className="animate-spin" /> Đang nộp...</>

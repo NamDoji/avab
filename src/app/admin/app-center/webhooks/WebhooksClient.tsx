@@ -131,7 +131,7 @@ function AddWebhookModal({
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://yourapp.com/webhooks/avab"
-                className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
               />
               <button
                 type="button"
@@ -154,17 +154,17 @@ function AddWebhookModal({
             <label className="block text-sm font-bold text-gray-700 mb-2">Sự kiện lắng nghe *</label>
             <div className="space-y-2">
               {ALL_EVENTS.map((ev) => (
-                <label key={ev.value} className="flex items-start gap-3 cursor-pointer p-3 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition">
+                <label key={ev.value} className="flex items-start gap-3 cursor-pointer p-3 rounded-xl border border-gray-100 hover:border-cherry-200 hover:bg-cherry-50/30 transition">
                   <input
                     type="checkbox"
                     checked={events.includes(ev.value)}
                     onChange={() => toggleEvent(ev.value)}
-                    className="mt-0.5 w-4 h-4 accent-indigo-600"
+                    className="mt-0.5 w-4 h-4 accent-cherry-600"
                   />
                   <div>
                     <span className="text-sm font-semibold text-gray-800">{ev.icon} {ev.label}</span>
                     <p className="text-xs text-gray-400 mt-0.5">{ev.desc}</p>
-                    <code className="text-xs text-indigo-500 font-mono">{ev.value}</code>
+                    <code className="text-xs text-cherry-500 font-mono">{ev.value}</code>
                   </div>
                 </label>
               ))}
@@ -181,7 +181,7 @@ function AddWebhookModal({
               type="submit"
               disabled={loading}
               className="flex-1 px-4 py-2.5 rounded-xl text-white text-sm font-bold transition disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+              style={{ background: 'linear-gradient(135deg, #6366f1, #BE3659)' }}
             >
               {loading ? 'Đang lưu...' : 'Thêm Webhook'}
             </button>
@@ -236,7 +236,7 @@ export default function WebhooksClient({ webhooks: initialWebhooks, orgId }: Pro
           className="relative overflow-hidden text-white py-12"
           style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}
         >
-          <div className="absolute top-0 right-0 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cherry-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
           <div className="container-custom relative">
             <p className="text-slate-400 text-sm font-semibold mb-1">
               🧭 AvaB Admin &rsaquo;{' '}
@@ -250,8 +250,8 @@ export default function WebhooksClient({ webhooks: initialWebhooks, orgId }: Pro
         <div className="container-custom py-10 space-y-10">
 
           {/* ── How it works ─────────────────────────────────────────────── */}
-          <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
-            <h3 className="text-sm font-black text-indigo-800 mb-3">📡 Webhooks hoạt động như thế nào?</h3>
+          <div className="bg-cherry-50 border border-cherry-100 rounded-2xl p-6">
+            <h3 className="text-sm font-black text-cherry-800 mb-3">📡 Webhooks hoạt động như thế nào?</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               {[
                 { step: '1', title: 'Sự kiện xảy ra', desc: 'Học sinh đăng ký, thanh toán thành công, ...' },
@@ -259,12 +259,12 @@ export default function WebhooksClient({ webhooks: initialWebhooks, orgId }: Pro
                 { step: '3', title: 'Bạn xử lý', desc: 'Ứng dụng nhận payload JSON, xác minh chữ ký, xử lý' },
               ].map((s) => (
                 <div key={s.step} className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-black flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-cherry-600 text-white text-xs font-black flex items-center justify-center flex-shrink-0">
                     {s.step}
                   </div>
                   <div>
-                    <p className="font-bold text-indigo-900">{s.title}</p>
-                    <p className="text-indigo-600 text-xs mt-0.5">{s.desc}</p>
+                    <p className="font-bold text-cherry-900">{s.title}</p>
+                    <p className="text-cherry-600 text-xs mt-0.5">{s.desc}</p>
                   </div>
                 </div>
               ))}
@@ -277,12 +277,12 @@ export default function WebhooksClient({ webhooks: initialWebhooks, orgId }: Pro
               <div className="flex items-center gap-2">
                 <span className="text-xl">📡</span>
                 <h2 className="text-lg font-black text-gray-800">Endpoints</h2>
-                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-violet-100 text-violet-700">{webhooks.length}</span>
+                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-cherry-100 text-cherry-700">{webhooks.length}</span>
               </div>
               <button
                 onClick={() => setShowAdd(true)}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold transition hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                style={{ background: 'linear-gradient(135deg, #6366f1, #BE3659)' }}
               >
                 + Thêm Webhook
               </button>
@@ -310,7 +310,7 @@ export default function WebhooksClient({ webhooks: initialWebhooks, orgId }: Pro
                           {w.events.map((ev) => {
                             const meta = ALL_EVENTS.find((e) => e.value === ev)
                             return (
-                              <span key={ev} className="px-2 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-700">
+                              <span key={ev} className="px-2 py-0.5 rounded-full text-xs font-medium bg-cherry-50 text-cherry-700">
                                 {meta?.icon} {ev}
                               </span>
                             )

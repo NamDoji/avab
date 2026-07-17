@@ -120,7 +120,7 @@ function MaterialContent({
         <p className="font-bold text-gray-500 text-sm">Chưa có nội dung</p>
         <button
           onClick={() => setEditing(true)}
-          className="mt-3 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-lg transition"
+          className="mt-3 text-xs font-semibold text-cherry-600 hover:text-cherry-800 bg-cherry-50 px-3 py-1.5 rounded-lg transition"
         >
           ✏️ Nhập thủ công
         </button>
@@ -207,7 +207,7 @@ function MaterialContent({
             <div className={`${expanded ? '' : 'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white pt-8'}`}>
               <button
                 onClick={() => setExpanded(v => !v)}
-                className="flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 mx-auto"
+                className="flex items-center gap-1 text-xs font-semibold text-cherry-600 hover:text-cherry-800 mx-auto"
               >
                 {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                 {expanded ? 'Thu gọn' : 'Xem toàn bộ'}

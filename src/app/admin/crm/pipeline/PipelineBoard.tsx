@@ -244,7 +244,7 @@ function LeadCard({ lead, stageBg, stageColor, prevStage, nextStage, isUpdating,
             placeholder="Ghi chú nội bộ..."
             rows={2}
             autoFocus
-            className="w-full border border-purple-300 rounded-xl px-2.5 py-1.5 text-xs focus:outline-none resize-none"
+            className="w-full border border-cherry-300 rounded-xl px-2.5 py-1.5 text-xs focus:outline-none resize-none"
           />
           <div className="flex gap-1.5">
             <button onClick={handleSaveNote} disabled={savingNote}
@@ -260,7 +260,7 @@ function LeadCard({ lead, stageBg, stageColor, prevStage, nextStage, isUpdating,
         </div>
       ) : (
         <button onClick={() => { setEditingNote(true); setNoteValue(lead.note2 ?? '') }}
-          className="mt-2 w-full text-left text-xs rounded-xl px-3 py-1.5 border border-dashed transition-colors hover:border-purple-300 hover:bg-purple-50 min-h-[36px]"
+          className="mt-2 w-full text-left text-xs rounded-xl px-3 py-1.5 border border-dashed transition-colors hover:border-cherry-300 hover:bg-cherry-50 min-h-[36px]"
           style={{ borderColor: '#d8b4fe55', color: lead.note2 ? '#7e22ce' : '#d1d5db' }}>
           {lead.note2 ? (lead.note2.length > 50 ? lead.note2.slice(0, 50) + '…' : lead.note2) : '+ Ghi chú nội bộ'}
         </button>

@@ -14,7 +14,7 @@ const yearlyData = [
     students: '135',
     revenue: '200+ triệu',
     highlight: { vi: 'Ra mắt sản phẩm, chứng minh thị trường', en: 'Product launch, market validation' },
-    color: 'from-purple-400 to-purple-600',
+    color: 'from-cherry-400 to-cherry-600',
   },
   {
     year: { vi: 'Năm học 2', en: 'Year 2' },
@@ -72,7 +72,7 @@ const expansionPlan = [
 ]
 
 const allocations = [
-  { label: { vi: 'Giáo viên & Nội dung chuyên môn', en: 'Teachers & Subject Content' }, pct: 40, color: 'bg-purple-600', desc: { vi: 'Đội ngũ giảng viên cộng tác, phát triển 25 chuyên đề', en: 'Collaborative faculty, developing 25 topics' } },
+  { label: { vi: 'Giáo viên & Nội dung chuyên môn', en: 'Teachers & Subject Content' }, pct: 40, color: 'bg-cherry-600', desc: { vi: 'Đội ngũ giảng viên cộng tác, phát triển 25 chuyên đề', en: 'Collaborative faculty, developing 25 topics' } },
   { label: { vi: 'Marketing & Phát triển cộng đồng', en: 'Marketing & Community' }, pct: 30, color: 'bg-teal-500', desc: { vi: 'Mạng xã hội, nhóm phụ huynh, word-of-mouth', en: 'Social media, parent groups, word-of-mouth' } },
   { label: { vi: 'Công nghệ & Nền tảng số', en: 'Technology & Digital Platform' }, pct: 20, color: 'bg-blue-500', desc: { vi: 'Website, hệ thống chấm bài, AI tích hợp', en: 'Website, grading system, integrated AI' } },
   { label: { vi: 'Vận hành & Hỗ trợ khách hàng', en: 'Operations & Customer Support' }, pct: 10, color: 'bg-gray-400', desc: { vi: 'Chăm sóc học viên, điều phối lịch kèm online', en: 'Student care, online tutoring schedule coordination' } },
@@ -98,7 +98,7 @@ const t = {
     commissionNote: 'Đại lý phụ huynh hưởng hoa hồng 15–20% mỗi khoá giới thiệu thành công',
     metricsTitle: '📊 Chỉ số thực tế hàng năm',
     metrics: [
-      { value: '590+', label: 'Thành viên tham gia', sub: 'năm đỉnh nhất (2025-2026)', icon: '👨‍👩‍👧', color: 'from-purple-500 to-purple-700' },
+      { value: '590+', label: 'Thành viên tham gia', sub: 'năm đỉnh nhất (2025-2026)', icon: '👨‍👩‍👧', color: 'from-cherry-500 to-cherry-700' },
       { value: '330', label: 'Học viên mua khoá', sub: 'năm 2025-2026', icon: '🎓', color: 'from-teal-500 to-teal-700' },
       { value: '490+ M', label: 'Doanh thu', sub: 'năm 2025-2026', icon: '💰', color: 'from-orange-500 to-orange-700' },
     ],
@@ -135,7 +135,7 @@ const t = {
     commissionNote: 'Parent agents earn 15–20% commission per successful referral',
     metricsTitle: '📊 Annual Key Metrics',
     metrics: [
-      { value: '590+', label: 'Members enrolled', sub: 'peak year (2025-2026)', icon: '👨‍👩‍👧', color: 'from-purple-500 to-purple-700' },
+      { value: '590+', label: 'Members enrolled', sub: 'peak year (2025-2026)', icon: '👨‍👩‍👧', color: 'from-cherry-500 to-cherry-700' },
       { value: '330', label: 'Students purchased', sub: 'year 2025-2026', icon: '🎓', color: 'from-teal-500 to-teal-700' },
       { value: '490+ M', label: 'Revenue', sub: 'year 2025-2026', icon: '💰', color: 'from-orange-500 to-orange-700' },
     ],
@@ -175,13 +175,13 @@ export default function TaiChinhPage() {
       <div className="container-custom py-16 space-y-16">
 
         {/* Pricing — prominent */}
-        <section className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-4xl p-8 md:p-10 text-white text-center">
+        <section className="bg-gradient-to-br from-cherry-600 to-cherry-800 rounded-4xl p-8 md:p-10 text-white text-center">
           <p className="text-white/70 text-sm font-semibold uppercase tracking-wider mb-2">{ui.pricingLabel}</p>
           <h2 className="text-2xl md:text-3xl font-black mb-2">{ui.pricingTitle}</h2>
           <p className="text-white/70 mb-6">{ui.pricingSub}</p>
 
           <div className="inline-block bg-white rounded-4xl px-10 py-8 shadow-2xl">
-            <div className="text-5xl md:text-6xl font-black text-purple-700 mb-1">1,5 triệu</div>
+            <div className="text-5xl md:text-6xl font-black text-cherry-700 mb-1">1,5 triệu</div>
             <div className="text-gray-500 font-semibold mb-4">{ui.priceUnit}</div>
             <ul className="text-left space-y-2 mb-6">
               {ui.pricingFeatures.map((f) => (
@@ -192,12 +192,12 @@ export default function TaiChinhPage() {
             </ul>
             {session?.user ? (
               <Link href="/khoa-hoc"
-                className="block w-full bg-purple-600 hover:bg-purple-700 text-white font-extrabold py-3 rounded-2xl transition-all hover:scale-105 text-center">
+                className="block w-full bg-cherry-600 hover:bg-cherry-700 text-white font-extrabold py-3 rounded-2xl transition-all hover:scale-105 text-center">
                 {lang === 'vi' ? 'Bắt đầu khám phá khoá học →' : 'Explore Courses →'}
               </Link>
             ) : (
               <a href="/dang-ky"
-                className="block w-full bg-purple-600 hover:bg-purple-700 text-white font-extrabold py-3 rounded-2xl transition-all hover:scale-105 text-center">
+                className="block w-full bg-cherry-600 hover:bg-cherry-700 text-white font-extrabold py-3 rounded-2xl transition-all hover:scale-105 text-center">
                 {ui.registerBtn}
               </a>
             )}
@@ -260,7 +260,7 @@ export default function TaiChinhPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 bg-purple-50 border border-purple-200 rounded-2xl p-4 text-sm text-purple-800">
+          <div className="mt-4 bg-cherry-50 border border-cherry-200 rounded-2xl p-4 text-sm text-cherry-800">
             💡 <strong>{ui.yearlyStrong}</strong> {ui.yearlyNote.replace(/^💡 .*?:? /, '')}
           </div>
         </section>
@@ -284,7 +284,7 @@ export default function TaiChinhPage() {
         </section>
 
         {/* 2035 Vision */}
-        <section className="bg-gradient-to-br from-gray-900 to-purple-900 rounded-4xl p-8 md:p-12 text-white">
+        <section className="bg-gradient-to-br from-gray-900 to-cherry-900 rounded-4xl p-8 md:p-12 text-white">
           <div className="text-center mb-10">
             <Target className="mx-auto mb-3 text-yellow-400" size={40} />
             <h2 className="text-2xl md:text-3xl font-black mb-2">
@@ -340,7 +340,7 @@ export default function TaiChinhPage() {
         </section>
 
         {/* Credibility note */}
-        <section className="border-2 border-dashed border-purple-200 rounded-4xl p-6">
+        <section className="border-2 border-dashed border-cherry-200 rounded-4xl p-6">
           <div className="flex items-start gap-4">
             <div className="text-3xl shrink-0">📋</div>
             <div>
@@ -348,7 +348,7 @@ export default function TaiChinhPage() {
               <p className="text-gray-500 text-sm leading-relaxed">
                 {ui.credDesc} <strong>SV_STARTUP-2024</strong>
                 {lang === 'vi' ? ' và được Ban giám khảo cấp thành phố Hà Nội đánh giá. Dự án đã vận hành thực tế 3 năm với khách hàng thực, doanh thu thực — không phải mô phỏng hay ước tính lý thuyết.' : ' and reviewed by Hanoi City judges. The project has operated commercially for 3 years with real customers and real revenue — not simulations or theoretical estimates.'}
-                {' '}{lang === 'vi' ? 'Liên hệ' : 'Contact'} <strong className="text-purple-600">dobaonam8386@gmail.com</strong> {lang === 'vi' ? 'để biết thêm thông tin.' : 'for more information.'}
+                {' '}{lang === 'vi' ? 'Liên hệ' : 'Contact'} <strong className="text-cherry-600">dobaonam8386@gmail.com</strong> {lang === 'vi' ? 'để biết thêm thông tin.' : 'for more information.'}
               </p>
             </div>
           </div>

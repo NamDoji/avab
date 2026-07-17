@@ -14,7 +14,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 const TYPE_COLORS: Record<string, string> = {
   SCHOOL: 'bg-blue-100 text-blue-700',
-  CENTER: 'bg-violet-100 text-violet-700',
+  CENTER: 'bg-cherry-100 text-cherry-700',
   CHAIN: 'bg-emerald-100 text-emerald-700',
 }
 
@@ -36,7 +36,7 @@ function OrgInitials({ name }: { name: string }) {
   return (
     <div
       className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-lg flex-shrink-0"
-      style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+      style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
     >
       {initials.toUpperCase()}
     </div>
@@ -124,7 +124,7 @@ export default async function OrganizationsPage({
         {/* Stats row */}
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: 'Tổng tổ chức',          value: orgCount,      icon: '🏢', color: 'from-violet-500 to-indigo-600' },
+            { label: 'Tổng tổ chức',          value: orgCount,      icon: '🏢', color: 'from-cherry-500 to-cherry-600' },
             { label: 'Đang active',             value: activeCount,   icon: '✅', color: 'from-emerald-500 to-teal-600' },
             { label: 'Cơ sở hoạt động',        value: campusCount,   icon: '🏫', color: 'from-blue-500 to-cyan-600' },
             { label: 'Đăng ký tháng này',      value: thisMonthCount,icon: '📅', color: 'from-orange-500 to-amber-500' },
@@ -155,7 +155,7 @@ export default async function OrganizationsPage({
             <Link
               href="/admin/organizations/new"
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-bold shadow-md hover:scale-[1.02] transition-transform"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
             >
               <span>➕</span>
               <span>Thêm nhanh</span>
@@ -172,7 +172,7 @@ export default async function OrganizationsPage({
                 href={`/admin/organizations?filter=${tab.value}&sort=${sort}`}
                 className="px-3 py-1.5 rounded-full text-sm font-bold transition-colors"
                 style={{
-                  background: filter === tab.value ? '#7c3aed' : '#f1f5f9',
+                  background: filter === tab.value ? '#951F3D' : '#f1f5f9',
                   color: filter === tab.value ? '#fff' : '#475569',
                 }}
               >

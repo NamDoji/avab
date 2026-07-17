@@ -49,7 +49,7 @@ export default async function TinTucPage() {
                       {format(item.publishedAt, 'dd MMM yyyy', { locale: vi })}
                     </div>
                   )}
-                  <h3 className="font-black text-gray-900 text-base mb-2 leading-snug group-hover:text-purple-700 transition-colors">
+                  <h3 className="font-black text-gray-900 text-base mb-2 leading-snug group-hover:text-cherry-700 transition-colors">
                     {item.title}
                   </h3>
                   {item.summary && (
@@ -57,7 +57,7 @@ export default async function TinTucPage() {
                       {item.summary}
                     </p>
                   )}
-                  <div className="flex items-center gap-1 text-purple-600 text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
+                  <div className="flex items-center gap-1 text-cherry-600 text-sm font-semibold mt-4 group-hover:gap-2 transition-all">
                     Đọc tiếp <ArrowRight size={14} />
                   </div>
                 </div>

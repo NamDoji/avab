@@ -52,9 +52,9 @@ export default function DangNhapPage() {
   }
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-purple-50 to-teal-50 flex items-center justify-center p-4">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-cherry-50 to-cherry-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-4xl shadow-xl border border-purple-100 overflow-hidden">
+        <div className="bg-white rounded-4xl shadow-xl border border-cherry-100 overflow-hidden">
           <div className="gradient-hero text-white p-6 text-center">
             <LogIn className="mx-auto mb-2" size={36} />
             <h1 className="text-2xl font-black">{vi ? 'Đăng nhập' : 'Sign In'}</h1>
@@ -82,7 +82,7 @@ export default function DangNhapPage() {
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 placeholder="0912345678"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
             </div>
 
@@ -97,7 +97,7 @@ export default function DangNhapPage() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none transition-colors"
               />
             </div>
 
@@ -114,13 +114,13 @@ export default function DangNhapPage() {
 
           <div className="px-6 pb-6 text-center space-y-2">
             <p className="text-gray-500 text-sm">
-              <Link href="/doi-mat-khau" className="text-purple-500 hover:underline text-sm">
+              <Link href="/doi-mat-khau" className="text-cherry-500 hover:underline text-sm">
                 {vi ? '🔓 Quên mật khẩu?' : '🔓 Forgot password?'}
               </Link>
             </p>
             <p className="text-gray-500 text-sm">
               {vi ? 'Chưa có tài khoản?' : "Don't have an account?"}{' '}
-              <Link href="/dang-ky" className="text-purple-600 font-bold hover:underline">
+              <Link href="/dang-ky" className="text-cherry-600 font-bold hover:underline">
                 {vi ? 'Đăng ký miễn phí' : 'Sign up free'}
               </Link>
             </p>

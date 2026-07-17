@@ -83,7 +83,7 @@ const milestones = [
     desc: 'Đạt Giải Nhất vòng Trường → Giải Nhì cụm Nam–Bắc Từ Liêm → Giải Ba Thành phố Hà Nội. Đây là giải thưởng khởi nghiệp cấp cao nhất mà một nhóm học sinh THCS có thể đạt được.',
     descEn: '1st Place (School round) → 2nd Place (Nam–Bắc Từ Liêm cluster) → 3rd Place (Hanoi City). The highest startup award a junior-high team can win.',
     icon: '🏆',
-    color: 'border-purple-300 bg-purple-50',
+    color: 'border-cherry-300 bg-cherry-50',
   },
   {
     period: '2024 – nay',
@@ -159,7 +159,7 @@ const t = {
     ],
     storyLabel: 'Our Story',
     storyH2: 'Từ lớp học đến thị trường',
-    storyP1: <>Mùa thu năm 2024, năm học sinh lớp 10G0 trường THCS-THPT Newton — <strong className="text-purple-700"> Đỗ Bảo Nam, Nguyễn Hoàng Gia Minh, Nguyễn Khánh Linh, Phan Minh Minh và Lê Minh Quý</strong> — đã ngồi lại với nhau không phải để làm bài tập về nhà, mà để đặt câu hỏi lớn hơn.</>,
+    storyP1: <>Mùa thu năm 2024, năm học sinh lớp 10G0 trường THCS-THPT Newton — <strong className="text-cherry-700"> Đỗ Bảo Nam, Nguyễn Hoàng Gia Minh, Nguyễn Khánh Linh, Phan Minh Minh và Lê Minh Quý</strong> — đã ngồi lại với nhau không phải để làm bài tập về nhà, mà để đặt câu hỏi lớn hơn.</>,
     storyP2: <>Là những học sinh giỏi, cả nhóm đều nhận ra một thực tế: giáo dục Việt Nam đang bùng nổ về số lượng nền tảng học trực tuyến, nhưng <strong>không ai thực sự cá nhân hoá</strong> trải nghiệm học — mỗi học sinh vẫn đang nhận cùng một nội dung, dù nhu cầu, tốc độ học và phong cách tư duy của các em hoàn toàn khác nhau.</>,
     storyP3: <>Từ insight đó, <strong className="text-teal-700">AvaB</strong> được hình thành — nền tảng EdTech kết hợp AI, Adaptive Learning và Gamification, với sản phẩm đầu tiên là khoá học Toán Tư Duy luyện thi học bổng vào lớp 1 dành cho trẻ 5–6 tuổi.</>,
     storyP4: <>Nhóm tham dự <strong>SV_STARTUP-2024</strong> — cuộc thi "Học sinh, sinh viên với Ý tưởng Khởi nghiệp" lần VII tại Hà Nội. Kết quả: <span className="text-yellow-600 font-bold"> Giải Nhất vòng Trường → Giải Nhì cụm Nam–Bắc Từ Liêm → Giải Ba Thành phố Hà Nội</span>. Nhưng quan trọng hơn giải thưởng — <strong> nhóm đã không dừng lại ở cuộc thi</strong>.</>,
@@ -189,7 +189,7 @@ const t = {
     ],
     storyLabel: 'Our Story',
     storyH2: 'From classroom to market',
-    storyP1: <>In autumn 2024, five students from class 10G0 at Newton School — <strong className="text-purple-700"> Đỗ Bảo Nam, Nguyễn Hoàng Gia Minh, Nguyễn Khánh Linh, Phan Minh Minh, and Lê Minh Quý</strong> — sat together not to do homework, but to ask bigger questions.</>,
+    storyP1: <>In autumn 2024, five students from class 10G0 at Newton School — <strong className="text-cherry-700"> Đỗ Bảo Nam, Nguyễn Hoàng Gia Minh, Nguyễn Khánh Linh, Phan Minh Minh, and Lê Minh Quý</strong> — sat together not to do homework, but to ask bigger questions.</>,
     storyP2: <>As high-achieving students, the team all noticed a reality: Vietnamese education was exploding with online learning platforms, yet <strong>no one was truly personalising</strong> the experience — every student still received the same content, despite having completely different needs, learning speeds, and thinking styles.</>,
     storyP3: <>From that insight, <strong className="text-teal-700">AvaB</strong> was formed — an EdTech platform combining AI, Adaptive Learning, and Gamification, with its first product being a Math Thinking course for scholarship entrance exams to Grade 1, designed for children aged 5–6.</>,
     storyP4: <>The team entered <strong>SV_STARTUP-2024</strong> — the 7th "Students with Startup Ideas" competition in Hanoi. Result: <span className="text-yellow-600 font-bold"> 1st Place (School round) → 2nd Place (Nam–Bắc Từ Liêm cluster) → 3rd Place (Hanoi City)</span>. But more important than the award — <strong> the team didn't stop at the competition</strong>.</>,
@@ -265,19 +265,19 @@ export default function GioiThieuPage() {
         {/* The Story */}
         <section className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">{ui.storyLabel}</span>
+            <span className="text-cherry-600 font-bold uppercase text-sm tracking-wider">{ui.storyLabel}</span>
             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">
               {ui.storyH2}
             </h2>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-teal-50 rounded-4xl p-8 md:p-10 border border-purple-100">
+          <div className="bg-gradient-to-br from-cherry-50 to-teal-50 rounded-4xl p-8 md:p-10 border border-cherry-100">
             <div className="space-y-5 text-gray-700 leading-relaxed text-base md:text-lg">
               <p>{ui.storyP1}</p>
               <p>{ui.storyP2}</p>
               <p>{ui.storyP3}</p>
               <p>{ui.storyP4}</p>
-              <p className="text-purple-800 font-semibold bg-purple-50 rounded-2xl p-4 border-l-4 border-purple-400">
+              <p className="text-cherry-800 font-semibold bg-cherry-50 rounded-2xl p-4 border-l-4 border-cherry-400">
                 {ui.storyQuote}
               </p>
               <p>{ui.storyP5}</p>
@@ -304,7 +304,7 @@ export default function GioiThieuPage() {
         {/* Timeline */}
         <section>
           <div className="text-center mb-10">
-            <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">{ui.journeyLabel}</span>
+            <span className="text-cherry-600 font-bold uppercase text-sm tracking-wider">{ui.journeyLabel}</span>
             <h2 className="text-3xl font-black text-gray-900 mt-2">{ui.journeyH2}</h2>
           </div>
           <div className="max-w-3xl mx-auto space-y-4">
@@ -328,7 +328,7 @@ export default function GioiThieuPage() {
         {/* Team */}
         <section>
           <div className="text-center mb-10">
-            <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">{ui.teamLabel}</span>
+            <span className="text-cherry-600 font-bold uppercase text-sm tracking-wider">{ui.teamLabel}</span>
             <h2 className="text-3xl font-black text-gray-900 mt-2">
               {ui.teamH2}
             </h2>
@@ -339,18 +339,18 @@ export default function GioiThieuPage() {
               <div
                 key={i}
                 className={`bg-white rounded-4xl border-2 p-6 card-hover ${
-                  i === 0 ? 'border-purple-300 shadow-lg shadow-purple-100' : 'border-purple-50'
+                  i === 0 ? 'border-cherry-300 shadow-lg shadow-cherry-100' : 'border-cherry-50'
                 }`}
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className={`w-14 h-14 rounded-3xl flex items-center justify-center text-3xl ${
-                    i === 0 ? 'bg-purple-100' : 'bg-gray-50'
+                    i === 0 ? 'bg-cherry-100' : 'bg-gray-50'
                   }`}>
                     {member.emoji}
                   </div>
                   <div>
                     <h3 className="font-black text-gray-900 leading-snug">{member.name}</h3>
-                    <p className={`text-xs font-bold ${i === 0 ? 'text-purple-600' : 'text-gray-500'}`}>
+                    <p className={`text-xs font-bold ${i === 0 ? 'text-cherry-600' : 'text-gray-500'}`}>
                       {lang === 'vi' ? member.role : member.roleEn}
                     </p>
                   </div>
@@ -361,7 +361,7 @@ export default function GioiThieuPage() {
                 <p className="text-gray-600 text-sm leading-relaxed">{lang === 'vi' ? member.highlight : member.highlightEn}</p>
                 {member.contact && (
                   <a href={`mailto:${member.contact}`}
-                    className="mt-3 flex items-center gap-1 text-purple-500 text-xs hover:text-purple-700">
+                    className="mt-3 flex items-center gap-1 text-cherry-500 text-xs hover:text-cherry-700">
                     <ExternalLink size={12} /> {member.contact}
                   </a>
                 )}
@@ -371,7 +371,7 @@ export default function GioiThieuPage() {
         </section>
 
         {/* What makes this unique */}
-        <section className="bg-gradient-to-br from-gray-900 to-purple-900 rounded-4xl p-8 md:p-12 text-white">
+        <section className="bg-gradient-to-br from-gray-900 to-cherry-900 rounded-4xl p-8 md:p-12 text-white">
           <div className="text-center mb-10">
             <Star className="mx-auto mb-3 text-yellow-400" size={36} />
             <h2 className="text-2xl md:text-3xl font-black">
@@ -400,11 +400,11 @@ export default function GioiThieuPage() {
           <div className="grid sm:grid-cols-3 gap-5">
             {partners.map((p) => (
               <div key={p.name} className="bg-white rounded-3xl border-2 border-gray-100 p-5 text-center card-hover">
-                <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl font-black text-purple-700">
+                <div className="w-12 h-12 bg-cherry-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl font-black text-cherry-700">
                   {p.name[0]}
                 </div>
                 <h3 className="font-black text-gray-900 mb-0.5">{p.name}</h3>
-                <p className="text-purple-600 text-xs font-semibold mb-2">{lang === 'vi' ? p.role : p.roleEn}</p>
+                <p className="text-cherry-600 text-xs font-semibold mb-2">{lang === 'vi' ? p.role : p.roleEn}</p>
                 <p className="text-gray-500 text-sm">{lang === 'vi' ? p.desc : p.descEn}</p>
               </div>
             ))}

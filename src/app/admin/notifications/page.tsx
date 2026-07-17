@@ -68,7 +68,7 @@ export default async function NotificationsPage() {
         style={{ background: 'linear-gradient(135deg, #3730a3 0%, #4f46e5 100%)' }}
       >
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-center gap-2 text-indigo-300 text-sm mb-3">
+          <div className="flex items-center gap-2 text-cherry-300 text-sm mb-3">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
             <span>›</span>
             <span className="text-white">Notifications</span>
@@ -76,7 +76,7 @@ export default async function NotificationsPage() {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-2xl font-black text-white">🔔 Notification Center</h1>
-              <p className="text-indigo-200 text-sm mt-0.5">
+              <p className="text-cherry-200 text-sm mt-0.5">
                 {totalCount > 0 ? (
                   <span className="font-bold text-white">{totalCount} thông báo</span>
                 ) : (

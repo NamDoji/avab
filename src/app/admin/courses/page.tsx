@@ -9,25 +9,25 @@ type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCR
 
 // K12 generic subject codes — full K12 list
 const SUBJECT_CODE_OPTIONS: { value: string; label: string; emoji: string; color: string }[] = [
-  { value: 'THINKING_MATH', label: 'Toán Tư Duy',           emoji: '🧠', color: 'bg-purple-50 text-purple-700' },
+  { value: 'THINKING_MATH', label: 'Toán Tư Duy',           emoji: '🧠', color: 'bg-cherry-50 text-cherry-700' },
   { value: 'MATH',          label: 'Toán',                    emoji: '📐', color: 'bg-blue-50 text-blue-700' },
   { value: 'VIETNAMESE',    label: 'Tiếng Việt',            emoji: '📖', color: 'bg-red-50 text-red-700' },
   { value: 'ENGLISH',       label: 'Tiếng Anh',              emoji: '🇬🇧', color: 'bg-green-50 text-green-700' },
   { value: 'SCIENCE',       label: 'Khoa học',               emoji: '🔬', color: 'bg-cyan-50 text-cyan-700' },
   { value: 'HISTORY',       label: 'Lịch sử',                emoji: '🏰', color: 'bg-amber-50 text-amber-700' },
   { value: 'GEOGRAPHY',     label: 'Địa lý',                emoji: '🌍', color: 'bg-emerald-50 text-emerald-700' },
-  { value: 'PHYSICS',       label: 'Vật lý',                emoji: '⚛️', color: 'bg-violet-50 text-violet-700' },
+  { value: 'PHYSICS',       label: 'Vật lý',                emoji: '⚛️', color: 'bg-cherry-50 text-cherry-700' },
   { value: 'CHEMISTRY',     label: 'Hóa học',               emoji: '🧪', color: 'bg-lime-50 text-lime-700' },
   { value: 'BIOLOGY',       label: 'Sinh học',               emoji: '🧬', color: 'bg-teal-50 text-teal-700' },
   { value: 'INFORMATICS',   label: 'Tin học',                emoji: '💻', color: 'bg-sky-50 text-sky-700' },
-  { value: 'CIVIC',         label: 'GDCD',                   emoji: '⚖️', color: 'bg-indigo-50 text-indigo-700' },
+  { value: 'CIVIC',         label: 'GDCD',                   emoji: '⚖️', color: 'bg-cherry-50 text-cherry-700' },
   { value: 'PE',            label: 'Thể dục',                emoji: '⚽', color: 'bg-orange-50 text-orange-700' },
   { value: 'MUSIC',         label: 'Âm nhạc',                emoji: '🎵', color: 'bg-pink-50 text-pink-700' },
   { value: 'ART',           label: 'Mỹ thuật',               emoji: '🎨', color: 'bg-yellow-50 text-yellow-700' },
   { value: 'ALGO',          label: 'Thuật Toán',             emoji: '🤖', color: 'bg-yellow-50 text-yellow-700' },
   { value: 'SCRATCH',       label: 'Scratch',                 emoji: '🐱', color: 'bg-orange-50 text-orange-700' },
   { value: 'PYTHON',        label: 'Python',                  emoji: '🐍', color: 'bg-teal-50 text-teal-700' },
-  { value: 'CPP',           label: 'C++',                     emoji: '⚡', color: 'bg-purple-50 text-purple-700' },
+  { value: 'CPP',           label: 'C++',                     emoji: '⚡', color: 'bg-cherry-50 text-cherry-700' },
   { value: 'IELTS',         label: 'IELTS',                   emoji: '📝', color: 'bg-sky-50 text-sky-700' },
   { value: 'CAMBRIDGE',     label: 'Cambridge',               emoji: '🎓', color: 'bg-rose-50 text-rose-700' },
   { value: 'GENERAL',       label: 'Tổng hợp',               emoji: '📚', color: 'bg-gray-50 text-gray-700' },
@@ -50,7 +50,7 @@ function CourseTypeBadge({ type }: { type: string }) {
     LAP_TRINH_THUAT_TOAN: { emoji: '🤖', label: 'Thuật toán', color: 'bg-yellow-50 text-yellow-700' },
     LAP_TRINH_SCRATCH: { emoji: '🐱', label: 'Scratch', color: 'bg-orange-50 text-orange-700' },
     LAP_TRINH_PYTHON: { emoji: '🐍', label: 'Python', color: 'bg-teal-50 text-teal-700' },
-    LAP_TRINH_CPP: { emoji: '⚡', label: 'C++', color: 'bg-purple-50 text-purple-700' },
+    LAP_TRINH_CPP: { emoji: '⚡', label: 'C++', color: 'bg-cherry-50 text-cherry-700' },
   }
   const meta = legacyMap[type] ?? { emoji: '📚', label: type || 'Khác', color: 'bg-gray-50 text-gray-700' }
   return (
@@ -177,12 +177,12 @@ export default function AdminCoursesPage() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-purple-600" />
+            <BookOpen className="w-6 h-6 text-cherry-600" />
             Quản lý khoá học
           </h1>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition"
+            className="flex items-center gap-2 bg-cherry-600 hover:bg-cherry-700 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition"
           >
             <Plus className="w-4 h-4" />
             Tạo khoá học
@@ -191,7 +191,7 @@ export default function AdminCoursesPage() {
 
         {/* Create Form */}
         {showForm && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-purple-100">
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-cherry-100">
             <h2 className="font-bold text-gray-800 mb-4">Tạo khoá học mới</h2>
             {error && (
               <p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg mb-4">{error}</p>
@@ -202,14 +202,14 @@ export default function AdminCoursesPage() {
                 placeholder="Mã khoá (VD: TOAN-10)"
                 value={form.code}
                 onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400"
               />
               <input
                 required
                 placeholder="Tên khoá học"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400"
               />
               {/* K12 Subject Code — generic, extensible */}
               <div className="md:col-span-2">
@@ -222,8 +222,8 @@ export default function AdminCoursesPage() {
                       onClick={() => setForm(f => ({ ...f, subjectCode: opt.value }))}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm font-semibold transition ${
                         form.subjectCode === opt.value
-                          ? 'border-purple-500 bg-purple-50 text-purple-700'
-                          : 'border-gray-200 text-gray-600 hover:border-purple-300'
+                          ? 'border-cherry-500 bg-cherry-50 text-cherry-700'
+                          : 'border-gray-200 text-gray-600 hover:border-cherry-300'
                       }`}
                     >
                       <span className="text-base">{opt.emoji}</span>
@@ -235,14 +235,14 @@ export default function AdminCoursesPage() {
                   placeholder="Tên môn hiển thị (tùy chọn — để trống = dùng tên mặc định)"
                   value={form.subjectName}
                   onChange={(e) => setForm(f => ({ ...f, subjectName: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
               <textarea
                 placeholder="Mô tả (tuỳ chọn)"
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 md:col-span-2"
+                className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400 md:col-span-2"
                 rows={2}
               />
               {/* Loại thu tiền */}
@@ -253,8 +253,8 @@ export default function AdminCoursesPage() {
                     onClick={() => setForm(f => ({ ...f, paymentType: 'PER_COURSE' }))}
                     className={`flex-1 px-4 py-2.5 rounded-lg border-2 text-sm font-semibold transition ${
                       form.paymentType === 'PER_COURSE'
-                        ? 'border-purple-500 bg-purple-50 text-purple-700'
-                        : 'border-gray-200 text-gray-600 hover:border-purple-300'
+                        ? 'border-cherry-500 bg-cherry-50 text-cherry-700'
+                        : 'border-gray-200 text-gray-600 hover:border-cherry-300'
                     }`}>
                     🏦 Thu theo khoá (hết hạn 18 tháng)
                   </button>
@@ -276,7 +276,7 @@ export default function AdminCoursesPage() {
                   placeholder="Học phí cả khoá (VND)"
                   value={form.price}
                   onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                  className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               ) : (
                 <input
@@ -314,7 +314,7 @@ export default function AdminCoursesPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition"
+                  className="flex-1 bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition"
                 >
                   {saving ? 'Đang tạo...' : 'Tạo khoá học'}
                 </button>
@@ -371,7 +371,7 @@ export default function AdminCoursesPage() {
                     </div>
                     <div className="flex gap-2">
                       <Link href={`/admin/courses/${course.id}`}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-purple-50 text-purple-700 font-semibold text-sm hover:bg-purple-100 transition">
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-cherry-50 text-cherry-700 font-semibold text-sm hover:bg-cherry-100 transition">
                         <Edit className="w-3.5 h-3.5" /> Chi tiết
                       </Link>
                       <button onClick={() => handleToggleActive(course)}
@@ -437,7 +437,7 @@ export default function AdminCoursesPage() {
                         <td className="p-4">
                           <div className="flex items-center justify-end gap-2">
                             <Link href={`/admin/courses/${course.id}`}
-                              className="p-1.5 text-gray-400 hover:text-purple-600 transition" title="Chi tiết">
+                              className="p-1.5 text-gray-400 hover:text-cherry-600 transition" title="Chi tiết">
                               <Edit className="w-4 h-4" />
                             </Link>
                             <button onClick={() => handleToggleActive(course)}

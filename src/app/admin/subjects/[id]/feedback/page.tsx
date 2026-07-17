@@ -112,7 +112,7 @@ function StudentDrawer({
       <div className="flex-1 bg-black/40" onClick={onClose} />
       <div className="w-full max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shrink-0">
+        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white shrink-0">
           <button onClick={onClose} className="p-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition">
             <X size={16} />
           </button>
@@ -124,7 +124,7 @@ function StudentDrawer({
             className={`flex items-center gap-1.5 font-bold px-3 py-1.5 rounded-xl text-sm transition disabled:opacity-60 ${
               saveStatus === 'ok' ? 'bg-green-500 text-white' :
               saveStatus === 'error' ? 'bg-red-500 text-white' :
-              'bg-white text-purple-700 hover:bg-purple-50'
+              'bg-white text-cherry-700 hover:bg-cherry-50'
             }`}>
             {saving ? <Loader2 size={14} className="animate-spin" /> :
              saveStatus === 'ok' ? <Check size={14} /> :
@@ -192,8 +192,8 @@ function StudentDrawer({
                         onClick={() => set('speakingCount', n === '8+' ? 8 : Number(n))}
                         className={`w-10 h-10 rounded-xl border-2 font-bold text-sm transition ${
                           form.speakingCount === (n === '8+' ? 8 : Number(n))
-                            ? 'bg-purple-100 border-purple-400 text-purple-700'
-                            : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-purple-200'
+                            ? 'bg-cherry-100 border-cherry-400 text-cherry-700'
+                            : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-cherry-200'
                         }`}
                       >{n}</button>
                     ))}
@@ -228,8 +228,8 @@ function StudentDrawer({
                         onClick={() => set('emotionState', form.emotionState === e.value ? null : e.value)}
                         className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm font-semibold transition ${
                           form.emotionState === e.value
-                            ? 'bg-purple-50 border-purple-400 text-purple-700'
-                            : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-purple-200'
+                            ? 'bg-cherry-50 border-cherry-400 text-cherry-700'
+                            : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-cherry-200'
                         }`}
                       >
                         <span className="text-lg">{e.emoji}</span>
@@ -245,7 +245,7 @@ function StudentDrawer({
                   <textarea rows={3} placeholder="Quan sát thêm về học sinh trong buổi này..."
                     value={form.teacherNote ?? ''}
                     onChange={e => set('teacherNote', e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none"
                   />
                 </div>
               </>
@@ -258,7 +258,7 @@ function StudentDrawer({
                   <span className="ml-2 font-normal text-gray-400 normal-case">(AI tự tạo — GV sửa trước khi gửi PH)</span>
                 </p>
                 <button onClick={handleAI} disabled={aiLoading}
-                  className="flex items-center gap-1.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 disabled:opacity-50 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
+                  className="flex items-center gap-1.5 bg-gradient-to-r from-cherry-500 to-cherry-600 hover:from-cherry-600 hover:to-cherry-700 disabled:opacity-50 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">
                   {aiLoading ? <><Loader2 size={12} className="animate-spin" /> Đang sinh...</> : <><Brain size={12} /> Sinh AI</>}
                 </button>
               </div>
@@ -271,7 +271,7 @@ function StudentDrawer({
                       setAiComment(e.target.value)
                       set('aiComment', e.target.value) // cập nhật form ngay khi gõ
                     }}
-                    className="w-full border border-purple-200 bg-purple-50 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                    className="w-full border border-cherry-200 bg-cherry-50 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none"
                   />
                   <p className="text-xs text-gray-400">Giáo viên có thể chỉnh sửa trước khi gửi phụ huynh</p>
                 </div>
@@ -438,7 +438,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <h1 className="font-black text-gray-900 text-lg">{subject.icon} {subject.name}</h1>
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${isPERSESSION ? 'bg-teal-50 text-teal-700' : 'bg-purple-50 text-purple-700'}`}>
+              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${isPERSESSION ? 'bg-teal-50 text-teal-700' : 'bg-cherry-50 text-cherry-700'}`}>
                 {isPERSESSION ? '🗓️ Theo buổi' : '🎓 Trọn gói'}
               </span>
             </div>
@@ -447,7 +447,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                 <div key={f.id}
                   onClick={() => loadSession(f.id)}
                   className={`group flex items-center gap-2 px-3 py-2 rounded-xl border-2 cursor-pointer transition ${
-                    currentFeedback?.id === f.id ? 'border-purple-400 bg-purple-50' : 'border-gray-200 bg-white hover:border-purple-200'
+                    currentFeedback?.id === f.id ? 'border-cherry-400 bg-cherry-50' : 'border-gray-200 bg-white hover:border-cherry-200'
                   }`}
                 >
                   <div>
@@ -471,14 +471,14 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
             {currentFeedback && (
               <button onClick={() => handleAIGenerate(null)} disabled={aiAllLoading}
                 title="Sinh nhận xét AI cá nhân hóa cho toàn bộ học sinh trong buổi này"
-                className="flex items-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 disabled:opacity-50 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-md">
+                className="flex items-center gap-2 bg-gradient-to-r from-cherry-500 to-cherry-600 hover:from-cherry-600 hover:to-cherry-700 disabled:opacity-50 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-md">
                 {aiAllLoading
                   ? <><Loader2 size={14} className="animate-spin" /> Đang sinh cả lớp...</>
                   : <><Brain size={14} /> 🤖 Sinh nhận xét cả lớp</>}
               </button>
             )}
             <button onClick={() => setShowNewSession(true)}
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition">
+              className="flex items-center gap-2 bg-cherry-600 hover:bg-cherry-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition">
               <Plus size={14} /> Buổi mới
             </button>
           </div>
@@ -492,14 +492,14 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
         ) : currentFeedback && records.length > 0 ? (
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
             {/* Session info bar */}
-            <div className="flex items-center gap-4 px-4 py-3 bg-purple-50 border-b border-purple-100 flex-wrap">
-              <Calendar size={14} className="text-purple-600" />
-              <span className="text-sm font-semibold text-purple-700">
+            <div className="flex items-center gap-4 px-4 py-3 bg-cherry-50 border-b border-cherry-100 flex-wrap">
+              <Calendar size={14} className="text-cherry-600" />
+              <span className="text-sm font-semibold text-cherry-700">
                 Buổi ngày {new Date(currentFeedback.sessionDate).toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
               <span className="text-xs text-gray-500">{records.filter(r => r.attendance).length}/{records.length} có mặt</span>
               <span className="text-xs text-gray-500">· {records.filter(r => r.aiComment).length}/{records.length} nhận xét AI</span>
-              <span className="text-xs text-gray-400 border-l border-purple-200 pl-4 hidden sm:inline">
+              <span className="text-xs text-gray-400 border-l border-cherry-200 pl-4 hidden sm:inline">
                 💡 Đánh giá nhanh trên bảng • Click ✨“Sinh nhận xét” để AI tự tạo • Click “Xem/Sửa” để đọc đầy đủ • Click ✏️ để mở chi tiết
               </span>
             </div>
@@ -549,7 +549,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                       {/* Phát biểu */}
                       <td className="px-2 py-2.5 text-center">
                         <span className={`inline-block w-8 h-8 rounded-lg text-sm font-bold flex items-center justify-center ${
-                          record.speakingCount !== null ? 'bg-purple-50 text-purple-700' : 'text-gray-300'
+                          record.speakingCount !== null ? 'bg-cherry-50 text-cherry-700' : 'text-gray-300'
                         }`}>{record.speakingCount ?? '—'}</span>
                       </td>
                       {/* Trả lời */}
@@ -586,7 +586,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                           <button
                             onClick={() => setDrawerRecord(record)}
                             title="Click để xem / sửa nhận xét AI"
-                            className="text-xs bg-violet-50 text-violet-700 border border-violet-200 px-2.5 py-1 rounded-full font-semibold hover:bg-violet-100 transition">
+                            className="text-xs bg-cherry-50 text-cherry-700 border border-cherry-200 px-2.5 py-1 rounded-full font-semibold hover:bg-cherry-100 transition">
                             ✓ Xem / Sửa
                           </button>
                         ) : (
@@ -594,7 +594,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                             onClick={() => handleAIGenerate(record.userId)}
                             disabled={!!aiLoading[record.userId]}
                             title="Sinh nhận xét AI tự động cho học sinh này"
-                            className="text-xs text-violet-600 hover:text-white hover:bg-violet-600 transition px-2.5 py-1 rounded-full border border-violet-300 hover:border-violet-600 font-semibold">
+                            className="text-xs text-cherry-600 hover:text-white hover:bg-cherry-600 transition px-2.5 py-1 rounded-full border border-cherry-300 hover:border-cherry-600 font-semibold">
                             {aiLoading[record.userId]
                               ? <span className="flex items-center gap-1"><Loader2 size={10} className="animate-spin" /> Đang sinh...</span>
                               : '🤖 Sinh nhận xét'}
@@ -604,7 +604,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
                       {/* Chi tiết */}
                       <td className="px-2 py-2.5 text-center">
                         <button onClick={() => setDrawerRecord(record)}
-                          className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">
+                          className="p-1.5 text-gray-400 hover:text-cherry-600 hover:bg-cherry-50 rounded-lg transition">
                           <Edit2 size={14} />
                         </button>
                       </td>
@@ -620,7 +620,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
             <p className="text-gray-500 font-semibold mb-2">Chưa có buổi nhận xét</p>
             <p className="text-gray-400 text-sm mb-5">Tạo buổi mới để bắt đầu theo dõi học sinh</p>
             <button onClick={() => setShowNewSession(true)}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3 rounded-xl transition">
+              className="bg-cherry-600 hover:bg-cherry-700 text-white font-bold px-6 py-3 rounded-xl transition">
               + Tạo buổi nhận xét đầu tiên
             </button>
           </div>
@@ -639,13 +639,13 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Ngày học</label>
                 <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Ghi chú buổi học (tuỳ chọn)</label>
                 <textarea rows={2} placeholder="VD: Ôn tập chương 3 — Toán đếm và phân loại"
                   value={newNote} onChange={e => setNewNote(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none" />
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none" />
               </div>
               <p className="text-xs text-gray-400">
                 Tự động thêm {students.length} học sinh và load điểm BTVN.
@@ -655,7 +655,7 @@ export default function SubjectFeedbackPage({ params }: { params: Promise<{ id: 
               </div>
               <div className="flex gap-3">
                 <button onClick={handleCreateSession} disabled={creating}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl text-sm transition">
+                  className="flex-1 bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl text-sm transition">
                   {creating ? 'Đang tạo...' : '✅ Tạo buổi'}
                 </button>
                 <button onClick={() => setShowNewSession(false)}

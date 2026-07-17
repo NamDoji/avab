@@ -147,8 +147,8 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                 </div>
               )}
               {lead.note2 && (
-                <div className="mt-2 rounded-xl px-4 py-3" style={{ background: '#f5f3ff' }}>
-                  <p className="text-xs font-bold text-purple-700 mb-1">🔒 Ghi chú nội bộ</p>
+                <div className="mt-2 rounded-xl px-4 py-3" style={{ background: '#FFF7F9' }}>
+                  <p className="text-xs font-bold text-cherry-700 mb-1">🔒 Ghi chú nội bộ</p>
                   <p className="text-sm text-gray-700 leading-relaxed">{lead.note2}</p>
                 </div>
               )}

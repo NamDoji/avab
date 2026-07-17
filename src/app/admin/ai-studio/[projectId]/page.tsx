@@ -127,7 +127,7 @@ function ContentPanel({
     return (
       <div>
         <h2 className="text-xl font-black text-gray-900 mb-4">⚙️ Thông tin dự án</h2>
-        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-100 space-y-3">
+        <div className="bg-gradient-to-br from-cherry-50 to-cherry-50 rounded-2xl p-6 border border-cherry-100 space-y-3">
           <div className="grid grid-cols-2 gap-4">
             <InfoRow label="Chương trình" value={project.curriculum} />
             <InfoRow label="Khối lớp" value={grade} />
@@ -153,7 +153,7 @@ function ContentPanel({
 
         <button
           onClick={() => onApprove('setup')}
-          className="mt-4 flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm"
+          className="mt-4 flex items-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:from-cherry-700 hover:to-cherry-700 transition-all shadow-sm"
         >
           Bắt đầu → Sinh Đề cương
         </button>
@@ -189,7 +189,7 @@ function ContentPanel({
             <button
               onClick={() => onGenerate(genDef.apiType)}
               disabled={generating}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm disabled:opacity-60"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:from-cherry-700 hover:to-cherry-700 transition-all shadow-sm disabled:opacity-60"
             >
               {genDef.btnLabel}
             </button>
@@ -198,10 +198,10 @@ function ContentPanel({
 
         {/* Running */}
         {isRunning && (
-          <div className="text-center py-16 bg-purple-50 rounded-2xl border border-purple-100">
-            <div className="inline-block w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4" />
-            <p className="font-bold text-purple-700">🤖 AI đang sinh nội dung...</p>
-            <p className="text-purple-500 text-sm mt-1">Thường mất 15–30 giây</p>
+          <div className="text-center py-16 bg-cherry-50 rounded-2xl border border-cherry-100">
+            <div className="inline-block w-10 h-10 border-4 border-cherry-200 border-t-cherry-600 rounded-full animate-spin mb-4" />
+            <p className="font-bold text-cherry-700">🤖 AI đang sinh nội dung...</p>
+            <p className="text-cherry-500 text-sm mt-1">Thường mất 15–30 giây</p>
           </div>
         )}
 
@@ -255,7 +255,7 @@ function ContentPanel({
               <textarea
                 value={editText}
                 onChange={e => setEditText(e.target.value)}
-                className="w-full h-96 border-2 border-gray-200 rounded-2xl p-4 text-sm font-mono focus:border-purple-400 focus:outline-none resize-none bg-gray-50"
+                className="w-full h-96 border-2 border-gray-200 rounded-2xl p-4 text-sm font-mono focus:border-cherry-400 focus:outline-none resize-none bg-gray-50"
               />
             ) : (
               <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 h-96 overflow-y-auto">
@@ -275,7 +275,7 @@ function ContentPanel({
               )}
               <button
                 onClick={() => onApprove(step.type)}
-                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm"
+                className="flex items-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:from-cherry-700 hover:to-cherry-700 transition-all shadow-sm"
               >
                 ✅ Duyệt & Tiếp →
               </button>
@@ -336,7 +336,7 @@ function ContentPanel({
 
             <button
               onClick={() => onApprove('preview')}
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm"
+              className="flex items-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:from-cherry-700 hover:to-cherry-700 transition-all shadow-sm"
             >
               ✅ Approve Preview → Xuất bản
             </button>
@@ -399,9 +399,9 @@ function ContentPanel({
         <h2 className="text-2xl font-black text-gray-900 mb-2">Hoàn thành!</h2>
         <p className="text-gray-500 text-sm mb-6">Học liệu đã được tạo và xuất bản thành công</p>
 
-        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-100 mb-6 text-left">
-          <p className="font-bold text-purple-800 mb-3">📊 Tóm tắt:</p>
-          <div className="space-y-2 text-sm text-purple-700">
+        <div className="bg-gradient-to-br from-cherry-50 to-cherry-50 rounded-2xl p-6 border border-cherry-100 mb-6 text-left">
+          <p className="font-bold text-cherry-800 mb-3">📊 Tóm tắt:</p>
+          <div className="space-y-2 text-sm text-cherry-700">
             <p>📖 Bài học: {project.title}</p>
             <p>🏫 {gradeLabel(project.grade)} — {project.subjectName ?? project.subject}</p>
             <p>📝 30 câu BTVN (10 dễ + 10 TB + 10 khó)</p>
@@ -411,7 +411,7 @@ function ContentPanel({
 
         <div className="flex flex-wrap gap-3 justify-center">
           <Link href="/admin/ai-studio/new"
-            className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm">
+            className="flex items-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:from-cherry-700 hover:to-cherry-700 transition-all shadow-sm">
             ➕ Tạo dự án mới
           </Link>
           <Link href="/admin/ai-studio"
@@ -432,7 +432,7 @@ function InfoRow({ label, value, highlight }: { label: string; value: string; hi
   return (
     <div>
       <p className="text-xs text-gray-400 font-semibold">{label}</p>
-      <p className={`text-sm font-bold mt-0.5 ${highlight ? 'text-purple-700' : 'text-gray-800'}`}>{value}</p>
+      <p className={`text-sm font-bold mt-0.5 ${highlight ? 'text-cherry-700' : 'text-gray-800'}`}>{value}</p>
     </div>
   )
 }
@@ -572,7 +572,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4" />
+          <div className="inline-block w-10 h-10 border-4 border-cherry-200 border-t-cherry-600 rounded-full animate-spin mb-4" />
           <p className="text-gray-500">Đang tải dự án...</p>
         </div>
       </div>
@@ -584,7 +584,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-500 text-lg mb-4">Không tìm thấy dự án</p>
-          <Link href="/admin/ai-studio" className="text-purple-600 hover:underline">← Quay lại AI Studio</Link>
+          <Link href="/admin/ai-studio" className="text-cherry-600 hover:underline">← Quay lại AI Studio</Link>
         </div>
       </div>
     )
@@ -641,7 +641,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
               key={s.num}
               onClick={() => setActiveStep(s.num)}
               className={`flex-shrink-0 flex flex-col items-center gap-0.5 px-2.5 py-2 rounded-xl text-center text-xs transition-all min-h-[44px] ${
-                isActive    ? 'bg-purple-600 text-white font-bold'
+                isActive    ? 'bg-cherry-600 text-white font-bold'
                 : status === 'done' ? 'bg-green-50 text-green-700'
                 : 'text-gray-400'
               }`}
@@ -672,7 +672,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
                       onClick={() => setActiveStep(s.num)}
                       className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all ${
                         isActive
-                          ? 'bg-purple-600 text-white font-bold shadow-sm'
+                          ? 'bg-cherry-600 text-white font-bold shadow-sm'
                           : status === 'done'
                           ? 'bg-green-50 text-green-700 hover:bg-green-100'
                           : status === 'running'
@@ -687,7 +687,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
                         <div className={`text-xs font-semibold truncate ${isActive ? 'text-white' : ''}`}>
                           {s.label}
                         </div>
-                        <div className={`text-xs leading-tight truncate ${isActive ? 'text-purple-200' : 'text-gray-400'}`}>
+                        <div className={`text-xs leading-tight truncate ${isActive ? 'text-cherry-200' : 'text-gray-400'}`}>
                           {s.desc}
                         </div>
                       </div>
@@ -700,13 +700,13 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
               <div className="mt-4 pt-4 border-t border-gray-100">
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-gray-400">Tiến độ</span>
-                  <span className="font-bold text-purple-600">
+                  <span className="font-bold text-cherry-600">
                     {project.steps.filter(s => s.status === 'done').length}/8
                   </span>
                 </div>
                 <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-purple-500 rounded-full transition-all"
+                    className="h-full bg-cherry-500 rounded-full transition-all"
                     style={{ width: `${(project.steps.filter(s => s.status === 'done').length / 8) * 100}%` }}
                   />
                 </div>
@@ -724,7 +724,7 @@ export default function AIStudioWorkspacePage({ params }: { params: Promise<{ pr
                 <span className="text-2xl">{currentStep.icon}</span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-cherry-100 text-cherry-700 font-bold px-2 py-0.5 rounded-full">
                       Step {currentStep.num}/8
                     </span>
                     {generating && (

@@ -25,7 +25,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: '👨‍🏫',
     label: 'Giáo viên mới',
     href: '/admin/erp/teachers/new',
-    color: '#8b5cf6',
+    color: '#BE3659',
   },
   {
     icon: '📋',
@@ -49,7 +49,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: '👕',
     label: 'Đồng phục',
     href: '/admin/erp/uniforms',
-    color: '#8b5cf6',
+    color: '#BE3659',
   },
 ]
 
@@ -176,7 +176,7 @@ export function QuickActionDial() {
           borderRadius: '50%',
           background: open
             ? 'linear-gradient(135deg, #f43f5e, #e11d48)'
-            : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            : 'linear-gradient(135deg, #6366f1, #BE3659)',
           border: 'none',
           cursor: 'pointer',
           boxShadow: '0 4px 16px rgba(99,102,241,0.35)',

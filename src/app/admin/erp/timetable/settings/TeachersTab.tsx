@@ -395,9 +395,9 @@ export default function TeachersTab({ initialTeachers }: TeachersTabProps) {
                 alignItems: 'center',
                 gap: 12,
                 padding: '12px 16px',
-                background: expandedAvailId === teacher.id ? '#f5f3ff' : '#fff',
+                background: expandedAvailId === teacher.id ? '#FFF7F9' : '#fff',
                 borderRadius: expandedAvailId === teacher.id ? '12px 12px 0 0' : 12,
-                border: expandedAvailId === teacher.id ? '1px solid #c4b5fd' : '1px solid #e2e8f0',
+                border: expandedAvailId === teacher.id ? '1px solid #EF9AAF' : '1px solid #e2e8f0',
                 borderBottom: expandedAvailId === teacher.id ? 'none' : undefined,
                 transition: 'all 0.15s',
               }}>
@@ -405,7 +405,7 @@ export default function TeachersTab({ initialTeachers }: TeachersTabProps) {
                   width: 36,
                   height: 36,
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  background: 'linear-gradient(135deg, #6366f1, #BE3659)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -505,9 +505,9 @@ export default function TeachersTab({ initialTeachers }: TeachersTabProps) {
                         style={{
                           padding: '5px 12px',
                           borderRadius: 8,
-                          border: `1px solid ${expandedAvailId === teacher.id ? '#7c3aed' : '#e2e8f0'}`,
-                          background: expandedAvailId === teacher.id ? '#ede9fe' : '#f8fafc',
-                          color: expandedAvailId === teacher.id ? '#7c3aed' : '#64748b',
+                          border: `1px solid ${expandedAvailId === teacher.id ? '#951F3D' : '#e2e8f0'}`,
+                          background: expandedAvailId === teacher.id ? '#FDECF0' : '#f8fafc',
+                          color: expandedAvailId === teacher.id ? '#951F3D' : '#64748b',
                           fontSize: 12,
                           fontWeight: 700,
                           cursor: 'pointer',
@@ -524,7 +524,7 @@ export default function TeachersTab({ initialTeachers }: TeachersTabProps) {
               {expandedAvailId === teacher.id && (
                 <div style={{
                   borderRadius: '0 0 12px 12px',
-                  border: '1px solid #c4b5fd',
+                  border: '1px solid #EF9AAF',
                   borderTop: 'none',
                   background: '#fff',
                   padding: '0 16px 16px',

@@ -12,7 +12,7 @@ function RichContent({ text, className }: { text: string; className?: string }) 
   if (isHtml) {
     return (
       <div
-        className={`rich-content [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-3 [&_img]:shadow-sm [&_img]:block [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-200 [&_td]:px-2 [&_td]:py-1 [&_td]:text-sm [&_th]:border [&_th]:border-gray-300 [&_th]:px-2 [&_th]:py-1 [&_th]:bg-purple-50 [&_th]:text-sm whitespace-pre-wrap leading-relaxed ${className ?? ''}`}
+        className={`rich-content [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-3 [&_img]:shadow-sm [&_img]:block [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-200 [&_td]:px-2 [&_td]:py-1 [&_td]:text-sm [&_th]:border [&_th]:border-gray-300 [&_th]:px-2 [&_th]:py-1 [&_th]:bg-cherry-50 [&_th]:text-sm whitespace-pre-wrap leading-relaxed ${className ?? ''}`}
         dangerouslySetInnerHTML={{ __html: text }}
       />
     )
@@ -29,13 +29,13 @@ function TheoryContent({ content }: { content: string }) {
       <div
         className="prose prose-base max-w-none break-words
           [&_h1]:text-xl [&_h1]:font-black [&_h1]:text-gray-900 [&_h1]:mb-3
-          [&_h2]:text-lg [&_h2]:font-black [&_h2]:text-purple-700 [&_h2]:border-b [&_h2]:border-purple-100 [&_h2]:pb-1 [&_h2]:mb-3
+          [&_h2]:text-lg [&_h2]:font-black [&_h2]:text-cherry-700 [&_h2]:border-b [&_h2]:border-cherry-100 [&_h2]:pb-1 [&_h2]:mb-3
           [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-gray-800 [&_h3]:mb-2
           [&_p]:text-gray-700 [&_p]:leading-relaxed [&_p]:my-2
           [&_li]:text-gray-700 [&_li]:my-1
           [&_strong]:text-gray-900 [&_strong]:font-bold
           [&_table]:w-full [&_table]:border-collapse [&_table]:my-3
-          [&_th]:bg-purple-50 [&_th]:text-purple-800 [&_th]:font-bold [&_th]:text-sm [&_th]:p-2 [&_th]:border [&_th]:border-purple-200
+          [&_th]:bg-cherry-50 [&_th]:text-cherry-800 [&_th]:font-bold [&_th]:text-sm [&_th]:p-2 [&_th]:border [&_th]:border-cherry-200
           [&_td]:p-2 [&_td]:border [&_td]:border-gray-200 [&_td]:text-sm [&_td]:align-top
           [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-3 [&_img]:shadow-sm [&_img]:block
           [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2
@@ -53,17 +53,17 @@ function MarkdownLesson({ content }: { content: string }) {
     <div className="prose prose-sm max-w-none break-words
       prose-headings:font-black prose-headings:text-gray-900
       prose-h1:text-xl prose-h1:mt-0
-      prose-h2:text-base prose-h2:text-purple-700 prose-h2:border-b prose-h2:border-purple-100 prose-h2:pb-1
+      prose-h2:text-base prose-h2:text-cherry-700 prose-h2:border-b prose-h2:border-cherry-100 prose-h2:pb-1
       prose-h3:text-sm prose-h3:text-gray-800
       prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-2
       prose-li:text-gray-700 prose-li:my-0.5
       prose-strong:text-gray-900
       prose-table:text-sm prose-table:w-full
-      prose-th:bg-purple-50 prose-th:text-purple-800 prose-th:font-bold prose-th:text-xs prose-th:p-2
+      prose-th:bg-cherry-50 prose-th:text-cherry-800 prose-th:font-bold prose-th:text-xs prose-th:p-2
       prose-td:p-2 prose-td:border-gray-200 prose-td:text-xs prose-td:align-top
       prose-pre:bg-gray-900 prose-pre:rounded-xl prose-pre:text-xs prose-pre:overflow-x-auto
-      prose-code:bg-gray-100 prose-code:text-purple-700 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
-      prose-blockquote:border-purple-300 prose-blockquote:bg-purple-50 prose-blockquote:rounded-r-xl prose-blockquote:py-1
+      prose-code:bg-gray-100 prose-code:text-cherry-700 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
+      prose-blockquote:border-cherry-300 prose-blockquote:bg-cherry-50 prose-blockquote:rounded-r-xl prose-blockquote:py-1
       [&_table]:border-collapse [&_td]:border [&_th]:border">
       <ReactMarkdown>{content}</ReactMarkdown>
     </div>
@@ -230,7 +230,7 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
       <div className="bg-white rounded-4xl p-8 max-w-sm w-full text-center shadow-2xl"
         onClick={e => e.stopPropagation()}>
         <div className="text-6xl mb-2 animate-bounce">🎉</div>
-        <h2 className="text-2xl font-black text-purple-700 mb-1">Chúc mừng con!</h2>
+        <h2 className="text-2xl font-black text-cherry-700 mb-1">Chúc mừng con!</h2>
         <p className="text-xl font-bold text-gray-800 mb-4">{name}</p>
         <div className="flex justify-center gap-2 mb-4">
           {[1,2,3].map(s => (
@@ -239,7 +239,7 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
             />
           ))}
         </div>
-        <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl p-5 text-white mb-4">
+        <div className="bg-gradient-to-br from-cherry-600 to-cherry-800 rounded-3xl p-5 text-white mb-4">
           <div className="text-5xl font-black text-yellow-300 mb-1">{correct}<span className="text-2xl text-white/60">/{total}</span></div>
           <p className="text-white/80 text-sm">câu đúng · {pct}% chính xác</p>
         </div>
@@ -247,7 +247,7 @@ function CongratScreen({ name, correct, total, onClose, onRetryAll, onRetryWrong
         <div className="flex flex-col gap-2">
           <button onClick={onClose} className="btn-primary w-full !py-3 text-sm">Tiếp tục học 📚</button>
           <div className="flex gap-2">
-            <button onClick={onRetryAll} className="flex-1 py-2.5 bg-purple-100 text-purple-700 font-bold rounded-2xl hover:bg-purple-200 transition text-sm">
+            <button onClick={onRetryAll} className="flex-1 py-2.5 bg-cherry-100 text-cherry-700 font-bold rounded-2xl hover:bg-cherry-200 transition text-sm">
               🔄 Làm lại toàn bộ
             </button>
             {correct < total && (
@@ -323,7 +323,7 @@ function MaterialView({ url, title }: { url: string; title?: string | null }) {
     />
   )
   return (
-    <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-2xl px-4 py-3 text-purple-600">
+    <div className="flex items-center gap-2 bg-cherry-50 border border-cherry-200 rounded-2xl px-4 py-3 text-cherry-600">
       📄 {title ?? 'Tài liệu'}
     </div>
   )
@@ -375,7 +375,7 @@ function VideoPanel({ videoMaterial, videoMaterials, activeIdx, onSelect }: {
               key={v.id}
               onClick={() => onSelect?.(idx)}
               className={`flex-shrink-0 text-xs px-2.5 py-1 rounded-full font-medium transition ${
-                activeIdx === idx ? 'bg-white text-purple-700' : 'bg-white/20 text-white hover:bg-white/30'
+                activeIdx === idx ? 'bg-white text-cherry-700' : 'bg-white/20 text-white hover:bg-white/30'
               }`}
             >
               {v.title || `Video ${idx + 1}`}
@@ -575,7 +575,7 @@ function AdminDownloadBtn({ subjectId, type, label }: { subjectId: string; type:
     <button
       onClick={handleDownload}
       disabled={loading}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50 transition shadow-sm"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-cherry-600 text-white hover:bg-cherry-700 disabled:opacity-50 transition shadow-sm"
       title="Chỉ admin nhìn thấy — tải tài liệu định dạng Word (.docx)"
     >
       {loading ? <Loader2 size={14} className="animate-spin" /> : <span>⬇️</span>}
@@ -910,7 +910,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       const hasAnyInput = Object.values(inputs).some(v => v.trim())
       return (
         <div className="mb-3">
-          <p className="text-sm text-purple-700 font-bold mb-2">
+          <p className="text-sm text-cherry-700 font-bold mb-2">
             🔗 Nối từng từ bên trái với nghĩa đúng:
           </p>
           {/* Hiển thị danh sách từ gợi ý */}
@@ -936,7 +936,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     value={studentVal}
                     onChange={e => handleMatchingInput(q.id, leftKey, e.target.value)}
                     className={`flex-1 px-3 py-2.5 rounded-2xl border-2 text-sm font-semibold min-w-0 bg-white cursor-pointer ${
-                      studentVal ? 'border-purple-400 bg-purple-50 text-purple-900' : 'border-gray-300 text-gray-500'
+                      studentVal ? 'border-cherry-400 bg-cherry-50 text-cherry-900' : 'border-gray-300 text-gray-500'
                     }`}
                   >
                     <option value="">— Chọn nghĩa —</option>
@@ -1003,7 +1003,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               </div>
             </div>
           )}
-          <p className="text-sm text-purple-700 font-bold mb-2">
+          <p className="text-sm text-cherry-700 font-bold mb-2">
             ✍️ Nhập thứ tự đúng (mỗi mục một dòng):
           </p>
           <textarea
@@ -1015,7 +1015,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             className={`w-full px-4 py-3 rounded-2xl border-2 text-base font-medium focus:outline-none transition-all resize-y mb-3 font-mono shadow-sm ${
               isDone
                 ? isCorrect ? 'border-teal-400 bg-teal-50 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
-                : 'border-purple-300 bg-white focus:border-purple-500'
+                : 'border-cherry-300 bg-white focus:border-cherry-500'
             }`}
           />
           {!isDone && (
@@ -1044,7 +1044,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
       const correctKeys = q.correctAnswer.split(',').map(s => s.trim().toLowerCase())
       return (
         <div className="mb-3">
-          <p className="text-sm text-indigo-700 font-bold mb-2">☑️ Chọn tất cả các đáp án đúng:</p>
+          <p className="text-sm text-cherry-700 font-bold mb-2">☑️ Chọn tất cả các đáp án đúng:</p>
           <div className="space-y-2 mb-4">
             {opts.map((opt, i) => {
               const key = opt.key || String(i)
@@ -1063,7 +1063,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               }
               return (
                 <button key={key} disabled={isDone} onClick={() => toggleSel(key)} className={cls}>
-                  <span className={`w-6 h-6 rounded border-2 flex items-center justify-center shrink-0 ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-gray-400 bg-white'}`}>
+                  <span className={`w-6 h-6 rounded border-2 flex items-center justify-center shrink-0 ${isSelected ? 'bg-cherry-500 border-cherry-500' : 'border-gray-400 bg-white'}`}>
                     {isSelected && <span className="text-white text-xs font-black">✓</span>}
                   </span>
                   <span className="w-6 text-sm font-bold">{key}.</span>
@@ -1232,14 +1232,14 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
         <div className="mb-3">
           <p className="text-sm text-pink-700 font-bold mb-2">🔀 Nhấp các từ theo đúng thứ tự để tạo thành câu:</p>
           {/* Sentence being built */}
-          <div className="min-h-[56px] p-3 mb-3 bg-purple-50 border-2 border-purple-300 rounded-2xl flex flex-wrap gap-2 items-center">
-            {placed.length === 0 && <span className="text-purple-300 text-sm">Nhấp vào từ ở dưới để xếp vào đây...</span>}
+          <div className="min-h-[56px] p-3 mb-3 bg-cherry-50 border-2 border-cherry-300 rounded-2xl flex flex-wrap gap-2 items-center">
+            {placed.length === 0 && <span className="text-cherry-300 text-sm">Nhấp vào từ ở dưới để xếp vào đây...</span>}
             {placed.map(id => (
               <button key={id} onClick={() => removeWord(id)} disabled={isDone}
                 className={`px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all ${
                   isDone
                     ? isCorrect ? 'bg-teal-100 border-teal-400 text-teal-800' : 'bg-orange-100 border-orange-400 text-orange-800'
-                    : 'bg-purple-200 border-purple-400 text-purple-900 hover:bg-red-100 hover:border-red-400'
+                    : 'bg-cherry-200 border-cherry-400 text-cherry-900 hover:bg-red-100 hover:border-red-400'
                 }`}>
                 {getWord(id)}
               </button>
@@ -1406,7 +1406,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           className={`flex-1 px-5 py-4 rounded-2xl border-2 font-black text-center text-xl focus:outline-none transition-all shadow-sm ${
             isDone
               ? isCorrect ? 'border-teal-400 bg-teal-100 text-teal-800' : 'border-orange-300 bg-orange-50 text-orange-800'
-              : 'border-purple-300 bg-white focus:border-purple-500'
+              : 'border-cherry-300 bg-white focus:border-cherry-500'
           }`}
         />
         {!isDone && (
@@ -1450,7 +1450,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           {/* Nút mũi tên thu/mở — mobile */}
           <button
             onClick={() => setVideoCollapsed(v => !v)}
-            className="w-full flex items-center justify-center gap-2 py-2 mt-1 rounded-2xl bg-white border-2 border-gray-100 hover:border-purple-300 text-gray-400 hover:text-purple-500 text-xs font-bold transition-all"
+            className="w-full flex items-center justify-center gap-2 py-2 mt-1 rounded-2xl bg-white border-2 border-gray-100 hover:border-cherry-300 text-gray-400 hover:text-cherry-500 text-xs font-bold transition-all"
           >
             {videoCollapsed
               ? <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg> Hiện video</>
@@ -1465,8 +1465,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all min-h-[44px] ${
                   activeTab === tab.id
-                    ? 'bg-purple-600 text-white shadow-md shadow-purple-200'
-                    : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-purple-200 hover:text-purple-600'
+                    ? 'bg-cherry-600 text-white shadow-md shadow-cherry-200'
+                    : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-cherry-200 hover:text-cherry-600'
                 }`}>
                 <span>{tab.emoji}</span>{tab.label}
               </button>
@@ -1476,7 +1476,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           <button
             onClick={() => setIsFullscreen(f => !f)}
             title={isFullscreen ? 'Thu nhỏ' : 'Phóng to'}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-white border-2 border-gray-100 hover:border-purple-300 hover:text-purple-600 text-gray-500 font-bold text-sm transition-all min-h-[44px] shadow-sm"
+            className="shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-white border-2 border-gray-100 hover:border-cherry-300 hover:text-cherry-600 text-gray-500 font-bold text-sm transition-all min-h-[44px] shadow-sm"
           >
             {isFullscreen
               ? <><Minimize2 className="w-4 h-4" /><span className="hidden sm:inline">Thu nhỏ</span></>
@@ -1485,7 +1485,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
         </div>
 
         {/* Tab content */}
-        <div className="bg-white rounded-4xl border-2 border-purple-50 p-5 md:p-6 shadow-sm">
+        <div className="bg-white rounded-4xl border-2 border-cherry-50 p-5 md:p-6 shadow-sm">
 
           {/* ── BTVN ── */}
           {activeTab === 'homework' && (
@@ -1506,8 +1506,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                         activeBTVNSet === idx
                           ? set.id === '__orphan__'
                             ? 'bg-gray-600 text-white'
-                            : 'bg-purple-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-purple-50'
+                            : 'bg-cherry-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-cherry-50'
                       }`}
                     >
                       {set.id === '__orphan__' ? '📦' : '📚'} {set.title}
@@ -1546,7 +1546,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   </div>
                   <div className="h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                     <div
-                      className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400"
+                      className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-cherry-400 via-pink-400 to-yellow-400"
                       style={{ width: `${activeQuestions.length > 0 ? (totalAnswered / activeQuestions.length) * 100 : 0}%` }}
                     />
                   </div>
@@ -1578,8 +1578,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                               : hasInput
                               ? 'bg-orange-400 text-white shadow-orange-200 animate-pulse'
                               : isActive
-                              ? 'bg-purple-600 text-white shadow-purple-200 scale-110'
-                              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-purple-300 hover:text-purple-600'
+                              ? 'bg-cherry-600 text-white shadow-cherry-200 scale-110'
+                              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-cherry-300 hover:text-cherry-600'
                           }`}>
                           {isDone ? (isCorrect ? '✓' : '~') : q.order}
                         </button>
@@ -1609,21 +1609,21 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       <div className={`mb-5 rounded-3xl border-2 p-5 transition-all shadow-md ${
                         isDone
                           ? isCorrect ? 'border-teal-300 bg-teal-50' : 'border-orange-200 bg-orange-50'
-                          : 'border-purple-300 bg-purple-50/30'
+                          : 'border-cherry-300 bg-cherry-50/30'
                       }`}>
                         {/* Số câu + badge loại */}
                         <div className="flex items-start gap-3 mb-3">
                           <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-base font-black shrink-0 shadow-sm ${
-                            isDone ? (isCorrect ? 'bg-teal-500 text-white' : 'bg-orange-400 text-white') : 'bg-purple-600 text-white'
+                            isDone ? (isCorrect ? 'bg-teal-500 text-white' : 'bg-orange-400 text-white') : 'bg-cherry-600 text-white'
                           }`}>{q.order}</div>
                           <div className="flex-1 min-w-0">
                             {q.questionType && q.questionType !== 'OPEN' && (
                               <span className={`inline-flex items-center gap-1 mb-2 text-xs font-bold px-2.5 py-0.5 rounded-full ${
                                 q.questionType === 'MULTIPLE_CHOICE' ? 'bg-blue-100 text-blue-700'
                                 : q.questionType === 'TRUE_FALSE'   ? 'bg-green-100 text-green-700'
-                                : q.questionType === 'MATCHING'     ? 'bg-purple-100 text-purple-700'
+                                : q.questionType === 'MATCHING'     ? 'bg-cherry-100 text-cherry-700'
                                 : q.questionType === 'ORDERING'     ? 'bg-amber-100 text-amber-700'
-                                : q.questionType === 'MULTI_SELECT' ? 'bg-indigo-100 text-indigo-700'
+                                : q.questionType === 'MULTI_SELECT' ? 'bg-cherry-100 text-cherry-700'
                                 : q.questionType === 'FILL_BLANK'   ? 'bg-teal-100 text-teal-700'
                                 : q.questionType === 'SHORT_ANSWER' ? 'bg-cyan-100 text-cyan-700'
                                 : q.questionType === 'NUMBER_INPUT' ? 'bg-sky-100 text-sky-700'
@@ -1707,7 +1707,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             }
                             setShowHint(p => ({ ...p, [q.id]: !p[q.id] }))
                           }}
-                            className="text-sm text-purple-600 hover:text-purple-800 font-bold rounded-xl px-3 py-1.5 bg-purple-50 hover:bg-purple-100 transition">
+                            className="text-sm text-cherry-600 hover:text-cherry-800 font-bold rounded-xl px-3 py-1.5 bg-cherry-50 hover:bg-cherry-100 transition">
                             {hint ? '🙈 Ẩn gợi ý' : '💡 Xem gợi ý / lời giải'}
                           </button>
                           {!isDone && (
@@ -1742,7 +1742,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           <button
                             disabled={!nextQ}
                             onClick={() => nextQ && setExpandedQ(nextQ.id)}
-                            className="flex-1 py-4 bg-purple-100 text-purple-700 font-black rounded-2xl hover:bg-purple-200 transition text-base disabled:opacity-30 shadow-sm">
+                            className="flex-1 py-4 bg-cherry-100 text-cherry-700 font-black rounded-2xl hover:bg-cherry-200 transition text-base disabled:opacity-30 shadow-sm">
                             Câu tiếp →
                           </button>
                         </div>
@@ -1796,7 +1796,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             }}
                             className={`w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
                               !aiQuizLoading
-                                ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-md'
+                                ? 'bg-gradient-to-r from-cherry-500 to-cherry-600 text-white hover:from-cherry-600 hover:to-cherry-700 shadow-md'
                                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             }`}
                           >
@@ -1810,14 +1810,14 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                   })()}
 
                   {aiLoading && (
-                    <div className="mt-4 text-center text-purple-600">
+                    <div className="mt-4 text-center text-cherry-600">
                       <Loader2 className="animate-spin mx-auto mb-2" size={24} />
                       <p className="text-sm font-medium">AI đang phân tích...</p>
                     </div>
                   )}
 
                   {aiResult && (
-                    <div className="mt-4 bg-gradient-to-br from-purple-50 to-teal-50 rounded-3xl p-5 border border-purple-100 shadow-sm">
+                    <div className="mt-4 bg-gradient-to-br from-cherry-50 to-teal-50 rounded-3xl p-5 border border-cherry-100 shadow-sm">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-2xl">🤖</span>
                         <h3 className="font-black text-gray-900">Nhận xét của AI</h3>
@@ -1825,16 +1825,16 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       </div>
                       {aiResult.summary && <p className="text-gray-700 text-sm mb-3">{aiResult.summary}</p>}
                       {aiResult.recommendation && (
-                        <div className="bg-white rounded-2xl p-3 text-sm text-purple-900 shadow-sm">
+                        <div className="bg-white rounded-2xl p-3 text-sm text-cherry-900 shadow-sm">
                           🚀 <strong>Gợi ý tiếp theo:</strong> {aiResult.recommendation}
                         </div>
                       )}
                       {aiResult.encouragement && (
-                        <p className="text-center text-purple-600 font-semibold text-sm mt-3">{aiResult.encouragement}</p>
+                        <p className="text-center text-cherry-600 font-semibold text-sm mt-3">{aiResult.encouragement}</p>
                       )}
                       <div className="mt-4 flex flex-col sm:flex-row gap-2">
                         <button onClick={() => handleRetry(false)}
-                          className="flex-1 py-3 bg-purple-600 text-white font-bold rounded-2xl hover:bg-purple-700 transition text-sm">
+                          className="flex-1 py-3 bg-cherry-600 text-white font-bold rounded-2xl hover:bg-cherry-700 transition text-sm">
                           🔄 Làm lại toàn bộ
                         </button>
                         {activeQuestions.some(q => submitted[q.id] && !results[q.id]) && (
@@ -1865,7 +1865,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                           }}
                           className={`mt-3 w-full py-3 flex items-center justify-center gap-2 font-bold rounded-2xl transition text-sm ${
                             !aiQuizLoading
-                              ? 'bg-gradient-to-r from-violet-600 to-purple-700 text-white hover:from-violet-700 hover:to-purple-800 shadow-md'
+                              ? 'bg-gradient-to-r from-cherry-600 to-cherry-700 text-white hover:from-cherry-700 hover:to-cherry-800 shadow-md'
                               : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           }`}
                         >
@@ -1966,8 +1966,8 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       onClick={() => setActiveBTVNSet(idx)}
                       className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
                         activeBTVNSet === idx
-                          ? set.id === '__orphan__' ? 'bg-gray-600 text-white' : 'bg-indigo-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-indigo-50'
+                          ? set.id === '__orphan__' ? 'bg-gray-600 text-white' : 'bg-cherry-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-cherry-50'
                       }`}
                     >
                       {set.id === '__orphan__' ? '📦' : '📓'} {set.title}
@@ -2008,7 +2008,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             done
                               ? 'bg-blue-500 text-white shadow-blue-200'
                               : active
-                              ? 'bg-purple-600 text-white scale-110 shadow-purple-200'
+                              ? 'bg-cherry-600 text-white scale-110 shadow-cherry-200'
                               : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-blue-300 hover:text-blue-600'
                           }`}>
                           {done ? '✓' : q.order}
@@ -2027,11 +2027,11 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                     const done = notebookDone[q.id]
                     return (
                       <div className={`mb-4 rounded-3xl border-2 p-5 transition-all shadow-sm ${
-                        done ? 'border-blue-300 bg-blue-50' : 'border-purple-300 bg-purple-50/40'
+                        done ? 'border-blue-300 bg-blue-50' : 'border-cherry-300 bg-cherry-50/40'
                       }`}>
                         <div className="flex items-center gap-3 mb-4">
                           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 ${
-                            done ? 'bg-blue-500 text-white' : 'bg-purple-600 text-white'
+                            done ? 'bg-blue-500 text-white' : 'bg-cherry-600 text-white'
                           }`}>{q.order}</div>
                           <p className="text-xs text-gray-500 font-medium">Câu {q.order} / {activeQuestions.length}</p>
                         </div>
@@ -2066,14 +2066,14 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             {activeQuestions.findIndex(x => x.id === q.id) > 0 && (
                               <button
                                 onClick={() => setNotebookQ(activeQuestions[activeQuestions.findIndex(x => x.id === q.id) - 1].id)}
-                                className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-base shadow-sm">
+                                className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-cherry-300 transition text-base shadow-sm">
                                 ← Trước
                               </button>
                             )}
                             {activeQuestions.findIndex(x => x.id === q.id) < activeQuestions.length - 1 && (
                               <button
                                 onClick={() => setNotebookQ(activeQuestions[activeQuestions.findIndex(x => x.id === q.id) + 1].id)}
-                                className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-purple-300 transition text-base shadow-sm">
+                                className="px-5 py-3 bg-white border-2 border-gray-200 text-gray-600 font-bold rounded-2xl hover:border-cherry-300 transition text-base shadow-sm">
                                 Tiếp →
                               </button>
                             )}
@@ -2092,7 +2092,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       <textarea value={notebookText} onChange={(e) => setNotebookText(e.target.value)}
                         disabled={!!notebookResult}
                         placeholder={'Câu 1: ...\nCâu 2: ...\n...'}
-                        className="w-full min-h-[200px] p-4 rounded-3xl border-2 border-blue-200 focus:border-purple-400 focus:outline-none text-gray-800 text-sm leading-7 bg-white resize-y font-mono disabled:bg-gray-100 disabled:cursor-not-allowed mb-3"
+                        className="w-full min-h-[200px] p-4 rounded-3xl border-2 border-blue-200 focus:border-cherry-400 focus:outline-none text-gray-800 text-sm leading-7 bg-white resize-y font-mono disabled:bg-gray-100 disabled:cursor-not-allowed mb-3"
                         style={{ backgroundImage: 'repeating-linear-gradient(transparent, transparent calc(1.75rem - 1px), #dbeafe calc(1.75rem - 1px), #dbeafe 1.75rem)', backgroundAttachment: 'local', lineHeight: '1.75rem' }}
                       />
                       {!notebookResult ? (
@@ -2103,13 +2103,13 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                         </button>
                       ) : (
                         <div className="space-y-3">
-                          <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl p-5 text-white text-center">
+                          <div className="bg-gradient-to-br from-cherry-600 to-cherry-800 rounded-3xl p-5 text-white text-center">
                             <div className="text-5xl font-black mb-1 text-yellow-300">
                               {notebookResult.score ?? '—'}<span className="text-xl text-white/60">/10</span>
                             </div>
                             <p className="text-white/80 text-sm">Điểm bài tự luận</p>
                           </div>
-                          <div className="bg-purple-50 border border-purple-100 rounded-3xl p-4">
+                          <div className="bg-cherry-50 border border-cherry-100 rounded-3xl p-4">
                             <h3 className="font-black text-gray-900 mb-2">🤖 Nhận xét của AI</h3>
                             <p className="text-gray-700 text-sm leading-relaxed">{notebookResult.feedback}</p>
                           </div>
@@ -2126,7 +2126,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                             </div>
                           )}
                           <button onClick={() => { setNotebookResult(null); setNotebookText(''); setNotebookDone({}); setNotebookQ(null) }}
-                            className="w-full py-3 border-2 border-purple-200 text-purple-600 font-bold rounded-2xl hover:bg-purple-50 transition-all">
+                            className="w-full py-3 border-2 border-cherry-200 text-cherry-600 font-bold rounded-2xl hover:bg-cherry-50 transition-all">
                             🔄 Làm lại bài
                           </button>
                         </div>
@@ -2247,7 +2247,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
               <h2 className="text-lg font-black text-gray-900">⭐ Điểm của bạn</h2>
 
               {/* Điểm chuyên đề hiện tại */}
-              <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-3xl p-5 text-white">
+              <div className="bg-gradient-to-br from-cherry-600 to-cherry-700 rounded-3xl p-5 text-white">
                 <p className="text-white/70 text-sm font-semibold mb-1">📚 Chưyên đề hiện tại</p>
                 <p className="text-xs text-white/60 mb-3">{subject.name}</p>
                 <div className="flex items-end gap-2">
@@ -2304,15 +2304,15 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
                       }`}>
                         <span className="text-lg shrink-0">{e.rank===1?'🥇':e.rank===2?'🥈':e.rank===3?'🥉':`#${e.rank}`}</span>
                         <p className="flex-1 font-bold text-sm text-gray-800">{e.name}{e.isMe && ' ✨'}</p>
-                        <span className="font-black text-purple-700">{e.score} đ</span>
+                        <span className="font-black text-cherry-700">{e.score} đ</span>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              <div className="text-center bg-purple-50 rounded-2xl p-4">
-                <p className="text-sm text-purple-700 font-semibold">💪 Làm BTVN để tăng điểm và leo bảng vàng!</p>
+              <div className="text-center bg-cherry-50 rounded-2xl p-4">
+                <p className="text-sm text-cherry-700 font-semibold">💪 Làm BTVN để tăng điểm và leo bảng vàng!</p>
               </div>
             </div>
           )}
@@ -2337,7 +2337,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
             <button
               onClick={() => setVideoCollapsed(v => !v)}
               title={videoCollapsed ? 'Mở video' : 'Thu video'}
-              className="w-7 h-14 flex items-center justify-center rounded-xl bg-white border-2 border-purple-100 hover:border-purple-400 hover:bg-purple-50 text-purple-400 hover:text-purple-600 shadow-sm transition-all duration-200"
+              className="w-7 h-14 flex items-center justify-center rounded-xl bg-white border-2 border-cherry-100 hover:border-cherry-400 hover:bg-cherry-50 text-cherry-400 hover:text-cherry-600 shadow-sm transition-all duration-200"
             >
               {videoCollapsed
                 ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -2354,7 +2354,7 @@ export function SubjectTabs({ subject, materials, questions, answersMap, top5, u
           >
             <div className="sticky top-24">
               <VideoPanel videoMaterial={videoMaterial} videoMaterials={videoMaterials} activeIdx={activeVideoIdx} onSelect={setActiveVideoIdx} />
-              <div className="mt-3 bg-white rounded-2xl border border-purple-100 px-4 py-3 text-xs text-gray-500 space-y-1 shadow-sm">
+              <div className="mt-3 bg-white rounded-2xl border border-cherry-100 px-4 py-3 text-xs text-gray-500 space-y-1 shadow-sm">
                 <p>📖 <strong className="text-gray-700">Bài giảng:</strong> slide/PDF lý thuyết</p>
                 <p>✏️ <strong className="text-gray-700">BTVN:</strong> làm bài trực tiếp, chấm tự động</p>
                 <p>✅ <strong className="text-gray-700">Đáp án:</strong> xem sau khi làm bài</p>
@@ -2454,8 +2454,8 @@ function QuizizzTabContent({
           const isClosed = qs.status === 'closed'
           const isOpen = qs.status === 'open'
           const hasAttempt = !!qs.myAttempt
-          const borderColor = isOpen ? 'border-green-400' : isClosed ? 'border-indigo-300' : 'border-gray-200'
-          const bgColor = isOpen ? 'bg-green-50' : isClosed ? 'bg-indigo-50' : 'bg-gray-50'
+          const borderColor = isOpen ? 'border-green-400' : isClosed ? 'border-cherry-300' : 'border-gray-200'
+          const bgColor = isOpen ? 'bg-green-50' : isClosed ? 'bg-cherry-50' : 'bg-gray-50'
           return (
             <div key={qs.id} className={`border-2 rounded-2xl overflow-hidden ${borderColor}`}>
               <div className={`p-4 ${bgColor}`}>
@@ -2465,15 +2465,15 @@ function QuizizzTabContent({
                       <span className="font-black text-gray-800 text-base">{qs.title}</span>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                         isOpen ? 'bg-green-500 text-white' :
-                        isClosed ? 'bg-indigo-600 text-white' : 'bg-gray-300 text-gray-700'
+                        isClosed ? 'bg-cherry-600 text-white' : 'bg-gray-300 text-gray-700'
                       }`}>
                         {isOpen ? '🟢 Đang mở' : isClosed ? '✅ Đã xong' : '⏸️ Chưa mở'}
                       </span>
                     </div>
                     <p className="text-sm text-gray-500">{qs.questions?.length ?? 0} câu hỏi</p>
                     {hasAttempt && qs.myAttempt && (
-                      <p className="text-sm font-bold text-indigo-700 mt-1">
-                        Điểm của bạn: <span className="text-2xl text-indigo-600">{qs.myAttempt.score}</span>/{qs.myAttempt.maxScore}
+                      <p className="text-sm font-bold text-cherry-700 mt-1">
+                        Điểm của bạn: <span className="text-2xl text-cherry-600">{qs.myAttempt.score}</span>/{qs.myAttempt.maxScore}
                       </p>
                     )}
                   </div>
@@ -2481,7 +2481,7 @@ function QuizizzTabContent({
                     {(isOpen || isClosed) && (
                       <button onClick={() => openQuiz(qs)}
                         className={`text-white text-sm px-5 py-2.5 rounded-xl font-bold transition shadow ${
-                          isOpen ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'
+                          isOpen ? 'bg-green-600 hover:bg-green-700' : 'bg-cherry-600 hover:bg-cherry-700'
                         }`}>
                         {isOpen ? (hasAttempt ? '📊 Kết quả' : '▶ Vào làm') : '📊 Xem & Xếp hạng'}
                       </button>
@@ -2510,12 +2510,12 @@ function QuizizzTabContent({
   return (
     <div>
       <button onClick={() => setActiveQuiz(null)}
-        className="flex items-center gap-1 text-sm text-gray-500 hover:text-purple-600 mb-5 font-semibold transition">
+        className="flex items-center gap-1 text-sm text-gray-500 hover:text-cherry-600 mb-5 font-semibold transition">
         ← Quay lại danh sách
       </button>
 
       {/* Quiz header */}
-      <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-5 text-white mb-5">
+      <div className="bg-gradient-to-br from-cherry-600 to-cherry-700 rounded-3xl p-5 text-white mb-5">
         <h3 className="font-black text-xl mb-0.5">{activeQuiz.title}</h3>
         <p className="text-white/70 text-sm">{questions.length} câu · Đúng: 10đ · Sai: 2đ · Không làm: 0đ</p>
         {submitted && myAttempt && (
@@ -2550,7 +2550,7 @@ function QuizizzTabContent({
             <div key={q.id} className="bg-white rounded-3xl border-2 border-gray-100 p-5 shadow-sm">
               {/* Question header */}
               <div className="flex items-start gap-3 mb-4">
-                <span className="w-9 h-9 flex-shrink-0 bg-indigo-100 text-indigo-700 font-black text-sm rounded-full flex items-center justify-center">
+                <span className="w-9 h-9 flex-shrink-0 bg-cherry-100 text-cherry-700 font-black text-sm rounded-full flex items-center justify-center">
                   {qi + 1}
                 </span>
                 <div className="flex-1">
@@ -2592,7 +2592,7 @@ function QuizizzTabContent({
                       value={selectedAnswers[q.id] ?? ''}
                       onChange={e => handleSelect(q.id, e.target.value)}
                       disabled={activeQuiz.status !== 'open'}
-                      className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-400 disabled:bg-gray-50"
+                      className="w-full border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-cherry-400 disabled:bg-gray-50"
                     />
                   ) : (
                     <div className={`rounded-2xl px-4 py-3 text-sm border-2 ${myAns?.isCorrect ? 'bg-green-50 border-green-400 text-green-900' : 'bg-red-50 border-red-300 text-red-900'}`}>
@@ -2631,13 +2631,13 @@ function QuizizzTabContent({
 
       {/* Submit bar */}
       {!submitted && activeQuiz.status === 'open' && (
-        <div className="sticky bottom-4 bg-white rounded-2xl shadow-xl border-2 border-indigo-200 p-4 flex items-center justify-between gap-3">
+        <div className="sticky bottom-4 bg-white rounded-2xl shadow-xl border-2 border-cherry-200 p-4 flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm text-gray-600">Đã chọn <strong className="text-indigo-700">{answered}/{questions.length}</strong> câu</p>
+            <p className="text-sm text-gray-600">Đã chọn <strong className="text-cherry-700">{answered}/{questions.length}</strong> câu</p>
             <p className="text-xs text-gray-400">Câu chưa chọn = 0 điểm</p>
           </div>
           <button onClick={handleSubmit} disabled={submitting}
-            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-8 py-3 rounded-xl font-black text-base transition shadow-lg">
+            className="bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white px-8 py-3 rounded-xl font-black text-base transition shadow-lg">
             {submitting ? '⏳ Đang nộp...' : '📤 Nộp bài'}
           </button>
         </div>
@@ -2648,20 +2648,20 @@ function QuizizzTabContent({
         <div className="mt-6">
           <button
             onClick={() => showLeaderboard ? setShowLeaderboard(false) : loadLeaderboard(activeQuiz.id)}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl py-3 font-bold transition hover:from-indigo-700 hover:to-purple-700 shadow-md">
+            className="w-full bg-gradient-to-r from-cherry-600 to-cherry-600 text-white rounded-2xl py-3 font-bold transition hover:from-cherry-700 hover:to-cherry-700 shadow-md">
             {loadingLb ? '⏳ Đang tải...' : showLeaderboard ? '▲ Ẩn xếp hạng' : '🏆 Xem bảng xếp hạng'}
           </button>
 
           {showLeaderboard && leaderboard.length > 0 && (
-            <div className="mt-4 bg-white rounded-3xl border-2 border-indigo-100 overflow-hidden shadow-sm">
-              <div className="bg-gradient-to-r from-indigo-600 to-purple-700 px-5 py-4">
+            <div className="mt-4 bg-white rounded-3xl border-2 border-cherry-100 overflow-hidden shadow-sm">
+              <div className="bg-gradient-to-r from-cherry-600 to-cherry-700 px-5 py-4">
                 <h4 className="text-white font-black text-lg">🏆 Bảng xếp hạng</h4>
                 <p className="text-white/60 text-xs">{activeQuiz.title}</p>
               </div>
               <div className="divide-y divide-gray-100">
                 {leaderboard.map(entry => (
                   <div key={entry.userId}
-                    className={`flex items-center gap-3 px-5 py-3.5 ${entry.isMe ? 'bg-indigo-50' : 'hover:bg-gray-50'} ${entry.status === 'absent' ? 'opacity-50' : ''}`}>
+                    className={`flex items-center gap-3 px-5 py-3.5 ${entry.isMe ? 'bg-cherry-50' : 'hover:bg-gray-50'} ${entry.status === 'absent' ? 'opacity-50' : ''}`}>
                     <div className={`w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full font-black text-sm ${
                       entry.rank === 1 ? 'bg-yellow-400 text-yellow-900' :
                       entry.rank === 2 ? 'bg-gray-300 text-gray-700' :
@@ -2672,8 +2672,8 @@ function QuizizzTabContent({
                       {entry.status === 'absent' ? '—' : entry.rank}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-semibold text-sm truncate ${entry.isMe ? 'text-indigo-700' : 'text-gray-800'}`}>
-                        {entry.name} {entry.isMe && <span className="text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full ml-1">bạn</span>}
+                      <p className={`font-semibold text-sm truncate ${entry.isMe ? 'text-cherry-700' : 'text-gray-800'}`}>
+                        {entry.name} {entry.isMe && <span className="text-xs bg-cherry-100 text-cherry-600 px-1.5 py-0.5 rounded-full ml-1">bạn</span>}
                       </p>
                       <p className="text-xs text-gray-400">
                         {entry.status === 'absent' ? 'Vắng mặt' :
@@ -2685,7 +2685,7 @@ function QuizizzTabContent({
                         <span className="text-sm font-bold text-red-400">Vắng</span>
                       ) : (
                         <>
-                          <p className={`text-xl font-black ${entry.rank <= 3 ? 'text-indigo-700' : 'text-gray-700'}`}>{entry.score}</p>
+                          <p className={`text-xl font-black ${entry.rank <= 3 ? 'text-cherry-700' : 'text-gray-700'}`}>{entry.score}</p>
                           <p className="text-xs text-gray-400">/{entry.maxScore}đ</p>
                         </>
                       )}

@@ -75,14 +75,14 @@ export default async function PermissionMatrixPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 text-white py-10">
+      <div className="relative overflow-hidden bg-gradient-to-br from-cherry-600 via-cherry-600 to-cherry-700 text-white py-10">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <Link href="/admin/roles" className="text-indigo-300 text-sm hover:text-white transition-colors mb-4 inline-block">
+          <Link href="/admin/roles" className="text-cherry-300 text-sm hover:text-white transition-colors mb-4 inline-block">
             ← Role Management
           </Link>
           <h1 className="text-3xl font-black mb-1">📊 Permission Matrix</h1>
-          <p className="text-indigo-200 text-sm">
+          <p className="text-cherry-200 text-sm">
             {permissions.length} permissions × {roles.length} roles
           </p>
         </div>
@@ -114,9 +114,9 @@ export default async function PermissionMatrixPage() {
                 {modules.map(module => (
                   <>
                     {/* Module header */}
-                    <tr key={`mod-${module}`} className="bg-violet-50 sticky">
+                    <tr key={`mod-${module}`} className="bg-cherry-50 sticky">
                       <td colSpan={sortedRoles.length + 1}
-                        className="sticky left-0 px-3 py-1.5 font-black text-violet-700 uppercase tracking-wider text-[10px] border-b border-violet-100">
+                        className="sticky left-0 px-3 py-1.5 font-black text-cherry-700 uppercase tracking-wider text-[10px] border-b border-cherry-100">
                         {module}
                       </td>
                     </tr>

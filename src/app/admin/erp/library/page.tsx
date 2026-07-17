@@ -167,7 +167,7 @@ export default function LibraryPage() {
           style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%, -50%)' }}
         />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-indigo-200 text-sm mb-1">
+          <div className="flex items-center gap-2 text-cherry-200 text-sm mb-1">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
             <span>/</span>
             <Link href="/admin/erp" className="hover:text-white transition-colors">ERP</Link>
@@ -175,7 +175,7 @@ export default function LibraryPage() {
             <span>Thư viện</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black mb-1">📖 Quản lý Thư viện</h1>
-          <p className="text-indigo-200 text-sm mb-4">Danh mục sách, mượn trả, theo dõi quá hạn</p>
+          <p className="text-cherry-200 text-sm mb-4">Danh mục sách, mượn trả, theo dõi quá hạn</p>
 
           {/* Stat pills */}
           <div className="flex flex-wrap gap-3">
@@ -188,7 +188,7 @@ export default function LibraryPage() {
               <div key={p.label} className="flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.15)' }}>
                 <span>{p.icon}</span>
                 <span className="font-black text-white">{p.val}</span>
-                <span className="text-indigo-200 text-xs">{p.label}</span>
+                <span className="text-cherry-200 text-xs">{p.label}</span>
               </div>
             ))}
           </div>
@@ -268,12 +268,12 @@ export default function LibraryPage() {
                       <div className="flex-1 min-w-0">
                         <div className="font-black text-gray-900 text-sm leading-tight truncate">{book.title}</div>
                         <div className="text-xs text-gray-500 mt-0.5 truncate">{book.author}</div>
-                        <div className="text-xs text-indigo-600 font-bold mt-0.5">{book.code}</div>
+                        <div className="text-xs text-cherry-600 font-bold mt-0.5">{book.code}</div>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-cherry-50 text-cherry-700 font-bold">
                         {book.category}
                       </span>
                       <span className="text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: statusBg, color: statusColor }}>
@@ -284,7 +284,7 @@ export default function LibraryPage() {
                     {/* Availability bar */}
                     <div className="mt-3">
                       <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Còn lại: <strong className="text-indigo-700">{book.available}</strong>/{book.total}</span>
+                        <span>Còn lại: <strong className="text-cherry-700">{book.available}</strong>/{book.total}</span>
                         <span>{availPct}%</span>
                       </div>
                       <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -337,7 +337,7 @@ export default function LibraryPage() {
                   <thead>
                     <tr style={{ background: '#eef2ff', borderBottom: '2px solid #c7d2fe' }}>
                       {['Sách', 'Học sinh', 'Lớp', 'Ngày mượn', 'Hạn trả', 'Trạng thái', ''].map(h => (
-                        <th key={h} className="px-4 py-3 text-left font-bold text-indigo-700 text-xs uppercase">{h}</th>
+                        <th key={h} className="px-4 py-3 text-left font-bold text-cherry-700 text-xs uppercase">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -346,7 +346,7 @@ export default function LibraryPage() {
                       const isOverdue = rec.status === 'overdue'
                       const daysLeft = Math.ceil((new Date(rec.dueDate).getTime() - today.getTime()) / 86400000)
                       return (
-                        <tr key={rec.id} className={`hover:bg-indigo-50/20 transition-colors ${isOverdue ? 'bg-red-50/30' : ''}`}>
+                        <tr key={rec.id} className={`hover:bg-cherry-50/20 transition-colors ${isOverdue ? 'bg-red-50/30' : ''}`}>
                           <td className="px-4 py-3">
                             <div className="font-semibold text-gray-900 text-sm">{rec.bookTitle}</div>
                           </td>
@@ -507,7 +507,7 @@ export default function LibraryPage() {
                         <div className="font-semibold text-gray-900 truncate">{book.title}</div>
                         <div className="text-xs text-gray-500">{book.author}</div>
                       </div>
-                      <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 font-black text-sm">
+                      <span className="px-3 py-1 rounded-full bg-cherry-50 text-cherry-700 font-black text-sm">
                         {book.borrowCount} lần
                       </span>
                     </div>

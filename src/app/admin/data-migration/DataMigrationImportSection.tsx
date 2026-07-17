@@ -7,7 +7,7 @@ const ENTITY_CARDS: { type: ImportEntityType; icon: string; label: string; desc:
   { type: 'students', icon: '👦', label: 'Học sinh', desc: 'Tên, SĐT, email, lớp học', color: '#0f766e' },
   { type: 'teachers', icon: '👨‍🏫', label: 'Giáo viên', desc: 'Tên, SĐT, cơ sở, chuyên môn', color: '#0369a1' },
   { type: 'leads',    icon: '📊', label: 'Khách hàng', desc: 'Tên PH/HS, SĐT, ghi chú', color: '#c2410c' },
-  { type: 'staff',   icon: '🛡️', label: 'Nhân viên', desc: 'Tên, SĐT, chức vụ, cơ sở', color: '#7c3aed' },
+  { type: 'staff',   icon: '🛡️', label: 'Nhân viên', desc: 'Tên, SĐT, chức vụ, cơ sở', color: '#951F3D' },
   { type: 'classes', icon: '🏫', label: 'Lớp học', desc: 'Tên lớp, mã lớp, cơ sở, học phí', color: '#0891b2' },
 ]
 
@@ -68,7 +68,7 @@ export function DataMigrationImportSection() {
 
       {/* Legacy advanced import */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-xl flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-cherry-50 flex items-center justify-center text-xl flex-shrink-0">
           🤖
         </div>
         <div className="flex-1 min-w-0">

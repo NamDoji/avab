@@ -13,7 +13,7 @@ export function ProductFeatures() {
       title: 'AI Cá Nhân Hoá',
       desc: 'Adaptive Learning tự động điều chỉnh lộ trình và độ khó theo năng lực từng học sinh',
       badge: 'Core',
-      badgeColor: 'bg-purple-100 text-purple-700',
+      badgeColor: 'bg-cherry-100 text-cherry-700',
     },
     {
       icon: '✅',
@@ -35,7 +35,7 @@ export function ProductFeatures() {
       title: 'AI Personalisation',
       desc: 'Adaptive Learning automatically adjusts the pathway and difficulty to each student\'s ability',
       badge: 'Core',
-      badgeColor: 'bg-purple-100 text-purple-700',
+      badgeColor: 'bg-cherry-100 text-cherry-700',
     },
     {
       icon: '✅',
@@ -57,7 +57,7 @@ export function ProductFeatures() {
     <section className="section-padding bg-white">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">
+          <span className="text-cherry-600 font-bold uppercase text-sm tracking-wider">
             {vi ? 'Tính năng' : 'Features'}
           </span>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-4">
@@ -76,7 +76,7 @@ export function ProductFeatures() {
           {features.map((f) => (
             <div
               key={f.title}
-              className="group bg-white rounded-3xl border-2 border-gray-100 p-5 card-hover hover:border-purple-200"
+              className="group bg-white rounded-3xl border-2 border-gray-100 p-5 card-hover hover:border-cherry-200"
             >
               <div className="text-3xl mb-3">{f.icon}</div>
               <div className="flex items-center gap-2 mb-2">

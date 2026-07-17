@@ -50,7 +50,7 @@ const CONTRACT_TYPE_COLORS: Record<string, string> = {
   fulltime: 'bg-blue-100 text-blue-700',
   parttime: 'bg-sky-100 text-sky-700',
   probation: 'bg-amber-100 text-amber-700',
-  freelance: 'bg-purple-100 text-purple-700',
+  freelance: 'bg-cherry-100 text-cherry-700',
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -160,8 +160,8 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
               onClick={() => setFilterStatus(s)}
               className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
                 filterStatus === s
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:border-purple-300'
+                  ? 'bg-cherry-600 text-white shadow-sm'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-cherry-300'
               }`}
             >
               {s === 'all' ? 'Tất cả' : CONTRACT_TYPE_LABELS[s] ?? s}
@@ -171,7 +171,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-5 py-2.5 text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm"
+          className="flex items-center gap-2 bg-cherry-600 text-white rounded-2xl px-5 py-2.5 text-sm font-bold hover:bg-cherry-700 transition-colors shadow-sm"
         >
           ＋ Tạo hợp đồng
         </button>
@@ -213,7 +213,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                     <tr key={c.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-black text-sm flex-shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-cherry-100 flex items-center justify-center text-cherry-700 font-black text-sm flex-shrink-0">
                             {(c.employee.name ?? c.employee.phone).charAt(0).toUpperCase()}
                           </div>
                           <div>
@@ -289,7 +289,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                 <select
                   value={formUserId}
                   onChange={(e) => setFormUserId(e.target.value)}
-                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 >
                   {staffList.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -305,7 +305,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                   <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value)}
-                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   >
                     <option value="fulltime">Toàn thời gian</option>
                     <option value="parttime">Bán thời gian</option>
@@ -319,7 +319,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                     value={formPosition}
                     onChange={(e) => setFormPosition(e.target.value)}
                     placeholder="VD: Giáo viên Toán"
-                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
               </div>
@@ -331,7 +331,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                     type="date"
                     value={formStart}
                     onChange={(e) => setFormStart(e.target.value)}
-                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
                 <div>
@@ -340,7 +340,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                     type="date"
                     value={formEnd}
                     onChange={(e) => setFormEnd(e.target.value)}
-                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
               </div>
@@ -352,7 +352,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                   value={formSalary}
                   onChange={(e) => setFormSalary(e.target.value)}
                   placeholder="VD: 12000000"
-                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -363,7 +363,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                   onChange={(e) => setFormNotes(e.target.value)}
                   rows={3}
                   placeholder="Ghi chú thêm về hợp đồng..."
-                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                  className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none"
                 />
               </div>
 
@@ -383,7 +383,7 @@ export default function ContractsClient({ initialContracts, staffList }: Props) 
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 py-3 rounded-2xl bg-purple-600 text-white text-sm font-bold hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                  className="flex-1 py-3 rounded-2xl bg-cherry-600 text-white text-sm font-bold hover:bg-cherry-700 disabled:opacity-50 transition-colors"
                 >
                   {saving ? 'Đang lưu...' : 'Tạo hợp đồng'}
                 </button>

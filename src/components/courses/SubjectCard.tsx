@@ -26,7 +26,7 @@ export function SubjectCard({ subject, index, onClick }: Props) {
         cursor-pointer select-none
         ${subject.done
           ? 'border-teal-200 bg-teal-50'
-          : 'border-purple-100 bg-white hover:border-purple-300'
+          : 'border-cherry-100 bg-white hover:border-cherry-300'
         }
       `}
       style={{ animationDelay: `${index * 0.05}s` }}
@@ -61,7 +61,7 @@ export function SubjectCard({ subject, index, onClick }: Props) {
       </p>
 
       {/* Tap hint */}
-      <span className="text-xs text-gray-400 group-hover:text-purple-500 transition-colors font-medium">
+      <span className="text-xs text-gray-400 group-hover:text-cherry-500 transition-colors font-medium">
         {subject.done ? '✅ Xem lại' : '👆 Bấm vào học'}
       </span>
     </button>

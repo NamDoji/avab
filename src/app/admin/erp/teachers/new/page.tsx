@@ -66,7 +66,7 @@ export default function NewTeacherPage() {
                   value={form.name}
                   onChange={e => set('name', e.target.value)}
                   placeholder="Nguyễn Thị Lan"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
               <div>
@@ -76,7 +76,7 @@ export default function NewTeacherPage() {
                   onChange={e => set('phone', e.target.value)}
                   placeholder="0912345678"
                   required
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
               <div>
@@ -86,7 +86,7 @@ export default function NewTeacherPage() {
                   value={form.email}
                   onChange={e => set('email', e.target.value)}
                   placeholder="giaovien@email.com (tuỳ chọn)"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
               <div>
@@ -94,7 +94,7 @@ export default function NewTeacherPage() {
                 <select
                   value={form.subject}
                   onChange={e => set('subject', e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 >
                   <option value="">-- Chọn môn --</option>
                   {SUBJECTS.map(s => <option key={s}>{s}</option>)}
@@ -106,7 +106,7 @@ export default function NewTeacherPage() {
                   value={form.qualification}
                   onChange={e => set('qualification', e.target.value)}
                   placeholder="Thạc sĩ Toán học — ĐH Sư phạm HN"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
             </div>
@@ -120,11 +120,11 @@ export default function NewTeacherPage() {
               value={form.note}
               onChange={e => set('note', e.target.value)}
               placeholder="Kinh nghiệm, lưu ý..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400 resize-none"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400 resize-none"
             />
           </div>
 
-          <div className="bg-violet-50 border border-violet-200 rounded-xl p-3 text-xs text-violet-700">
+          <div className="bg-cherry-50 border border-cherry-200 rounded-xl p-3 text-xs text-cherry-700">
             💡 Mật khẩu mặc định: <strong>123456</strong> — yêu cầu giáo viên đổi sau lần đăng nhập đầu tiên.
           </div>
 
@@ -143,7 +143,7 @@ export default function NewTeacherPage() {
               type="submit"
               disabled={loading}
               className="flex-1 py-3 rounded-2xl text-sm font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
-              style={{ background: 'linear-gradient(135deg,#7c3aed,#4338ca)' }}
+              style={{ background: 'linear-gradient(135deg,#951F3D,#4338ca)' }}
             >
               {loading ? '⏳ Đang tạo...' : '✅ Tạo giáo viên'}
             </button>

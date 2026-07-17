@@ -329,7 +329,7 @@ export default async function TeacherHub() {
               emoji="📝"
               label="Nhận xét"
               sub="Buổi học hôm nay"
-              color="bg-purple-50 border-purple-100 hover:bg-purple-100"
+              color="bg-cherry-50 border-cherry-100 hover:bg-cherry-100"
             />
             <ActionTile
               href="/giao-vien/cham-bai"
@@ -355,7 +355,7 @@ export default async function TeacherHub() {
               emoji="👥"
               label="Học sinh"
               sub="Danh sách lớp"
-              color="bg-indigo-50 border-indigo-100 hover:bg-indigo-100"
+              color="bg-cherry-50 border-cherry-100 hover:bg-cherry-100"
             />
             <ActionTile
               href="/giao-vien/dashboard"

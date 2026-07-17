@@ -196,7 +196,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
             // PER_SESSION: original create button
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2.5 rounded-xl transition text-sm"
+              className="flex items-center gap-2 bg-cherry-600 hover:bg-cherry-700 text-white font-bold px-4 py-2.5 rounded-xl transition text-sm"
             >
               <Plus className="w-4 h-4" /> Tạo đợt thu mới
             </button>
@@ -238,7 +238,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                       <span className="text-teal-600 font-bold">{col.paidCount} đã đóng</span>
                       <span className="text-orange-500 font-bold">{col.unpaidCount} chưa</span>
                       {col.freeCount > 0 && <span className="text-gray-400">{col.freeCount} miễn phí</span>}
-                      <span className="text-purple-700 font-black">{fmt(col.collectedAmount)}</span>
+                      <span className="text-cherry-700 font-black">{fmt(col.collectedAmount)}</span>
                       {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
                     </div>
                   </button>
@@ -285,7 +285,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                                           type="number"
                                           value={current.amount}
                                           onChange={e => handleEdit(col.id, pay.id, 'amount', Number(e.target.value))}
-                                          className="w-28 border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+                                          className="w-28 border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300"
                                         />
                                       </td>
                                       <td className="py-2.5 pr-3 text-center">
@@ -313,7 +313,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                                           value={current.note ?? ''}
                                           onChange={e => handleEdit(col.id, pay.id, 'note', e.target.value)}
                                           placeholder="Ghi chú..."
-                                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+                                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300"
                                         />
                                       </td>
                                     </tr>
@@ -336,7 +336,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                             <button
                               onClick={() => handleSave(col.id)}
                               disabled={!hasEdits || saving === col.id}
-                              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl transition disabled:opacity-40 text-sm"
+                              className="flex items-center gap-2 bg-cherry-600 hover:bg-cherry-700 text-white font-bold px-4 py-2 rounded-xl transition disabled:opacity-40 text-sm"
                             >
                               {saving === col.id
                                 ? <><Loader2 className="animate-spin" size={15} /> Đang lưu...</>
@@ -369,7 +369,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                   value={form.title}
                   onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                   placeholder="Thu học phí tháng 3/2026"
-                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400 text-sm"
                 />
               </div>
               {isPERCOURSE ? (
@@ -382,12 +382,12 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                       value={form.amount}
                       onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
                       placeholder={String(course?.price ?? 0)}
-                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400 text-sm"
                     />
                   </div>
-                  <div className="bg-purple-50 rounded-xl px-4 py-3 text-sm">
-                    <p className="text-purple-700 font-semibold">
-                      💰 Học phí: <span className="font-black text-purple-900">{fmt(perCourseAmount)}</span>/HS
+                  <div className="bg-cherry-50 rounded-xl px-4 py-3 text-sm">
+                    <p className="text-cherry-700 font-semibold">
+                      💰 Học phí: <span className="font-black text-cherry-900">{fmt(perCourseAmount)}</span>/HS
                     </p>
                   </div>
                 </>
@@ -402,13 +402,13 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
                       value={form.sessions}
                       onChange={e => setForm(f => ({ ...f, sessions: e.target.value }))}
                       placeholder="8"
-                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                      className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400 text-sm"
                     />
                   </div>
                   {form.sessions && pricePerSession > 0 && (
-                    <div className="bg-purple-50 rounded-xl px-4 py-3 text-sm">
-                      <p className="text-purple-700 font-semibold">
-                        💰 Số tiền mỗi HS: <span className="font-black text-purple-900">{fmt(previewAmount)}</span>
+                    <div className="bg-cherry-50 rounded-xl px-4 py-3 text-sm">
+                      <p className="text-cherry-700 font-semibold">
+                        💰 Số tiền mỗi HS: <span className="font-black text-cherry-900">{fmt(previewAmount)}</span>
                       </p>
                       <p className="text-gray-400 text-xs mt-0.5">{form.sessions} buổi × {fmt(pricePerSession)}/buổi</p>
                     </div>
@@ -420,7 +420,7 @@ export default function TuitionPage({ params }: { params: Promise<{ id: string }
               )}
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={creating}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-black py-3 rounded-2xl transition disabled:opacity-50">
+                  className="flex-1 bg-cherry-600 hover:bg-cherry-700 text-white font-black py-3 rounded-2xl transition disabled:opacity-50">
                   {creating ? 'Đang tạo...' : '✅ Tạo đợt thu'}
                 </button>
                 <button type="button" onClick={() => setShowModal(false)}

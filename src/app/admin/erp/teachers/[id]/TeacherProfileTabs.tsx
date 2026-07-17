@@ -124,7 +124,7 @@ export default function TeacherProfileTabs({
           {[
             { label: 'Tổng buổi dạy', value: sessionCount, icon: '📅', color: '#0369a1', bg: '#eff6ff' },
             { label: 'Học sinh đã dạy', value: studentCount, icon: '👥', color: '#059669', bg: '#f0fdf4' },
-            { label: 'Cơ sở hoạt động', value: campuses.length, icon: '🏫', color: '#7c3aed', bg: '#faf5ff' },
+            { label: 'Cơ sở hoạt động', value: campuses.length, icon: '🏫', color: '#951F3D', bg: '#FFF7F9' },
           ].map((s, i) => (
             <div
               key={i}

@@ -1,10 +1,68 @@
 @import "tailwindcss";
 
+/* ── AvaB Design System — Tailwind v4 @theme (BẮT BUỘC: config.ts màu KHÔNG có tác dụng ở v4) ── */
+@theme {
+  /* Master Brand — Dark Cherry */
+  --color-cherry-50:  #FFF7F9;
+  --color-cherry-100: #FDECF0;
+  --color-cherry-200: #F9CCD6;
+  --color-cherry-300: #EF9AAF;
+  --color-cherry-400: #DC607D;
+  --color-cherry-500: #BE3659;
+  --color-cherry-600: #951F3D;
+  --color-cherry-700: #7B1933;
+  --color-cherry-800: #5F1227;
+  --color-cherry-900: #400B19;
+  --color-cherry-950: #29050F;
+
+  /* primary map sang Cherry (thay tím cũ) */
+  --color-primary-50:  #FFF7F9;
+  --color-primary-100: #FDECF0;
+  --color-primary-200: #F9CCD6;
+  --color-primary-300: #EF9AAF;
+  --color-primary-400: #DC607D;
+  --color-primary-500: #BE3659;
+  --color-primary-600: #951F3D;
+  --color-primary-700: #7B1933;
+  --color-primary-800: #5F1227;
+  --color-primary-900: #400B19;
+
+  /* Learning Joy */
+  --color-avab-sky:      #4385F5;
+  --color-avab-mint:     #27A875;
+  --color-avab-sunshine: #F4BD3C;
+  --color-avab-orange:   #F27A49;
+  --color-avab-violet:   #8064D8;
+  --color-avab-aqua:     #28A9A5;
+  --color-avab-coral:    #E85F65;
+
+  /* Semantic */
+  --color-avab-success: #18825B;
+  --color-avab-warning: #B86A00;
+  --color-avab-error:   #C53A49;
+  --color-avab-info:    #3475CB;
+  --color-avab-ai:      #7458C6;
+
+  /* Màu theo môn học */
+  --color-subject-math:      #4385F5;
+  --color-subject-viet:      #D95B75;
+  --color-subject-english:   #8064D8;
+  --color-subject-coding:    #28A9A5;
+  --color-subject-science:   #27A875;
+  --color-subject-physics:   #3974C6;
+  --color-subject-chemistry: #16A0A5;
+  --color-subject-biology:   #63A744;
+  --color-subject-history:   #B77A3B;
+  --color-subject-geography: #32A18C;
+  --color-subject-art:       #E665A4;
+  --color-subject-skills:    #F27A49;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-    --primary: 262 83% 58%;
+    --primary: 342 66% 35%;
     --primary-foreground: 210 40% 98%;
     --secondary: 173 80% 40%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -14,8 +72,63 @@
     --accent-foreground: 222.2 47.4% 11.2%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 262 83% 58%;
+    --ring: 342 66% 35%;
     --radius: 0.75rem;
+
+    /* ── AvaB Design System Tokens ── */
+
+    /* Master Brand: Dark Cherry Scale */
+    --avab-cherry-50:  #FFF7F9;
+    --avab-cherry-100: #FDECF0;
+    --avab-cherry-200: #F9CCD6;
+    --avab-cherry-300: #EF9AAF;
+    --avab-cherry-400: #DC607D;
+    --avab-cherry-500: #BE3659;
+    --avab-cherry-600: #951F3D;
+    --avab-cherry-700: #7B1933;
+    --avab-cherry-800: #5F1227;
+    --avab-cherry-900: #400B19;
+    --avab-cherry-950: #29050F;
+
+    /* Learning Joy Palette */
+    --avab-sky:      #4385F5;
+    --avab-mint:     #27A875;
+    --avab-sunshine: #F4BD3C;
+    --avab-orange:   #F27A49;
+    --avab-violet:   #8064D8;
+    --avab-aqua:     #28A9A5;
+    --avab-coral:    #E85F65;
+
+    /* Neutral */
+    --avab-text-primary:   #211A1D;
+    --avab-text-secondary: #655D61;
+    --avab-text-muted:     #958C90;
+    --avab-border:         #DDD7DA;
+    --avab-surface-soft:   #F7F5F6;
+    --avab-surface:        #FFFFFF;
+
+    /* Semantic */
+    --avab-success: #18825B;
+    --avab-warning: #B86A00;
+    --avab-error:   #C53A49;
+    --avab-info:    #3475CB;
+    --avab-ai:      #7458C6;
+
+    /* Interaction */
+    --avab-focus-ring:   rgba(149, 31, 61, 0.20);
+    --avab-selected-bg:  #FDECF0;
+    --avab-hover-bg:     #FFF7F9;
+
+    /* Shape */
+    --avab-radius-control: 10px;
+    --avab-radius-card:    16px;
+    --avab-radius-modal:   20px;
+    --avab-radius-banner:  24px;
+
+    /* Motion */
+    --avab-motion-fast:   120ms;
+    --avab-motion-normal: 200ms;
+    --avab-motion-slow:   280ms;
   }
 
   * {
@@ -40,23 +153,29 @@
 }
 
 @layer utilities {
+  /* ── AvaB Gradients — Dark Cherry Master Brand ── */
   .gradient-primary {
-    background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 50%, #14B8A6 100%);
+    background: linear-gradient(135deg, #BE3659 0%, #951F3D 50%, #7B1933 100%);
   }
 
   .gradient-hero {
-    background: linear-gradient(135deg, #4C1D95 0%, #7C3AED 40%, #14B8A6 100%);
+    background: linear-gradient(135deg, #7B1933 0%, #951F3D 40%, #BE3659 100%);
   }
 
   .gradient-card {
-    background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    background: linear-gradient(135deg, #FFF7F9 0%, #FDECF0 100%);
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #7C3AED, #14B8A6);
+    background: linear-gradient(135deg, #951F3D, #DC607D);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Cherry signature — vệt sáng hoàn tất nhiệm vụ */
+  .gradient-cherry-sweep {
+    background: linear-gradient(90deg, transparent 0%, #DC607D 40%, #951F3D 60%, transparent 100%);
   }
 
   .card-hover {
@@ -64,18 +183,23 @@
   }
 
   .btn-primary {
-    @apply bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-2xl
+    @apply bg-cherry-600 hover:bg-cherry-700 text-white font-bold py-3 px-6 rounded-2xl
            transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95;
   }
 
   .btn-secondary {
-    @apply bg-[#14B8A6] hover:bg-[#0F766E] text-white font-bold py-3 px-6 rounded-2xl
+    @apply bg-cherry-800 hover:bg-cherry-900 text-white font-bold py-3 px-6 rounded-2xl
            transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95;
   }
 
   .btn-outline {
-    @apply border-2 border-[#7C3AED] text-[#7C3AED] hover:bg-[#7C3AED] hover:text-white
+    @apply border-2 border-cherry-600 text-cherry-600 hover:bg-cherry-600 hover:text-white
            font-bold py-3 px-6 rounded-2xl transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply text-cherry-600 hover:bg-cherry-50 font-bold py-3 px-6 rounded-2xl
+           transition-all duration-200;
   }
 
   /* Kid-friendly big tap targets */
@@ -102,7 +226,7 @@
   background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #A78BFA;
+  background: #DC607D;
   border-radius: 3px;
 }
 

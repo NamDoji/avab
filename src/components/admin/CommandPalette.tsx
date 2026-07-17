@@ -200,7 +200,7 @@ export function CommandPalette() {
               <div className="px-2">
                 {filtered.map((item, i) => (
                   <button key={item.id} onClick={() => navigate(item)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${i === sel ? 'bg-violet-50' : 'hover:bg-gray-50'}`}>
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${i === sel ? 'bg-cherry-50' : 'hover:bg-gray-50'}`}>
                     <span className="text-xl w-8 text-center flex-shrink-0">{item.icon}</span>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 text-sm truncate">{item.label}</p>

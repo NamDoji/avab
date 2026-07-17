@@ -159,7 +159,7 @@ export default function AIChatPanel({ courseId }: { courseId: string }) {
       {/* ── Floating button ─────────────────────────────────────────────── */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center text-2xl"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-gradient-to-br from-cherry-500 to-cherry-600 text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all flex items-center justify-center text-2xl"
         title="AI Chat"
       >
         {open ? '✕' : '🤖'}
@@ -167,15 +167,15 @@ export default function AIChatPanel({ courseId }: { courseId: string }) {
 
       {/* ── Chat panel ──────────────────────────────────────────────────── */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-[360px] max-h-[540px] flex flex-col rounded-3xl shadow-2xl border border-purple-100 overflow-hidden bg-white">
+        <div className="fixed bottom-24 right-6 z-50 w-[360px] max-h-[540px] flex flex-col rounded-3xl shadow-2xl border border-cherry-100 overflow-hidden bg-white">
 
           {/* header */}
-          <div className="bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-cherry-600 to-cherry-600 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-lg">🤖</div>
               <div>
                 <p className="text-white font-black text-sm">AI Assistant</p>
-                <p className="text-purple-200 text-xs">Course Generator</p>
+                <p className="text-cherry-200 text-xs">Course Generator</p>
               </div>
             </div>
             <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white text-lg transition-colors">✕</button>
@@ -188,7 +188,7 @@ export default function AIChatPanel({ courseId }: { courseId: string }) {
                 key={cmd.text}
                 onClick={() => send(cmd.text)}
                 disabled={loading}
-                className="text-xs bg-purple-50 text-purple-700 border border-purple-200 rounded-lg px-2.5 py-1 hover:bg-purple-100 transition-colors disabled:opacity-40 font-medium"
+                className="text-xs bg-cherry-50 text-cherry-700 border border-cherry-200 rounded-lg px-2.5 py-1 hover:bg-cherry-100 transition-colors disabled:opacity-40 font-medium"
               >
                 {cmd.label}
               </button>
@@ -201,7 +201,7 @@ export default function AIChatPanel({ courseId }: { courseId: string }) {
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                   m.role === 'user'
-                    ? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white rounded-br-sm'
+                    ? 'bg-gradient-to-br from-cherry-500 to-cherry-600 text-white rounded-br-sm'
                     : 'bg-gray-50 border border-gray-100 text-gray-800 rounded-bl-sm'
                 }`}>
                   <p className="whitespace-pre-line">{m.content}</p>
@@ -210,7 +210,7 @@ export default function AIChatPanel({ courseId }: { courseId: string }) {
                   {m.action && (
                     <div className="mt-2 pt-2 border-t border-white/20 text-xs">
                       {m.status === 'pending' && (
-                        <span className="flex items-center gap-1.5 text-purple-300">
+                        <span className="flex items-center gap-1.5 text-cherry-300">
                           <span className="inline-block w-3 h-3 border-2 border-current/40 border-t-current rounded-full animate-spin" />
                           Đang chuẩn bị...
                         </span>
@@ -236,7 +236,7 @@ export default function AIChatPanel({ courseId }: { courseId: string }) {
               <div className="flex justify-start">
                 <div className="bg-gray-50 border border-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
                   <span className="flex items-center gap-2 text-gray-400 text-sm">
-                    <span className="inline-block w-3 h-3 border-2 border-gray-300 border-t-purple-500 rounded-full animate-spin" />
+                    <span className="inline-block w-3 h-3 border-2 border-gray-300 border-t-cherry-500 rounded-full animate-spin" />
                     Đang suy nghĩ...
                   </span>
                 </div>
@@ -256,12 +256,12 @@ export default function AIChatPanel({ courseId }: { courseId: string }) {
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
                 placeholder="Nhập lệnh hoặc câu hỏi..."
                 disabled={loading}
-                className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-purple-400 focus:bg-white transition-colors disabled:opacity-60"
+                className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-cherry-400 focus:bg-white transition-colors disabled:opacity-60"
               />
               <button
                 onClick={() => send()}
                 disabled={loading || !input.trim()}
-                className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40 flex-shrink-0 text-base"
+                className="w-9 h-9 rounded-xl bg-gradient-to-br from-cherry-500 to-cherry-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40 flex-shrink-0 text-base"
               >
                 ↑
               </button>

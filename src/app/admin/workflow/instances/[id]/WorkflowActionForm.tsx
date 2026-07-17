@@ -130,7 +130,7 @@ export default function WorkflowActionForm({ instanceId, stepName, allowedAction
                     ? 'Nội dung bình luận...'
                     : 'Ghi chú (không bắt buộc)...'
                 }
-                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-cherry-300"
                 required={selectedAction === 'reject'}
               />
             </div>
@@ -146,7 +146,7 @@ export default function WorkflowActionForm({ instanceId, stepName, allowedAction
                   onChange={(e) => setNextAssigneeId(e.target.value)}
                   placeholder="User ID..."
                   required
-                  className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cherry-300"
                 />
               </div>
             )}

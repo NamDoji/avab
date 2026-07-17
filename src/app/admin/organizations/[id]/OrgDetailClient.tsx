@@ -59,7 +59,7 @@ interface Props {
 
 const ROLE_COLORS: Record<string, string> = {
   OWNER: 'bg-amber-100 text-amber-700',
-  ADMIN: 'bg-violet-100 text-violet-700',
+  ADMIN: 'bg-cherry-100 text-cherry-700',
   MEMBER: 'bg-slate-100 text-slate-600',
 }
 
@@ -142,7 +142,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex-1 py-3 text-sm font-bold transition-colors ${
                     activeTab === tab.key
-                      ? 'text-violet-700 border-b-2 border-violet-600 bg-violet-50'
+                      ? 'text-cherry-700 border-b-2 border-cherry-600 bg-cherry-50'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -160,7 +160,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                     <button
                       onClick={() => setShowAddCampus(true)}
                       className="text-sm font-bold px-3 py-1.5 rounded-xl text-white shadow-sm hover:scale-[1.02] transition-transform"
-                      style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                      style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
                     >
                       + Thêm Cơ sở
                     </button>
@@ -214,7 +214,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                             {/* Set campus principal */}
                             <Link
                               href={`/admin/organizations/${org.id}/campuses/${campus.id}?tab=principal`}
-                              className="text-xs font-bold px-2.5 py-1 rounded-lg border border-violet-200 text-violet-600 hover:bg-violet-50 transition-colors"
+                              className="text-xs font-bold px-2.5 py-1 rounded-lg border border-cherry-200 text-cherry-600 hover:bg-cherry-50 transition-colors"
                               title="Thiết lập hiệu trưởng / người phụ trách"
                             >
                               👤 Hiệu trưởng
@@ -266,7 +266,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="🔍 Tìm theo tên, số điện thoại..."
-                      className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                      className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                   {filteredUsers.length === 0 ? (
@@ -274,7 +274,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                   ) : (
                     filteredUsers.map((ou) => (
                       <div key={ou.id} className="flex items-center gap-3 border border-gray-100 rounded-xl p-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-sm font-black flex-shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cherry-400 to-cherry-500 flex items-center justify-center text-white text-sm font-black flex-shrink-0">
                           {(ou.user.name ?? '?')[0].toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -301,7 +301,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                   <Link
                     href={`/admin/courses?orgId=${org.id}`}
                     className="inline-block text-sm font-bold px-4 py-2 rounded-xl text-white mt-2 shadow"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                    style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
                   >
                     Xem tất cả khóa học →
                   </Link>
@@ -327,7 +327,7 @@ export default function OrgDetailClient({ org, orgUsers, academicYears }: Props)
                         <p className="text-sm text-gray-400">Chưa bật module nào</p>
                       ) : (
                         modules.map((m) => (
-                          <span key={m} className="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-100 text-violet-700">
+                          <span key={m} className="text-xs font-semibold px-2.5 py-1 rounded-full bg-cherry-100 text-cherry-700">
                             {m}
                           </span>
                         ))

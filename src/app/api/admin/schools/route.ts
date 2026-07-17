@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
       slug: generatedSlug,
       logo: logo || null,
       domain: domain || null,
-      primaryColor: primaryColor || '#7c3aed',
+      primaryColor: primaryColor || '#951F3D',
       description: description || null,
       address: address || null,
       phone: phone || null,

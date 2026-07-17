@@ -48,7 +48,7 @@ const COURSE_TYPE_LABELS: Record<string, { label: string; emoji: string; color: 
   LAP_TRINH_THUAT_TOAN: { label: 'Lập trình thuật toán', emoji: '🤖', color: 'bg-yellow-100 text-yellow-700' },
   LAP_TRINH_SCRATCH: { label: 'Lập trình Scratch', emoji: '🐱', color: 'bg-orange-100 text-orange-700' },
   LAP_TRINH_PYTHON: { label: 'Lập trình Python', emoji: '🐍', color: 'bg-teal-100 text-teal-700' },
-  LAP_TRINH_CPP: { label: 'Lập trình C++', emoji: '⚡', color: 'bg-purple-100 text-purple-700' },
+  LAP_TRINH_CPP: { label: 'Lập trình C++', emoji: '⚡', color: 'bg-cherry-100 text-cherry-700' },
   // K12 generic codes — map to SUBJECT_META
   ...Object.fromEntries(
     Object.entries(SUBJECT_META).map(([k, v]) => [k, { label: v.label, emoji: v.emoji, color: `${v.color} ${v.textColor}` }])
@@ -57,12 +57,12 @@ const COURSE_TYPE_LABELS: Record<string, { label: string; emoji: string; color: 
 
 const Q_TYPE_LABELS: Record<string, { label: string; color: string }> = {
   MULTIPLE_CHOICE: { label: 'Trắc nghiệm', color: 'bg-blue-100 text-blue-700' },
-  OPEN: { label: 'Tự luận', color: 'bg-purple-100 text-purple-700' },
+  OPEN: { label: 'Tự luận', color: 'bg-cherry-100 text-cherry-700' },
   TRUE_FALSE: { label: 'Đúng/Sai', color: 'bg-green-100 text-green-700' },
   MATCHING: { label: 'Nối đáp', color: 'bg-orange-100 text-orange-700' },
   FILL_BLANK: { label: 'Điền chỗ trống', color: 'bg-teal-100 text-teal-700' },
   NUMBER_INPUT: { label: 'Số học', color: 'bg-red-100 text-red-700' },
-  SHORT_ANSWER: { label: 'Trả lời ngắn', color: 'bg-indigo-100 text-indigo-700' },
+  SHORT_ANSWER: { label: 'Trả lời ngắn', color: 'bg-cherry-100 text-cherry-700' },
   SORT_WORDS: { label: 'Sắp xếp từ', color: 'bg-pink-100 text-pink-700' },
   GROUP_CLASSIFY: { label: 'Phân loại', color: 'bg-yellow-100 text-yellow-700' },
   MULTI_BLANK: { label: 'Nhiều chỗ trống', color: 'bg-cyan-100 text-cyan-700' },
@@ -109,7 +109,7 @@ function AIGenerateModal({
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
-            <Sparkles size={20} className="text-purple-500" />
+            <Sparkles size={20} className="text-cherry-500" />
             Sinh câu hỏi AI
           </h2>
           <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100 transition">
@@ -117,9 +117,9 @@ function AIGenerateModal({
           </button>
         </div>
 
-        <div className="bg-purple-50 rounded-2xl p-4 mb-4">
-          <p className="text-sm font-semibold text-purple-900 mb-1">Chủ đề:</p>
-          <p className="text-purple-700 font-black">{subject.name}</p>
+        <div className="bg-cherry-50 rounded-2xl p-4 mb-4">
+          <p className="text-sm font-semibold text-cherry-900 mb-1">Chủ đề:</p>
+          <p className="text-cherry-700 font-black">{subject.name}</p>
         </div>
 
         <p className="text-sm text-gray-600 mb-4">
@@ -140,7 +140,7 @@ function AIGenerateModal({
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-sm hover:from-purple-700 hover:to-purple-800 transition disabled:opacity-60 min-h-[44px] flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cherry-600 to-cherry-700 text-white font-bold text-sm hover:from-cherry-700 hover:to-cherry-800 transition disabled:opacity-60 min-h-[44px] flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -178,11 +178,11 @@ function SubjectCard({
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col">
       {/* Icon strip */}
-      <div className="h-2 rounded-t-2xl bg-gradient-to-r from-purple-400 to-blue-400" />
+      <div className="h-2 rounded-t-2xl bg-gradient-to-r from-cherry-400 to-blue-400" />
       <div className="p-4 flex-1 flex flex-col">
         {/* Icon + name */}
         <div className="flex items-start gap-3 mb-3">
-          <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+          <div className="w-10 h-10 bg-cherry-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
             {subject.icon ?? '📚'}
           </div>
           <div className="flex-1 min-w-0">
@@ -193,7 +193,7 @@ function SubjectCard({
 
         {/* Question count */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-2xl font-black text-purple-600">{subject._count.questions}</span>
+          <span className="text-2xl font-black text-cherry-600">{subject._count.questions}</span>
           <span className="text-xs text-gray-500">câu hỏi</span>
         </div>
 
@@ -208,7 +208,7 @@ function SubjectCard({
           </Link>
           <button
             onClick={() => onAIGenerate({ id: subject.id, name: subject.name })}
-            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-purple-50 text-purple-700 text-xs font-bold hover:bg-purple-100 transition min-h-[36px] border border-purple-200"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-cherry-50 text-cherry-700 text-xs font-bold hover:bg-cherry-100 transition min-h-[36px] border border-cherry-200"
             title="Sinh câu hỏi AI"
           >
             <Sparkles size={12} />
@@ -333,7 +333,7 @@ export default function QuestionBankPage() {
             </div>
             <button
               onClick={() => setAiSubject(null)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl font-bold text-sm hover:from-purple-700 hover:to-purple-800 transition shadow-lg min-h-[44px]"
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cherry-600 to-cherry-700 text-white rounded-xl font-bold text-sm hover:from-cherry-700 hover:to-cherry-800 transition shadow-lg min-h-[44px]"
             >
               <Sparkles size={16} />
               Sinh câu hỏi AI
@@ -347,7 +347,7 @@ export default function QuestionBankPage() {
         {stats && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-              <div className="text-2xl font-black text-purple-600">{stats.totalQuestions.toLocaleString()}</div>
+              <div className="text-2xl font-black text-cherry-600">{stats.totalQuestions.toLocaleString()}</div>
               <div className="text-xs text-gray-500 mt-0.5">Tổng câu hỏi</div>
             </div>
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
@@ -381,7 +381,7 @@ export default function QuestionBankPage() {
               placeholder="Tìm chủ đề..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 min-h-[40px]"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 min-h-[40px]"
             />
           </div>
 
@@ -389,7 +389,7 @@ export default function QuestionBankPage() {
           <select
             value={gradeFilter}
             onChange={e => setGradeFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 min-h-[40px] bg-white"
+            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 min-h-[40px] bg-white"
           >
             {GRADE_OPTIONS.map(o => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -400,7 +400,7 @@ export default function QuestionBankPage() {
           <select
             value={courseFilter}
             onChange={e => setCourseFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 min-h-[40px] bg-white max-w-[200px]"
+            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 min-h-[40px] bg-white max-w-[200px]"
           >
             <option value="">Tất cả khoá</option>
             {courses.map(c => (
@@ -433,7 +433,7 @@ export default function QuestionBankPage() {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <RefreshCw size={24} className="animate-spin text-purple-400" />
+            <RefreshCw size={24} className="animate-spin text-cherry-400" />
           </div>
         )}
 

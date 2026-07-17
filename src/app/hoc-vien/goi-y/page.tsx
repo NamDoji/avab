@@ -180,12 +180,12 @@ export default async function GoiYPage() {
 
             {/* ── Continue from last ─────────────────────────── */}
             {lastSubject && (
-              <div className="bg-white rounded-3xl p-5 shadow-sm border border-indigo-100">
-                <p className="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-3">
+              <div className="bg-white rounded-3xl p-5 shadow-sm border border-cherry-100">
+                <p className="text-xs font-bold text-cherry-500 uppercase tracking-wider mb-3">
                   ▶ Tiếp tục từ chỗ bỏ
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center shrink-0 text-2xl">
+                  <div className="w-12 h-12 rounded-2xl bg-cherry-100 flex items-center justify-center shrink-0 text-2xl">
                     📖
                   </div>
                   <div className="flex-1 min-w-0">
@@ -194,7 +194,7 @@ export default async function GoiYPage() {
                   </div>
                   <Link
                     href={`/khoa-hoc/${lastSubject.courseId}`}
-                    className="shrink-0 flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition"
+                    className="shrink-0 flex items-center gap-1.5 bg-cherry-600 hover:bg-cherry-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition"
                   >
                     <Play className="w-3.5 h-3.5" />
                     Tiếp tục
@@ -286,18 +286,18 @@ export default async function GoiYPage() {
             {/* ── CTA: AI Tutor ───────────────────────────────── */}
             <div
               className="rounded-3xl p-5 flex items-center gap-4"
-              style={{ background: 'linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%)' }}
+              style={{ background: 'linear-gradient(135deg,#6366f1 0%,#BE3659 100%)' }}
             >
               <span className="text-4xl shrink-0">🤖</span>
               <div className="flex-1">
                 <p className="font-black text-white text-sm">Cần giải thích thêm?</p>
-                <p className="text-indigo-200 text-xs mt-0.5">
+                <p className="text-cherry-200 text-xs mt-0.5">
                   Gia sư AI sẵn sàng giải đáp mọi thắc mắc
                 </p>
               </div>
               <Link
                 href="/hoc-vien/ai-tutor"
-                className="shrink-0 bg-white text-indigo-700 font-black px-4 py-2 rounded-xl text-xs hover:bg-indigo-50 transition"
+                className="shrink-0 bg-white text-cherry-700 font-black px-4 py-2 rounded-xl text-xs hover:bg-cherry-50 transition"
               >
                 Hỏi ngay →
               </Link>

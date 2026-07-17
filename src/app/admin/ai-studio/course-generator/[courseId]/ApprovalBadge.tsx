@@ -20,7 +20,7 @@ const STATUS_CONFIG: Record<ApprovalStatus, {
   draft:     { label: 'Bản nháp',   icon: '📝', bg: 'bg-gray-100',   text: 'text-gray-700',   border: 'border-gray-200'  },
   review:    { label: 'Đang duyệt', icon: '🔍', bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-200'},
   approved:  { label: 'Đã duyệt',   icon: '✅', bg: 'bg-green-100',  text: 'text-green-700',  border: 'border-green-200' },
-  published: { label: 'Đã xuất bản',icon: '🚀', bg: 'bg-indigo-100', text: 'text-indigo-700', border: 'border-indigo-200'},
+  published: { label: 'Đã xuất bản',icon: '🚀', bg: 'bg-cherry-100', text: 'text-cherry-700', border: 'border-cherry-200'},
   archived:  { label: 'Lưu trữ',    icon: '📦', bg: 'bg-red-100',    text: 'text-red-700',    border: 'border-red-200'   },
 }
 

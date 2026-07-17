@@ -37,7 +37,7 @@ const COLOR_BG: Record<string, string> = {
   amber: 'bg-amber-500', yellow: 'bg-yellow-400', lime: 'bg-lime-500',
   green: 'bg-green-500', emerald: 'bg-emerald-500', teal: 'bg-teal-500',
   cyan: 'bg-cyan-500', sky: 'bg-sky-500', blue: 'bg-blue-500',
-  indigo: 'bg-indigo-500', violet: 'bg-violet-500', purple: 'bg-purple-500',
+  indigo: 'bg-cherry-500', violet: 'bg-cherry-500', purple: 'bg-cherry-500',
   pink: 'bg-pink-500', rose: 'bg-rose-500',
 }
 
@@ -153,10 +153,10 @@ function CreateRolePageInner() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white py-10">
+      <div className="relative overflow-hidden bg-gradient-to-br from-cherry-600 via-cherry-600 to-cherry-700 text-white py-10">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <p className="text-violet-200 text-sm mb-3">
+          <p className="text-cherry-200 text-sm mb-3">
             <Link href="/admin" className="hover:text-white">Admin</Link>
             {' / '}
             <Link href="/admin/roles" className="hover:text-white">Roles</Link>
@@ -164,7 +164,7 @@ function CreateRolePageInner() {
             <span>New</span>
           </p>
           <h1 className="text-3xl font-black">🛡️ Tạo Role Mới</h1>
-          {cloneId && <p className="text-violet-200 text-sm mt-1">📋 Clone từ role có sẵn</p>}
+          {cloneId && <p className="text-cherry-200 text-sm mt-1">📋 Clone từ role có sẵn</p>}
         </div>
       </div>
 
@@ -193,7 +193,7 @@ function CreateRolePageInner() {
                     onChange={e => setName(e.target.value)}
                     placeholder="vd: Giáo viên chủ nhiệm"
                     required
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
 
@@ -207,7 +207,7 @@ function CreateRolePageInner() {
                     value={slug}
                     onChange={e => setSlug(e.target.value)}
                     placeholder="giao-vien-chu-nhiem"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
 
@@ -219,7 +219,7 @@ function CreateRolePageInner() {
                   <select
                     value={level}
                     onChange={e => setLevel(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   >
                     {LEVEL_OPTIONS.map(opt => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -258,7 +258,7 @@ function CreateRolePageInner() {
                     onChange={e => setDescription(e.target.value)}
                     rows={3}
                     placeholder="Mô tả ngắn về vai trò này..."
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none"
                   />
                 </div>
               </div>
@@ -267,7 +267,7 @@ function CreateRolePageInner() {
               <button
                 type="submit"
                 disabled={submitting || !name.trim()}
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-2xl text-sm transition-all shadow-sm disabled:opacity-60"
+                className="w-full bg-cherry-600 hover:bg-cherry-700 text-white font-bold py-3 rounded-2xl text-sm transition-all shadow-sm disabled:opacity-60"
               >
                 {submitting ? '⏳ Đang tạo...' : '✅ Tạo Role'}
               </button>
@@ -282,7 +282,7 @@ function CreateRolePageInner() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-black text-gray-900 text-base">🔑 Permissions</h2>
-                <span className="text-xs font-bold text-violet-700 bg-violet-50 px-2.5 py-1 rounded-full">
+                <span className="text-xs font-bold text-cherry-700 bg-cherry-50 px-2.5 py-1 rounded-full">
                   {totalSelected} / {totalPerms} đã chọn
                 </span>
               </div>
@@ -307,7 +307,7 @@ function CreateRolePageInner() {
                             onClick={() => toggleModule(modulePerms)}
                             className={`text-xs font-semibold px-2 py-0.5 rounded-lg transition-all ${
                               allSelected
-                                ? 'bg-violet-100 text-violet-700 hover:bg-violet-200'
+                                ? 'bg-cherry-100 text-cherry-700 hover:bg-cherry-200'
                                 : someSelected
                                 ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                                 : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
@@ -326,7 +326,7 @@ function CreateRolePageInner() {
                                 key={perm.key}
                                 className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg cursor-pointer border transition-all ${
                                   isChecked
-                                    ? 'bg-violet-50 border-violet-200 text-violet-700'
+                                    ? 'bg-cherry-50 border-cherry-200 text-cherry-700'
                                     : 'bg-white border-gray-100 text-gray-600 hover:border-gray-300'
                                 }`}
                                 title={perm.description ?? perm.name}
@@ -337,7 +337,7 @@ function CreateRolePageInner() {
                                   onChange={() => togglePermission(perm.key)}
                                   className="sr-only"
                                 />
-                                <span className={isChecked ? 'text-violet-500' : 'text-gray-300'}>
+                                <span className={isChecked ? 'text-cherry-500' : 'text-gray-300'}>
                                   {isChecked ? '✅' : '⬜'}
                                 </span>
                                 <span className="font-semibold">{perm.action}</span>

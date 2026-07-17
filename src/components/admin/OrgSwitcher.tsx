@@ -153,12 +153,12 @@ export function OrgSwitcher({ currentOrg, allOrgs }: Props) {
                   width: '100%',
                   padding: '10px 14px',
                   border: 'none',
-                  background: isActive ? '#f5f3ff' : '#fff',
+                  background: isActive ? '#FFF7F9' : '#fff',
                   cursor: isLoading ? 'wait' : 'pointer',
                   textAlign: 'left',
                   fontSize: 13,
                   fontWeight: isActive ? 700 : 500,
-                  color: isActive ? '#7c3aed' : '#374151',
+                  color: isActive ? '#951F3D' : '#374151',
                   transition: 'background 0.1s',
                 }}
                 onMouseEnter={e => {

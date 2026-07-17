@@ -68,12 +68,12 @@ const DIFF_OPTIONS = [
 
 const Q_TYPE_BADGE: Record<string, { label: string; color: string }> = {
   MULTIPLE_CHOICE: { label: 'Trắc nghiệm', color: 'bg-blue-100 text-blue-700' },
-  OPEN: { label: 'Tự luận', color: 'bg-purple-100 text-purple-700' },
+  OPEN: { label: 'Tự luận', color: 'bg-cherry-100 text-cherry-700' },
   TRUE_FALSE: { label: 'Đúng/Sai', color: 'bg-green-100 text-green-700' },
   MATCHING: { label: 'Nối đáp', color: 'bg-orange-100 text-orange-700' },
   FILL_BLANK: { label: 'Điền chỗ trống', color: 'bg-teal-100 text-teal-700' },
   NUMBER_INPUT: { label: 'Số học', color: 'bg-red-100 text-red-700' },
-  SHORT_ANSWER: { label: 'Trả lời ngắn', color: 'bg-indigo-100 text-indigo-700' },
+  SHORT_ANSWER: { label: 'Trả lời ngắn', color: 'bg-cherry-100 text-cherry-700' },
   SORT_WORDS: { label: 'Sắp xếp từ', color: 'bg-pink-100 text-pink-700' },
   GROUP_CLASSIFY: { label: 'Phân loại', color: 'bg-yellow-100 text-yellow-700' },
   MULTI_BLANK: { label: 'Nhiều chỗ trống', color: 'bg-cyan-100 text-cyan-700' },
@@ -477,7 +477,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
               <button
                 onClick={handleAIGenerate}
                 disabled={aiGenerating}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl text-sm font-bold hover:from-purple-700 hover:to-purple-800 transition disabled:opacity-60 min-h-[44px]"
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-cherry-600 to-cherry-700 text-white rounded-xl text-sm font-bold hover:from-cherry-700 hover:to-cherry-800 transition disabled:opacity-60 min-h-[44px]"
               >
                 {aiGenerating ? <RefreshCw size={15} className="animate-spin" /> : <Sparkles size={15} />}
                 {aiGenerating ? 'Đang sinh...' : 'AI Sinh câu hỏi'}
@@ -496,7 +496,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
         {stats && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-              <div className="text-2xl font-black text-purple-600">{stats.total}</div>
+              <div className="text-2xl font-black text-cherry-600">{stats.total}</div>
               <div className="text-xs text-gray-500 mt-0.5">Tổng câu</div>
             </div>
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
@@ -524,7 +524,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
               placeholder="Tìm câu hỏi..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 min-h-[40px]"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 min-h-[40px]"
             />
           </div>
 
@@ -532,7 +532,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
           <select
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 min-h-[40px] bg-white"
+            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 min-h-[40px] bg-white"
           >
             {Q_TYPE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
@@ -541,7 +541,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
           <select
             value={diffFilter}
             onChange={e => setDiffFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 min-h-[40px] bg-white"
+            className="px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 min-h-[40px] bg-white"
           >
             {DIFF_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
@@ -596,7 +596,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <RefreshCw size={24} className="animate-spin text-purple-400" />
+            <RefreshCw size={24} className="animate-spin text-cherry-400" />
           </div>
         )}
 
@@ -660,7 +660,7 @@ export default function QuestionBankSubjectPage({ params }: { params: Promise<{ 
               <button
                 onClick={handleAIGenerate}
                 disabled={aiGenerating}
-                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl text-sm font-bold hover:from-purple-700 hover:to-purple-800 transition disabled:opacity-60"
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cherry-600 to-cherry-700 text-white rounded-xl text-sm font-bold hover:from-cherry-700 hover:to-cherry-800 transition disabled:opacity-60"
               >
                 <Sparkles size={15} />
                 Sinh câu hỏi AI ngay

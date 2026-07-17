@@ -88,8 +88,8 @@ export default async function OwnerDashboardPage() {
       {/* ── Header: dark slate gradient ────────────────────────────────── */}
       <div className="relative overflow-hidden py-12"
         style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)' }}>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-violet-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cherry-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-cherry-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent pointer-events-none" />
         <div className="container-custom relative">
           <Link
@@ -123,14 +123,14 @@ export default async function OwnerDashboardPage() {
                 label: 'Cơ sở',
                 value: campuses,
                 sub: 'Campus đang hoạt động',
-                gradient: 'from-indigo-600 to-indigo-800',
+                gradient: 'from-cherry-600 to-cherry-800',
               },
               {
                 icon: '👥',
                 label: 'Học sinh',
                 value: totalStudents,
                 sub: 'Tổng học viên STUDENT',
-                gradient: 'from-violet-600 to-violet-800',
+                gradient: 'from-cherry-600 to-cherry-800',
               },
               {
                 icon: '💰',
@@ -241,13 +241,13 @@ export default async function OwnerDashboardPage() {
 
                         {/* Staff */}
                         <div className="text-center">
-                          <p className="text-xl font-black text-indigo-600">{staffCount}</p>
+                          <p className="text-xl font-black text-cherry-600">{staffCount}</p>
                           <p className="text-xs text-gray-400">nhân viên</p>
                         </div>
 
                         {/* Courses */}
                         <div className="text-center">
-                          <p className="text-xl font-black text-violet-600">{courseCount}</p>
+                          <p className="text-xl font-black text-cherry-600">{courseCount}</p>
                           <p className="text-xs text-gray-400">lớp học</p>
                         </div>
 
@@ -279,20 +279,20 @@ export default async function OwnerDashboardPage() {
               <Link
                 key={campus.id}
                 href={`/admin/organizations?campusId=${campus.id}`}
-                className="flex items-center gap-3 bg-white rounded-2xl px-5 py-4 border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-200 hover:bg-indigo-50 transition-all group"
+                className="flex items-center gap-3 bg-white rounded-2xl px-5 py-4 border border-gray-100 shadow-sm hover:shadow-md hover:border-cherry-200 hover:bg-cherry-50 transition-all group"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-slate-100 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+                <div className="w-10 h-10 bg-gradient-to-br from-cherry-100 to-slate-100 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
                   🏫
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-gray-900 text-sm truncate group-hover:text-indigo-700 transition-colors">
+                  <p className="font-bold text-gray-900 text-sm truncate group-hover:text-cherry-700 transition-colors">
                     {campus.name}
                   </p>
                   {campus.code && (
                     <p className="text-xs text-gray-400">{campus.code}</p>
                   )}
                 </div>
-                <span className="text-gray-300 group-hover:text-indigo-400 transition-colors text-sm">→</span>
+                <span className="text-gray-300 group-hover:text-cherry-400 transition-colors text-sm">→</span>
               </Link>
             ))}
 

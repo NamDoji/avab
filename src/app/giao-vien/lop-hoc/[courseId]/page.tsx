@@ -17,7 +17,7 @@ const DAY_LABELS: Record<number, string> = {
 // Avatar initials component (server)
 function AvatarInitial({ name, size = 36 }: { name: string | null; size?: number }) {
   const letter = (name ?? '?')[0]?.toUpperCase() ?? '?'
-  const bgColors = ['bg-teal-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500', 'bg-orange-500']
+  const bgColors = ['bg-teal-500', 'bg-cherry-500', 'bg-cherry-500', 'bg-pink-500', 'bg-orange-500']
   const bg = bgColors[(letter.charCodeAt(0) ?? 0) % bgColors.length]
   const px = size <= 32 ? 'text-xs' : 'text-sm'
   return (
@@ -364,7 +364,7 @@ export default async function TeacherClassViewPage({
         {course.subjects.length > 0 && (
           <section className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100">
-              <BookOpen size={18} className="text-purple-600" />
+              <BookOpen size={18} className="text-cherry-600" />
               <h2 className="font-black text-gray-900">
                 Chuyên đề ({course.subjects.length})
               </h2>
@@ -373,7 +373,7 @@ export default async function TeacherClassViewPage({
               {course.subjects.map((sub) => (
                 <div
                   key={sub.id}
-                  className="flex items-center gap-2 p-3 bg-purple-50 border border-purple-100 rounded-xl"
+                  className="flex items-center gap-2 p-3 bg-cherry-50 border border-cherry-100 rounded-xl"
                 >
                   <span className="text-lg">{sub.icon ?? '📖'}</span>
                   <p className="text-sm font-semibold text-gray-800 truncate">{sub.name}</p>

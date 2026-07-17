@@ -95,7 +95,7 @@ export default async function StudentHomeworkHistoryPage({
           </Link>
           <div>
             <h1 className="font-black text-gray-900 flex items-center gap-2 text-lg">
-              <ClipboardList className="w-5 h-5 text-indigo-500" />
+              <ClipboardList className="w-5 h-5 text-cherry-500" />
               Lịch sử bài tập
             </h1>
             <p className="text-xs text-gray-400">
@@ -121,7 +121,7 @@ export default async function StudentHomeworkHistoryPage({
             <p className="text-xs text-gray-500 mt-0.5">Chờ chấm</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
-            <p className="text-2xl font-black text-indigo-600">
+            <p className="text-2xl font-black text-cherry-600">
               {avgScore ?? '—'}
             </p>
             <p className="text-xs text-gray-500 mt-0.5">Điểm trung bình</p>
@@ -163,7 +163,7 @@ export default async function StudentHomeworkHistoryPage({
         {/* Submissions list */}
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
           <h2 className="font-black text-gray-900 text-base mb-5 flex items-center gap-2">
-            <ClipboardList className="w-4 h-4 text-indigo-500" />
+            <ClipboardList className="w-4 h-4 text-cherry-500" />
             Danh sách bài nộp ({total})
           </h2>
 
@@ -197,7 +197,7 @@ export default async function StudentHomeworkHistoryPage({
                     {s.status === 'graded' && (
                       <div className="flex items-center gap-3 flex-wrap">
                         {s.score !== null && (
-                          <span className="text-sm font-black text-indigo-700">
+                          <span className="text-sm font-black text-cherry-700">
                             Điểm: {s.score}/10
                           </span>
                         )}

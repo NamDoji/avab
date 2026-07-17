@@ -142,7 +142,7 @@ export default function NewOrganizationPage() {
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="VD: AvaB Hà Nội, Trung tâm ABC..."
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 required
               />
             </div>
@@ -158,7 +158,7 @@ export default function NewOrganizationPage() {
                   value={slug}
                   onChange={(e) => handleSlugChange(e.target.value)}
                   placeholder="avab-ha-noi"
-                  className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 font-mono"
+                  className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 font-mono"
                   required
                 />
               </div>
@@ -175,7 +175,7 @@ export default function NewOrganizationPage() {
                   key={t.value}
                   className={`cursor-pointer rounded-xl border-2 p-4 transition-all ${
                     type === t.value
-                      ? 'border-violet-500 bg-violet-50'
+                      ? 'border-cherry-500 bg-cherry-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -208,7 +208,7 @@ export default function NewOrganizationPage() {
                     type="checkbox"
                     checked={modules.includes(m.key)}
                     onChange={() => toggleModule(m.key)}
-                    className="w-4 h-4 accent-violet-600 rounded"
+                    className="w-4 h-4 accent-cherry-600 rounded"
                   />
                   <span className="text-lg">{m.icon}</span>
                   <span className="text-sm font-bold text-gray-800">{m.label}</span>
@@ -234,7 +234,7 @@ export default function NewOrganizationPage() {
               type="submit"
               disabled={loading}
               className="flex-1 py-2.5 rounded-xl text-white text-sm font-black shadow-md hover:scale-[1.01] transition-transform disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
             >
               {loading ? '⏳ Đang tạo...' : '✅ Tạo Organization'}
             </button>

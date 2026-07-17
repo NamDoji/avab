@@ -72,7 +72,7 @@ export default function AddCampusModal({ orgId, onClose }: Props) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="VD: Cơ sở Quận 1, Chi nhánh Hà Nội..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
               required
             />
           </div>
@@ -83,7 +83,7 @@ export default function AddCampusModal({ orgId, onClose }: Props) {
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder="VD: Q1, BD, HN..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 font-mono uppercase"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 font-mono uppercase"
             />
           </div>
           <div>
@@ -93,7 +93,7 @@ export default function AddCampusModal({ orgId, onClose }: Props) {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Địa chỉ đầy đủ..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
             />
           </div>
           <div>
@@ -103,7 +103,7 @@ export default function AddCampusModal({ orgId, onClose }: Props) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="0xx xxx xxxx"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function AddCampusModal({ orgId, onClose }: Props) {
               type="submit"
               disabled={loading}
               className="flex-1 py-2.5 rounded-xl text-white text-sm font-black shadow disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
             >
               {loading ? '⏳ Đang tạo...' : '✅ Tạo Cơ sở'}
             </button>

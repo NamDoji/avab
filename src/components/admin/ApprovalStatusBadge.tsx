@@ -32,14 +32,14 @@ const STATUS_CFG: Record<ApprovalStatus, {
   draft:     { label: 'Bản nháp',    icon: '📝', color: 'text-gray-700',   bg: 'bg-gray-100',   border: 'border-gray-200'   },
   review:    { label: 'Đang duyệt',  icon: '🔍', color: 'text-yellow-700', bg: 'bg-yellow-100', border: 'border-yellow-200' },
   approved:  { label: 'Đã duyệt',    icon: '✅', color: 'text-green-700',  bg: 'bg-green-100',  border: 'border-green-200'  },
-  published: { label: 'Đã xuất bản', icon: '🚀', color: 'text-indigo-700', bg: 'bg-indigo-100', border: 'border-indigo-200' },
+  published: { label: 'Đã xuất bản', icon: '🚀', color: 'text-cherry-700', bg: 'bg-cherry-100', border: 'border-cherry-200' },
   archived:  { label: 'Lưu trữ',     icon: '📦', color: 'text-red-700',    bg: 'bg-red-100',    border: 'border-red-200'    },
 }
 
 const NEXT_ACTIONS: Partial<Record<ApprovalStatus, { status: ApprovalStatus; label: string; color: string }>> = {
   draft:    { status: 'review',    label: 'Gửi Review',  color: 'bg-yellow-600 hover:bg-yellow-700 text-white' },
   review:   { status: 'approved',  label: 'Phê duyệt',   color: 'bg-green-600 hover:bg-green-700 text-white'   },
-  approved: { status: 'published', label: 'Xuất bản',    color: 'bg-indigo-600 hover:bg-indigo-700 text-white' },
+  approved: { status: 'published', label: 'Xuất bản',    color: 'bg-cherry-600 hover:bg-cherry-700 text-white' },
 }
 
 const REJECT_TARGETS: Partial<Record<ApprovalStatus, ApprovalStatus>> = {

@@ -35,7 +35,7 @@ function Toggle({
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-          checked ? 'bg-indigo-600' : 'bg-gray-200'
+          checked ? 'bg-cherry-600' : 'bg-gray-200'
         }`}
       >
         <span
@@ -78,7 +78,7 @@ function TabOrg() {
               type="text"
               value={orgName}
               onChange={(e) => setOrgName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100"
               placeholder="Nhập tên tổ chức..."
             />
           </div>
@@ -90,7 +90,7 @@ function TabOrg() {
             </label>
             <input
               type="url"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100"
               placeholder="https://..."
             />
           </div>
@@ -103,7 +103,7 @@ function TabOrg() {
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 bg-white"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100 bg-white"
             >
               <option value="Asia/Ho_Chi_Minh">GMT+7 — Hà Nội / TP.HCM</option>
               <option value="Asia/Bangkok">GMT+7 — Bangkok</option>
@@ -121,7 +121,7 @@ function TabOrg() {
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 bg-white"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100 bg-white"
             >
               <option value="VND">VND — Đồng Việt Nam</option>
               <option value="USD">USD — US Dollar</option>
@@ -135,7 +135,7 @@ function TabOrg() {
           <button
             onClick={handleSave}
             className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+            style={{ background: 'linear-gradient(135deg, #6366f1, #BE3659)' }}
           >
             {saved ? '✅ Đã lưu!' : '💾 Lưu thay đổi'}
           </button>
@@ -149,14 +149,14 @@ function TabOrg() {
       </div>
 
       {/* Quick link */}
-      <div className="bg-indigo-50 rounded-2xl border border-indigo-100 p-5">
-        <p className="text-sm font-semibold text-indigo-700 mb-1">💡 Cài đặt nâng cao</p>
-        <p className="text-xs text-indigo-500 mb-3">
+      <div className="bg-cherry-50 rounded-2xl border border-cherry-100 p-5">
+        <p className="text-sm font-semibold text-cherry-700 mb-1">💡 Cài đặt nâng cao</p>
+        <p className="text-xs text-cherry-500 mb-3">
           Cấu hình chi tiết tổ chức: cơ sở, branding, domain, và nhiều hơn nữa.
         </p>
         <Link
           href="/admin/organizations"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 hover:text-indigo-900 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-cherry-700 hover:text-cherry-900 transition-colors"
         >
           Đến trang Organizations →
         </Link>
@@ -192,7 +192,7 @@ function TabSecurity() {
               onChange={(e) => setMinLength(e.target.value)}
               min={6}
               max={32}
-              className="w-32 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="w-32 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100"
             />
             <span className="ml-2 text-xs text-gray-400">ký tự</span>
           </div>
@@ -237,7 +237,7 @@ function TabSecurity() {
           <select
             value={sessionTimeout}
             onChange={(e) => setSessionTimeout(e.target.value)}
-            className="w-48 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 bg-white"
+            className="w-48 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100 bg-white"
           >
             <option value="60">1 giờ</option>
             <option value="240">4 giờ</option>
@@ -253,7 +253,7 @@ function TabSecurity() {
         <h3 className="font-black text-gray-800 mb-2">🌐 IP Whitelist</h3>
         <p className="text-xs text-gray-400 mb-4">Chỉ cho phép đăng nhập từ các địa chỉ IP được liệt kê.</p>
         <textarea
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-mono focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 resize-none"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-mono focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100 resize-none"
           rows={4}
           placeholder={'192.168.1.0/24\n203.113.xx.xx\n# Mỗi IP / CIDR trên một dòng'}
         />
@@ -352,7 +352,7 @@ function TabSystem() {
         <select
           value={lang}
           onChange={(e) => setLang(e.target.value)}
-          className="w-56 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 bg-white"
+          className="w-56 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-cherry-400 focus:ring-2 focus:ring-cherry-100 bg-white"
         >
           <option value="vi">🇻🇳 Tiếng Việt</option>
           <option value="en">🇺🇸 English</option>
@@ -371,8 +371,8 @@ function TabSystem() {
                 onClick={() => handleThemeChange(t)}
                 className={`px-4 py-2.5 rounded-xl text-sm font-bold border transition-all ${
                   theme === t
-                    ? 'bg-indigo-600 text-white border-indigo-600'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
+                    ? 'bg-cherry-600 text-white border-cherry-600'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-cherry-300 hover:text-cherry-600'
                 }`}
               >
                 {labels[t]}
@@ -456,8 +456,8 @@ export function SettingsClient() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex-1 justify-center ${
               activeTab === tab.id
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600'
+                ? 'bg-cherry-600 text-white shadow-sm'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-cherry-600'
             }`}
           >
             <span>{tab.icon}</span>

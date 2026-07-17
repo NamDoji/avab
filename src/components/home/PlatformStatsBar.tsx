@@ -37,7 +37,7 @@ export function PlatformStatsBar({ orgCount, studentCount, courseCount }: Props)
             (feature) => (
               <span
                 key={feature}
-                className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 text-xs font-bold px-3 py-1.5 rounded-full border border-violet-100"
+                className="inline-flex items-center gap-1 bg-cherry-50 text-cherry-700 text-xs font-bold px-3 py-1.5 rounded-full border border-cherry-100"
               >
                 {feature}
               </span>
@@ -49,14 +49,14 @@ export function PlatformStatsBar({ orgCount, studentCount, courseCount }: Props)
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             href="/dang-ky-to-chuc"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-black text-white shadow-lg shadow-violet-200 transition-all hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-black text-white shadow-lg shadow-cherry-200 transition-all hover:scale-105"
+            style={{ background: 'linear-gradient(135deg, #951F3D, #4f46e5)' }}
           >
             🚀 Đăng ký miễn phí 30 ngày
           </Link>
           <Link
             href="/thi-truong"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-black text-violet-700 bg-violet-50 border border-violet-200 hover:bg-violet-100 transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-black text-cherry-700 bg-cherry-50 border border-cherry-200 hover:bg-cherry-100 transition-all"
           >
             📖 Xem kho học liệu
           </Link>

@@ -124,7 +124,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
       aria-checked={checked}
       onClick={onChange}
       className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-        checked ? 'bg-indigo-600' : 'bg-gray-200'
+        checked ? 'bg-cherry-600' : 'bg-gray-200'
       }`}
     >
       <span
@@ -143,7 +143,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
 const CATEGORY_COLORS: Record<string, string> = {
   Communication: '#6366f1',
   Video:         '#06b6d4',
-  Calendar:      '#8b5cf6',
+  Calendar:      '#BE3659',
   Payment:       '#22c55e',
   LMS:           '#f59e0b',
   Storage:       '#3b82f6',
@@ -204,7 +204,7 @@ function TabInstalled() {
               key={app.id}
               className={`bg-white rounded-2xl border shadow-sm p-5 flex flex-col gap-3 transition-all ${
                 isOn
-                  ? 'border-gray-100 hover:shadow-md hover:border-indigo-100'
+                  ? 'border-gray-100 hover:shadow-md hover:border-cherry-100'
                   : 'border-gray-100 opacity-60'
               }`}
             >
@@ -238,7 +238,7 @@ function TabInstalled() {
                   {app.manageHref && isOn && (
                     <Link
                       href={app.manageHref}
-                      className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
+                      className="text-xs text-cherry-600 hover:text-cherry-800 font-semibold transition-colors"
                     >
                       Quản lý
                     </Link>
@@ -285,8 +285,8 @@ function TabMarketplace() {
             onClick={() => setFilterCat(cat)}
             className={`px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all ${
               filterCat === cat
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300'
+                ? 'bg-cherry-600 text-white shadow-sm'
+                : 'bg-white text-gray-600 border border-gray-200 hover:border-cherry-300'
             }`}
           >
             {cat === 'all' ? '📦 Tất cả' : cat}
@@ -300,7 +300,7 @@ function TabMarketplace() {
           return (
             <div
               key={app.name}
-              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md hover:border-indigo-100 transition-all"
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3 hover:shadow-md hover:border-cherry-100 transition-all"
             >
               <div className="flex items-start gap-3">
                 <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-2xl flex-shrink-0">
@@ -329,7 +329,7 @@ function TabMarketplace() {
                   <button
                     onClick={() => handleInstall(app.name)}
                     className="px-3 py-1.5 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                    style={{ background: 'linear-gradient(135deg, #6366f1, #BE3659)' }}
                   >
                     + Cài đặt
                   </button>
@@ -375,8 +375,8 @@ export default function AppCenterPage() {
         className="relative overflow-hidden text-white py-12"
         style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}
       >
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cherry-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-cherry-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
           <p className="text-slate-400 text-sm font-semibold mb-1">🧭 AvaB Admin</p>
           <h1 className="text-4xl font-black mb-2">🔌 App Center</h1>
@@ -398,14 +398,14 @@ export default function AppCenterPage() {
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                 tab === t.id
-                  ? 'bg-indigo-50 text-indigo-700'
+                  ? 'bg-cherry-50 text-cherry-700'
                   : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
               }`}
             >
               {t.label}
               <span
                 className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
-                  tab === t.id ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500'
+                  tab === t.id ? 'bg-cherry-100 text-cherry-600' : 'bg-gray-100 text-gray-500'
                 }`}
               >
                 {t.desc}

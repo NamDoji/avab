@@ -78,8 +78,8 @@ export default async function CourseEnrollPage({ params }: Props) {
   }
 
   const SUBJECT_META: Record<string, { emoji: string; gradient: string }> = {
-    THINKING_MATH: { emoji: '🧠', gradient: 'from-purple-500 to-indigo-600' },
-    MATH: { emoji: '📐', gradient: 'from-blue-500 to-indigo-600' },
+    THINKING_MATH: { emoji: '🧠', gradient: 'from-cherry-500 to-cherry-600' },
+    MATH: { emoji: '📐', gradient: 'from-blue-500 to-cherry-600' },
     ENGLISH: { emoji: '🇬🇧', gradient: 'from-green-400 to-teal-600' },
     SCIENCE: { emoji: '🔬', gradient: 'from-cyan-500 to-teal-600' },
     CODING: { emoji: '💻', gradient: 'from-sky-500 to-blue-600' },

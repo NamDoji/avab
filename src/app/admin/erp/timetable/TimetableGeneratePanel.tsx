@@ -50,7 +50,7 @@ const PROGRESS_STEPS = [
 ]
 
 const PALETTE = [
-  '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981',
+  '#6366f1', '#BE3659', '#ec4899', '#f59e0b', '#10b981',
   '#3b82f6', '#ef4444', '#14b8a6', '#f97316', '#84cc16',
 ]
 
@@ -225,13 +225,13 @@ export default function TimetableGeneratePanel({
       {/* ── Zone 1: Generate Panel ─────────────────────────────── */}
       <div
         className="rounded-3xl p-6 mb-6 text-white shadow-xl"
-        style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #29050F 0%, #4338ca 100%)' }}
       >
         <div className="flex items-center gap-3 mb-5">
           <div className="text-3xl">🤖</div>
           <div>
             <h2 className="text-lg font-black">Generate TKB với AI</h2>
-            <p className="text-indigo-200 text-xs">
+            <p className="text-cherry-200 text-xs">
               AI tự động tạo thời khóa biểu tối ưu — không trùng GV, không trùng phòng
             </p>
           </div>
@@ -241,7 +241,7 @@ export default function TimetableGeneratePanel({
           {/* Campus selector */}
           {campuses.length > 1 && (
             <div>
-              <label className="text-indigo-200 text-xs font-bold mb-1 block">🏫 Campus</label>
+              <label className="text-cherry-200 text-xs font-bold mb-1 block">🏫 Campus</label>
               <select
                 value={campusId}
                 onChange={(e) => setCampusId(e.target.value)}
@@ -259,7 +259,7 @@ export default function TimetableGeneratePanel({
 
           {/* Semester */}
           <div>
-            <label className="text-indigo-200 text-xs font-bold mb-1 block">📅 Học kỳ</label>
+            <label className="text-cherry-200 text-xs font-bold mb-1 block">📅 Học kỳ</label>
             <input
               type="text"
               value={semesterId}
@@ -272,7 +272,7 @@ export default function TimetableGeneratePanel({
 
           {/* Periods per day */}
           <div>
-            <label className="text-indigo-200 text-xs font-bold mb-1 block">
+            <label className="text-cherry-200 text-xs font-bold mb-1 block">
               ⏱️ Tiết/ngày: <span className="text-white">{periodsPerDay}</span>
             </label>
             <input
@@ -287,7 +287,7 @@ export default function TimetableGeneratePanel({
 
           {/* Days per week */}
           <div>
-            <label className="text-indigo-200 text-xs font-bold mb-1 block">
+            <label className="text-cherry-200 text-xs font-bold mb-1 block">
               📆 Ngày/tuần: <span className="text-white">{daysPerWeek}</span>
             </label>
             <input
@@ -302,7 +302,7 @@ export default function TimetableGeneratePanel({
 
           {/* Max periods per teacher */}
           <div>
-            <label className="text-indigo-200 text-xs font-bold mb-1 block">
+            <label className="text-cherry-200 text-xs font-bold mb-1 block">
               👩‍🏫 Max tiết/GV/ngày: <span className="text-white">{maxPeriodsPerTeacher}</span>
             </label>
             <input
@@ -357,7 +357,7 @@ export default function TimetableGeneratePanel({
                 Tạo xong! {result.slots} tiết — Điểm tối ưu: {result.score}/100 — Xung đột:{' '}
                 {result.conflicts}
               </p>
-              <p className="text-indigo-200 text-xs">
+              <p className="text-cherry-200 text-xs">
                 Nhấn &quot;📊 Xem&quot; để xem chi tiết, &quot;✅ Publish&quot; để áp dụng
               </p>
             </div>
@@ -381,7 +381,7 @@ export default function TimetableGeneratePanel({
           <h3 className="text-base font-black text-gray-800">📋 Lịch sử phiên bản</h3>
           <button
             onClick={refreshVersions}
-            className="text-xs text-indigo-600 hover:text-indigo-800 font-bold transition-colors"
+            className="text-xs text-cherry-600 hover:text-cherry-800 font-bold transition-colors"
           >
             🔄 Làm mới
           </button>
@@ -430,7 +430,7 @@ export default function TimetableGeneratePanel({
                     onClick={() => loadSlots(v.id)}
                     className="text-xs font-bold px-3 py-1.5 rounded-xl transition-all"
                     style={{ background: '#eef2ff', color: '#4338ca' }}
-                    onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = '#ddd6fe')}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = '#F9CCD6')}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = '#eef2ff')}
                   >
                     📊 Xem
@@ -471,7 +471,7 @@ export default function TimetableGeneratePanel({
             <h3 className="text-base font-black text-gray-800">
               📅 Thời khóa biểu
               {viewingVersion && (
-                <span className="ml-2 text-sm font-semibold text-indigo-600">
+                <span className="ml-2 text-sm font-semibold text-cherry-600">
                   — {viewingVersion.name}
                 </span>
               )}
@@ -484,7 +484,7 @@ export default function TimetableGeneratePanel({
               placeholder="Lọc theo lớp, GV..."
               value={filterCourse}
               onChange={(e) => setFilterCourse(e.target.value)}
-              className="text-sm border border-gray-200 rounded-xl px-3 py-1.5 outline-none focus:border-indigo-400 w-48"
+              className="text-sm border border-gray-200 rounded-xl px-3 py-1.5 outline-none focus:border-cherry-400 w-48"
             />
           )}
         </div>
@@ -630,7 +630,7 @@ export default function TimetableGeneratePanel({
                 </span>
               )}
               {viewingVersion && (viewingVersion.score ?? 0) > 0 && (
-                <span className="text-indigo-600 font-semibold">
+                <span className="text-cherry-600 font-semibold">
                   🎯 Điểm tối ưu: {viewingVersion.score}/100
                 </span>
               )}

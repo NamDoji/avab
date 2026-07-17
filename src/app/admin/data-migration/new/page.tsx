@@ -304,11 +304,11 @@ export default function DataMigrationNewPage() {
                 <div key={label} className="flex flex-col items-center gap-1 flex-1">
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all
-                      ${isDone ? 'bg-green-500 text-white' : isActive ? 'bg-indigo-600 text-white shadow-lg scale-110' : 'bg-gray-200 text-gray-400'}`}
+                      ${isDone ? 'bg-green-500 text-white' : isActive ? 'bg-cherry-600 text-white shadow-lg scale-110' : 'bg-gray-200 text-gray-400'}`}
                   >
                     {isDone ? '✓' : num}
                   </div>
-                  <span className={`text-xs font-medium hidden sm:block ${isActive ? 'text-indigo-600' : isDone ? 'text-green-600' : 'text-gray-400'}`}>
+                  <span className={`text-xs font-medium hidden sm:block ${isActive ? 'text-cherry-600' : isDone ? 'text-green-600' : 'text-gray-400'}`}>
                     {label}
                   </span>
                 </div>
@@ -350,7 +350,7 @@ export default function DataMigrationNewPage() {
               <select
                 value={module}
                 onChange={e => setModule(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 bg-white"
               >
                 <option value="">-- Chọn module --</option>
                 {MODULE_OPTIONS.map(m => (
@@ -368,7 +368,7 @@ export default function DataMigrationNewPage() {
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
                 className={`relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all
-                  ${dragging ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'}`}
+                  ${dragging ? 'border-cherry-400 bg-cherry-50' : 'border-gray-200 hover:border-cherry-300 hover:bg-gray-50'}`}
               >
                 <input
                   ref={fileInputRef}
@@ -411,7 +411,7 @@ export default function DataMigrationNewPage() {
                 <span>💡 Chưa có file?</span>
                 <a
                   href={`/api/admin/migration/template?module=${module}`}
-                  className="text-indigo-600 font-semibold hover:underline"
+                  className="text-cherry-600 font-semibold hover:underline"
                 >
                   📥 Tải template mẫu
                 </a>
@@ -443,7 +443,7 @@ export default function DataMigrationNewPage() {
               {[0, 1, 2].map(i => (
                 <div
                   key={i}
-                  className="w-3 h-3 rounded-full bg-indigo-400 animate-bounce"
+                  className="w-3 h-3 rounded-full bg-cherry-400 animate-bounce"
                   style={{ animationDelay: `${i * 0.15}s` }}
                 />
               ))}
@@ -494,7 +494,7 @@ export default function DataMigrationNewPage() {
                     <select
                       value={mapping[header] ?? ''}
                       onChange={e => setMapping(prev => ({ ...prev, [header]: e.target.value || null }))}
-                      className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                      className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-cherry-300"
                     >
                       <option value="">-- Bỏ qua --</option>
                       {fieldOptions.map(f => (
@@ -613,7 +613,7 @@ export default function DataMigrationNewPage() {
                       type="checkbox"
                       checked={skipErrors}
                       onChange={e => setSkipErrors(e.target.checked)}
-                      className="w-4 h-4 accent-indigo-600"
+                      className="w-4 h-4 accent-cherry-600"
                     />
                     <span className="text-sm font-medium text-amber-800">
                       Bỏ qua các dòng lỗi, chỉ import {validStats.validCount} dòng hợp lệ
@@ -676,7 +676,7 @@ export default function DataMigrationNewPage() {
                         {activeHeaders.map(h => (
                           <th key={h} className="px-3 py-2 text-left text-gray-500 font-semibold whitespace-nowrap">
                             {h}
-                            <span className="ml-1 text-indigo-400 font-normal">→ {mapping[h]}</span>
+                            <span className="ml-1 text-cherry-400 font-normal">→ {mapping[h]}</span>
                           </th>
                         ))}
                       </tr>

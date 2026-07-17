@@ -114,7 +114,7 @@ function StepIndicator({ current }: { current: number }) {
               className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black transition-all"
               style={{
                 background: current === step.num
-                  ? 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)'
+                  ? 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)'
                   : current > step.num ? '#d1fae5' : '#f3f4f6',
                 color: current === step.num ? '#fff' : current > step.num ? '#065f46' : '#9ca3af',
               }}
@@ -123,7 +123,7 @@ function StepIndicator({ current }: { current: number }) {
             </div>
             <span
               className="text-xs mt-1 font-medium whitespace-nowrap"
-              style={{ color: current === step.num ? '#7c3aed' : '#9ca3af' }}
+              style={{ color: current === step.num ? '#951F3D' : '#9ca3af' }}
             >
               {step.label}
             </span>
@@ -463,7 +463,7 @@ export default function MaterialImportNewPage() {
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-8"
-        style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
       >
         <div className="container-custom relative flex items-center gap-4">
           <Link href="/admin/material-import" className="text-white/70 hover:text-white text-sm font-medium transition-colors">
@@ -471,7 +471,7 @@ export default function MaterialImportNewPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-black">🚀 Import tài liệu mới</h1>
-            <p className="text-indigo-200 text-sm">Upload → AI phân tích → Review → Import vào AvaB</p>
+            <p className="text-cherry-200 text-sm">Upload → AI phân tích → Review → Import vào AvaB</p>
           </div>
         </div>
       </div>
@@ -485,7 +485,7 @@ export default function MaterialImportNewPage() {
               onClick={() => setTab('file')}
               className="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition-all"
               style={tab === 'file'
-                ? { background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)', color: '#fff' }
+                ? { background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)', color: '#fff' }
                 : { background: 'transparent', color: '#6b7280' }}
             >
               📁 Upload File
@@ -494,7 +494,7 @@ export default function MaterialImportNewPage() {
               onClick={() => setTab('url')}
               className="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition-all"
               style={tab === 'url'
-                ? { background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)', color: '#fff' }
+                ? { background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)', color: '#fff' }
                 : { background: 'transparent', color: '#6b7280' }}
             >
               🔗 Import từ URL
@@ -527,7 +527,7 @@ export default function MaterialImportNewPage() {
                     onDrop={onDrop}
                     className="relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all mb-6"
                     style={{
-                      borderColor: isDragging ? '#7c3aed' : '#e5e7eb',
+                      borderColor: isDragging ? '#951F3D' : '#e5e7eb',
                       background: isDragging ? 'rgba(124,58,237,0.05)' : '#fafafa',
                     }}
                   >
@@ -572,7 +572,7 @@ export default function MaterialImportNewPage() {
                         value={subjectId}
                         onFocus={loadCourses}
                         onChange={e => setSubjectId(e.target.value)}
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 bg-white"
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 bg-white"
                       >
                         <option value="">AI tự nhận diện</option>
                         {courses.map(c =>
@@ -587,7 +587,7 @@ export default function MaterialImportNewPage() {
                       <select
                         value={grade}
                         onChange={e => setGrade(e.target.value)}
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 bg-white"
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 bg-white"
                       >
                         <option value="">AI tự nhận diện</option>
                         <option value="preschool">Mầm non</option>
@@ -600,7 +600,7 @@ export default function MaterialImportNewPage() {
                     onClick={handleUpload}
                     disabled={loading || !file}
                     className="w-full py-3.5 rounded-2xl text-white font-black text-base transition-all hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                    style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
                   >
                     🤖 Phân tích với AI →
                   </button>
@@ -619,7 +619,7 @@ export default function MaterialImportNewPage() {
                         key={i}
                         className="w-2.5 h-2.5 rounded-full"
                         style={{
-                          background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)',
+                          background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)',
                           animation: `bounce 1.2s ${i * 0.15}s infinite ease-in-out`,
                         }}
                       />
@@ -643,7 +643,7 @@ export default function MaterialImportNewPage() {
                   <div className="rounded-2xl border border-gray-100 overflow-hidden mb-6">
                     <div
                       className="px-4 py-3 text-white text-sm font-bold"
-                      style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                      style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
                     >
                       📊 Kết quả phân tích AI
                     </div>
@@ -690,7 +690,7 @@ export default function MaterialImportNewPage() {
                               className="h-2 rounded-full"
                               style={{
                                 width: `${(analysis.confidence * 100).toFixed(0)}%`,
-                                background: 'linear-gradient(90deg, #7c3aed, #0ea5e9)',
+                                background: 'linear-gradient(90deg, #951F3D, #0ea5e9)',
                               }}
                             />
                           </div>
@@ -729,7 +729,7 @@ export default function MaterialImportNewPage() {
                           key={opt.value}
                           className="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all"
                           style={{
-                            borderColor: importMode === opt.value ? '#7c3aed' : '#e5e7eb',
+                            borderColor: importMode === opt.value ? '#951F3D' : '#e5e7eb',
                             background: importMode === opt.value ? 'rgba(124,58,237,0.05)' : '#fff',
                           }}
                         >
@@ -739,7 +739,7 @@ export default function MaterialImportNewPage() {
                             value={opt.value}
                             checked={importMode === opt.value}
                             onChange={e => setImportMode(e.target.value as typeof importMode)}
-                            className="mt-0.5 accent-violet-600"
+                            className="mt-0.5 accent-cherry-600"
                           />
                           <div>
                             <p className="text-sm font-semibold text-gray-900">{opt.label}</p>
@@ -754,7 +754,7 @@ export default function MaterialImportNewPage() {
                     onClick={handleImport}
                     disabled={loading}
                     className="w-full py-3.5 rounded-2xl text-white font-black text-base transition-all hover:scale-[1.01] disabled:opacity-50"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                    style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
                   >
                     ✅ Xác nhận và Import →
                   </button>
@@ -776,7 +776,7 @@ export default function MaterialImportNewPage() {
                     <div
                       className="h-2 rounded-full"
                       style={{
-                        background: 'linear-gradient(90deg, #7c3aed, #0ea5e9)',
+                        background: 'linear-gradient(90deg, #951F3D, #0ea5e9)',
                         animation: 'progress 3s ease-in-out infinite',
                         width: '70%',
                       }}
@@ -829,7 +829,7 @@ export default function MaterialImportNewPage() {
                       <Link
                         href="/admin/subjects"
                         className="px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all hover:scale-[1.01]"
-                        style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                        style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
                       >
                         📖 Xem tài liệu
                       </Link>
@@ -896,7 +896,7 @@ export default function MaterialImportNewPage() {
                       value={urlInput}
                       onChange={e => { setUrlInput(e.target.value); setUrlError('') }}
                       placeholder="https://docs.google.com/forms/d/... hoặc https://quizizz.com/admin/quiz/..."
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300"
                       disabled={urlLoading}
                     />
                     <div className="flex gap-2 mt-2 flex-wrap">
@@ -922,7 +922,7 @@ export default function MaterialImportNewPage() {
                     onClick={handleUrlAnalyze}
                     disabled={urlLoading || !urlInput.trim()}
                     className="w-full py-3.5 rounded-2xl text-white font-black text-base transition-all hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                    style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
                   >
                     {urlLoading ? '⏳ Đang phân tích...' : '🔍 Phân tích'}
                   </button>
@@ -966,7 +966,7 @@ export default function MaterialImportNewPage() {
                               className="text-xs font-bold px-2 py-0.5 rounded-full text-white shrink-0"
                               style={{
                                 background: q.questionType === 'MULTIPLE_CHOICE'
-                                  ? '#7c3aed' : q.questionType === 'FILL_IN'
+                                  ? '#951F3D' : q.questionType === 'FILL_IN'
                                     ? '#0ea5e9' : '#6b7280',
                               }}
                             >
@@ -1010,7 +1010,7 @@ export default function MaterialImportNewPage() {
                       value={urlSubjectId}
                       onFocus={loadCourses}
                       onChange={e => setUrlSubjectId(e.target.value)}
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 bg-white"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-300 bg-white"
                     >
                       <option value="">— Chọn môn học —</option>
                       {courses.map(c =>
@@ -1034,7 +1034,7 @@ export default function MaterialImportNewPage() {
                           key={opt.value}
                           className="flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all"
                           style={{
-                            borderColor: urlImportMode === opt.value ? '#7c3aed' : '#e5e7eb',
+                            borderColor: urlImportMode === opt.value ? '#951F3D' : '#e5e7eb',
                             background: urlImportMode === opt.value ? 'rgba(124,58,237,0.05)' : '#fff',
                           }}
                         >
@@ -1044,7 +1044,7 @@ export default function MaterialImportNewPage() {
                             value={opt.value}
                             checked={urlImportMode === opt.value}
                             onChange={e => setUrlImportMode(e.target.value as typeof urlImportMode)}
-                            className="mt-0.5 accent-violet-600"
+                            className="mt-0.5 accent-cherry-600"
                           />
                           <div>
                             <p className="text-sm font-semibold text-gray-900">{opt.label}</p>
@@ -1072,7 +1072,7 @@ export default function MaterialImportNewPage() {
                       onClick={handleUrlImport}
                       disabled={urlImporting || !urlSubjectId}
                       className="flex-1 py-3 rounded-2xl text-white font-black text-base transition-all hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                      style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
                     >
                       {urlImporting ? '⏳ Đang import...' : '📥 Import vào hệ thống'}
                     </button>
@@ -1117,7 +1117,7 @@ export default function MaterialImportNewPage() {
                       <Link
                         href="/admin/subjects"
                         className="px-5 py-2.5 rounded-xl text-white text-sm font-bold transition-all hover:scale-[1.01]"
-                        style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                        style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
                       >
                         📖 Xem tài liệu
                       </Link>

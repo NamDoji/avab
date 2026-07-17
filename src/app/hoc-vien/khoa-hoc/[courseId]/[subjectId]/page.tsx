@@ -83,7 +83,7 @@ export default async function SubjectContentPage({
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 pt-20">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
+      <div className="bg-gradient-to-br from-blue-600 to-cherry-700 text-white">
         <div className="max-w-3xl mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-white/60 mb-4 flex-wrap">
@@ -159,7 +159,7 @@ export default async function SubjectContentPage({
           {/* Homework CTA */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <ClipboardList className="w-5 h-5 text-indigo-500" />
+              <ClipboardList className="w-5 h-5 text-cherry-500" />
               <h2 className="font-black text-gray-900 text-sm">Bài tập về nhà</h2>
             </div>
 
@@ -185,13 +185,13 @@ export default async function SubjectContentPage({
           {/* Quiz CTA */}
           <Link
             href={`/hoc-vien/khoa-hoc/${courseId}/quiz`}
-            className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-3xl p-5 flex flex-col gap-2 hover:opacity-95 active:scale-95 transition text-white"
+            className="bg-gradient-to-br from-cherry-900 to-cherry-900 rounded-3xl p-5 flex flex-col gap-2 hover:opacity-95 active:scale-95 transition text-white"
           >
             <div className="flex items-center gap-2">
-              <FileQuestion className="w-5 h-5 text-indigo-300" />
+              <FileQuestion className="w-5 h-5 text-cherry-300" />
               <h2 className="font-black text-sm">Kiểm tra nhanh</h2>
             </div>
-            <p className="text-xs text-indigo-300">
+            <p className="text-xs text-cherry-300">
               {questions.length} câu hỏi • Toàn khoá học • Nhận XP
             </p>
             <span className="mt-1 text-sm font-black">🎯 Bắt đầu →</span>
@@ -236,7 +236,7 @@ export default async function SubjectContentPage({
           </Link>
           <Link
             href={`/hoc-vien/khoa-hoc/${courseId}/bai-tap`}
-            className="flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition"
+            className="flex items-center gap-2 text-sm font-semibold text-cherry-600 hover:text-cherry-700 transition"
           >
             📋 Xem tất cả bài tập
           </Link>

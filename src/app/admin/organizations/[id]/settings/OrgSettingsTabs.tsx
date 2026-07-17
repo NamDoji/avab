@@ -126,7 +126,7 @@ function TabInfo({ org }: { org: OrgData }) {
           disabled={saving}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            background: saving ? '#c4b5fd' : 'linear-gradient(135deg, #7c3aed, #2563eb)',
+            background: saving ? '#EF9AAF' : 'linear-gradient(135deg, #951F3D, #2563eb)',
             color: '#fff', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer',
           }}
         >
@@ -182,21 +182,21 @@ function TabModules({ org }: { org: OrgData }) {
               style={{
                 display: 'flex', alignItems: 'center', gap: 14,
                 padding: '14px 16px', borderRadius: 12, cursor: 'pointer',
-                border: `1.5px solid ${on ? '#7c3aed' : '#e5e7eb'}`,
-                background: on ? '#f5f3ff' : '#fafafa',
+                border: `1.5px solid ${on ? '#951F3D' : '#e5e7eb'}`,
+                background: on ? '#FFF7F9' : '#fafafa',
                 textAlign: 'left', width: '100%', transition: 'all 0.15s',
               }}
             >
               <span style={{ fontSize: 24 }}>{mod.icon}</span>
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, color: on ? '#7c3aed' : '#374151' }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: on ? '#951F3D' : '#374151' }}>
                   {mod.label}
                 </div>
                 <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>{mod.desc}</div>
               </div>
               <div style={{
                 width: 40, height: 22, borderRadius: 11,
-                background: on ? '#7c3aed' : '#d1d5db',
+                background: on ? '#951F3D' : '#d1d5db',
                 position: 'relative', transition: 'background 0.2s', flexShrink: 0,
               }}>
                 <div style={{
@@ -216,7 +216,7 @@ function TabModules({ org }: { org: OrgData }) {
           disabled={saving}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            background: saving ? '#c4b5fd' : 'linear-gradient(135deg, #7c3aed, #2563eb)',
+            background: saving ? '#EF9AAF' : 'linear-gradient(135deg, #951F3D, #2563eb)',
             color: '#fff', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer',
           }}
         >
@@ -238,7 +238,7 @@ const THEME_OPTIONS = [
 
 function TabBranding({ org }: { org: OrgData }) {
   const [primaryColor, setPrimaryColor] = useState(
-    (org.settings.primaryColor as string) ?? '#7c3aed'
+    (org.settings.primaryColor as string) ?? '#951F3D'
   )
   const [logo, setLogo] = useState((org.settings.logo as string) ?? org.logo ?? '')
   const [faviconUrl, setFaviconUrl] = useState((org.settings.faviconUrl as string) ?? '')
@@ -292,7 +292,7 @@ function TabBranding({ org }: { org: OrgData }) {
               style={{ ...inputStyle, flex: 1, fontFamily: 'monospace' }}
               value={primaryColor}
               onChange={e => setPrimaryColor(e.target.value)}
-              placeholder="#7c3aed"
+              placeholder="#951F3D"
               maxLength={7}
             />
           </div>
@@ -396,7 +396,7 @@ function TabBranding({ org }: { org: OrgData }) {
           disabled={saving}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            background: saving ? '#c4b5fd' : `linear-gradient(135deg, ${primaryColor}, #2563eb)`,
+            background: saving ? '#EF9AAF' : `linear-gradient(135deg, ${primaryColor}, #2563eb)`,
             color: '#fff', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer',
           }}
         >
@@ -488,7 +488,7 @@ function TabMembers({ org }: { org: OrgData }) {
           disabled={addLoading}
           style={{
             padding: '10px 16px', borderRadius: 10, border: 'none',
-            background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
+            background: 'linear-gradient(135deg, #951F3D, #2563eb)',
             color: '#fff', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
@@ -517,7 +517,7 @@ function TabMembers({ org }: { org: OrgData }) {
             ) : (
               <div style={{
                 width: 40, height: 40, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
+                background: 'linear-gradient(135deg, #951F3D, #2563eb)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: '#fff', fontWeight: 800, fontSize: 14, flexShrink: 0,
               }}>
@@ -659,7 +659,7 @@ export default function OrgSettingsTabs({ org }: { org: OrgData }) {
             onClick={() => setActiveTab(tab.key)}
             style={{
               padding: '8px 16px', borderRadius: 10, border: 'none',
-              background: activeTab === tab.key ? '#7c3aed' : 'transparent',
+              background: activeTab === tab.key ? '#951F3D' : 'transparent',
               color: activeTab === tab.key ? '#fff' : '#6b7280',
               fontWeight: 700, fontSize: 13, cursor: 'pointer',
               whiteSpace: 'nowrap', transition: 'all 0.15s',

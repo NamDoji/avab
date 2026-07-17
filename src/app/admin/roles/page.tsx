@@ -18,8 +18,8 @@ const LEVEL_LABELS: Record<string, string> = {
 const COLOR_CLASS: Record<string, string> = {
   red:     'bg-red-100 text-red-700 border-red-200',
   orange:  'bg-orange-100 text-orange-700 border-orange-200',
-  purple:  'bg-purple-100 text-purple-700 border-purple-200',
-  indigo:  'bg-indigo-100 text-indigo-700 border-indigo-200',
+  purple:  'bg-cherry-100 text-cherry-700 border-cherry-200',
+  indigo:  'bg-cherry-100 text-cherry-700 border-cherry-200',
   blue:    'bg-blue-100 text-blue-700 border-blue-200',
   cyan:    'bg-cyan-100 text-cyan-700 border-cyan-200',
   teal:    'bg-teal-100 text-teal-700 border-teal-200',
@@ -55,14 +55,14 @@ export default async function RolesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white py-10">
+      <div className="relative overflow-hidden bg-gradient-to-br from-cherry-600 via-cherry-600 to-cherry-700 text-white py-10">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <p className="text-violet-200 text-sm font-semibold mb-1">🔐 Phân quyền hệ thống</p>
+          <p className="text-cherry-200 text-sm font-semibold mb-1">🔐 Phân quyền hệ thống</p>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-black mb-1">🛡️ Role Management</h1>
-              <p className="text-violet-200 text-sm">{roles.length} vai trò · {LEVEL_ORDER.length} cấp độ</p>
+              <p className="text-cherry-200 text-sm">{roles.length} vai trò · {LEVEL_ORDER.length} cấp độ</p>
             </div>
             <div className="flex gap-3 flex-wrap">
               <Link href="/admin/permissions"
@@ -74,7 +74,7 @@ export default async function RolesPage() {
                 📊 Matrix
               </Link>
               <Link href="/admin/roles/new"
-                className="bg-white text-violet-700 hover:bg-violet-50 font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm">
+                className="bg-white text-cherry-700 hover:bg-cherry-50 font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm">
                 + Tạo Role Mới
               </Link>
             </div>
@@ -138,7 +138,7 @@ export default async function RolesPage() {
                       {/* Actions */}
                       <div className="mt-auto flex gap-2 flex-wrap">
                         <Link href={`/admin/roles/${role.id}`}
-                          className="flex-1 text-center bg-violet-50 hover:bg-violet-100 text-violet-700 font-semibold text-xs py-2 rounded-xl transition-all">
+                          className="flex-1 text-center bg-cherry-50 hover:bg-cherry-100 text-cherry-700 font-semibold text-xs py-2 rounded-xl transition-all">
                           Xem →
                         </Link>
                         <Link href={`/admin/roles/${role.id}/edit`}

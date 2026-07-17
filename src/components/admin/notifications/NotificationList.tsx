@@ -129,8 +129,8 @@ export default function NotificationList({ notifications, overdueCount }: Notifi
                 className={[
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all',
                   active
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300 hover:text-indigo-600',
+                    ? 'bg-cherry-600 text-white shadow-sm'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-cherry-300 hover:text-cherry-600',
                 ].join(' ')}
               >
                 {conf.icon} {conf.label}
@@ -138,7 +138,7 @@ export default function NotificationList({ notifications, overdueCount }: Notifi
                   <span
                     className={[
                       'text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center',
-                      active ? 'bg-white text-indigo-600' : 'bg-indigo-600 text-white',
+                      active ? 'bg-white text-cherry-600' : 'bg-cherry-600 text-white',
                     ].join(' ')}
                   >
                     {count > 9 ? '9+' : count}
@@ -162,7 +162,7 @@ export default function NotificationList({ notifications, overdueCount }: Notifi
           {counts.all > 0 && (
             <button
               onClick={markAllRead}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-gray-200 text-gray-600 hover:border-cherry-300 hover:text-cherry-600 transition"
             >
               ✓ Đọc tất cả
             </button>
@@ -229,7 +229,7 @@ export default function NotificationList({ notifications, overdueCount }: Notifi
                     </div>
                     {!isRead && (
                       <span
-                        className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-indigo-500 border-2 border-white"
+                        className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-cherry-500 border-2 border-white"
                       />
                     )}
                     {idx < filtered.length - 1 && (
@@ -258,7 +258,7 @@ export default function NotificationList({ notifications, overdueCount }: Notifi
                     {!isRead && (
                       <button
                         onClick={() => markRead(notif.id)}
-                        className="text-[10px] font-bold px-2 py-1 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                        className="text-[10px] font-bold px-2 py-1 rounded-lg text-gray-400 hover:text-cherry-600 hover:bg-cherry-50 transition"
                         title="Đánh dấu đã đọc"
                       >
                         ✓
@@ -267,7 +267,7 @@ export default function NotificationList({ notifications, overdueCount }: Notifi
                     <Link
                       href={notif.link}
                       onClick={() => markRead(notif.id)}
-                      className="text-xs font-bold px-3 py-1.5 rounded-lg text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition"
+                      className="text-xs font-bold px-3 py-1.5 rounded-lg text-cherry-700 bg-cherry-50 hover:bg-cherry-100 transition"
                     >
                       Xem
                     </Link>

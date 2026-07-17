@@ -62,7 +62,7 @@ export default function LienHePage() {
                 <p className="text-gray-500">{vi ? 'Chúng tôi sẽ liên hệ lại với bạn sớm nhất có thể. Cảm ơn bạn!' : 'We’ll get back to you as soon as possible. Thank you!'}</p>
                 <button
                   onClick={() => { setDone(false); setForm({ name: '', phone: '', email: '', message: '' }) }}
-                  className="mt-2 text-purple-600 font-semibold hover:underline text-sm"
+                  className="mt-2 text-cherry-600 font-semibold hover:underline text-sm"
                 >
                   {vi ? 'Gửi thêm' : 'Send another'}
                 </button>
@@ -79,7 +79,7 @@ export default function LienHePage() {
                       placeholder="Nguyễn Văn A"
                       value={form.name}
                       onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                   <div>
@@ -90,7 +90,7 @@ export default function LienHePage() {
                       placeholder="0912 345 678"
                       value={form.phone}
                       onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                   <div>
@@ -100,7 +100,7 @@ export default function LienHePage() {
                       placeholder="email@example.com"
                       value={form.email}
                       onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                   <div>
@@ -111,7 +111,7 @@ export default function LienHePage() {
                       placeholder="Bạn muốn hỏi hoặc trao đổi điều gì?"
                       value={form.message}
                       onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                      className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 resize-none"
                     />
                   </div>
                   {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -138,7 +138,7 @@ export default function LienHePage() {
               </div>
               <div>
                 <p className="font-bold text-gray-900 mb-0.5">Zalo / Điện thoại</p>
-                <a href="tel:0904290583" className="text-purple-600 font-semibold hover:underline text-sm">
+                <a href="tel:0904290583" className="text-cherry-600 font-semibold hover:underline text-sm">
                   0904 290 583
                 </a>
                 <p className="text-gray-400 text-xs mt-1">Thứ 2 – Thứ 7 · 8:00 – 20:00</p>
@@ -152,7 +152,7 @@ export default function LienHePage() {
               </div>
               <div>
                 <p className="font-bold text-gray-900 mb-0.5">Email</p>
-                <a href="mailto:nam@itsol.vn" className="text-purple-600 font-semibold hover:underline text-sm">
+                <a href="mailto:nam@itsol.vn" className="text-cherry-600 font-semibold hover:underline text-sm">
                   nam@itsol.vn
                 </a>
                 <p className="text-gray-400 text-xs mt-1">Phản hồi trong vòng 24 giờ</p>
@@ -161,8 +161,8 @@ export default function LienHePage() {
 
             {/* Địa chỉ */}
             <div className="bg-white rounded-4xl shadow-sm p-6 flex items-start gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center shrink-0">
-                <MapPin className="w-5 h-5 text-purple-600" />
+              <div className="w-12 h-12 bg-cherry-100 rounded-2xl flex items-center justify-center shrink-0">
+                <MapPin className="w-5 h-5 text-cherry-600" />
               </div>
               <div>
                 <p className="font-bold text-gray-900 mb-0.5">Địa chỉ</p>
@@ -172,7 +172,7 @@ export default function LienHePage() {
             </div>
 
             {/* Banner Zalo */}
-            <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-4xl p-6 text-white">
+            <div className="bg-gradient-to-br from-cherry-600 to-cherry-800 rounded-4xl p-6 text-white">
               <p className="text-2xl mb-2">💬</p>
               <h3 className="font-black text-lg mb-1">{vi ? 'Nhắn Zalo ngay!' : 'Message us on Zalo!'}</h3>
               <p className="text-white/80 text-sm mb-4">{vi ? 'Được tư vấn miễn phí về khoá học phù hợp cho bé.' : 'Get a free consultation about the right course for your child.'}</p>
@@ -180,7 +180,7 @@ export default function LienHePage() {
                 href="https://zalo.me/0904290583"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-white text-purple-700 font-extrabold px-6 py-2.5 rounded-2xl text-sm hover:scale-105 transition-all"
+                className="inline-block bg-white text-cherry-700 font-extrabold px-6 py-2.5 rounded-2xl text-sm hover:scale-105 transition-all"
               >
                 Mở Zalo →
               </a>

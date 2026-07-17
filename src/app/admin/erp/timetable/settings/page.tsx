@@ -153,7 +153,7 @@ export default async function TimetableSettingsPage() {
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-12"
-        style={{ background: 'linear-gradient(135deg, #4338ca 0%, #1e1b4b 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #4338ca 0%, #29050F 100%)' }}
       >
         <div
           className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
@@ -164,7 +164,7 @@ export default async function TimetableSettingsPage() {
           style={{ background: 'rgba(99,102,241,0.2)', transform: 'translate(-25%, 50%)' }}
         />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-indigo-300 text-sm mb-1">
+          <div className="flex items-center gap-2 text-cherry-300 text-sm mb-1">
             <Link href="/admin/erp" className="hover:text-white transition-colors">School ERP</Link>
             <span>/</span>
             <Link href="/admin/erp/timetable" className="hover:text-white transition-colors">Thời khóa biểu</Link>
@@ -172,7 +172,7 @@ export default async function TimetableSettingsPage() {
             <span>Cấu hình</span>
           </div>
           <h1 className="text-3xl font-black mb-2">⚙️ Cấu hình Thời khóa biểu</h1>
-          <p className="text-indigo-200 text-sm max-w-xl">
+          <p className="text-cherry-200 text-sm max-w-xl">
             Định nghĩa tiết học, ngày nghỉ và quy tắc theo trường — AI sẽ dùng dữ liệu này để xếp TKB
           </p>
         </div>

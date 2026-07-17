@@ -150,12 +150,12 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
           <p className="text-gray-500 text-sm mb-7 line-clamp-2">{courseName}</p>
 
           <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-purple-50 rounded-2xl p-4">
-              <div className="text-2xl font-black text-purple-600">{totalQ}</div>
+            <div className="bg-cherry-50 rounded-2xl p-4">
+              <div className="text-2xl font-black text-cherry-600">{totalQ}</div>
               <div className="text-xs text-gray-500 mt-1">Câu hỏi</div>
             </div>
-            <div className="bg-indigo-50 rounded-2xl p-4">
-              <div className="text-2xl font-black text-indigo-600">15</div>
+            <div className="bg-cherry-50 rounded-2xl p-4">
+              <div className="text-2xl font-black text-cherry-600">15</div>
               <div className="text-xs text-gray-500 mt-1">Phút</div>
             </div>
             <div className="bg-yellow-50 rounded-2xl p-4">
@@ -174,14 +174,14 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
               Hết giờ sẽ tự động nộp bài
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-purple-500">🏅</span>
+              <span className="text-cherry-500">🏅</span>
               Đạt 90%+ sẽ nhận huy hiệu đặc biệt
             </li>
           </ul>
 
           <button
             onClick={startQuiz}
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black py-4 rounded-2xl text-lg hover:from-purple-700 hover:to-indigo-700 active:scale-95 transition"
+            className="w-full bg-gradient-to-r from-cherry-600 to-cherry-600 text-white font-black py-4 rounded-2xl text-lg hover:from-cherry-700 hover:to-cherry-700 active:scale-95 transition"
           >
             🚀 Bắt đầu làm bài
           </button>
@@ -218,8 +218,8 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
               </div>
               <div className="text-xs text-gray-500 mt-1">Câu đúng</div>
             </div>
-            <div className="bg-purple-50 rounded-2xl p-4">
-              <div className="text-2xl font-black text-purple-600">{result.pct}%</div>
+            <div className="bg-cherry-50 rounded-2xl p-4">
+              <div className="text-2xl font-black text-cherry-600">{result.pct}%</div>
               <div className="text-xs text-gray-500 mt-1">Tỉ lệ</div>
             </div>
             <div className="bg-yellow-50 rounded-2xl p-4">
@@ -278,14 +278,14 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
             </button>
             <button
               onClick={resetQuiz}
-              className="flex-1 py-3 rounded-2xl border-2 border-purple-200 bg-purple-50 font-bold text-purple-700 hover:bg-purple-100 transition text-sm"
+              className="flex-1 py-3 rounded-2xl border-2 border-cherry-200 bg-cherry-50 font-bold text-cherry-700 hover:bg-cherry-100 transition text-sm"
             >
               📚 Làm lại
             </button>
           </div>
           <Link
             href={`/hoc-vien/khoa-hoc/${courseId}`}
-            className="block py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black hover:from-purple-700 hover:to-indigo-700 transition text-center"
+            className="block py-3 rounded-2xl bg-gradient-to-r from-cherry-600 to-cherry-600 text-white font-black hover:from-cherry-700 hover:to-cherry-700 transition text-center"
           >
             ← Về khoá học
           </Link>
@@ -451,7 +451,7 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
         </div>
         <div className="bg-gray-100 rounded-full h-2 overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
+            className="h-full rounded-full bg-gradient-to-r from-cherry-500 to-cherry-500 transition-all duration-300"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -478,14 +478,14 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
                   }
                   className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-98 ${
                     isSelected
-                      ? 'border-purple-500 bg-purple-50 shadow-md'
-                      : 'border-gray-200 bg-white hover:border-purple-300 hover:bg-purple-50/30'
+                      ? 'border-cherry-500 bg-cherry-50 shadow-md'
+                      : 'border-gray-200 bg-white hover:border-cherry-300 hover:bg-cherry-50/30'
                   }`}
                 >
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0 transition-colors ${
                       isSelected
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-cherry-600 text-white'
                         : 'bg-gray-100 text-gray-500'
                     }`}
                   >
@@ -493,7 +493,7 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
                   </div>
                   <span
                     className={`font-semibold text-sm leading-relaxed ${
-                      isSelected ? 'text-purple-900' : 'text-gray-700'
+                      isSelected ? 'text-cherry-900' : 'text-gray-700'
                     }`}
                   >
                     {opt.text}
@@ -511,7 +511,7 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
             }
             placeholder="Nhập câu trả lời của bạn..."
             rows={3}
-            className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none resize-none font-medium text-gray-800 text-sm transition"
+            className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 focus:outline-none resize-none font-medium text-gray-800 text-sm transition"
           />
         )}
       </div>
@@ -535,7 +535,7 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
               title={`Câu ${idx + 1}${answers[q.id] ? ' (đã trả lời)' : ''}`}
               className={`w-7 h-7 rounded-lg text-xs font-black transition-all ${
                 idx === currentIdx
-                  ? 'bg-purple-600 text-white scale-110 shadow-sm'
+                  ? 'bg-cherry-600 text-white scale-110 shadow-sm'
                   : answers[q.id]
                   ? 'bg-green-500 text-white'
                   : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -549,7 +549,7 @@ export default function QuizPlayer({ courseId, courseName, questions }: QuizPlay
         {currentIdx < totalQ - 1 ? (
           <button
             onClick={() => setCurrentIdx(prev => Math.min(totalQ - 1, prev + 1))}
-            className="px-4 py-3 rounded-2xl border-2 border-purple-200 bg-purple-50 font-bold text-purple-700 hover:bg-purple-100 transition text-sm min-h-[48px] whitespace-nowrap"
+            className="px-4 py-3 rounded-2xl border-2 border-cherry-200 bg-cherry-50 font-bold text-cherry-700 hover:bg-cherry-100 transition text-sm min-h-[48px] whitespace-nowrap"
           >
             Câu tiếp →
           </button>

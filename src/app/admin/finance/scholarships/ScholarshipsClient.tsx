@@ -374,7 +374,7 @@ export default function ScholarshipsClient({ initialScholarships, courses }: Pro
                     <td className="px-4 py-4 text-center">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                         s.type === 'percent'
-                          ? 'bg-purple-100 text-purple-700'
+                          ? 'bg-cherry-100 text-cherry-700'
                           : 'bg-orange-100 text-orange-700'
                       }`}>
                         {s.type === 'percent' ? '%' : 'VNĐ'}

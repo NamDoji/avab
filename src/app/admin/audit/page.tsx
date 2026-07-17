@@ -13,8 +13,8 @@ function getActionStyle(action: string): { icon: string; dotClass: string; textC
   if (a === 'deleted' || a === 'delete') return { icon: '🔴', dotClass: 'bg-red-500', textClass: 'text-red-700' }
   if (a === 'approved' || a === 'approve') return { icon: '✅', dotClass: 'bg-teal-500', textClass: 'text-teal-700' }
   if (a === 'rejected' || a === 'reject') return { icon: '❌', dotClass: 'bg-rose-500', textClass: 'text-rose-700' }
-  if (a === 'published' || a === 'publish') return { icon: '📢', dotClass: 'bg-violet-500', textClass: 'text-violet-700' }
-  if (a === 'login') return { icon: '🔐', dotClass: 'bg-indigo-500', textClass: 'text-indigo-700' }
+  if (a === 'published' || a === 'publish') return { icon: '📢', dotClass: 'bg-cherry-500', textClass: 'text-cherry-700' }
+  if (a === 'login') return { icon: '🔐', dotClass: 'bg-cherry-500', textClass: 'text-cherry-700' }
   return { icon: '📝', dotClass: 'bg-gray-400', textClass: 'text-gray-600' }
 }
 
@@ -84,7 +84,7 @@ export default async function AuditLogPage() {
                       <div className={`relative z-10 mt-3 w-3 h-3 rounded-full border-2 border-white shadow-sm shrink-0 ml-3.5 ${style.dotClass}`} />
 
                       {/* Card */}
-                      <div className={`flex-1 bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3 mb-2 hover:shadow-md transition-all ${idx === 0 ? 'ring-1 ring-violet-100' : ''}`}>
+                      <div className={`flex-1 bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3 mb-2 hover:shadow-md transition-all ${idx === 0 ? 'ring-1 ring-cherry-100' : ''}`}>
                         <div className="flex items-start justify-between gap-2 flex-wrap">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="text-base leading-none">{style.icon}</span>

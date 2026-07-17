@@ -35,11 +35,11 @@ function SearchInput({ defaultValue }: { defaultValue: string }) {
         defaultValue={defaultValue}
         placeholder="Tìm khoá học, bài viết..."
         autoFocus
-        className="w-full pl-12 pr-28 py-4 rounded-2xl border-2 border-gray-200 focus:border-purple-400 text-sm focus:outline-none shadow-sm transition bg-white text-gray-900"
+        className="w-full pl-12 pr-28 py-4 rounded-2xl border-2 border-gray-200 focus:border-cherry-400 text-sm focus:outline-none shadow-sm transition bg-white text-gray-900"
       />
       <button
         type="submit"
-        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-bold hover:bg-purple-700 transition"
+        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-cherry-600 text-white text-sm font-bold hover:bg-cherry-700 transition"
       >
         Tìm
       </button>
@@ -109,7 +109,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
       {/* ── Hero search bar ────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-r from-gray-900 to-purple-900 text-white py-10 px-4">
+      <div className="bg-gradient-to-r from-gray-900 to-cherry-900 text-white py-10 px-4">
         <div className="container-custom max-w-3xl">
           <h1 className="text-center font-black text-2xl mb-6">🔍 Tìm kiếm</h1>
           <SearchInput defaultValue={q} />
@@ -135,7 +135,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 <a
                   key={term}
                   href={`/tim-kiem?q=${encodeURIComponent(term)}`}
-                  className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:border-purple-400 hover:text-purple-700 transition shadow-sm"
+                  className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:border-cherry-400 hover:text-cherry-700 transition shadow-sm"
                 >
                   {term}
                 </a>
@@ -154,7 +154,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </p>
             <a
               href="/tim-kiem"
-              className="inline-block mt-4 text-sm text-purple-600 hover:underline"
+              className="inline-block mt-4 text-sm text-cherry-600 hover:underline"
             >
               Xoá tìm kiếm
             </a>
@@ -166,13 +166,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-black text-gray-900 flex items-center gap-2">
-                <BookOpen size={18} className="text-purple-500" />
+                <BookOpen size={18} className="text-cherry-500" />
                 Khoá học
                 <span className="text-sm font-semibold text-gray-400">({courses.length})</span>
               </h2>
               <Link
                 href="/khoa-hoc"
-                className="text-xs font-semibold text-purple-600 hover:text-purple-800 flex items-center gap-1"
+                className="text-xs font-semibold text-cherry-600 hover:text-cherry-800 flex items-center gap-1"
               >
                 Xem tất cả <ArrowRight size={12} />
               </Link>
@@ -186,7 +186,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
                 >
                   {/* Thumbnail */}
-                  <div className="h-28 bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center overflow-hidden">
+                  <div className="h-28 bg-gradient-to-br from-cherry-100 to-cherry-100 flex items-center justify-center overflow-hidden">
                     {course.thumbnail ? (
                       <img
                         src={course.thumbnail}
@@ -210,7 +210,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       />
                     )}
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-purple-600 font-semibold">
+                      <span className="text-xs text-cherry-600 font-semibold">
                         {course.subjectName ?? 'Khoá học'}
                         {course.gradeMin != null ? ` · Lớp ${course.gradeMin}` : ''}
                       </span>

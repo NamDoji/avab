@@ -26,7 +26,7 @@ export default function PageHeader({
   subtitle,
   breadcrumb,
   actions,
-  gradient = 'linear-gradient(135deg, #1e1b4b 0%, #3730a3 100%)',
+  gradient = 'linear-gradient(135deg, #29050F 0%, #3730a3 100%)',
   icon,
 }: PageHeaderProps) {
   return (

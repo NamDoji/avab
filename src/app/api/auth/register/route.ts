@@ -21,20 +21,20 @@ async function sendWelcomeEmail(email: string, name: string, phone: string, pass
     subject: '🎉 Chào mừng bạn đến với AvaB!',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #7C3AED, #14B8A6); border-radius: 16px; padding: 24px; text-align: center; color: white;">
+        <div style="background: linear-gradient(135deg, #951F3D, #14B8A6); border-radius: 16px; padding: 24px; text-align: center; color: white;">
           <h1 style="margin: 0; font-size: 28px;">🏆 AvaB</h1>
           <p style="margin: 8px 0 0; opacity: 0.8;">avab.vn — Luyện Thi Học Bổng Lớp 1</p>
         </div>
         <div style="padding: 24px 0;">
           <h2>Xin chào ${name}! 👋</h2>
           <p>Tài khoản AvaB của bạn đã được tạo thành công. Dưới đây là thông tin đăng nhập:</p>
-          <div style="background: #F5F3FF; border: 2px solid #A78BFA; border-radius: 12px; padding: 16px; margin: 16px 0;">
+          <div style="background: #FFF7F9; border: 2px solid #DC607D; border-radius: 12px; padding: 16px; margin: 16px 0;">
             <p style="margin: 4px 0;"><strong>🔑 Số điện thoại:</strong> ${phone}</p>
             <p style="margin: 4px 0;"><strong>🔐 Mật khẩu:</strong> <code style="background: white; padding: 2px 8px; border-radius: 4px; font-size: 16px; font-weight: bold;">${password}</code></p>
           </div>
           <p style="color: #666; font-size: 14px;">⚠️ Lưu ý: Đây là mật khẩu tự động tạo. Bạn có thể đổi mật khẩu sau khi đăng nhập.</p>
           <a href="https://avab.vn/dang-nhap" 
-             style="display: inline-block; background: #7C3AED; color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 16px;">
+             style="display: inline-block; background: #951F3D; color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 16px;">
             Đăng nhập ngay 🚀
           </a>
         </div>

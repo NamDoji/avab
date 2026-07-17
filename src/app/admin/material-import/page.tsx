@@ -24,7 +24,7 @@ function statusBadge(status: string) {
   switch (status) {
     case 'analyzing': return { label: 'Đang phân tích', bg: '#dbeafe', color: '#1d4ed8' }
     case 'mapping':   return { label: 'Đang mapping',   bg: '#fef3c7', color: '#92400e' }
-    case 'importing': return { label: 'Đang import',    bg: '#ede9fe', color: '#5b21b6' }
+    case 'importing': return { label: 'Đang import',    bg: '#FDECF0', color: '#5F1227' }
     case 'done':      return { label: 'Hoàn tất',       bg: '#d1fae5', color: '#065f46' }
     case 'failed':    return { label: 'Lỗi',            bg: '#fee2e2', color: '#991b1b' }
     default:          return { label: status,            bg: '#f3f4f6', color: '#374151' }
@@ -69,14 +69,14 @@ export default async function MaterialImportHubPage() {
       {/* Hero banner */}
       <div
         className="relative overflow-hidden text-white py-12"
-        style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
       >
         <div className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%, -50%)' }} />
         <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full pointer-events-none" style={{ background: 'rgba(99,102,241,0.2)', transform: 'translate(-25%, 50%)' }} />
         <div className="container-custom relative">
-          <p className="text-indigo-200 text-sm font-semibold mb-1">📥 Import & Migration</p>
+          <p className="text-cherry-200 text-sm font-semibold mb-1">📥 Import & Migration</p>
           <h1 className="text-4xl font-black mb-2">📚 Teaching Material Import</h1>
-          <p className="text-indigo-100 text-sm max-w-xl">
+          <p className="text-cherry-100 text-sm max-w-xl">
             Đưa toàn bộ học liệu từ Word, PDF, Google Drive, Quizizz... vào AvaB bằng AI — Tự động nhận diện loại, môn học, khối lớp và import đúng cấu trúc.
           </p>
 
@@ -101,7 +101,7 @@ export default async function MaterialImportHubPage() {
           <Link
             href="/admin/material-import/new"
             className="relative overflow-hidden rounded-3xl p-6 text-white hover:scale-[1.01] transition-transform shadow-lg hover:shadow-xl group"
-            style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+            style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
           >
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full pointer-events-none" style={{ background: 'rgba(255,255,255,0.1)', transform: 'translate(25%, -50%)' }} />
             <div className="text-3xl mb-3">🚀</div>
@@ -144,7 +144,7 @@ export default async function MaterialImportHubPage() {
               <Link
                 href="/admin/material-import/new"
                 className="inline-block mt-4 text-sm font-bold px-4 py-2 rounded-xl text-white"
-                style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)' }}
+                style={{ background: 'linear-gradient(135deg, #951F3D 0%, #0ea5e9 100%)' }}
               >
                 🚀 Import ngay
               </Link>
@@ -178,7 +178,7 @@ export default async function MaterialImportHubPage() {
                           <td className="px-4 py-3 text-gray-700">{detectedTypeLabel(log.detectedType)}</td>
                           <td className="px-4 py-3">
                             {log.detectedSubject ? (
-                              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">{log.detectedSubject}</span>
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-cherry-50 text-cherry-700">{log.detectedSubject}</span>
                             ) : (
                               <span className="text-gray-400">—</span>
                             )}

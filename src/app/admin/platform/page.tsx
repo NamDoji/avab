@@ -67,7 +67,7 @@ export default async function PlatformPage() {
   })
 
   const KPI_CARDS = [
-    { label: 'Tổng tổ chức',  value: orgCount,              icon: '🏢', gradient: 'from-violet-500 to-indigo-600' },
+    { label: 'Tổng tổ chức',  value: orgCount,              icon: '🏢', gradient: 'from-cherry-500 to-cherry-600' },
     { label: 'Tổng users',    value: userCount,             icon: '👥', gradient: 'from-blue-500 to-cyan-600' },
     { label: 'Tổng courses',  value: courseCount,           icon: '📚', gradient: 'from-emerald-500 to-teal-600' },
     { label: 'Doanh thu',     value: formatRevenue(revenue), icon: '💰', gradient: 'from-orange-500 to-amber-500' },
@@ -115,7 +115,7 @@ export default async function PlatformPage() {
             <Link
               href="/admin/organizations/new"
               className="text-xs font-bold px-3 py-1.5 rounded-xl text-white shadow"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
             >
               ➕ Thêm tổ chức
             </Link>
@@ -156,7 +156,7 @@ export default async function PlatformPage() {
                         ) : (
                           <div
                             className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black flex-shrink-0"
-                            style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                            style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
                           >
                             {org.name.slice(0, 2).toUpperCase()}
                           </div>
@@ -242,7 +242,7 @@ export default async function PlatformPage() {
             <div className="px-6 py-3 border-t border-gray-100 text-center">
               <Link
                 href="/admin/organizations"
-                className="text-sm font-bold text-violet-600 hover:text-violet-800"
+                className="text-sm font-bold text-cherry-600 hover:text-cherry-800"
               >
                 Xem tất cả tổ chức →
               </Link>

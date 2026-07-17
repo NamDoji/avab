@@ -15,7 +15,7 @@ export default async function TimetablePage() {
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-12"
-        style={{ background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #a855f7 0%, #951F3D 100%)' }}
       >
         <div
           className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
@@ -26,7 +26,7 @@ export default async function TimetablePage() {
           style={{ background: 'rgba(99,102,241,0.2)', transform: 'translate(-25%, 50%)' }}
         />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-purple-200 text-sm mb-1">
+          <div className="flex items-center gap-2 text-cherry-200 text-sm mb-1">
             <Link href="/admin/erp" className="hover:text-white transition-colors">School ERP</Link>
             <span>/</span>
             <span>Thời khóa biểu</span>
@@ -49,7 +49,7 @@ export default async function TimetablePage() {
               ⚙️ Cấu hình TKB
             </Link>
           </div>
-          <p className="text-purple-200 text-sm max-w-xl">
+          <p className="text-cherry-200 text-sm max-w-xl">
             AI tự động tạo thời khóa biểu tối ưu — không trùng giáo viên, không trùng phòng, cân bằng tải
           </p>
         </div>

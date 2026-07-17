@@ -46,7 +46,7 @@ export default function PaymentGatewayPage() {
       color: '#6772E5',
       bg: 'linear-gradient(135deg, #6772E5 0%, #4f56c5 100%)',
       badge: 'Quốc tế',
-      badgeColor: '#8b5cf6',
+      badgeColor: '#BE3659',
       features: ['Visa / Mastercard', 'Apple Pay', 'Google Pay', 'Đa tiền tệ'],
     },
   ]
@@ -64,7 +64,7 @@ export default function PaymentGatewayPage() {
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <div
         className="px-6 py-10"
-        style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #3730a3 50%, #4f46e5 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #29050F 0%, #3730a3 50%, #4f46e5 100%)' }}
       >
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-4 mb-4">
@@ -74,7 +74,7 @@ export default function PaymentGatewayPage() {
             >
               <ArrowLeft size={20} />
             </Link>
-            <nav className="flex items-center gap-2 text-indigo-300 text-xs">
+            <nav className="flex items-center gap-2 text-cherry-300 text-xs">
               <Link href="/admin/finance" className="hover:text-white transition">Finance</Link>
               <span>›</span>
               <span className="text-white font-semibold">Cổng thanh toán</span>
@@ -83,7 +83,7 @@ export default function PaymentGatewayPage() {
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-black text-white mb-2">💳 Cổng thanh toán online</h1>
-              <p className="text-indigo-200 text-sm">
+              <p className="text-cherry-200 text-sm">
                 Kết nối cổng thanh toán để học viên đóng học phí trực tuyến
               </p>
             </div>
@@ -221,11 +221,11 @@ export default function PaymentGatewayPage() {
         {/* ── Bottom CTA ────────────────────────────────────────────────────── */}
         <div
           className="rounded-3xl p-8 text-center text-white"
-          style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #4f46e5 100%)' }}
+          style={{ background: 'linear-gradient(135deg, #29050F 0%, #4f46e5 100%)' }}
         >
           <div className="text-4xl mb-4">📬</div>
           <h3 className="font-black text-xl mb-2">Nhận thông báo khi ra mắt</h3>
-          <p className="text-indigo-200 text-sm mb-6">
+          <p className="text-cherry-200 text-sm mb-6">
             Tính năng thanh toán online sẽ ra mắt trong Q3/2026. Liên hệ đội phát triển để được hỗ trợ tích hợp sớm.
           </p>
           <a

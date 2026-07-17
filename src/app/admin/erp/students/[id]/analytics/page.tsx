@@ -8,7 +8,7 @@ export const metadata = { title: 'Analytics học sinh — AvaB ERP' }
 // ── Helpers ─────────────────────────────────────────────────────────
 function Avatar({ name, size = 56 }: { name: string | null; size?: number }) {
   const letter = name ? name.trim()[0]?.toUpperCase() ?? '?' : '?'
-  const colors = ['#0f766e', '#0369a1', '#7c3aed', '#db2777', '#ea580c', '#65a30d']
+  const colors = ['#0f766e', '#0369a1', '#951F3D', '#db2777', '#ea580c', '#65a30d']
   const bg = colors[(letter.charCodeAt(0) ?? 0) % colors.length]
   return (
     <div style={{
@@ -247,7 +247,7 @@ export default async function StudentAnalyticsPage({
     <main style={{ minHeight: '100vh', background: '#0f172a', paddingTop: 80 }}>
 
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div style={{ background: 'linear-gradient(135deg,#1e1b4b 0%,#0f172a 100%)', padding: '32px 24px' }}>
+      <div style={{ background: 'linear-gradient(135deg,#29050F 0%,#0f172a 100%)', padding: '32px 24px' }}>
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
             <Link
@@ -300,7 +300,7 @@ export default async function StudentAnalyticsPage({
             { label: 'Câu đã làm', value: totalAnswers, emoji: '📝', color: '#60a5fa' },
             { label: 'Câu đúng', value: correctAnswers, emoji: '✅', color: '#4ade80' },
             { label: 'Điểm danh', value: `${attendanceRate}%`, emoji: '📅', color: attendanceRate >= 80 ? '#4ade80' : attendanceRate >= 60 ? '#fbbf24' : '#f87171' },
-            { label: 'Buổi học', value: totalSessions, emoji: '📚', color: '#a78bfa' },
+            { label: 'Buổi học', value: totalSessions, emoji: '📚', color: '#DC607D' },
             { label: 'Huy hiệu', value: userBadges.length, emoji: '🏆', color: '#fbbf24' },
           ].map(stat => (
             <div key={stat.label} style={{
@@ -394,7 +394,7 @@ export default async function StudentAnalyticsPage({
             <h2 style={{ color: '#f1f5f9', fontWeight: 900, fontSize: 16, margin: '0 0 20px' }}>
               📈 Learning Curve — Độ chính xác 4 tuần gần nhất
             </h2>
-            <MiniBarChart weeks={last4WeeksData} valueKey="accuracy" color="#a78bfa" />
+            <MiniBarChart weeks={last4WeeksData} valueKey="accuracy" color="#DC607D" />
             <p style={{ color: '#475569', fontSize: 12, marginTop: 12 }}>
               Dựa trên {recentAnswers.length} câu trả lời gần nhất
             </p>

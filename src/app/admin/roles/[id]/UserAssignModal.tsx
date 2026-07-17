@@ -106,7 +106,7 @@ export default function UserAssignModal({ roleId, roleName, onClose, onAssigned 
                 onChange={e => { setSearch(e.target.value); setSelectedUser(null) }}
                 placeholder="Nhập tên hoặc số điện thoại..."
                 autoFocus
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
               />
               {searching && (
                 <span className="absolute right-3 top-2.5 text-gray-400 text-xs">🔍</span>
@@ -121,9 +121,9 @@ export default function UserAssignModal({ roleId, roleName, onClose, onAssigned 
                     key={u.id}
                     type="button"
                     onClick={() => { setSelectedUser(u); setSearch(u.name || u.phone); setUsers([]) }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-violet-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-cherry-50 transition-colors text-left"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-violet-400 to-indigo-500 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-br from-cherry-400 to-cherry-500 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
                       {u.name?.charAt(0)?.toUpperCase() ?? '?'}
                     </div>
                     <div className="min-w-0">
@@ -137,18 +137,18 @@ export default function UserAssignModal({ roleId, roleName, onClose, onAssigned 
 
             {/* Selected user badge */}
             {selectedUser && (
-              <div className="mt-2 flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-xl px-3 py-2">
-                <div className="w-7 h-7 bg-gradient-to-br from-violet-400 to-indigo-500 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
+              <div className="mt-2 flex items-center gap-2 bg-cherry-50 border border-cherry-200 rounded-xl px-3 py-2">
+                <div className="w-7 h-7 bg-gradient-to-br from-cherry-400 to-cherry-500 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0">
                   {selectedUser.name?.charAt(0)?.toUpperCase() ?? '?'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-violet-900 truncate">{selectedUser.name}</p>
-                  <p className="text-xs text-violet-500">{selectedUser.phone}</p>
+                  <p className="text-sm font-semibold text-cherry-900 truncate">{selectedUser.name}</p>
+                  <p className="text-xs text-cherry-500">{selectedUser.phone}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => { setSelectedUser(null); setSearch('') }}
-                  className="text-violet-400 hover:text-violet-700 text-xs"
+                  className="text-cherry-400 hover:text-cherry-700 text-xs"
                 >
                   ✕
                 </button>
@@ -164,7 +164,7 @@ export default function UserAssignModal({ roleId, roleName, onClose, onAssigned 
             <select
               value={scopeType}
               onChange={e => setScopeType(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
             >
               {SCOPE_TYPES.map(s => (
                 <option key={s.value} value={s.value}>{s.label}</option>
@@ -183,7 +183,7 @@ export default function UserAssignModal({ roleId, roleName, onClose, onAssigned 
                 value={scopeId}
                 onChange={e => setScopeId(e.target.value)}
                 placeholder={`ID của ${scopeType}...`}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
               />
             </div>
           )}
@@ -197,7 +197,7 @@ export default function UserAssignModal({ roleId, roleName, onClose, onAssigned 
               type="datetime-local"
               value={expiresAt}
               onChange={e => setExpiresAt(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
             />
           </div>
 
@@ -217,7 +217,7 @@ export default function UserAssignModal({ roleId, roleName, onClose, onAssigned 
           <button
             onClick={handleAssign}
             disabled={submitting || !selectedUser}
-            className="flex-1 bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all disabled:opacity-60"
+            className="flex-1 bg-cherry-600 hover:bg-cherry-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all disabled:opacity-60"
           >
             {submitting ? '⏳ Đang gán...' : '➕ Gán Role'}
           </button>

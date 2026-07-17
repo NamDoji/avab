@@ -12,7 +12,7 @@ interface Props {
 function LoadingState({ label = 'AI đang phân tích...' }: { label?: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-10 text-gray-400">
-      <Loader2 className="animate-spin mb-3 text-purple-400" size={32} />
+      <Loader2 className="animate-spin mb-3 text-cherry-400" size={32} />
       <p className="text-sm font-medium">{label}</p>
       <p className="text-xs mt-1">Thường mất 3–8 giây</p>
     </div>
@@ -33,7 +33,7 @@ function Badge({ label, color }: { label: string; color: 'green' | 'yellow' | 'r
     green: 'bg-green-50 text-green-700 border-green-200',
     yellow: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     red: 'bg-red-50 text-red-700 border-red-200',
-    purple: 'bg-purple-50 text-purple-700 border-purple-200',
+    purple: 'bg-cherry-50 text-cherry-700 border-cherry-200',
     blue: 'bg-blue-50 text-blue-700 border-blue-200',
     orange: 'bg-orange-50 text-orange-700 border-orange-200',
     gray: 'bg-gray-100 text-gray-600 border-gray-200',
@@ -47,7 +47,7 @@ function ScoreRing({ pct, size = 80 }: { pct: number; size?: number }) {
   const r = (size - 8) / 2
   const circ = 2 * Math.PI * r
   const offset = circ - (pct / 100) * circ
-  const color = pct >= 80 ? '#14B8A6' : pct >= 60 ? '#7C3AED' : pct >= 40 ? '#F97316' : '#EF4444'
+  const color = pct >= 80 ? '#14B8A6' : pct >= 60 ? '#951F3D' : pct >= 40 ? '#F97316' : '#EF4444'
   return (
     <div className="relative inline-flex items-center justify-center shrink-0">
       <svg width={size} height={size} className="-rotate-90">
@@ -62,7 +62,7 @@ function ScoreRing({ pct, size = 80 }: { pct: number; size?: number }) {
 }
 
 function MasteryBar({ label, icon, accuracy, masteryLevel }: { label: string; icon: string | null; accuracy: number; masteryLevel: string }) {
-  const color = masteryLevel === 'mastered' ? 'bg-teal-500' : masteryLevel === 'developing' ? 'bg-purple-400' : masteryLevel === 'struggling' ? 'bg-orange-400' : 'bg-red-400'
+  const color = masteryLevel === 'mastered' ? 'bg-teal-500' : masteryLevel === 'developing' ? 'bg-cherry-400' : masteryLevel === 'struggling' ? 'bg-orange-400' : 'bg-red-400'
   const badge = masteryLevel === 'mastered' ? { label: 'Nắm vững', c: 'green' as const } :
                 masteryLevel === 'developing' ? { label: 'Đang phát triển', c: 'purple' as const } :
                 masteryLevel === 'struggling' ? { label: 'Cần hỗ trợ', c: 'orange' as const } :
@@ -97,8 +97,8 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
   return (
     <div className="space-y-4">
       {/* Trạng thái tổng quan */}
-      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-4 border border-purple-100">
-        <p className="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1.5">🔬 Trạng thái tổng quan (BKT-inspired)</p>
+      <div className="bg-gradient-to-br from-cherry-50 to-cherry-50 rounded-3xl p-4 border border-cherry-100">
+        <p className="text-xs font-bold text-cherry-600 uppercase tracking-wider mb-1.5">🔬 Trạng thái tổng quan (BKT-inspired)</p>
         <p className="text-gray-800 text-sm leading-relaxed font-medium">{data.overallState}</p>
       </div>
 
@@ -144,9 +144,9 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
 
       {/* SRL — Năng lực tự học (SRL_t^i) */}
       {data.srl && (
-        <div className="bg-indigo-50 rounded-2xl px-4 py-3 border border-indigo-100">
+        <div className="bg-cherry-50 rounded-2xl px-4 py-3 border border-cherry-100">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-bold text-indigo-600">📚 Năng lực tự học (SRL_t^i)</p>
+            <p className="text-xs font-bold text-cherry-600">📚 Năng lực tự học (SRL_t^i)</p>
             <span className={`text-sm font-black ${
               data.srl.srlScore >= 60 ? 'text-green-600' : data.srl.srlScore >= 30 ? 'text-orange-500' : 'text-red-500'
             }`}>{data.srl.srlScore}/100</span>
@@ -161,7 +161,7 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
             <div><div className="font-semibold text-gray-700">{data.srl.consistencyScore}</div>Đều đặn</div>
             <div><div className="font-semibold text-gray-700">{data.srl.initiativeScore}</div>Chủ động</div>
           </div>
-          {data.srlInsight && <p className="text-xs text-indigo-700 mt-2 italic">{data.srlInsight}</p>}
+          {data.srlInsight && <p className="text-xs text-cherry-700 mt-2 italic">{data.srlInsight}</p>}
         </div>
       )}
 
@@ -208,7 +208,7 @@ function DiagnosePanel({ data, loading }: { data?: any; loading?: boolean }) {
 
       {/* Kết luận chẩn đoán */}
       {data.diagnosticConclusion && (
-        <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-3xl p-4 text-white">
+        <div className="bg-gradient-to-br from-cherry-600 to-cherry-700 rounded-3xl p-4 text-white">
           <p className="text-xs font-bold opacity-80 mb-1.5">🏁 Kết luận chẩn đoán — cơ sở ra quyết định dạy học</p>
           <p className="text-sm leading-relaxed">{data.diagnosticConclusion}</p>
         </div>
@@ -226,7 +226,7 @@ function PredictPanel({ data, loading }: { data?: any; loading?: boolean }) {
   const pct = data.probability || 0
   const levelColors: Record<string, string> = {
     'Xuất sắc': 'text-teal-600 bg-teal-50',
-    'Tốt': 'text-purple-600 bg-purple-50',
+    'Tốt': 'text-cherry-600 bg-cherry-50',
     'Trung bình': 'text-orange-600 bg-orange-50',
     'Cần cố gắng': 'text-red-600 bg-red-50',
   }
@@ -241,7 +241,7 @@ function PredictPanel({ data, loading }: { data?: any; loading?: boolean }) {
   return (
     <div className="space-y-4">
       {/* Xác suất đỗ */}
-      <div className="flex items-center gap-4 bg-gradient-to-br from-purple-50 to-teal-50 rounded-3xl p-4">
+      <div className="flex items-center gap-4 bg-gradient-to-br from-cherry-50 to-teal-50 rounded-3xl p-4">
         <ScoreRing pct={pct} size={88} />
         <div className="flex-1">
           <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Xác suất thành công</p>
@@ -318,14 +318,14 @@ function PredictPanel({ data, loading }: { data?: any; loading?: boolean }) {
           </div>
         )}
         {data.srlForecast && (
-          <div className="bg-indigo-50 rounded-2xl px-4 py-3">
-            <p className="text-xs font-bold text-indigo-600 mb-0.5">📚 Dự báo phát triển SRL_t^i</p>
+          <div className="bg-cherry-50 rounded-2xl px-4 py-3">
+            <p className="text-xs font-bold text-cherry-600 mb-0.5">📚 Dự báo phát triển SRL_t^i</p>
             <p className="text-sm text-gray-700">{data.srlForecast}</p>
           </div>
         )}
         {data.retentionForecast && (
-          <div className="bg-purple-50 rounded-2xl px-4 py-3">
-            <p className="text-xs font-bold text-purple-600 mb-0.5">🔄 Dự báo duy trì tiến trình (RET)</p>
+          <div className="bg-cherry-50 rounded-2xl px-4 py-3">
+            <p className="text-xs font-bold text-cherry-600 mb-0.5">🔄 Dự báo duy trì tiến trình (RET)</p>
             <p className="text-sm text-gray-700">{data.retentionForecast}</p>
           </div>
         )}
@@ -365,8 +365,8 @@ function PredictPanel({ data, loading }: { data?: any; loading?: boolean }) {
           <h4 className="font-bold text-gray-900 text-sm mb-2">📋 Cần làm ngay:</h4>
           <div className="space-y-1.5">
             {data.actionPlan.map((action: string, i: number) => (
-              <div key={i} className="flex items-start gap-2 bg-purple-50 rounded-xl px-3 py-2">
-                <span className="text-purple-500 font-bold text-xs mt-0.5">{i + 1}.</span>
+              <div key={i} className="flex items-start gap-2 bg-cherry-50 rounded-xl px-3 py-2">
+                <span className="text-cherry-500 font-bold text-xs mt-0.5">{i + 1}.</span>
                 <span className="text-sm text-gray-700">{action}</span>
               </div>
             ))}
@@ -394,7 +394,7 @@ function IntervenePanel({ data, loading }: { data?: any; loading?: boolean }) {
 
   const packageColors = {
     intensive: { bg: 'bg-red-50 border-red-200', badge: 'red', emoji: '🔥' },
-    standard: { bg: 'bg-purple-50 border-purple-200', badge: 'purple', emoji: '⚡' },
+    standard: { bg: 'bg-cherry-50 border-cherry-200', badge: 'purple', emoji: '⚡' },
     light: { bg: 'bg-green-50 border-green-200', badge: 'green', emoji: '✨' },
   } as const
   const pkgStyle = packageColors[data.packageType as keyof typeof packageColors] ?? packageColors.standard
@@ -417,8 +417,8 @@ function IntervenePanel({ data, loading }: { data?: any; loading?: boolean }) {
 
       {/* Mục tiêu can thiệp */}
       {data.interventionGoal && (
-        <div className="bg-indigo-50 rounded-2xl px-4 py-3 border border-indigo-100">
-          <p className="text-xs font-bold text-indigo-600 mb-0.5">🎯 Mục tiêu can thiệp (SMART)</p>
+        <div className="bg-cherry-50 rounded-2xl px-4 py-3 border border-cherry-100">
+          <p className="text-xs font-bold text-cherry-600 mb-0.5">🎯 Mục tiêu can thiệp (SMART)</p>
           <p className="text-sm text-gray-700">{data.interventionGoal}</p>
         </div>
       )}
@@ -430,7 +430,7 @@ function IntervenePanel({ data, loading }: { data?: any; loading?: boolean }) {
           <div className="space-y-2">
             {data.learningPathway.map((step: string, i: number) => (
               <div key={i} className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-purple-600 text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-cherry-600 text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">
                   {i + 1}
                 </div>
                 <div className="bg-white border border-gray-100 rounded-xl px-3 py-2 flex-1 text-sm text-gray-700">
@@ -481,8 +481,8 @@ function IntervenePanel({ data, loading }: { data?: any; loading?: boolean }) {
         </div>
       )}
       {data.srlDevelopmentPlan && (
-        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl px-4 py-3">
-          <p className="text-xs font-bold text-indigo-600 mb-0.5">📚 Kế hoạch tăng SRL trong gói này</p>
+        <div className="bg-cherry-50 border border-cherry-100 rounded-2xl px-4 py-3">
+          <p className="text-xs font-bold text-cherry-600 mb-0.5">📚 Kế hoạch tăng SRL trong gói này</p>
           <p className="text-sm text-gray-700">{data.srlDevelopmentPlan}</p>
         </div>
       )}
@@ -510,9 +510,9 @@ function RecommendPanel({ data, loading }: { data?: any; loading?: boolean }) {
   return (
     <div className="space-y-4">
       {/* Chiến lược sư phạm + Mức hỗ trợ */}
-      <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-4 border border-purple-100">
+      <div className="bg-gradient-to-br from-cherry-50 to-cherry-50 rounded-3xl p-4 border border-cherry-100">
         <div className="flex items-start justify-between gap-3 mb-2">
-          <p className="text-xs font-bold text-purple-600 uppercase tracking-wide">🎓 Chiến lược sư phạm (Aware Recommendation)</p>
+          <p className="text-xs font-bold text-cherry-600 uppercase tracking-wide">🎓 Chiến lược sư phạm (Aware Recommendation)</p>
           {data.supportLevel && (
             <Badge label={supportLabels[data.supportLevel as keyof typeof supportLabels] ?? data.supportLevel}
               color={supportColors[data.supportLevel as keyof typeof supportColors] ?? 'gray'} />
@@ -541,7 +541,7 @@ function RecommendPanel({ data, loading }: { data?: any; loading?: boolean }) {
                   </div>
                 )}
                 {ex.pedagogicalReason && (
-                  <p className="text-xs text-purple-600 mt-2 font-medium">🎓 {ex.pedagogicalReason}</p>
+                  <p className="text-xs text-cherry-600 mt-2 font-medium">🎓 {ex.pedagogicalReason}</p>
                 )}
               </div>
             ))}
@@ -558,12 +558,12 @@ function RecommendPanel({ data, loading }: { data?: any; loading?: boolean }) {
       )}
       {/* SRL development actions */}
       {data.srlDevelopmentActions?.length > 0 && (
-        <div className="bg-indigo-50 rounded-2xl px-4 py-3">
-          <p className="text-xs font-bold text-indigo-600 mb-2">📚 Phát triển SRL (tự học chủ động)</p>
+        <div className="bg-cherry-50 rounded-2xl px-4 py-3">
+          <p className="text-xs font-bold text-cherry-600 mb-2">📚 Phát triển SRL (tự học chủ động)</p>
           <ul className="space-y-1">
             {data.srlDevelopmentActions.map((a: string, i: number) => (
               <li key={i} className="text-xs text-gray-700 flex items-start gap-1.5">
-                <ChevronRight size={12} className="text-indigo-400 mt-0.5 shrink-0" />{a}
+                <ChevronRight size={12} className="text-cherry-400 mt-0.5 shrink-0" />{a}
               </li>
             ))}
           </ul>
@@ -620,8 +620,8 @@ function RecommendPanel({ data, loading }: { data?: any; loading?: boolean }) {
       {/* Mục tiêu ngày + Động viên */}
       <div className="grid sm:grid-cols-2 gap-3">
         {data.dailyGoal && (
-          <div className="bg-purple-50 rounded-2xl px-4 py-3">
-            <p className="text-xs font-bold text-purple-600 mb-0.5">📅 Mục tiêu hôm nay</p>
+          <div className="bg-cherry-50 rounded-2xl px-4 py-3">
+            <p className="text-xs font-bold text-cherry-600 mb-0.5">📅 Mục tiêu hôm nay</p>
             <p className="text-sm font-semibold text-gray-800">{data.dailyGoal}</p>
           </div>
         )}
@@ -780,9 +780,9 @@ export function AIDashboard({ userId }: Props) {
   }, [])
 
   return (
-    <div className="bg-white rounded-4xl border-2 border-purple-100 overflow-hidden shadow-sm">
+    <div className="bg-white rounded-4xl border-2 border-cherry-100 overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-700 via-purple-600 to-teal-500 p-5 text-white">
+      <div className="bg-gradient-to-r from-cherry-700 via-cherry-600 to-teal-500 p-5 text-white">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
             <Brain size={22} />
@@ -863,8 +863,8 @@ export function AIDashboard({ userId }: Props) {
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 px-2 py-3 text-xs font-bold transition-all border-b-2 whitespace-nowrap ${
               activeTab === tab.id
-                ? 'border-purple-600 text-purple-700 bg-purple-50'
-                : 'border-transparent text-gray-400 hover:text-purple-500 hover:bg-gray-50'
+                ? 'border-cherry-600 text-cherry-700 bg-cherry-50'
+                : 'border-transparent text-gray-400 hover:text-cherry-500 hover:bg-gray-50'
             }`}
           >
             <span className="text-base">{tab.emoji}</span>

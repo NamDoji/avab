@@ -50,7 +50,7 @@ interface StudentsTableProps {
 
 function Avatar({ name, size = 36 }: { name: string | null; size?: number }) {
   const letter = name ? name.trim()[0]?.toUpperCase() ?? '?' : '?'
-  const colors = ['#0f766e', '#0369a1', '#7c3aed', '#db2777', '#ea580c', '#65a30d']
+  const colors = ['#0f766e', '#0369a1', '#951F3D', '#db2777', '#ea580c', '#65a30d']
   const color = colors[(letter.charCodeAt(0) ?? 0) % colors.length]
   return (
     <div
@@ -239,7 +239,7 @@ function NotifyModal({
             <div className="text-5xl mb-3">✅</div>
             <p className="font-black text-gray-900 text-lg mb-1">Đã gửi!</p>
             <p className="text-sm text-gray-500">Thông báo đến <strong>{count}</strong> học sinh</p>
-            <button onClick={onClose} className="mt-5 px-6 py-2.5 rounded-xl font-bold text-white text-sm" style={{ background: 'linear-gradient(135deg,#4f46e5,#7c3aed)' }}>
+            <button onClick={onClose} className="mt-5 px-6 py-2.5 rounded-xl font-bold text-white text-sm" style={{ background: 'linear-gradient(135deg,#4f46e5,#951F3D)' }}>
               Đóng
             </button>
           </div>
@@ -249,7 +249,7 @@ function NotifyModal({
               <label className="text-xs font-bold text-gray-600 uppercase mb-1 block">Loại thông báo</label>
               <div className="flex gap-2 flex-wrap">
                 {[{v:'INFO',l:'📢 Thông báo'},{v:'WARNING',l:'⚠️ Cảnh báo'},{v:'SUCCESS',l:'✅ Khen thưởng'}].map(t => (
-                  <button key={t.v} onClick={() => setType(t.v)} className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${type===t.v ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>{t.l}</button>
+                  <button key={t.v} onClick={() => setType(t.v)} className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${type===t.v ? 'border-cherry-400 bg-cherry-50 text-cherry-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>{t.l}</button>
                 ))}
               </div>
             </div>
@@ -259,7 +259,7 @@ function NotifyModal({
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="Tiêu đề thông báo..."
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cherry-400"
               />
             </div>
             <div className="mb-4">
@@ -269,7 +269,7 @@ function NotifyModal({
                 value={message}
                 onChange={e => setMessage(e.target.value)}
                 placeholder="Nhập nội dung thông báo..."
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-400 resize-none"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cherry-400 resize-none"
               />
             </div>
             <div className="flex gap-2">
@@ -278,7 +278,7 @@ function NotifyModal({
                 onClick={handleSend}
                 disabled={!message.trim() || loading}
                 className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ background: 'linear-gradient(135deg,#4f46e5,#7c3aed)' }}
+                style={{ background: 'linear-gradient(135deg,#4f46e5,#951F3D)' }}
               >
                 {loading ? '⏳ Đang gửi...' : '📢 Gửi thông báo'}
               </button>

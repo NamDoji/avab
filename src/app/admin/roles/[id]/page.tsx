@@ -17,8 +17,8 @@ const LEVEL_LABELS: Record<string, string> = {
 const COLOR_CLASS: Record<string, string> = {
   red:     'bg-red-100 text-red-700',
   orange:  'bg-orange-100 text-orange-700',
-  purple:  'bg-purple-100 text-purple-700',
-  indigo:  'bg-indigo-100 text-indigo-700',
+  purple:  'bg-cherry-100 text-cherry-700',
+  indigo:  'bg-cherry-100 text-cherry-700',
   blue:    'bg-blue-100 text-blue-700',
   cyan:    'bg-cyan-100 text-cyan-700',
   teal:    'bg-teal-100 text-teal-700',
@@ -108,10 +108,10 @@ export default async function RoleDetailPage({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white py-10">
+      <div className="relative overflow-hidden bg-gradient-to-br from-cherry-600 via-cherry-600 to-cherry-700 text-white py-10">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <p className="text-violet-200 text-sm mb-3">
+          <p className="text-cherry-200 text-sm mb-3">
             <Link href="/admin" className="hover:text-white">Admin</Link>
             {' / '}
             <Link href="/admin/roles" className="hover:text-white">Roles</Link>
@@ -124,18 +124,18 @@ export default async function RoleDetailPage({
               <span className={`text-sm font-bold px-3 py-1 rounded-full ${badgeClass}`}>{role.color}</span>
               <div>
                 <h1 className="text-3xl font-black">{role.name}</h1>
-                <p className="text-violet-200 text-sm font-mono mt-0.5">{role.slug}</p>
+                <p className="text-cherry-200 text-sm font-mono mt-0.5">{role.slug}</p>
               </div>
             </div>
             <div className="flex gap-3">
               <Link href={`/admin/roles/${id}/edit`}
-                className="bg-white text-violet-700 hover:bg-violet-50 font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm">
+                className="bg-white text-cherry-700 hover:bg-cherry-50 font-bold px-4 py-2 rounded-xl text-sm transition-all shadow-sm">
                 ✏️ Sửa Role
               </Link>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4 mt-4 text-sm text-violet-200">
+          <div className="flex flex-wrap gap-4 mt-4 text-sm text-cherry-200">
             <span>
               <strong className="text-white">{LEVEL_LABELS[role.level] ?? role.level}</strong>
             </span>

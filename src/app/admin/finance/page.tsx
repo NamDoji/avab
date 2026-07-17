@@ -209,11 +209,11 @@ export default async function FinanceDashboardPage() {
           </div>
 
           {/* Card 3: Tổng thu toàn thời gian */}
-          <div className="rounded-3xl p-6 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}>
-            <p className="text-xs font-semibold text-purple-200 uppercase tracking-wide mb-1">📊 Tổng thu toàn bộ</p>
+          <div className="rounded-3xl p-6 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}>
+            <p className="text-xs font-semibold text-cherry-200 uppercase tracking-wide mb-1">📊 Tổng thu toàn bộ</p>
             <p className="text-2xl font-black leading-tight">{fmtVND(totalPaidAmt)}</p>
             <div className="mt-3">
-              <span className="text-xs text-purple-200">
+              <span className="text-xs text-cherry-200">
                 Tổng hóa đơn: {fmtVND(grandTotal)}
               </span>
             </div>
@@ -403,7 +403,7 @@ export default async function FinanceDashboardPage() {
             <Link
               href="/admin/finance/cashflow"
               className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
-              style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #29050F 0%, #4338ca 100%)' }}
             >
               <span className="text-2xl">📈</span>
               <span>Dòng tiền</span>
@@ -411,7 +411,7 @@ export default async function FinanceDashboardPage() {
             <Link
               href="/admin/finance/reports"
               className="flex flex-col items-center gap-2 px-4 py-4 rounded-2xl font-bold text-sm text-white hover:opacity-90 transition shadow-sm text-center"
-              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
             >
               <span className="text-2xl">📊</span>
               <span>Báo cáo</span>

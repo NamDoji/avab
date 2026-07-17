@@ -42,7 +42,7 @@ function PrintButton() {
       className="no-print"
       style={{
         padding: '10px 24px', borderRadius: 10, border: 'none',
-        background: 'linear-gradient(135deg,#7c3aed,#2563eb)',
+        background: 'linear-gradient(135deg,#951F3D,#2563eb)',
         color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer',
         display: 'inline-flex', alignItems: 'center', gap: 8,
       }}
@@ -125,7 +125,7 @@ export default async function ReportPage({
 
   // KPIs
   const kpis = [
-    { label: 'Học sinh',          value: fmtNum(students),       icon: '🎓', color: '#7c3aed', bg: '#f5f3ff' },
+    { label: 'Học sinh',          value: fmtNum(students),       icon: '🎓', color: '#951F3D', bg: '#FFF7F9' },
     { label: 'Doanh thu',         value: fmtVND(revenue) + ' ₫', icon: '💰', color: '#16a34a', bg: '#f0fdf4' },
     { label: 'Khóa học',          value: fmtNum(courses),        icon: '📚', color: '#2563eb', bg: '#eff6ff' },
     { label: 'Tỷ lệ chuyển đổi', value: convRate + '%',          icon: '📈', color: '#d97706', bg: '#fffbeb' },
@@ -153,7 +153,7 @@ export default async function ReportPage({
           h1 { font-size: 22px; font-weight: 900; }
           h2 { font-size: 15px; font-weight: 800; margin-bottom: 12px; color: #374151; }
           table { width: 100%; border-collapse: collapse; font-size: 13px; }
-          th { background: #7c3aed; color: #fff; padding: 9px 12px; text-align: left; font-weight: 700; font-size: 12px; }
+          th { background: #951F3D; color: #fff; padding: 9px 12px; text-align: left; font-weight: 700; font-size: 12px; }
           td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; }
           tr:nth-child(even) td { background: #fafafa; }
           .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
@@ -163,11 +163,11 @@ export default async function ReportPage({
           .kpi .lbl  { font-size: 11px; font-weight: 600; margin-top: 2px; opacity: 0.8; }
           .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
           .header-brand { display: flex; align-items: center; gap: 12px; }
-          .badge { background: #7c3aed; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+          .badge { background: #951F3D; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
           .section { margin-bottom: 28px; }
           .meta { color: #6b7280; font-size: 12px; }
           .bar-wrap { background: #f3f4f6; border-radius: 4px; height: 8px; width: 80px; display: inline-block; vertical-align: middle; }
-          .bar-fill { background: #7c3aed; height: 8px; border-radius: 4px; }
+          .bar-fill { background: #951F3D; height: 8px; border-radius: 4px; }
           .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
         `}</style>
       </head>
@@ -176,7 +176,7 @@ export default async function ReportPage({
 
           {/* ── Top nav (no-print) ──────────────────────────────────── */}
           <div className="no-print" style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Link href="/admin/analytics" style={{ color: '#7c3aed', fontWeight: 700, textDecoration: 'none' }}>
+            <Link href="/admin/analytics" style={{ color: '#951F3D', fontWeight: 700, textDecoration: 'none' }}>
               ← Analytics
             </Link>
             <span style={{ color: '#d1d5db' }}>|</span>
@@ -187,7 +187,7 @@ export default async function ReportPage({
                 href={`/admin/analytics/report?period=${p}`}
                 style={{
                   padding: '6px 14px', borderRadius: 8, fontWeight: 700, fontSize: 13,
-                  background: period === p ? '#7c3aed' : '#f3f4f6',
+                  background: period === p ? '#951F3D' : '#f3f4f6',
                   color: period === p ? '#fff' : '#6b7280',
                   textDecoration: 'none',
                 }}
@@ -204,7 +204,7 @@ export default async function ReportPage({
             <div className="header-brand">
               <div style={{
                 width: 48, height: 48, borderRadius: 12,
-                background: 'linear-gradient(135deg,#7c3aed,#2563eb)',
+                background: 'linear-gradient(135deg,#951F3D,#2563eb)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: '#fff', fontWeight: 900, fontSize: 18,
               }}>A</div>
@@ -281,7 +281,7 @@ export default async function ReportPage({
                   const pct = Math.round((c._count.enrollments / Math.max(max, 1)) * 100)
                   return (
                     <tr key={c.id}>
-                      <td style={{ fontWeight: 700, color: '#7c3aed' }}>{i + 1}</td>
+                      <td style={{ fontWeight: 700, color: '#951F3D' }}>{i + 1}</td>
                       <td>{c.name}</td>
                       <td><code style={{ fontSize: 11, background: '#f3f4f6', padding: '1px 6px', borderRadius: 4 }}>{c.code}</code></td>
                       <td>{fmtNum(c._count.enrollments)}</td>
@@ -369,7 +369,7 @@ export default async function ReportPage({
                       <td style={{ fontWeight: 800, fontSize: 16 }}>{medals[i] ?? `#${i + 1}`}</td>
                       <td>{s.user?.name ?? '—'}</td>
                       <td>
-                        <span className="pill" style={{ background: '#f5f3ff', color: '#7c3aed' }}>
+                        <span className="pill" style={{ background: '#FFF7F9', color: '#951F3D' }}>
                           Lv.{s.level}
                         </span>
                       </td>

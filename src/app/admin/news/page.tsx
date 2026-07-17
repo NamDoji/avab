@@ -132,17 +132,17 @@ export default function AdminNewsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Link href="/admin" className="text-gray-400 hover:text-purple-600 transition">
+            <Link href="/admin" className="text-gray-400 hover:text-cherry-600 transition">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <Newspaper className="w-6 h-6 text-purple-600" />
+              <Newspaper className="w-6 h-6 text-cherry-600" />
               Quản lý tin tức
             </h1>
           </div>
           <button
             onClick={openCreate}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition"
+            className="flex items-center gap-2 bg-cherry-600 hover:bg-cherry-700 text-white px-4 py-2.5 rounded-lg font-semibold text-sm transition"
           >
             <Plus className="w-4 h-4" />
             Tạo bài viết
@@ -151,7 +151,7 @@ export default function AdminNewsPage() {
 
         {/* Create / Edit Form */}
         {showForm && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-purple-100">
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border-2 border-cherry-100">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-gray-800">
                 {editingId ? 'Chỉnh sửa bài viết' : 'Tạo bài viết mới'}
@@ -178,7 +178,7 @@ export default function AdminNewsPage() {
                   placeholder="Nhập tiêu đề bài viết"
                   value={form.title}
                   onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -190,7 +190,7 @@ export default function AdminNewsPage() {
                   placeholder="Tóm tắt ngắn gọn bài viết (tuỳ chọn)"
                   value={form.summary}
                   onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   rows={2}
                 />
               </div>
@@ -204,7 +204,7 @@ export default function AdminNewsPage() {
                   placeholder="Nội dung đầy đủ của bài viết..."
                   value={form.content}
                   onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400 font-mono text-sm"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400 font-mono text-sm"
                   rows={10}
                 />
               </div>
@@ -218,7 +218,7 @@ export default function AdminNewsPage() {
                   placeholder="https://... (tuỳ chọn)"
                   value={form.thumbnail}
                   onChange={(e) => setForm((f) => ({ ...f, thumbnail: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -230,7 +230,7 @@ export default function AdminNewsPage() {
                     onChange={(e) => setForm((f) => ({ ...f, isPublished: e.target.checked }))}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-400 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cherry-400 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cherry-600"></div>
                 </label>
                 <span className="text-sm font-medium text-gray-700">
                   {form.isPublished ? 'Đã xuất bản' : 'Nháp'}
@@ -241,7 +241,7 @@ export default function AdminNewsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg py-2.5 font-semibold transition"
+                  className="flex-1 bg-cherry-600 hover:bg-cherry-700 disabled:bg-cherry-300 text-white rounded-lg py-2.5 font-semibold transition"
                 >
                   {saving ? 'Đang lưu...' : editingId ? 'Cập nhật' : 'Đăng bài'}
                 </button>
@@ -306,7 +306,7 @@ export default function AdminNewsPage() {
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => openEdit(article)}
-                          className="p-1.5 text-gray-400 hover:text-purple-600 transition"
+                          className="p-1.5 text-gray-400 hover:text-cherry-600 transition"
                           title="Chỉnh sửa"
                         >
                           <Edit className="w-4 h-4" />

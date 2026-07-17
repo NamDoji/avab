@@ -98,7 +98,7 @@ function makeCppHTML(starterCode: string, stdinVal: string = '') {
   return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Courier New',monospace;background:#0d1117;color:#e6edf3;height:100vh;display:flex;flex-direction:column}
 #tb{background:#161b22;padding:6px 10px;display:flex;gap:6px;align-items:center;border-bottom:1px solid #30363d;flex-shrink:0}
-.btn{background:#7c3aed;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:13px}.btn:hover{background:#6d28d9}
+.btn{background:#951F3D;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:13px}.btn:hover{background:#7B1933}
 .btn-g{background:#374151}.btn-g:hover{background:#4b5563}
 #lbl{color:#c084fc;font-weight:bold;font-size:13px;flex:1}
 #code{flex:1;background:#0d1117;color:#e6edf3;border:none;padding:12px;font-family:'Courier New',monospace;font-size:14px;resize:none;outline:none;line-height:1.7;min-height:0}
@@ -138,7 +138,7 @@ const ROBOT_HTML = `<!DOCTYPE html><html><head><meta charset="utf-8">
 h2{text-align:center;color:#92400e;padding:8px 0 2px;font-size:15px;flex-shrink:0}
 #tb{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;padding:6px;background:#fde68a;border-bottom:2px solid #f59e0b;flex-shrink:0}
 .cmd{background:#3b82f6;color:#fff;border:none;border-radius:10px;padding:7px 11px;font-size:13px;font-weight:bold;cursor:grab;user-select:none;touch-action:none;box-shadow:0 2px 4px #0003}
-.cmd.rep{background:#8b5cf6}.cmd.iif{background:#ec4899}.cmd.stp{background:#ef4444}
+.cmd.rep{background:#BE3659}.cmd.iif{background:#ec4899}.cmd.stp{background:#ef4444}
 #prog{min-height:50px;background:#fff;border:2px dashed #f59e0b;border-radius:10px;margin:5px;padding:5px;display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start;flex-shrink:0}
 #prog.over{background:#fef3c7}
 .slot{position:relative;display:inline-flex;align-items:center}
@@ -181,7 +181,7 @@ function add(cmd){if(!cmd)return;const ph=document.getElementById('ph');if(ph)ph
   const slot=document.createElement('div');slot.className='slot';
   const btn=document.createElement('button');btn.textContent='×';btn.onclick=()=>slot.remove();
   const tag=document.createElement('div');tag.className='cmd';tag.textContent=cmd;tag.style.cursor='default';tag.style.fontSize='12px';
-  if(cmd.startsWith('🔁'))tag.style.background='#8b5cf6';
+  if(cmd.startsWith('🔁'))tag.style.background='#BE3659';
   if(cmd.startsWith('🛑'))tag.style.background='#ef4444';
   slot.append(btn,tag);prog.appendChild(slot);}
 function clear_(){prog.innerHTML='<span id="ph" style="color:#9ca3af;font-size:12px;padding:2px">👆 Kéo lệnh vào đây...</span>';rb={x:0,y:4};draw();msg('Giúp 🤖 đến 🏫!','#92400e');}
@@ -238,7 +238,7 @@ function ScratchPanel() {
             <ExternalLink className="w-4 h-4" /> Mở Scratch.mit.edu
           </a>
           <a href="https://turbowarp.org/" target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-3 bg-purple-500 hover:bg-purple-600 text-white font-black rounded-2xl transition">
+            className="flex items-center justify-center gap-2 py-3 bg-cherry-500 hover:bg-cherry-600 text-white font-black rounded-2xl transition">
             <ExternalLink className="w-4 h-4" /> Mở TurboWarp
           </a>
         </div>
@@ -276,11 +276,11 @@ function ProblemPanel({
   useEffect(() => { onSelectProblem(q); setShowHint(false); setShowAns(false) }, [qi])
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl border-2 border-purple-100 overflow-hidden shadow-sm">
+    <div className="flex flex-col h-full bg-white rounded-2xl border-2 border-cherry-100 overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100 flex-shrink-0 bg-purple-50">
-        <Code2 className="w-4 h-4 text-purple-600" />
-        <span className="text-sm font-black text-purple-700">Bài tập thực hành ({problems.length} bài)</span>
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100 flex-shrink-0 bg-cherry-50">
+        <Code2 className="w-4 h-4 text-cherry-600" />
+        <span className="text-sm font-black text-cherry-700">Bài tập thực hành ({problems.length} bài)</span>
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0">
@@ -290,16 +290,16 @@ function ProblemPanel({
             <div className="flex gap-1 flex-wrap">
               {problems.map((_, i) => (
                 <button key={i} onClick={() => setQi(i)}
-                  className={`w-8 h-8 rounded-lg text-xs font-bold transition ${i === qi ? 'bg-purple-600 text-white shadow' : 'bg-gray-100 text-gray-600 hover:bg-purple-100'}`}>
+                  className={`w-8 h-8 rounded-lg text-xs font-bold transition ${i === qi ? 'bg-cherry-600 text-white shadow' : 'bg-gray-100 text-gray-600 hover:bg-cherry-100'}`}>
                   {i + 1}
                 </button>
               ))}
             </div>
 
             {/* Problem statement */}
-            <div className="bg-purple-50 rounded-xl p-3 border border-purple-100">
+            <div className="bg-cherry-50 rounded-xl p-3 border border-cherry-100">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full font-bold">Bài {qi + 1}</span>
+                <span className="text-xs bg-cherry-200 text-cherry-800 px-2 py-0.5 rounded-full font-bold">Bài {qi + 1}</span>
                 <span className="text-sm font-black text-gray-800">{q?.title}</span>
               </div>
               <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{q?.description}</p>
@@ -339,7 +339,7 @@ function ProblemPanel({
                 <ChevronLeft className="w-3.5 h-3.5" /> Bài trước
               </button>
               <button onClick={() => setQi(i => Math.min(problems.length-1, i+1))} disabled={qi === problems.length-1}
-                className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs disabled:opacity-30 hover:bg-purple-700 transition">
+                className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-cherry-600 text-white font-bold text-xs disabled:opacity-30 hover:bg-cherry-700 transition">
                 Bài tiếp <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -390,9 +390,9 @@ export function IDETab({ courseType, subjectName, questions = [], theoryContent,
 
       {/* Toolbar */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        <Code2 className="w-4 h-4 text-purple-600" />
+        <Code2 className="w-4 h-4 text-cherry-600" />
         <span className="font-black text-gray-800 text-sm">{label[courseType] ?? '💻 IDE'}</span>
-        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full hidden sm:inline">{subjectName}</span>
+        <span className="text-xs bg-cherry-100 text-cherry-700 px-2 py-0.5 rounded-full hidden sm:inline">{subjectName}</span>
       </div>
 
       {/* Layout: bài tập + lý thuyết trên, IDE dưới */}

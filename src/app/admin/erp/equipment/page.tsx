@@ -7,7 +7,7 @@ export const metadata = { title: 'Thiết bị & Tài sản — School ERP' }
 
 const CATEGORY_LABELS: Record<string, { label: string; icon: string; bg: string; color: string }> = {
   computer:  { label: 'Máy tính',     icon: '💻', bg: '#eff6ff', color: '#1d4ed8' },
-  projector: { label: 'Máy chiếu',    icon: '📽️', bg: '#faf5ff', color: '#7c3aed' },
+  projector: { label: 'Máy chiếu',    icon: '📽️', bg: '#FFF7F9', color: '#951F3D' },
   furniture: { label: 'Nội thất',     icon: '🪑', bg: '#fff7ed', color: '#c2410c' },
   lab:       { label: 'Thiết bị PTN', icon: '🔬', bg: '#f0fdf4', color: '#15803d' },
   other:     { label: 'Khác',         icon: '📦', bg: '#f8fafc', color: '#475569' },
@@ -53,7 +53,7 @@ export default async function EquipmentPage() {
           style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%, -50%)' }}
         />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-indigo-100 text-sm mb-1">
+          <div className="flex items-center gap-2 text-cherry-100 text-sm mb-1">
             <Link href="/admin/erp" className="hover:text-white transition-colors">School ERP</Link>
             <span>/</span>
             <span>Thiết bị & Tài sản</span>
@@ -61,7 +61,7 @@ export default async function EquipmentPage() {
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black mb-1">💻 Thiết bị & Tài sản</h1>
-              <p className="text-indigo-100 text-sm">Quản lý trang thiết bị, tài sản nhà trường</p>
+              <p className="text-cherry-100 text-sm">Quản lý trang thiết bị, tài sản nhà trường</p>
             </div>
             <Link
               href="/api/admin/erp/equipment"
@@ -75,21 +75,21 @@ export default async function EquipmentPage() {
           <div className="flex flex-wrap gap-6 sm:gap-8 mt-5">
             <div>
               <div className="text-3xl font-black">{totalQty}</div>
-              <div className="text-xs text-indigo-100">Tổng số lượng</div>
+              <div className="text-xs text-cherry-100">Tổng số lượng</div>
             </div>
             <div>
               <div className="text-3xl font-black text-green-300">{totalActive}</div>
-              <div className="text-xs text-indigo-100">Đang hoạt động</div>
+              <div className="text-xs text-cherry-100">Đang hoạt động</div>
             </div>
             {totalMaintenance > 0 && (
               <div>
                 <div className="text-3xl font-black text-yellow-300">{totalMaintenance}</div>
-                <div className="text-xs text-indigo-100">Đang bảo trì</div>
+                <div className="text-xs text-cherry-100">Đang bảo trì</div>
               </div>
             )}
             <div>
               <div className="text-3xl font-black">{Object.keys(byCategory).length}</div>
-              <div className="text-xs text-indigo-100">Danh mục</div>
+              <div className="text-xs text-cherry-100">Danh mục</div>
             </div>
           </div>
         </div>

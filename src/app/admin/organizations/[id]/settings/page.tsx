@@ -13,7 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
 }
 const TYPE_COLORS: Record<string, string> = {
   SCHOOL: '#2563eb',
-  CENTER: '#7c3aed',
+  CENTER: '#951F3D',
   CHAIN:  '#059669',
 }
 
@@ -100,7 +100,7 @@ export default async function OrgSettingsPage({
             ) : (
               <div
                 className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-xl border-2 border-white/20"
-                style={{ background: TYPE_COLORS[org.type] ?? '#7c3aed' }}
+                style={{ background: TYPE_COLORS[org.type] ?? '#951F3D' }}
               >
                 {org.name.slice(0, 2).toUpperCase()}
               </div>
@@ -111,7 +111,7 @@ export default async function OrgSettingsPage({
                 <h1 className="text-3xl font-black">{org.name}</h1>
                 <span
                   className="text-xs font-bold px-2 py-0.5 rounded-full text-white"
-                  style={{ background: TYPE_COLORS[org.type] ?? '#7c3aed' }}
+                  style={{ background: TYPE_COLORS[org.type] ?? '#951F3D' }}
                 >
                   {TYPE_LABELS[org.type] ?? org.type}
                 </span>

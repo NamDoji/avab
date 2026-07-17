@@ -85,7 +85,7 @@ export default async function HRMStaffPage({ searchParams }: { searchParams: Sea
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-purple-200 text-sm font-semibold mb-3">
+          <div className="flex items-center gap-2 text-cherry-200 text-sm font-semibold mb-3">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
             <span>›</span>
             <Link href="/admin/hrm" className="hover:text-white transition-colors">HRM</Link>
@@ -96,7 +96,7 @@ export default async function HRMStaffPage({ searchParams }: { searchParams: Sea
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-black mb-1">👥 Danh sách nhân viên</h1>
-              <p className="text-purple-100 text-sm">
+              <p className="text-cherry-100 text-sm">
                 {totalCount} nhân viên · {adminCount} Admin · {teacherCount} Giáo viên
               </p>
             </div>
@@ -104,7 +104,7 @@ export default async function HRMStaffPage({ searchParams }: { searchParams: Sea
               <StaffImportWrapper />
               <Link
                 href="/admin/users"
-                className="flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-4 py-2.5 text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm"
+                className="flex items-center gap-2 bg-cherry-600 text-white rounded-2xl px-4 py-2.5 text-sm font-bold hover:bg-cherry-700 transition-colors shadow-sm"
               >
                 <span>+</span> Thêm nhân viên
               </Link>
@@ -116,10 +116,10 @@ export default async function HRMStaffPage({ searchParams }: { searchParams: Sea
       <div className="container-custom py-8">
         {/* ── Stats badges ── */}
         <div className="flex gap-3 mb-6 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 bg-purple-50 border border-purple-200 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 bg-cherry-50 border border-cherry-200 text-cherry-700 text-xs font-bold px-3 py-1.5 rounded-full">
             👥 {totalCount} nhân viên
           </span>
-          <span className="inline-flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 bg-cherry-50 border border-cherry-200 text-cherry-700 text-xs font-bold px-3 py-1.5 rounded-full">
             🛡️ {adminCount} Admin
           </span>
           <span className="inline-flex items-center gap-1.5 bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold px-3 py-1.5 rounded-full">

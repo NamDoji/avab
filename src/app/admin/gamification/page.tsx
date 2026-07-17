@@ -69,7 +69,7 @@ async function getGamificationData() {
 function MissionTypeBadge({ type }: { type: string }) {
   const config: Record<string, { label: string; classes: string }> = {
     daily:       { label: 'Hàng ngày',  classes: 'bg-blue-100 text-blue-700' },
-    weekly:      { label: 'Hàng tuần',  classes: 'bg-purple-100 text-purple-700' },
+    weekly:      { label: 'Hàng tuần',  classes: 'bg-cherry-100 text-cherry-700' },
     achievement: { label: 'Thành tựu',  classes: 'bg-amber-100 text-amber-700' },
   }
   const cfg = config[type] ?? { label: type, classes: 'bg-gray-100 text-gray-600' }
@@ -125,8 +125,8 @@ export default async function AdminGamificationPage() {
             {[
               { icon: <Zap className="w-5 h-5 text-yellow-500" />,   label: 'Tổng XP phát ra',   value: totalXP.toLocaleString(),          sub: 'XP' },
               { icon: <Medal className="w-5 h-5 text-amber-500" />,  label: 'Badges đã trao',    value: badgesEarned.toLocaleString(),     sub: 'lần trao' },
-              { icon: <Target className="w-5 h-5 text-purple-500" />,label: 'Missions hoàn thành',value: missionsCompleted.toLocaleString(), sub: 'missions' },
-              { icon: <Trophy className="w-5 h-5 text-indigo-500" />,label: 'Loại badge',         value: totalBadges.toString(),            sub: 'loại' },
+              { icon: <Target className="w-5 h-5 text-cherry-500" />,label: 'Missions hoàn thành',value: missionsCompleted.toLocaleString(), sub: 'missions' },
+              { icon: <Trophy className="w-5 h-5 text-cherry-500" />,label: 'Loại badge',         value: totalBadges.toString(),            sub: 'loại' },
               { icon: <Users className="w-5 h-5 text-teal-500" />,   label: 'Loại mission',       value: totalMissions.toString(),          sub: 'loại' },
             ].map((card) => (
               <div key={card.label} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
@@ -170,7 +170,7 @@ export default async function AdminGamificationPage() {
                         {badge.description ?? '—'}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <span className="font-black text-purple-600">{badge._count.userBadges}</span>
+                        <span className="font-black text-cherry-600">{badge._count.userBadges}</span>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <span className="font-bold text-yellow-600">+{badge.xpReward}</span>
@@ -281,7 +281,7 @@ export default async function AdminGamificationPage() {
                        : <span className="text-sm font-black text-gray-400">#{idx + 1}</span>}
                     </div>
                     {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-white font-black text-base shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cherry-400 to-cherry-500 flex items-center justify-center text-white font-black text-base shrink-0">
                       {stat.user.name?.[0] ?? '?'}
                     </div>
                     {/* Info */}
@@ -290,7 +290,7 @@ export default async function AdminGamificationPage() {
                       <p className="text-xs text-gray-400">{stat.user.phone}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden max-w-[120px]">
-                          <div className="h-full bg-gradient-to-r from-purple-400 to-indigo-500 rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-gradient-to-r from-cherry-400 to-cherry-500 rounded-full" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="text-[10px] text-gray-400">Lv.{level}</span>
                       </div>
@@ -334,7 +334,7 @@ export default async function AdminGamificationPage() {
               <p className="text-white/70 text-xs mt-0.5">Leaderboard học viên</p>
             </Link>
             <Link href="/hoc-vien/gamification" target="_blank"
-              className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl p-4 hover:scale-[1.01] transition-transform shadow-sm">
+              className="bg-gradient-to-br from-cherry-500 to-cherry-600 text-white rounded-2xl p-4 hover:scale-[1.01] transition-transform shadow-sm">
               <div className="text-2xl mb-1.5">🎮</div>
               <h3 className="font-black text-sm">Preview học viên</h3>
               <p className="text-white/70 text-xs mt-0.5">Trang Thành tích</p>

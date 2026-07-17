@@ -8,7 +8,7 @@ import PageHeader from '@/components/admin/PageHeader'
 export const metadata = { title: 'HRM — Nhân sự — AvaB Admin' }
 
 const HRM_MODULES = [
-  { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công',    color: '#7c3aed', badge: null },
+  { href: '/admin/hrm/staff',      icon: '👥', label: 'Nhân viên',  desc: 'Hồ sơ, phân công',    color: '#951F3D', badge: null },
   { href: '/admin/hrm/contracts',  icon: '📄', label: 'Hợp đồng',  desc: 'HĐLĐ, theo dõi',       color: '#4f46e5', badge: 'expiringContracts' },
   { href: '/admin/hrm/attendance', icon: '⏰', label: 'Chấm công',  desc: 'Check-in/out',          color: '#0369a1', badge: null },
   { href: '/admin/hrm/kpi',        icon: '📊', label: 'KPI & OKR', desc: 'Mục tiêu, đánh giá',   color: '#059669', badge: null },
@@ -55,8 +55,8 @@ export default async function HRMPage() {
           <p className="text-sm font-bold text-gray-700 mb-3">📊 Tổng quan nhân sự</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { icon: '👤', label: 'Tổng nhân viên', value: totalStaff,   gradient: 'from-purple-500 to-violet-600' },
-              { icon: '🛡️', label: 'Quản trị viên',  value: adminCount,   gradient: 'from-indigo-500 to-blue-600' },
+              { icon: '👤', label: 'Tổng nhân viên', value: totalStaff,   gradient: 'from-cherry-500 to-cherry-600' },
+              { icon: '🛡️', label: 'Quản trị viên',  value: adminCount,   gradient: 'from-cherry-500 to-blue-600' },
               { icon: '👨‍🏫', label: 'Giáo viên',     value: teacherCount, gradient: 'from-teal-500 to-emerald-600' },
             ].map((stat) => (
               <div
@@ -87,7 +87,7 @@ export default async function HRMPage() {
                 <Link
                   key={mod.href}
                   href={mod.href}
-                  className="group bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 transition-all flex flex-col gap-3 relative"
+                  className="group bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-cherry-200 transition-all flex flex-col gap-3 relative"
                 >
                   {badgeCount > 0 && (
                     <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-black rounded-full w-5 h-5 flex items-center justify-center">
@@ -101,7 +101,7 @@ export default async function HRMPage() {
                     {mod.icon}
                   </div>
                   <div>
-                    <h2 className="font-black text-gray-900 group-hover:text-purple-700 transition-colors">{mod.label}</h2>
+                    <h2 className="font-black text-gray-900 group-hover:text-cherry-700 transition-colors">{mod.label}</h2>
                     <p className="text-gray-400 text-xs mt-0.5">{mod.desc}</p>
                   </div>
                   <div className="mt-auto text-xs font-bold" style={{ color: mod.color }}>
@@ -117,13 +117,13 @@ export default async function HRMPage() {
         <div className="flex gap-3 flex-wrap">
           <Link
             href="/admin/hrm/staff"
-            className="flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-5 py-3 text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-cherry-600 text-white rounded-2xl px-5 py-3 text-sm font-bold hover:bg-cherry-700 transition-colors shadow-sm"
           >
             <span>👥</span> Danh sách nhân viên
           </Link>
           <Link
             href="/admin/users"
-            className="flex items-center gap-2 bg-white text-gray-700 rounded-2xl px-5 py-3 text-sm font-bold border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all shadow-sm"
+            className="flex items-center gap-2 bg-white text-gray-700 rounded-2xl px-5 py-3 text-sm font-bold border border-gray-200 hover:border-cherry-300 hover:bg-cherry-50 transition-all shadow-sm"
           >
             <span>🔗</span> Tất cả người dùng
           </Link>

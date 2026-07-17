@@ -20,7 +20,7 @@ export default async function DangKyThanhCongPage({ searchParams }: Props) {
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f3ff 0%, #eff6ff 100%)',
+        background: 'linear-gradient(135deg, #FFF7F9 0%, #eff6ff 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -61,20 +61,20 @@ export default async function DangKyThanhCongPage({ searchParams }: Props) {
           {/* Workspace URL box */}
           <div
             style={{
-              background: 'linear-gradient(135deg, #f5f3ff, #eff6ff)',
-              border: '2px solid #c4b5fd',
+              background: 'linear-gradient(135deg, #FFF7F9, #eff6ff)',
+              border: '2px solid #EF9AAF',
               borderRadius: 16,
               padding: '20px 24px',
               marginBottom: 28,
             }}
           >
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#7c3aed', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 1 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#951F3D', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 1 }}>
               🌐 Workspace URL
             </p>
-            <p style={{ fontSize: 18, fontWeight: 900, color: '#4c1d95', marginBottom: 4 }}>
+            <p style={{ fontSize: 18, fontWeight: 900, color: '#400B19', marginBottom: 4 }}>
               {workspaceUrl}
             </p>
-            <p style={{ fontSize: 12, color: '#8b5cf6' }}>Bookmark URL này để truy cập nhanh</p>
+            <p style={{ fontSize: 12, color: '#BE3659' }}>Bookmark URL này để truy cập nhanh</p>
           </div>
 
           {/* Credentials summary */}
@@ -99,7 +99,7 @@ export default async function DangKyThanhCongPage({ searchParams }: Props) {
               {slug && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                   <span style={{ color: '#6b7280' }}>Workspace slug</span>
-                  <strong style={{ color: '#7c3aed' }}>{slug}</strong>
+                  <strong style={{ color: '#951F3D' }}>{slug}</strong>
                 </div>
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
@@ -115,7 +115,7 @@ export default async function DangKyThanhCongPage({ searchParams }: Props) {
               href={loginUrl}
               style={{
                 display: 'block',
-                background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
+                background: 'linear-gradient(135deg, #951F3D, #2563eb)',
                 color: '#fff',
                 fontWeight: 800,
                 fontSize: 15,
@@ -150,7 +150,7 @@ export default async function DangKyThanhCongPage({ searchParams }: Props) {
         {/* Footer note */}
         <p style={{ textAlign: 'center', marginTop: 20, fontSize: 12, color: '#9ca3af' }}>
           Cần hỗ trợ?{' '}
-          <a href="mailto:support@avab.vn" style={{ color: '#7c3aed', fontWeight: 700 }}>
+          <a href="mailto:support@avab.vn" style={{ color: '#951F3D', fontWeight: 700 }}>
             support@avab.vn
           </a>
         </p>

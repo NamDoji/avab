@@ -133,8 +133,8 @@ const QUESTION_TYPE_BADGE: Record<string, string> = {
   MULTIPLE_CHOICE: 'bg-blue-100 text-blue-700',
   TRUE_FALSE: 'bg-green-100 text-green-700',
   MATCHING: 'bg-orange-100 text-orange-700',
-  ORDERING: 'bg-violet-100 text-violet-700',
-  MULTI_SELECT: 'bg-indigo-100 text-indigo-700',
+  ORDERING: 'bg-cherry-100 text-cherry-700',
+  MULTI_SELECT: 'bg-cherry-100 text-cherry-700',
   FILL_BLANK: 'bg-teal-100 text-teal-700',
   SHORT_ANSWER: 'bg-cyan-100 text-cyan-700',
   NUMBER_INPUT: 'bg-sky-100 text-sky-700',
@@ -850,7 +850,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
           {/* ── 3. BTVN (Parse file) ── */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="font-bold text-gray-800 mb-2 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-purple-600" />
+              <FileText className="w-5 h-5 text-cherry-600" />
               ✏️ Bài Tập Về Nhà (BTVN)
               <span className="text-xs font-normal text-gray-400 ml-1">— Upload file Word/PDF theo mẫu → tự động tách câu hỏi</span>
             </h2>
@@ -883,10 +883,10 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
             )}
 
             {/* Template download */}
-            <div className="bg-purple-50 border border-purple-200 rounded-lg px-4 py-3 mb-4 flex items-center justify-between flex-wrap gap-2">
-              <p className="text-xs text-purple-700 font-semibold">📋 Dùng đúng file mẫu để parse chính xác</p>
+            <div className="bg-cherry-50 border border-cherry-200 rounded-lg px-4 py-3 mb-4 flex items-center justify-between flex-wrap gap-2">
+              <p className="text-xs text-cherry-700 font-semibold">📋 Dùng đúng file mẫu để parse chính xác</p>
               <a href="/templates/mau-bai-tap-ve-nha.docx" download
-                className="flex items-center gap-1 bg-purple-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-700">
+                className="flex items-center gap-1 bg-cherry-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-cherry-700">
                 ⬇️ Tải mẫu BTVN (câu hỏi + đáp án + lời giải)
               </a>
             </div>
@@ -897,13 +897,13 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
               placeholder="Tên đề (VD: Đề 1 - So sánh thay thế)"
               value={setTitle}
               onChange={e => setSetTitle(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-purple-300"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-cherry-300"
             />
 
             <div className="flex gap-3 flex-wrap">
               <label className="flex-1 min-w-48">
                 <input type="file" accept=".docx,.pdf,.txt" onChange={e => setUploadFile(e.target.files?.[0] ?? null)} className="hidden" />
-                <div className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition ${uploadFile ? 'border-purple-400 bg-purple-50' : 'border-gray-200 hover:border-purple-300'}`}>
+                <div className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition ${uploadFile ? 'border-cherry-400 bg-cherry-50' : 'border-gray-200 hover:border-cherry-300'}`}>
                   <FileText className="w-7 h-7 mx-auto mb-1 text-gray-400" />
                   <p className="text-sm text-gray-500">{uploadFile ? uploadFile.name : 'Chọn file .docx / .pdf / .txt'}</p>
                 </div>
@@ -915,7 +915,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                 </button>
                 {parseResult && (
                   <button onClick={handleParseAndSave} disabled={saving}
-                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+                    className="bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
                     {saving ? 'Đang lưu...' : saveMode === 'replace' ? `🔄 Thay thế (${parseResult.parsed} câu)` : `💾 Tạo đề mới (${parseResult.parsed} câu)`}
                   </button>
                 )}
@@ -934,8 +934,8 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       onClick={() => { setSaveMode('new'); setReplaceSetId('') }}
                       className={`flex-1 min-w-28 px-3 py-2 rounded-lg text-sm font-semibold border-2 transition ${
                         saveMode === 'new'
-                          ? 'border-purple-500 bg-purple-50 text-purple-700'
-                          : 'border-gray-200 bg-white text-gray-600 hover:border-purple-300'
+                          ? 'border-cherry-500 bg-cherry-50 text-cherry-700'
+                          : 'border-gray-200 bg-white text-gray-600 hover:border-cherry-300'
                       }`}
                     >
                       ➕ Tạo đề mới
@@ -995,13 +995,13 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
 
                 {/* Các đề có HomeworkSet */}
                 {homeworkSets.map(set => (
-                  <div key={set.id} className="border border-purple-100 rounded-xl overflow-hidden">
+                  <div key={set.id} className="border border-cherry-100 rounded-xl overflow-hidden">
                     {/* Header card */}
-                    <div className="flex items-center justify-between px-4 py-3 bg-purple-50 hover:bg-purple-100 transition cursor-pointer"
+                    <div className="flex items-center justify-between px-4 py-3 bg-cherry-50 hover:bg-cherry-100 transition cursor-pointer"
                       onClick={() => setExpandedSets(prev => ({ ...prev, [set.id]: !prev[set.id] }))}>
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-purple-600 font-bold text-sm">📋 {set.title}</span>
-                        <span className="bg-purple-200 text-purple-800 text-xs font-bold px-2 py-0.5 rounded-full">
+                        <span className="text-cherry-600 font-bold text-sm">📋 {set.title}</span>
+                        <span className="bg-cherry-200 text-cherry-800 text-xs font-bold px-2 py-0.5 rounded-full">
                           {set._count.questions} câu
                         </span>
                       </div>
@@ -1109,13 +1109,13 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-gray-800 flex items-center gap-2">
-                <Plus className="w-5 h-5 text-purple-600" />
+                <Plus className="w-5 h-5 text-cherry-600" />
                 ➕ Thêm câu hỏi
               </h2>
               {!showQForm && (
                 <button
                   onClick={() => setShowQForm(true)}
-                  className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                  className="flex items-center gap-1.5 bg-cherry-600 hover:bg-cherry-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
                   <Plus className="w-4 h-4" /> Tạo câu hỏi mới
                 </button>
               )}
@@ -1135,7 +1135,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                         onClick={() => setQForm(f => ({ ...f, questionType: type, correctAnswer: '' }))}
                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition border ${
                           qForm.questionType === type
-                            ? 'bg-purple-600 text-white border-purple-600'
+                            ? 'bg-cherry-600 text-white border-cherry-600'
                             : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                         }`}>
                         {QUESTION_TYPE_LABELS[type]}
@@ -1153,7 +1153,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                     placeholder="Nhập nội dung câu hỏi..."
                     value={qForm.content}
                     onChange={e => setQForm(f => ({ ...f, content: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
 
@@ -1165,7 +1165,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       placeholder="https://..."
                       value={qForm.imageUrl}
                       onChange={e => setQForm(f => ({ ...f, imageUrl: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                   <div>
@@ -1176,7 +1176,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       required
                       value={qForm.points}
                       onChange={e => setQForm(f => ({ ...f, points: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                 </div>
@@ -1188,7 +1188,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                     placeholder="Giải thích đáp án..."
                     value={qForm.explanation}
                     onChange={e => setQForm(f => ({ ...f, explanation: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
 
@@ -1201,7 +1201,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       placeholder="Nhập đáp án..."
                       value={qForm.correctAnswer}
                       onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                 )}
@@ -1221,7 +1221,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                               value={key}
                               checked={qForm.correctAnswer === key}
                               onChange={() => setQForm(f => ({ ...f, correctAnswer: key }))}
-                              className="accent-purple-600 w-4 h-4 flex-shrink-0"
+                              className="accent-cherry-600 w-4 h-4 flex-shrink-0"
                             />
                             <span className="w-6 text-sm font-bold text-gray-600">{key}.</span>
                             <input
@@ -1229,7 +1229,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                               placeholder={`Lựa chọn ${key}`}
                               value={qForm[fieldKey]}
                               onChange={e => setQForm(f => ({ ...f, [fieldKey]: e.target.value }))}
-                              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                             />
                           </div>
                         )
@@ -1249,7 +1249,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       {['Đúng', 'Sai'].map(opt => (
                         <label key={opt} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border cursor-pointer transition ${
                           qForm.correctAnswer === opt
-                            ? 'border-purple-500 bg-purple-50 text-purple-700 font-semibold'
+                            ? 'border-cherry-500 bg-cherry-50 text-cherry-700 font-semibold'
                             : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                         }`}>
                           <input
@@ -1258,7 +1258,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                             value={opt}
                             checked={qForm.correctAnswer === opt}
                             onChange={() => setQForm(f => ({ ...f, correctAnswer: opt }))}
-                            className="accent-purple-600"
+                            className="accent-cherry-600"
                           />
                           {opt === 'Đúng' ? '✅' : '❌'} {opt}
                         </label>
@@ -1273,7 +1273,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các cặp nối *</label>
                       <button type="button" onClick={addMatchPair}
-                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        className="flex items-center gap-1 text-xs text-cherry-600 hover:text-cherry-800 font-semibold">
                         <Plus className="w-3.5 h-3.5" /> Thêm cặp
                       </button>
                     </div>
@@ -1286,7 +1286,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                             placeholder="Vế trái"
                             value={pair.left}
                             onChange={e => updateMatchPair(i, 'left', e.target.value)}
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                           />
                           <span className="text-gray-400 text-sm">→</span>
                           <input
@@ -1294,7 +1294,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                             placeholder="Vế phải"
                             value={pair.right}
                             onChange={e => updateMatchPair(i, 'right', e.target.value)}
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                           />
                           {qForm.matchPairs.length > 1 && (
                             <button type="button" onClick={() => removeMatchPair(i)}
@@ -1315,7 +1315,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các mục sắp xếp *</label>
                       <button type="button" onClick={addOrderItem}
-                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        className="flex items-center gap-1 text-xs text-cherry-600 hover:text-cherry-800 font-semibold">
                         <Plus className="w-3.5 h-3.5" /> Thêm mục
                       </button>
                     </div>
@@ -1328,7 +1328,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                             placeholder={`Mục thứ ${i + 1}`}
                             value={item}
                             onChange={e => updateOrderItem(i, e.target.value)}
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                           />
                           {qForm.orderItems.length > 1 && (
                             <button type="button" onClick={() => removeOrderItem(i)}
@@ -1354,7 +1354,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                             type="checkbox"
                             checked={qForm.multiSelectCorrectKeys.includes(opt.key)}
                             onChange={() => toggleMultiCorrect(opt.key)}
-                            className="w-4 h-4 accent-purple-600 flex-shrink-0"
+                            className="w-4 h-4 accent-cherry-600 flex-shrink-0"
                           />
                           <span className="w-6 text-sm font-bold text-gray-600">{opt.key}.</span>
                           <input
@@ -1362,7 +1362,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                             placeholder={`Lựa chọn ${opt.key}`}
                             value={opt.text}
                             onChange={e => updateMultiSelectOption(i, e.target.value)}
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                           />
                         </div>
                       ))}
@@ -1384,7 +1384,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       placeholder="VD: hà nội | việt nam (nếu nhiều chỗ)"
                       value={qForm.correctAnswer}
                       onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                     />
                   </div>
                 )}
@@ -1398,14 +1398,14 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       placeholder="Nhập đáp án..."
                       value={qForm.correctAnswer}
                       onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 mb-2"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 mb-2"
                     />
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={qForm.caseSensitive}
                         onChange={e => setQForm(f => ({ ...f, caseSensitive: e.target.checked }))}
-                        className="w-4 h-4 accent-purple-600"
+                        className="w-4 h-4 accent-cherry-600"
                       />
                       <span className="text-sm text-gray-600">Phân biệt chữ hoa/thường (case sensitive)</span>
                     </label>
@@ -1424,13 +1424,13 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                         placeholder="42"
                         value={qForm.correctAnswer}
                         onChange={e => setQForm(f => ({ ...f, correctAnswer: e.target.value }))}
-                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                       />
                       <input
                         placeholder="Đơn vị (VD: cm, kg)"
                         value={qForm.numberUnit}
                         onChange={e => setQForm(f => ({ ...f, numberUnit: e.target.value }))}
-                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                       />
                       <input
                         type="number"
@@ -1439,7 +1439,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                         placeholder="Sai số cho phép"
                         value={qForm.numberTolerance}
                         onChange={e => setQForm(f => ({ ...f, numberTolerance: e.target.value }))}
-                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                       />
                     </div>
                     <div className="flex gap-2 mt-1">
@@ -1454,7 +1454,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các từ (theo thứ tự đúng) *</label>
                       <button type="button" onClick={addSortWord}
-                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        className="flex items-center gap-1 text-xs text-cherry-600 hover:text-cherry-800 font-semibold">
                         <Plus className="w-3.5 h-3.5" /> Thêm từ
                       </button>
                     </div>
@@ -1467,7 +1467,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                             placeholder={`Từ thứ ${i + 1}`}
                             value={word}
                             onChange={e => updateSortWord(i, e.target.value)}
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                           />
                           {qForm.sortWords.length > 1 && (
                             <button type="button" onClick={() => removeSortWord(i)}
@@ -1479,8 +1479,8 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       ))}
                     </div>
                     <p className="text-xs text-gray-400 mt-2">💡 Nhập từng từ theo thứ tự đúng. Học sinh sẽ thấy các từ bị xáo trộn và cần sắp xếp lại.</p>
-                    <div className="mt-2 p-2 bg-purple-50 rounded-lg">
-                      <p className="text-xs font-semibold text-purple-700">Preview câu: <span className="font-normal">{qForm.sortWords.filter(w=>w.trim()).join(' ')}</span></p>
+                    <div className="mt-2 p-2 bg-cherry-50 rounded-lg">
+                      <p className="text-xs font-semibold text-cherry-700">Preview câu: <span className="font-normal">{qForm.sortWords.filter(w=>w.trim()).join(' ')}</span></p>
                     </div>
                   </div>
                 )}
@@ -1493,7 +1493,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       <div className="flex items-center justify-between mb-1">
                         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các nhóm *</label>
                         <button type="button" onClick={addGcGroup}
-                          className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                          className="flex items-center gap-1 text-xs text-cherry-600 hover:text-cherry-800 font-semibold">
                           <Plus className="w-3.5 h-3.5" /> Thêm nhóm
                         </button>
                       </div>
@@ -1506,7 +1506,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                                 ...f,
                                 gcGroups: f.gcGroups.map((grp, idx) => idx === i ? e.target.value : grp)
                               }))}
-                              className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 w-28"
+                              className="border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 w-28"
                             />
                             {qForm.gcGroups.length > 2 && (
                               <button type="button" onClick={() => removeGcGroup(i)}
@@ -1523,7 +1523,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                       <div className="flex items-center justify-between mb-1">
                         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Các mục cần phân loại *</label>
                         <button type="button" onClick={addGcItem}
-                          className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                          className="flex items-center gap-1 text-xs text-cherry-600 hover:text-cherry-800 font-semibold">
                           <Plus className="w-3.5 h-3.5" /> Thêm mục
                         </button>
                       </div>
@@ -1535,12 +1535,12 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                               placeholder={`Mục ${i + 1}`}
                               value={item.text}
                               onChange={e => updateGcItem(i, 'text', e.target.value)}
-                              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                             />
                             <select
                               value={item.group}
                               onChange={e => updateGcItem(i, 'group', e.target.value)}
-                              className="border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
+                              className="border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400 bg-white"
                             >
                               {qForm.gcGroups.map(g => <option key={g} value={g}>{g}</option>)}
                             </select>
@@ -1564,20 +1564,20 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Đáp án cho từng chỗ trống *</label>
                       <button type="button" onClick={addMultiBlank}
-                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold">
+                        className="flex items-center gap-1 text-xs text-cherry-600 hover:text-cherry-800 font-semibold">
                         <Plus className="w-3.5 h-3.5" /> Thêm chỗ trống
                       </button>
                     </div>
                     <div className="space-y-2">
                       {qForm.multiBlanks.map((blank, i) => (
                         <div key={i} className="flex items-center gap-2">
-                          <span className="text-xs bg-purple-100 text-purple-700 font-bold px-2 py-1 rounded-full w-16 text-center flex-shrink-0">Chỗ {i + 1}</span>
+                          <span className="text-xs bg-cherry-100 text-cherry-700 font-bold px-2 py-1 rounded-full w-16 text-center flex-shrink-0">Chỗ {i + 1}</span>
                           <input
                             required
                             placeholder={`Đáp án chỗ ${i + 1}`}
                             value={blank}
                             onChange={e => updateMultiBlank(i, e.target.value)}
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                           />
                           {qForm.multiBlanks.length > 1 && (
                             <button type="button" onClick={() => removeMultiBlank(i)}
@@ -1643,7 +1643,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                   <button
                     type="submit"
                     disabled={savingQ}
-                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-semibold transition">
+                    className="bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-semibold transition">
                     {savingQ ? 'Đang lưu...' : '💾 Thêm câu hỏi'}
                   </button>
                   <button
@@ -1735,7 +1735,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
           {/* ── 7. QUIZIZZ ── */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <CheckSquare className="w-5 h-5 text-indigo-600" />
+              <CheckSquare className="w-5 h-5 text-cherry-600" />
               ⚡ Quizizz (Kiểm tra trực tiếp)
               <span className="text-xs font-normal text-gray-400 ml-1">— Dành cho khoá thu tiền theo buổi</span>
             </h2>
@@ -1745,10 +1745,10 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
               <div className="mb-5 space-y-3">
                 {quizSets.map(qs => (
                   <div key={qs.id} className="border rounded-xl overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-3 bg-indigo-50">
+                    <div className="flex items-center justify-between px-4 py-3 bg-cherry-50">
                       <div>
-                        <span className="font-semibold text-indigo-800 text-sm">{qs.title}</span>
-                        <span className="ml-2 text-xs text-indigo-600">{qs._count.questions} câu · {qs._count.attempts} lượt nộp</span>
+                        <span className="font-semibold text-cherry-800 text-sm">{qs.title}</span>
+                        <span className="ml-2 text-xs text-cherry-600">{qs._count.questions} câu · {qs._count.attempts} lượt nộp</span>
                         <span className={`ml-2 text-xs font-bold px-2 py-0.5 rounded-full ${
                           qs.status === 'open' ? 'bg-green-100 text-green-700' :
                           qs.status === 'closed' ? 'bg-gray-200 text-gray-600' :
@@ -1766,9 +1766,15 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                         )}
                         {qs.status === 'open' && (
                           <button onClick={() => handleQuizStatus(qs.id, 'close')}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">
+                            className="bg-cherry-600 hover:bg-cherry-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">
                             ✅ Hoàn thành
                           </button>
+                        )}
+                        {qs._count.attempts > 0 && (
+                          <a href={`/api/quiz-sets/${qs.id}/leaderboard/pdf`} target="_blank" rel="noreferrer"
+                            className="text-xs px-2.5 py-1.5 rounded-lg font-bold border border-cherry-200 text-cherry-600 hover:bg-cherry-50 transition">
+                            🏆 Tải PDF
+                          </a>
                         )}
                         <button onClick={() => handleDeleteQuizSet(qs.id, qs.title)}
                           className="p-1.5 text-gray-400 hover:text-red-500 transition">
@@ -1789,14 +1795,14 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
             {/* Upload form */}
             <input type="text" placeholder="Tên Quizizz (VD: Buổi 1 — Python cơ bản)"
               value={quizTitle} onChange={e => setQuizTitle(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-cherry-300" />
 
             <div className="flex gap-3 flex-wrap">
               <label className="flex-1 min-w-48">
                 <input type="file" accept=".docx,.pdf,.txt"
                   onChange={e => { setQuizUploadFile(e.target.files?.[0] ?? null); setQuizParseResult(null) }}
                   className="hidden" />
-                <div className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition ${quizUploadFile ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-indigo-300'}`}>
+                <div className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition ${quizUploadFile ? 'border-cherry-400 bg-cherry-50' : 'border-gray-200 hover:border-cherry-300'}`}>
                   <CheckSquare className="w-7 h-7 mx-auto mb-1 text-gray-400" />
                   <p className="text-sm text-gray-500">{quizUploadFile ? quizUploadFile.name : 'Chọn file DOCX Quizizz'}</p>
                 </div>
@@ -1808,7 +1814,7 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
                 </button>
                 {quizParseResult && (
                   <button onClick={handleQuizSave} disabled={quizSaving}
-                    className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
+                    className="bg-cherry-600 hover:bg-cherry-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition">
                     {quizSaving ? 'Đang lưu...' : `⚡ Tạo Quizizz (${quizParseResult.parsed} câu)`}
                   </button>
                 )}
@@ -1816,13 +1822,13 @@ export default function AdminSubjectPage({ params }: { params: Promise<{ id: str
             </div>
 
             {quizParseResult && (
-              <div className="mt-4 p-4 bg-indigo-50 rounded-xl">
-                <p className="font-semibold text-indigo-700 mb-2">Preview: {quizParseResult.parsed} câu</p>
+              <div className="mt-4 p-4 bg-cherry-50 rounded-xl">
+                <p className="font-semibold text-cherry-700 mb-2">Preview: {quizParseResult.parsed} câu</p>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {quizParseResult.questions.slice(0, 8).map((q: any, i: number) => (
                     <div key={i} className="bg-white rounded-lg p-3 text-sm">
                       <p className="font-medium text-gray-800">{q.order}. {String(q.content).substring(0, 100)}{String(q.content).length > 100 ? '...' : ''}</p>
-                      <p className="text-indigo-600 mt-1 text-xs">
+                      <p className="text-cherry-600 mt-1 text-xs">
                         {q.options ? `ABCD · ĐA: ${q.correctKey}` : `Tự luận · ĐA: ${String(q.correctKey).substring(0, 40)}`}
                       </p>
                     </div>

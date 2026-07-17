@@ -132,7 +132,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Sea
           </div>
           <div
             className="rounded-2xl p-5 text-white shadow-sm"
-            style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+            style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
           >
             <p className="text-xs font-semibold opacity-75 mb-1">📄 Tổng HĐ</p>
             <p className="text-3xl font-black">{statsAgg.totalInvoices}</p>

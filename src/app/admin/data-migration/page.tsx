@@ -9,7 +9,7 @@ export const metadata = { title: 'Data Migration Center — AvaB' }
 const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
   pending:    { label: 'Chờ xử lý', cls: 'bg-gray-100 text-gray-600' },
   analyzing:  { label: 'Đang phân tích', cls: 'bg-blue-100 text-blue-700' },
-  mapping:    { label: 'Mapping', cls: 'bg-indigo-100 text-indigo-700' },
+  mapping:    { label: 'Mapping', cls: 'bg-cherry-100 text-cherry-700' },
   validating: { label: 'Kiểm tra', cls: 'bg-yellow-100 text-yellow-700' },
   importing:  { label: 'Đang import', cls: 'bg-orange-100 text-orange-700' },
   done:       { label: 'Hoàn thành', cls: 'bg-green-100 text-green-700' },
@@ -95,7 +95,7 @@ export default async function DataMigrationPage() {
 
           <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-xl">📋</div>
+              <div className="w-10 h-10 rounded-xl bg-cherry-50 flex items-center justify-center text-xl">📋</div>
               <h2 className="text-lg font-black text-gray-800">Lịch sử import</h2>
             </div>
             <p className="text-sm text-gray-500">Xem danh sách các lần import bên dưới</p>
@@ -105,7 +105,7 @@ export default async function DataMigrationPage() {
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'Tổng migrations', value: totalMigrations, color: 'text-indigo-600' },
+            { label: 'Tổng migrations', value: totalMigrations, color: 'text-cherry-600' },
             { label: 'Thành công', value: doneLogs.length, color: 'text-green-600' },
             { label: 'Bản ghi đã import', value: totalImported.toLocaleString('vi-VN'), color: 'text-sky-600' },
           ].map(s => (
@@ -194,7 +194,7 @@ export default async function DataMigrationPage() {
                   { step: '3', icon: '🚀', title: 'Import', desc: 'Upload file và bấm Import. AI sẽ tự động mapping, kiểm tra lỗi và hiển thị kết quả trước khi xác nhận.' },
                 ].map(s => (
                   <div key={s.step} className="flex gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
-                    <div className="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm font-black flex items-center justify-center flex-shrink-0">{s.step}</div>
+                    <div className="w-8 h-8 rounded-full bg-cherry-600 text-white text-sm font-black flex items-center justify-center flex-shrink-0">{s.step}</div>
                     <div>
                       <p className="font-bold text-gray-800 text-sm">{s.icon} {s.title}</p>
                       <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{s.desc}</p>
@@ -217,16 +217,16 @@ export default async function DataMigrationPage() {
               </div>
 
               {/* AI Migration link */}
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100">
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-cherry-50 to-cherry-50 border border-cherry-100">
                 <span className="text-2xl">🤖</span>
                 <div className="flex-1">
-                  <p className="text-sm font-bold text-indigo-700">Import nâng cao với AI Mapping</p>
-                  <p className="text-xs text-indigo-500">Không khớp cột? AI sẽ tự động phân tích và mapping file của bạn.</p>
+                  <p className="text-sm font-bold text-cherry-700">Import nâng cao với AI Mapping</p>
+                  <p className="text-xs text-cherry-500">Không khớp cột? AI sẽ tự động phân tích và mapping file của bạn.</p>
                 </div>
                 <a
                   href="/admin/data-migration/new"
                   className="px-4 py-2 rounded-xl text-xs font-bold text-white flex-shrink-0 hover:opacity-90 transition-opacity"
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #BE3659)' }}
                 >
                   🚀 Thử ngay
                 </a>

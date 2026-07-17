@@ -23,7 +23,7 @@ export default function AdminOrgBadge({ orgName, orgSlug, campusCount }: AdminOr
         gap: 6,
         padding: '6px 12px',
         borderRadius: 20,
-        background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
+        background: 'linear-gradient(135deg, #951F3D, #2563eb)',
         color: '#fff',
         fontWeight: 700,
         fontSize: 13,

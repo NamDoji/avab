@@ -24,7 +24,7 @@ type Period = 'all' | 'week' | 'month'
 
 function levelBadgeStyle(level: number): React.CSSProperties {
   if (level >= 20) return { background: '#fbbf24', color: '#92400e' }
-  if (level >= 10) return { background: '#7c3aed', color: '#fff' }
+  if (level >= 10) return { background: '#951F3D', color: '#fff' }
   if (level >= 5)  return { background: '#2563eb', color: '#fff' }
   return { background: '#e0e7ff', color: '#4338ca' }
 }
@@ -52,7 +52,7 @@ function XpBar({ xp, level }: { xp: number; level: number }) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-[10px] text-purple-200 mt-0.5 text-right font-semibold">
+      <p className="text-[10px] text-cherry-200 mt-0.5 text-right font-semibold">
         {xp.toLocaleString()} XP
       </p>
     </div>
@@ -158,7 +158,7 @@ function LeaderboardInner() {
 
   return (
     <main className="min-h-screen pt-24 pb-16 px-4"
-      style={{ background: 'linear-gradient(160deg,#4c1d95 0%,#7c3aed 45%,#2563eb 100%)' }}
+      style={{ background: 'linear-gradient(160deg,#400B19 0%,#951F3D 45%,#2563eb 100%)' }}
     >
       <div className="max-w-3xl mx-auto">
 
@@ -168,7 +168,7 @@ function LeaderboardInner() {
             <Trophy className="w-14 h-14 text-yellow-400 drop-shadow-lg" />
           </div>
           <h1 className="text-4xl font-black text-white mb-2">🏆 Bảng Vàng</h1>
-          <p className="text-purple-200 text-sm">
+          <p className="text-cherry-200 text-sm">
             Top học sinh xuất sắc · Cập nhật theo XP · Level badges
           </p>
         </div>
@@ -213,7 +213,7 @@ function LeaderboardInner() {
         {/* ── Loading ─────────────────────────────────────────────── */}
         {loading && (
           <div className="flex justify-center py-20">
-            <div className="w-10 h-10 border-3 border-purple-300 border-t-yellow-400 rounded-full animate-spin" style={{ borderWidth: 3 }} />
+            <div className="w-10 h-10 border-3 border-cherry-300 border-t-yellow-400 rounded-full animate-spin" style={{ borderWidth: 3 }} />
           </div>
         )}
 
@@ -279,7 +279,7 @@ function LeaderboardInner() {
           >
             {/* Top entries header */}
             <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
-              <Star className="w-4 h-4 text-purple-600" />
+              <Star className="w-4 h-4 text-cherry-600" />
               <span className="text-sm font-black text-gray-700">Bảng xếp hạng đầy đủ</span>
               <span className="ml-auto text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
                 {leaderboard.length} học sinh
@@ -298,7 +298,7 @@ function LeaderboardInner() {
                       background: isOwn
                         ? 'linear-gradient(90deg,#fef3c7,#fffbeb)'
                         : entry.rank <= 3
-                          ? '#f5f3ff'
+                          ? '#FFF7F9'
                           : undefined,
                       opacity: entry.isReal ? 1 : 0.65,
                     }}
@@ -337,7 +337,7 @@ function LeaderboardInner() {
 
                     {/* XP bar */}
                     <div className="shrink-0"
-                      style={{ '--xp-purple': '#7c3aed' } as React.CSSProperties}
+                      style={{ '--xp-purple': '#951F3D' } as React.CSSProperties}
                     >
                       <div className="w-20">
                         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -345,7 +345,7 @@ function LeaderboardInner() {
                             className="h-full rounded-full"
                             style={{
                               width: `${Math.min(100, Math.round(((entry.xp - (entry.level - 1) * 500) / 500) * 100))}%`,
-                              background: 'linear-gradient(90deg,#7c3aed,#2563eb)',
+                              background: 'linear-gradient(90deg,#951F3D,#2563eb)',
                             }}
                           />
                         </div>
@@ -362,14 +362,14 @@ function LeaderboardInner() {
         )}
 
         {!loading && leaderboard.length === 0 && (
-          <div className="text-center py-16 text-purple-300">
+          <div className="text-center py-16 text-cherry-300">
             <Trophy className="w-14 h-14 mx-auto mb-4 opacity-50" />
             <p className="font-bold">Chưa có dữ liệu bảng xếp hạng</p>
           </div>
         )}
 
         {/* Note */}
-        <p className="text-center text-purple-300 text-xs mt-5">
+        <p className="text-center text-cherry-300 text-xs mt-5">
           * Học sinh ẩn danh được thêm để tạo không khí cạnh tranh lành mạnh
         </p>
       </div>
@@ -383,7 +383,7 @@ export default function BangVangPage() {
   return (
     <Suspense fallback={
       <main className="min-h-screen flex items-center justify-center"
-        style={{ background: 'linear-gradient(160deg,#4c1d95 0%,#7c3aed 45%,#2563eb 100%)' }}
+        style={{ background: 'linear-gradient(160deg,#400B19 0%,#951F3D 45%,#2563eb 100%)' }}
       >
         <div className="text-center text-white">
           <Trophy className="w-14 h-14 mx-auto mb-4 text-yellow-400 animate-pulse" />

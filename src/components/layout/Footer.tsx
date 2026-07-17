@@ -43,7 +43,7 @@ export function Footer() {
               : 'Premier Grade 1 scholarship exam prep platform. Top-tier logical thinking math methodology.'}
           </p>
           <div className="flex gap-3">
-            <a href="#" className="w-9 h-9 bg-purple-800 hover:bg-purple-600 rounded-xl flex items-center justify-center transition-colors text-sm font-bold">f</a>
+            <a href="#" className="w-9 h-9 bg-cherry-800 hover:bg-cherry-600 rounded-xl flex items-center justify-center transition-colors text-sm font-bold">f</a>
             <a href="#" className="w-9 h-9 bg-red-800 hover:bg-red-600 rounded-xl flex items-center justify-center transition-colors text-sm font-bold">▶</a>
           </div>
         </div>
@@ -54,7 +54,7 @@ export function Footer() {
           <ul className="space-y-2">
             {explore.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="text-gray-400 hover:text-purple-300 text-sm transition-colors">
+                <Link href={link.href} className="text-gray-400 hover:text-cherry-300 text-sm transition-colors">
                   {vi ? link.label : link.labelEn}
                 </Link>
               </li>
@@ -68,7 +68,7 @@ export function Footer() {
           <ul className="space-y-2">
             {support.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="text-gray-400 hover:text-purple-300 text-sm transition-colors">
+                <Link href={link.href} className="text-gray-400 hover:text-cherry-300 text-sm transition-colors">
                   {vi ? link.label : link.labelEn}
                 </Link>
               </li>
@@ -84,7 +84,7 @@ export function Footer() {
             © {new Date().getFullYear()} AvaB – avab.vn. {vi ? 'Bảo lưu mọi quyền.' : 'All rights reserved.'}
           </p>
           <p className="text-gray-600 text-xs">
-            {vi ? 'Phát triển bởi' : 'Built by'} <span className="text-purple-400 font-semibold">TenGo Team</span>
+            {vi ? 'Phát triển bởi' : 'Built by'} <span className="text-cherry-400 font-semibold">TenGo Team</span>
           </p>
         </div>
       </div>

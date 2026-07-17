@@ -26,7 +26,7 @@ export default async function NewsDetailPage({
         {/* Back */}
         <Link
           href="/tin-tuc"
-          className="flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold mb-8 transition-colors"
+          className="flex items-center gap-2 text-cherry-600 hover:text-cherry-800 font-semibold mb-8 transition-colors"
         >
           <ArrowLeft size={18} />
           Quay lại tin tức

@@ -332,7 +332,7 @@ export default async function AdminPage() {
       icon: '🚀',
       title: 'Tạo khóa học',
       desc: 'AI sinh lý thuyết, bài tập, đề kiểm tra tự động',
-      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+      gradient: 'linear-gradient(135deg, #BE3659 0%, #7B1933 100%)',
       badge: draftProjects > 0 ? `${draftProjects} projects draft` : null,
       badgeUrgent: false,
     },
@@ -383,7 +383,7 @@ export default async function AdminPage() {
             {orgCtx ? (
               <span
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold text-white"
-                style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
               >
                 🏢 {orgCtx.name}
               </span>
@@ -409,9 +409,9 @@ export default async function AdminPage() {
                   href={`/admin/organizations/${ou.organization.id}/settings`}
                   className="text-xs font-bold px-3 py-1 rounded-full border transition-colors"
                   style={{
-                    borderColor: orgCtx?.id === ou.organization.id ? '#7c3aed' : '#e5e7eb',
-                    color: orgCtx?.id === ou.organization.id ? '#7c3aed' : '#6b7280',
-                    background: orgCtx?.id === ou.organization.id ? '#f5f3ff' : '#fff',
+                    borderColor: orgCtx?.id === ou.organization.id ? '#951F3D' : '#e5e7eb',
+                    color: orgCtx?.id === ou.organization.id ? '#951F3D' : '#6b7280',
+                    background: orgCtx?.id === ou.organization.id ? '#FFF7F9' : '#fff',
                   }}
                 >
                   {ou.organization.name}
@@ -474,21 +474,21 @@ export default async function AdminPage() {
         {/* ── Organization Management card ─────────────────────────────────── */}
         {orgCtx && (
           <div
-            className="rounded-2xl overflow-hidden shadow-sm border border-purple-100"
-            style={{ background: 'linear-gradient(135deg, #faf5ff 0%, #eff6ff 100%)' }}
+            className="rounded-2xl overflow-hidden shadow-sm border border-cherry-100"
+            style={{ background: 'linear-gradient(135deg, #FFF7F9 0%, #eff6ff 100%)' }}
           >
             <div className="flex items-center justify-between px-5 py-4 flex-wrap gap-3">
               <div className="flex items-center gap-3">
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0"
-                  style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                  style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
                 >
                   🏢
                 </div>
                 <div>
                   <p className="font-black text-gray-900 text-base leading-tight">{orgCtx.name}</p>
                   <p className="text-xs text-gray-500">
-                    Vai trò: <span className="font-bold text-purple-700">{orgCtx.orgRole}</span>
+                    Vai trò: <span className="font-bold text-cherry-700">{orgCtx.orgRole}</span>
                     {' · '}{orgCtx.type}
                   </p>
                 </div>
@@ -497,14 +497,14 @@ export default async function AdminPage() {
                 <Link
                   href={`/admin/organizations/${orgCtx.id}/settings`}
                   className="text-xs font-bold px-3 py-2 rounded-lg border transition hover:bg-white"
-                  style={{ borderColor: '#c4b5fd', color: '#7c3aed' }}
+                  style={{ borderColor: '#EF9AAF', color: '#951F3D' }}
                 >
                   ⚙️ Cài đặt
                 </Link>
                 <Link
                   href={`/admin/organizations/${orgCtx.id}`}
                   className="text-xs font-bold px-3 py-2 rounded-lg text-white transition hover:opacity-90"
-                  style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)' }}
+                  style={{ background: 'linear-gradient(135deg, #951F3D, #2563eb)' }}
                 >
                   🏢 Quản lý tổ chức →
                 </Link>

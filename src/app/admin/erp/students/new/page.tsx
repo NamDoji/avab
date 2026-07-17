@@ -65,7 +65,7 @@ export default function NewStudentPage() {
                   value={form.name}
                   onChange={e => set('name', e.target.value)}
                   placeholder="Nguyễn Văn An"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
               <div>
@@ -75,7 +75,7 @@ export default function NewStudentPage() {
                   onChange={e => set('phone', e.target.value)}
                   placeholder="0912345678"
                   required
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
               <div>
@@ -85,7 +85,7 @@ export default function NewStudentPage() {
                   value={form.email}
                   onChange={e => set('email', e.target.value)}
                   placeholder="hocsinh@email.com (tuỳ chọn)"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
               <div>
@@ -93,7 +93,7 @@ export default function NewStudentPage() {
                 <select
                   value={form.grade}
                   onChange={e => set('grade', e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 >
                   <option value="">-- Chọn khối --</option>
                   {['Mầm non','Lớp 1','Lớp 2','Lớp 3','Lớp 4','Lớp 5','Lớp 6','Lớp 7','Lớp 8','Lớp 9','Lớp 10','Lớp 11','Lớp 12'].map(g => (
@@ -114,7 +114,7 @@ export default function NewStudentPage() {
                   value={form.parentName}
                   onChange={e => set('parentName', e.target.value)}
                   placeholder="Nguyễn Văn B"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
               <div>
@@ -123,7 +123,7 @@ export default function NewStudentPage() {
                   value={form.parentPhone}
                   onChange={e => set('parentPhone', e.target.value)}
                   placeholder="0987654321"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400"
                 />
               </div>
             </div>
@@ -137,7 +137,7 @@ export default function NewStudentPage() {
               value={form.note}
               onChange={e => set('note', e.target.value)}
               placeholder="Ghi chú thêm..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400 resize-none"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-cherry-400 resize-none"
             />
           </div>
 
@@ -160,7 +160,7 @@ export default function NewStudentPage() {
               type="submit"
               disabled={loading}
               className="flex-1 py-3 rounded-2xl text-sm font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
-              style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
+              style={{ background: 'linear-gradient(135deg,#6366f1,#BE3659)' }}
             >
               {loading ? '⏳ Đang tạo...' : '✅ Tạo học sinh'}
             </button>

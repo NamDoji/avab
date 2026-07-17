@@ -40,14 +40,14 @@ export default async function ERPHubPage() {
       icon: '🚪',
       label: 'Phòng học',
       desc: 'Phòng, sức chứa, lịch sử dụng',
-      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+      gradient: 'linear-gradient(135deg, #BE3659 0%, #7B1933 100%)',
     },
     {
       href: '/admin/erp/timetable',
       icon: '📅',
       label: 'Thời khóa biểu',
       desc: 'AI tự động xếp lịch',
-      gradient: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+      gradient: 'linear-gradient(135deg, #a855f7 0%, #951F3D 100%)',
       badge: 'AI',
     },
     {
@@ -113,7 +113,7 @@ export default async function ERPHubPage() {
       icon: '👕',
       label: 'Đồng phục',
       desc: 'Quản lý đồng phục HS',
-      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+      gradient: 'linear-gradient(135deg, #BE3659 0%, #7B1933 100%)',
     },
     {
       href: '/admin/erp/canteen',

@@ -26,7 +26,7 @@ export function FeaturedCourses() {
       name: 'Luyện Thi Học Bổng Lớp 1',
       emoji: '🏆',
       level: 'Flagship',
-      levelColor: 'text-purple-600 bg-purple-50',
+      levelColor: 'text-cherry-600 bg-cherry-50',
       subjects: 25,
       desc: 'Toàn bộ 25 chuyên đề luyện thi học bổng vào lớp 1 các trường chất lượng cao: Lương Thế Vinh, Nguyễn Siêu, Vinschool…',
       features: ['25 chuyên đề Toán Tư Duy', 'Khoá học nhóm có gia sư', 'AI lộ trình cá nhân', 'Chấm bài tự động + Bảng xếp hạng'],
@@ -63,7 +63,7 @@ export function FeaturedCourses() {
       name: 'Grade 1 Scholarship Prep',
       emoji: '🏆',
       level: 'Flagship',
-      levelColor: 'text-purple-600 bg-purple-50',
+      levelColor: 'text-cherry-600 bg-cherry-50',
       subjects: 25,
       desc: 'All 25 modules for Grade 1 scholarship exams at top schools: Lương Thế Vinh, Nguyễn Siêu, Vinschool…',
       features: ['25 Thinking Math modules', 'Group class with tutor', 'AI personalised pathway', 'Auto-grading + Leaderboard'],
@@ -88,7 +88,7 @@ export function FeaturedCourses() {
     <section className="section-padding bg-white">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <span className="text-purple-600 font-bold uppercase text-sm tracking-wider">
+          <span className="text-cherry-600 font-bold uppercase text-sm tracking-wider">
             {vi ? 'Khoá học' : 'Courses'}
           </span>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-4">
@@ -108,12 +108,12 @@ export function FeaturedCourses() {
               key={course.id}
               className={`relative rounded-4xl border-2 overflow-hidden card-hover ${
                 course.popular
-                  ? 'border-purple-400 shadow-xl shadow-purple-100'
+                  ? 'border-cherry-400 shadow-xl shadow-cherry-100'
                   : 'border-gray-100 shadow-md'
               }`}
             >
               {course.popular && (
-                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-center text-xs font-bold py-2 tracking-wider">
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-cherry-600 to-cherry-500 text-white text-center text-xs font-bold py-2 tracking-wider">
                   ⭐ {vi ? 'PHỔ BIẾN NHẤT' : 'MOST POPULAR'}
                 </div>
               )}
@@ -128,17 +128,17 @@ export function FeaturedCourses() {
 
                 <div className="flex items-center gap-4 text-sm text-gray-500 mb-5 pb-5 border-b border-gray-100">
                   <span className="flex items-center gap-1">
-                    <BookOpen size={14} className="text-purple-500" />
+                    <BookOpen size={14} className="text-cherry-500" />
                     {course.subjects} chuyên đề
                   </span>
                 </div>
 
                 {/* Price */}
                 <div className={`text-center rounded-2xl py-2.5 px-4 mb-4 ${
-                  course.popular ? 'bg-purple-100' : 'bg-gray-50'
+                  course.popular ? 'bg-cherry-100' : 'bg-gray-50'
                 }`}>
                   <span className={`text-xl font-black ${
-                    course.popular ? 'text-purple-700' : 'text-gray-500'
+                    course.popular ? 'text-cherry-700' : 'text-gray-500'
                   }`}>{course.price}</span>
                 </div>
 

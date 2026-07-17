@@ -8,7 +8,7 @@ export const metadata = { title: 'Workflow Engine — AvaB Admin' }
 
 // ── Module config ─────────────────────────────────────────────────────────────
 const MODULE_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-  content:    { label: 'Nội dung',   color: '#7c3aed', icon: '📚' },
+  content:    { label: 'Nội dung',   color: '#951F3D', icon: '📚' },
   enrollment: { label: 'Tuyển sinh', color: '#2563eb', icon: '🎓' },
   finance:    { label: 'Tài chính',  color: '#059669', icon: '💰' },
   hr:         { label: 'Nhân sự',    color: '#d97706', icon: '👥' },
@@ -149,18 +149,18 @@ export default async function WorkflowHubPage() {
       {/* ── Hero header ───────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden text-white py-10 px-6"
-        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #BE3659 100%)' }}
       >
         <div
           className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
           style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%,-50%)' }}
         />
         <div className="container mx-auto max-w-6xl">
-          <p className="text-indigo-200 text-sm font-semibold mb-1">
+          <p className="text-cherry-200 text-sm font-semibold mb-1">
             <Link href="/admin" className="hover:underline">← Admin</Link> / Workflow Engine
           </p>
           <h1 className="text-3xl font-black mb-1">⚙️ Workflow Engine</h1>
-          <p className="text-indigo-200 text-sm">Tự động hóa quy trình vận hành toàn trường</p>
+          <p className="text-cherry-200 text-sm">Tự động hóa quy trình vận hành toàn trường</p>
         </div>
       </div>
 
@@ -227,7 +227,7 @@ export default async function WorkflowHubPage() {
             <p className="text-sm font-bold text-gray-700">⚙️ Workflows của tôi</p>
             <Link
               href="/admin/workflow/new"
-              className="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors"
+              className="text-xs font-bold text-cherry-600 hover:text-cherry-800 bg-cherry-50 hover:bg-cherry-100 px-3 py-1.5 rounded-lg transition-colors"
             >
               + Tạo workflow mới
             </Link>
@@ -260,7 +260,7 @@ export default async function WorkflowHubPage() {
                     <div className="flex gap-2 mt-auto">
                       <Link
                         href={`/admin/workflow/instances?workflowId=${def.id}`}
-                        className="flex-1 text-center text-xs font-bold py-1.5 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors"
+                        className="flex-1 text-center text-xs font-bold py-1.5 rounded-lg border border-cherry-200 text-cherry-600 hover:bg-cherry-50 transition-colors"
                       >
                         Xem instances
                       </Link>
@@ -319,7 +319,7 @@ export default async function WorkflowHubPage() {
             <p className="text-sm font-bold text-gray-700">🔄 Đang chạy</p>
             <Link
               href="/admin/workflow/instances"
-              className="text-xs font-bold text-indigo-600 hover:underline"
+              className="text-xs font-bold text-cherry-600 hover:underline"
             >
               Xem tất cả →
             </Link>
@@ -349,7 +349,7 @@ export default async function WorkflowHubPage() {
                     return (
                       <tr key={inst.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-4 py-3">
-                          <Link href={`/admin/workflow/instances/${inst.id}`} className="font-semibold text-indigo-600 hover:underline text-xs">
+                          <Link href={`/admin/workflow/instances/${inst.id}`} className="font-semibold text-cherry-600 hover:underline text-xs">
                             {inst.workflow.name}
                           </Link>
                         </td>

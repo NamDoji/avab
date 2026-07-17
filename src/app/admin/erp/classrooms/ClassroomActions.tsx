@@ -119,7 +119,7 @@ export function AddClassroomModal() {
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                   placeholder="VD: Phòng 101"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -129,7 +129,7 @@ export function AddClassroomModal() {
                     type="number"
                     value={form.capacity}
                     onChange={(e) => setForm((p) => ({ ...p, capacity: parseInt(e.target.value) || 30 }))}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
                 <div>
@@ -139,7 +139,7 @@ export function AddClassroomModal() {
                     value={form.floor}
                     onChange={(e) => setForm((p) => ({ ...p, floor: e.target.value }))}
                     placeholder="1"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
               </div>
@@ -148,7 +148,7 @@ export function AddClassroomModal() {
                 <select
                   value={form.type}
                   onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 >
                   <option value="standard">Phòng thường</option>
                   <option value="lab">Phòng thí nghiệm</option>
@@ -164,7 +164,7 @@ export function AddClassroomModal() {
                   value={form.building}
                   onChange={(e) => setForm((p) => ({ ...p, building: e.target.value }))}
                   placeholder="VD: Tòa A"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
             </div>

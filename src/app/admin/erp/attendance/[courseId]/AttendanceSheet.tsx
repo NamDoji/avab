@@ -42,7 +42,7 @@ function initEntries(students: StudentRow[]): Record<string, AttendanceEntry> {
 // ── Avatar ────────────────────────────────────────────────────────
 function MiniAvatar({ name }: { name: string | null }) {
   const letter = name?.trim()[0]?.toUpperCase() ?? '?'
-  const colors = ['#0f766e', '#0369a1', '#7c3aed', '#db2777', '#ea580c']
+  const colors = ['#0f766e', '#0369a1', '#951F3D', '#db2777', '#ea580c']
   const bg = colors[(letter.charCodeAt(0) ?? 0) % colors.length]
   return (
     <div

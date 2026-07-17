@@ -48,9 +48,9 @@ export default async function HRMContractsPage() {
         style={{ background: 'linear-gradient(135deg, #4a044e 0%, #7e22ce 100%)' }}
       >
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cherry-400/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-purple-200 text-sm font-semibold mb-3">
+          <div className="flex items-center gap-2 text-cherry-200 text-sm font-semibold mb-3">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
             <span>›</span>
             <Link href="/admin/hrm" className="hover:text-white transition-colors">HRM</Link>
@@ -60,7 +60,7 @@ export default async function HRMContractsPage() {
           <div className="flex items-start justify-between flex-wrap gap-3">
             <div>
               <h1 className="text-3xl font-black mb-1">📄 Hợp đồng lao động</h1>
-              <p className="text-purple-100 text-sm">Quản lý HĐLĐ, theo dõi hạn hợp đồng</p>
+              <p className="text-cherry-100 text-sm">Quản lý HĐLĐ, theo dõi hạn hợp đồng</p>
             </div>
           </div>
 
@@ -78,7 +78,7 @@ export default async function HRMContractsPage() {
             ].map((s) => (
               <div key={s.label} className="bg-white/15 backdrop-blur rounded-2xl p-3">
                 <div className="text-lg font-black">{s.value}</div>
-                <div className="text-xs text-purple-100 mt-0.5">
+                <div className="text-xs text-cherry-100 mt-0.5">
                   {s.icon} {s.label}
                 </div>
               </div>

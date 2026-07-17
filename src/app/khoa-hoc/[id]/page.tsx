@@ -9,11 +9,11 @@ type CourseType = 'TOAN' | 'TIENG_ANH' | 'LAP_TRINH_THUAT_TOAN' | 'LAP_TRINH_SCR
 
 const COURSE_TYPE_THEME: Record<CourseType, { gradient: string; emoji: string; mascot: string; tagline: string; subjectColors: string[] }> = {
   TOAN: {
-    gradient: 'from-purple-600 via-indigo-600 to-blue-600',
+    gradient: 'from-cherry-600 via-cherry-600 to-blue-600',
     emoji: '📐',
     mascot: '🦊',
     tagline: 'Toán tư duy — Học thông minh hơn mỗi ngày!',
-    subjectColors: ['from-purple-400 to-purple-600','from-indigo-400 to-indigo-600','from-blue-400 to-blue-600','from-violet-400 to-violet-600','from-fuchsia-400 to-fuchsia-600','from-pink-400 to-pink-600'],
+    subjectColors: ['from-cherry-400 to-cherry-600','from-cherry-400 to-cherry-600','from-blue-400 to-blue-600','from-cherry-400 to-cherry-600','from-fuchsia-400 to-fuchsia-600','from-pink-400 to-pink-600'],
   },
   TIENG_ANH: {
     gradient: 'from-green-500 via-teal-500 to-cyan-600',
@@ -34,43 +34,43 @@ const COURSE_TYPE_THEME: Record<CourseType, { gradient: string; emoji: string; m
     emoji: '🐱',
     mascot: '🐱',
     tagline: 'Scratch — Kéo thả code, tạo game siêu vui!',
-    subjectColors: ['from-orange-400 to-pink-500','from-pink-400 to-rose-500','from-fuchsia-400 to-purple-500','from-red-400 to-orange-500','from-yellow-400 to-amber-500','from-rose-400 to-pink-500'],
+    subjectColors: ['from-orange-400 to-pink-500','from-pink-400 to-rose-500','from-fuchsia-400 to-cherry-500','from-red-400 to-orange-500','from-yellow-400 to-amber-500','from-rose-400 to-pink-500'],
   },
   LAP_TRINH_PYTHON: {
     gradient: 'from-teal-500 via-cyan-500 to-blue-600',
     emoji: '🐍',
     mascot: '🐍',
     tagline: 'Python — Ngôn ngữ lập trình mạnh nhất thế giới!',
-    subjectColors: ['from-teal-400 to-teal-600','from-cyan-400 to-blue-500','from-blue-400 to-indigo-500','from-sky-400 to-cyan-500','from-indigo-400 to-blue-500','from-green-400 to-teal-500'],
+    subjectColors: ['from-teal-400 to-teal-600','from-cyan-400 to-blue-500','from-blue-400 to-cherry-500','from-sky-400 to-cyan-500','from-cherry-400 to-blue-500','from-green-400 to-teal-500'],
   },
   LAP_TRINH_CPP: {
-    gradient: 'from-violet-600 via-purple-700 to-indigo-800',
+    gradient: 'from-cherry-600 via-cherry-700 to-cherry-800',
     emoji: '⚡',
     mascot: '⚡',
     tagline: 'C++ — Lập trình thi đấu, chinh phục mọi bài toán!',
-    subjectColors: ['from-violet-400 to-violet-600','from-purple-400 to-purple-600','from-indigo-400 to-indigo-600','from-blue-400 to-violet-500','from-fuchsia-400 to-violet-500','from-pink-400 to-purple-500'],
+    subjectColors: ['from-cherry-400 to-cherry-600','from-cherry-400 to-cherry-600','from-cherry-400 to-cherry-600','from-blue-400 to-cherry-500','from-fuchsia-400 to-cherry-500','from-pink-400 to-cherry-500'],
   },
 }
 
 const K12_SUBJECT_THEME: Record<string, { gradient: string; emoji: string; mascot: string; tagline: string; subjectColors: string[] }> = {
-  THINKING_MATH: { gradient: 'from-purple-600 via-indigo-600 to-blue-600', emoji: '🧠', mascot: '🦊', tagline: 'Toán Tư Duy — Rèn tư duy logic mỗi ngày!', subjectColors: ['from-purple-400 to-purple-600','from-indigo-400 to-indigo-600','from-blue-400 to-blue-600','from-violet-400 to-violet-600','from-fuchsia-400 to-fuchsia-600','from-pink-400 to-pink-600'] },
-  MATH:          { gradient: 'from-blue-600 via-indigo-600 to-blue-700',   emoji: '📐', mascot: '🔢', tagline: 'Toán học — Nền tảng vững chắc!',         subjectColors: ['from-blue-400 to-blue-600','from-indigo-400 to-indigo-600','from-sky-400 to-sky-600','from-cyan-400 to-cyan-600','from-violet-400 to-violet-600','from-purple-400 to-purple-600'] },
+  THINKING_MATH: { gradient: 'from-cherry-600 via-cherry-600 to-blue-600', emoji: '🧠', mascot: '🦊', tagline: 'Toán Tư Duy — Rèn tư duy logic mỗi ngày!', subjectColors: ['from-cherry-400 to-cherry-600','from-cherry-400 to-cherry-600','from-blue-400 to-blue-600','from-cherry-400 to-cherry-600','from-fuchsia-400 to-fuchsia-600','from-pink-400 to-pink-600'] },
+  MATH:          { gradient: 'from-blue-600 via-cherry-600 to-blue-700',   emoji: '📐', mascot: '🔢', tagline: 'Toán học — Nền tảng vững chắc!',         subjectColors: ['from-blue-400 to-blue-600','from-cherry-400 to-cherry-600','from-sky-400 to-sky-600','from-cyan-400 to-cyan-600','from-cherry-400 to-cherry-600','from-cherry-400 to-cherry-600'] },
   VIETNAMESE:    { gradient: 'from-red-500 via-orange-500 to-yellow-500',  emoji: '📖', mascot: '✏️', tagline: 'Tiếng Việt — Đọc hay, viết đẹp!',        subjectColors: ['from-red-400 to-orange-500','from-orange-400 to-yellow-500','from-amber-400 to-orange-500','from-rose-400 to-red-500','from-yellow-400 to-amber-500','from-pink-400 to-rose-500'] },
   ENGLISH:       { gradient: 'from-green-500 via-teal-500 to-cyan-600',    emoji: '🇬🇧', mascot: '🦜', tagline: 'English — Học như chơi!',              subjectColors: ['from-green-400 to-green-600','from-teal-400 to-teal-600','from-cyan-400 to-cyan-600','from-emerald-400 to-emerald-600','from-lime-400 to-lime-600','from-sky-400 to-sky-600'] },
-  SCIENCE:       { gradient: 'from-cyan-500 via-teal-500 to-blue-600',     emoji: '🔬', mascot: '🧪', tagline: 'Khoa học — Khám phá thế giới!',         subjectColors: ['from-cyan-400 to-teal-500','from-teal-400 to-cyan-500','from-blue-400 to-cyan-500','from-sky-400 to-blue-500','from-emerald-400 to-teal-500','from-indigo-400 to-blue-500'] },
-  PHYSICS:       { gradient: 'from-violet-600 via-purple-600 to-indigo-700', emoji: '⚛️', mascot: '🔭', tagline: 'Vật lý — Hiểu bản chất vũ trụ!',    subjectColors: ['from-violet-400 to-purple-500','from-purple-400 to-indigo-500','from-indigo-400 to-violet-500','from-blue-400 to-indigo-500','from-fuchsia-400 to-purple-500','from-sky-400 to-violet-500'] },
+  SCIENCE:       { gradient: 'from-cyan-500 via-teal-500 to-blue-600',     emoji: '🔬', mascot: '🧪', tagline: 'Khoa học — Khám phá thế giới!',         subjectColors: ['from-cyan-400 to-teal-500','from-teal-400 to-cyan-500','from-blue-400 to-cyan-500','from-sky-400 to-blue-500','from-emerald-400 to-teal-500','from-cherry-400 to-blue-500'] },
+  PHYSICS:       { gradient: 'from-cherry-600 via-cherry-600 to-cherry-700', emoji: '⚛️', mascot: '🔭', tagline: 'Vật lý — Hiểu bản chất vũ trụ!',    subjectColors: ['from-cherry-400 to-cherry-500','from-cherry-400 to-cherry-500','from-cherry-400 to-cherry-500','from-blue-400 to-cherry-500','from-fuchsia-400 to-cherry-500','from-sky-400 to-cherry-500'] },
   CHEMISTRY:     { gradient: 'from-lime-500 via-green-500 to-teal-600',    emoji: '🧪', mascot: '⚗️', tagline: 'Hóa học — Phản ứng kỳ diệu!',         subjectColors: ['from-lime-400 to-green-500','from-green-400 to-teal-500','from-teal-400 to-green-500','from-emerald-400 to-lime-500','from-cyan-400 to-teal-500','from-yellow-400 to-lime-500'] },
   BIOLOGY:       { gradient: 'from-emerald-500 via-green-500 to-teal-600', emoji: '🧬', mascot: '🌿', tagline: 'Sinh học — Sự kỳ diệu của sự sống!',   subjectColors: ['from-emerald-400 to-green-500','from-green-400 to-emerald-500','from-teal-400 to-emerald-500','from-lime-400 to-green-500','from-cyan-400 to-emerald-500','from-green-400 to-teal-500'] },
   HISTORY:       { gradient: 'from-amber-500 via-orange-500 to-red-500',   emoji: '🏰', mascot: '📜', tagline: 'Lịch sử — Hiểu quá khứ, dựng tương lai!', subjectColors: ['from-amber-400 to-orange-500','from-orange-400 to-red-500','from-yellow-400 to-amber-500','from-red-400 to-orange-500','from-rose-400 to-red-500','from-amber-400 to-yellow-500'] },
   GEOGRAPHY:     { gradient: 'from-emerald-500 via-teal-500 to-cyan-600',  emoji: '🌍', mascot: '🗺️', tagline: 'Địa lý — Khám phá thế giới!',         subjectColors: ['from-emerald-400 to-teal-500','from-teal-400 to-cyan-500','from-cyan-400 to-blue-500','from-green-400 to-emerald-500','from-sky-400 to-cyan-500','from-blue-400 to-teal-500'] },
-  INFORMATICS:   { gradient: 'from-sky-500 via-blue-500 to-indigo-600',    emoji: '💻', mascot: '🖥️', tagline: 'Tin học — Lập trình tương lai!',       subjectColors: ['from-sky-400 to-blue-500','from-blue-400 to-indigo-500','from-indigo-400 to-blue-500','from-cyan-400 to-sky-500','from-violet-400 to-indigo-500','from-teal-400 to-cyan-500'] },
-  CIVIC:         { gradient: 'from-indigo-500 via-blue-500 to-cyan-600',   emoji: '⚖️', mascot: '🏛️', tagline: 'GDCD — Công dân tốt, xã hội đẹp!',   subjectColors: ['from-indigo-400 to-blue-500','from-blue-400 to-cyan-500','from-sky-400 to-blue-500','from-violet-400 to-indigo-500','from-cyan-400 to-blue-500','from-teal-400 to-cyan-500'] },
+  INFORMATICS:   { gradient: 'from-sky-500 via-blue-500 to-cherry-600',    emoji: '💻', mascot: '🖥️', tagline: 'Tin học — Lập trình tương lai!',       subjectColors: ['from-sky-400 to-blue-500','from-blue-400 to-cherry-500','from-cherry-400 to-blue-500','from-cyan-400 to-sky-500','from-cherry-400 to-cherry-500','from-teal-400 to-cyan-500'] },
+  CIVIC:         { gradient: 'from-cherry-500 via-blue-500 to-cyan-600',   emoji: '⚖️', mascot: '🏛️', tagline: 'GDCD — Công dân tốt, xã hội đẹp!',   subjectColors: ['from-cherry-400 to-blue-500','from-blue-400 to-cyan-500','from-sky-400 to-blue-500','from-cherry-400 to-cherry-500','from-cyan-400 to-blue-500','from-teal-400 to-cyan-500'] },
   ALGO:          { gradient: 'from-yellow-400 via-orange-500 to-red-500',  emoji: '🤖', mascot: '🤖', tagline: 'Thuật toán — Tư duy lập trình!',       subjectColors: ['from-yellow-400 to-orange-500','from-orange-400 to-red-500','from-amber-400 to-yellow-500','from-red-400 to-pink-500','from-lime-400 to-green-500','from-teal-400 to-cyan-500'] },
-  SCRATCH:       { gradient: 'from-orange-400 via-pink-500 to-rose-600',   emoji: '🐱', mascot: '🐱', tagline: 'Scratch — Kéo thả code, tạo game!',    subjectColors: ['from-orange-400 to-pink-500','from-pink-400 to-rose-500','from-fuchsia-400 to-purple-500','from-red-400 to-orange-500','from-yellow-400 to-amber-500','from-rose-400 to-pink-500'] },
-  PYTHON:        { gradient: 'from-teal-500 via-cyan-500 to-blue-600',     emoji: '🐍', mascot: '🐍', tagline: 'Python — Ngôn ngữ mạnh nhất thế giới!', subjectColors: ['from-teal-400 to-teal-600','from-cyan-400 to-blue-500','from-blue-400 to-indigo-500','from-sky-400 to-cyan-500','from-indigo-400 to-blue-500','from-green-400 to-teal-500'] },
-  CPP:           { gradient: 'from-violet-600 via-purple-700 to-indigo-800', emoji: '⚡', mascot: '⚡', tagline: 'C++ — Lập trình thi đấu!',           subjectColors: ['from-violet-400 to-violet-600','from-purple-400 to-purple-600','from-indigo-400 to-indigo-600','from-blue-400 to-violet-500','from-fuchsia-400 to-violet-500','from-pink-400 to-purple-500'] },
-  IELTS:         { gradient: 'from-sky-500 via-blue-500 to-indigo-600',    emoji: '📝', mascot: '✍️', tagline: 'IELTS — Chinh phục band score cao!',    subjectColors: ['from-sky-400 to-blue-500','from-blue-400 to-indigo-500','from-indigo-400 to-sky-500','from-cyan-400 to-blue-500','from-violet-400 to-blue-500','from-teal-400 to-sky-500'] },
-  CAMBRIDGE:     { gradient: 'from-rose-500 via-pink-500 to-fuchsia-600',  emoji: '🎓', mascot: '🎓', tagline: 'Cambridge — Chuẩn quốc tế!',           subjectColors: ['from-rose-400 to-pink-500','from-pink-400 to-fuchsia-500','from-fuchsia-400 to-purple-500','from-red-400 to-rose-500','from-purple-400 to-pink-500','from-amber-400 to-rose-500'] },
+  SCRATCH:       { gradient: 'from-orange-400 via-pink-500 to-rose-600',   emoji: '🐱', mascot: '🐱', tagline: 'Scratch — Kéo thả code, tạo game!',    subjectColors: ['from-orange-400 to-pink-500','from-pink-400 to-rose-500','from-fuchsia-400 to-cherry-500','from-red-400 to-orange-500','from-yellow-400 to-amber-500','from-rose-400 to-pink-500'] },
+  PYTHON:        { gradient: 'from-teal-500 via-cyan-500 to-blue-600',     emoji: '🐍', mascot: '🐍', tagline: 'Python — Ngôn ngữ mạnh nhất thế giới!', subjectColors: ['from-teal-400 to-teal-600','from-cyan-400 to-blue-500','from-blue-400 to-cherry-500','from-sky-400 to-cyan-500','from-cherry-400 to-blue-500','from-green-400 to-teal-500'] },
+  CPP:           { gradient: 'from-cherry-600 via-cherry-700 to-cherry-800', emoji: '⚡', mascot: '⚡', tagline: 'C++ — Lập trình thi đấu!',           subjectColors: ['from-cherry-400 to-cherry-600','from-cherry-400 to-cherry-600','from-cherry-400 to-cherry-600','from-blue-400 to-cherry-500','from-fuchsia-400 to-cherry-500','from-pink-400 to-cherry-500'] },
+  IELTS:         { gradient: 'from-sky-500 via-blue-500 to-cherry-600',    emoji: '📝', mascot: '✍️', tagline: 'IELTS — Chinh phục band score cao!',    subjectColors: ['from-sky-400 to-blue-500','from-blue-400 to-cherry-500','from-cherry-400 to-sky-500','from-cyan-400 to-blue-500','from-cherry-400 to-blue-500','from-teal-400 to-sky-500'] },
+  CAMBRIDGE:     { gradient: 'from-rose-500 via-pink-500 to-fuchsia-600',  emoji: '🎓', mascot: '🎓', tagline: 'Cambridge — Chuẩn quốc tế!',           subjectColors: ['from-rose-400 to-pink-500','from-pink-400 to-fuchsia-500','from-fuchsia-400 to-cherry-500','from-red-400 to-rose-500','from-cherry-400 to-pink-500','from-amber-400 to-rose-500'] },
   GENERAL:       { gradient: 'from-gray-600 via-slate-600 to-gray-700',    emoji: '📚', mascot: '📖', tagline: 'Học tập — Nền tảng tương lai!',        subjectColors: ['from-gray-400 to-gray-600','from-slate-400 to-slate-600','from-zinc-400 to-zinc-600','from-neutral-400 to-neutral-600','from-stone-400 to-stone-600','from-gray-400 to-slate-600'] },
 }
 
@@ -219,7 +219,7 @@ const course = await prisma.course.findUnique({
                 {session ? (
                   <EnrollButton courseId={id} isEnrolled={isEnrolled} enrollmentStatus={enrollmentStatus} />
                 ) : (
-                  <Link href="/dang-nhap" className="bg-white text-purple-700 font-black px-5 py-2.5 rounded-2xl hover:bg-purple-50 transition text-sm">
+                  <Link href="/dang-nhap" className="bg-white text-cherry-700 font-black px-5 py-2.5 rounded-2xl hover:bg-cherry-50 transition text-sm">
                     Đăng nhập để đăng ký →
                   </Link>
                 )}
@@ -267,7 +267,7 @@ const course = await prisma.course.findUnique({
                 href={canAccess ? `/khoa-hoc/${id}/${subject.id}` : '#'}
                 className={`group relative flex flex-col items-center p-4 rounded-3xl text-center border-2 transition-all duration-200 select-none
                   ${canAccess
-                    ? 'border-white bg-white hover:border-purple-200 hover:-translate-y-2 hover:shadow-xl active:scale-95 cursor-pointer'
+                    ? 'border-white bg-white hover:border-cherry-200 hover:-translate-y-2 hover:shadow-xl active:scale-95 cursor-pointer'
                     : 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed pointer-events-none'
                   }
                 `}
@@ -304,14 +304,14 @@ const course = await prisma.course.findUnique({
         </div>
 
         {/* Motivation footer */}
-        <div className="mt-10 bg-white rounded-3xl border-2 border-purple-100 p-6 text-center">
+        <div className="mt-10 bg-white rounded-3xl border-2 border-cherry-100 p-6 text-center">
           <div className="text-4xl mb-3">⭐</div>
           <h3 className="font-black text-gray-900 text-lg mb-2">Hệ thống khen thưởng</h3>
           <div className="flex justify-center flex-wrap gap-4 text-sm text-gray-600">
             <span className="flex items-center gap-1.5 bg-yellow-50 px-3 py-1.5 rounded-full border border-yellow-200">
               ⭐ Hoàn thành → nhận sao
             </span>
-            <span className="flex items-center gap-1.5 bg-purple-50 px-3 py-1.5 rounded-full border border-purple-200">
+            <span className="flex items-center gap-1.5 bg-cherry-50 px-3 py-1.5 rounded-full border border-cherry-200">
               🏅 Đạt 90%+ → huy hiệu vàng
             </span>
             <span className="flex items-center gap-1.5 bg-teal-50 px-3 py-1.5 rounded-full border border-teal-200">

@@ -18,7 +18,7 @@ const LEGACY_META: Record<string, {
 }> = {
   TOAN: {
     emoji: '📐', label: 'Toán',
-    gradient: 'from-purple-500 to-indigo-600', textColor: 'text-purple-700', badgeBg: 'bg-purple-50',
+    gradient: 'from-cherry-500 to-cherry-600', textColor: 'text-cherry-700', badgeBg: 'bg-cherry-50',
     tag: '🏆 Phổ biến nhất',
     features: ['Toán tư duy & luyện thi', 'Bài tập tự động chấm 24/7', 'AI phân tích điểm yếu', 'Có gia sư hướng dẫn'],
   },
@@ -48,7 +48,7 @@ const LEGACY_META: Record<string, {
   },
   LAP_TRINH_CPP: {
     emoji: '⚡', label: 'Lập trình C++',
-    gradient: 'from-violet-500 to-purple-700', textColor: 'text-violet-700', badgeBg: 'bg-violet-50',
+    gradient: 'from-cherry-500 to-cherry-700', textColor: 'text-cherry-700', badgeBg: 'bg-cherry-50',
     tag: '🏅 Thi thuật toán',
     features: ['C++ cho học sinh phổ thông', 'Judge tự động chấm bài', 'Bài tập theo đề Codeforces', 'Thi contest & ranking'],
   },
@@ -63,13 +63,13 @@ interface SubjectMeta {
 const SUBJECT_META: Record<string, SubjectMeta> = {
   THINKING_MATH: {
     emoji: '🧠', label: 'Toán Tư Duy',
-    gradient: 'from-purple-500 to-indigo-600', textColor: 'text-purple-700', badgeBg: 'bg-purple-50',
+    gradient: 'from-cherry-500 to-cherry-600', textColor: 'text-cherry-700', badgeBg: 'bg-cherry-50',
     tag: '🏆 Phổ biến nhất',
     features: ['Tư duy logic & sáng tạo', 'AI phân tích điểm yếu', 'Bài tập tự động chấm', 'Gia sư hướng dẫn'],
   },
   MATH: {
     emoji: '📐', label: 'Toán',
-    gradient: 'from-blue-500 to-indigo-600', textColor: 'text-blue-700', badgeBg: 'bg-blue-50',
+    gradient: 'from-blue-500 to-cherry-600', textColor: 'text-blue-700', badgeBg: 'bg-blue-50',
     tag: '',
     features: ['Toán chuẩn CTGD', 'Luyện thi cuối kỳ', 'AI chấm tự động', 'Theo chuẩn Bộ GD'],
   },
@@ -105,7 +105,7 @@ const SUBJECT_META: Record<string, SubjectMeta> = {
   },
   PHYSICS: {
     emoji: '⚛️', label: 'Vật lý',
-    gradient: 'from-violet-500 to-purple-600', textColor: 'text-violet-700', badgeBg: 'bg-violet-50',
+    gradient: 'from-cherry-500 to-cherry-600', textColor: 'text-cherry-700', badgeBg: 'bg-cherry-50',
     tag: '',
     features: ['Vật lý lớp 6-12', 'Công thức & bài tập', 'Thí nghiệm ảo', 'Luyện đề thi THPT'],
   },
@@ -129,7 +129,7 @@ const SUBJECT_META: Record<string, SubjectMeta> = {
   },
   CIVIC: {
     emoji: '⚖️', label: 'GDCD',
-    gradient: 'from-indigo-400 to-blue-500', textColor: 'text-indigo-700', badgeBg: 'bg-indigo-50',
+    gradient: 'from-cherry-400 to-blue-500', textColor: 'text-cherry-700', badgeBg: 'bg-cherry-50',
     tag: '',
     features: ['Pháp luật & đạo đức', 'Kinh tế & xã hội', 'Ôn thi học kỳ', 'Trắc nghiệm'],
   },
@@ -171,7 +171,7 @@ const SUBJECT_META: Record<string, SubjectMeta> = {
   },
   CPP: {
     emoji: '⚡', label: 'C++',
-    gradient: 'from-violet-500 to-purple-700', textColor: 'text-violet-700', badgeBg: 'bg-violet-50',
+    gradient: 'from-cherry-500 to-cherry-700', textColor: 'text-cherry-700', badgeBg: 'bg-cherry-50',
     tag: '🏅 Thi thuật toán',
     features: ['C++ phổ thông', 'Judge tự động chấm', 'Bài tập Codeforces', 'Thi contest & ranking'],
   },
@@ -322,8 +322,8 @@ export function KhoaHocPageClient({ courses }: Props) {
             onClick={() => handleGradeChange(opt.value)}
             className={`px-3 py-1.5 rounded-2xl text-sm font-bold transition-all ${
               selectedGrade === opt.value
-                ? 'bg-purple-600 text-white shadow-md shadow-purple-200'
-                : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-purple-300 hover:text-purple-600'
+                ? 'bg-cherry-600 text-white shadow-md shadow-cherry-200'
+                : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-cherry-300 hover:text-cherry-600'
             }`}
           >
             {opt.label}
@@ -399,7 +399,7 @@ export function KhoaHocPageClient({ courses }: Props) {
                     {gradeLabels.length > 0 && (
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1">
                         {gradeLabels.map(g => (
-                          <span key={g} className="bg-white/90 text-purple-700 text-xs font-black px-2.5 py-1 rounded-full">
+                          <span key={g} className="bg-white/90 text-cherry-700 text-xs font-black px-2.5 py-1 rounded-full">
                             {/^\d+$/.test(g) ? `Lớp ${g}` : g === 'preschool' ? 'Mầm non' : g}
                           </span>
                         ))}
@@ -418,7 +418,7 @@ export function KhoaHocPageClient({ courses }: Props) {
 
                     <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 pb-4 border-b border-gray-100">
                       <span className="flex items-center gap-1">
-                        <BookOpen size={14} className="text-purple-400" />
+                        <BookOpen size={14} className="text-cherry-400" />
                         {course._count.subjects} chuyên đề
                       </span>
                       <span className="flex items-center gap-1">
@@ -462,7 +462,7 @@ export function KhoaHocPageClient({ courses }: Props) {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={safePage === 1}
-                className="flex items-center gap-1 px-4 py-2 rounded-2xl bg-white border-2 border-gray-100 text-gray-600 font-bold hover:border-purple-300 hover:text-purple-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex items-center gap-1 px-4 py-2 rounded-2xl bg-white border-2 border-gray-100 text-gray-600 font-bold hover:border-cherry-300 hover:text-cherry-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={16} /> Trước
               </button>
@@ -472,8 +472,8 @@ export function KhoaHocPageClient({ courses }: Props) {
                   onClick={() => setPage(p)}
                   className={`w-10 h-10 rounded-2xl font-black text-sm transition-all ${
                     p === safePage
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'bg-white border-2 border-gray-100 text-gray-600 hover:border-purple-300 hover:text-purple-600'
+                      ? 'bg-cherry-600 text-white shadow-md'
+                      : 'bg-white border-2 border-gray-100 text-gray-600 hover:border-cherry-300 hover:text-cherry-600'
                   }`}
                 >
                   {p}
@@ -482,7 +482,7 @@ export function KhoaHocPageClient({ courses }: Props) {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={safePage === totalPages}
-                className="flex items-center gap-1 px-4 py-2 rounded-2xl bg-white border-2 border-gray-100 text-gray-600 font-bold hover:border-purple-300 hover:text-purple-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex items-center gap-1 px-4 py-2 rounded-2xl bg-white border-2 border-gray-100 text-gray-600 font-bold hover:border-cherry-300 hover:text-cherry-600 transition disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Tiếp <ChevronRight size={16} />
               </button>
@@ -492,12 +492,12 @@ export function KhoaHocPageClient({ courses }: Props) {
       )}
 
       {/* Footer banner */}
-      <div className="mt-12 bg-gradient-to-br from-purple-50 to-teal-50 rounded-4xl p-8 text-center border border-purple-100">
+      <div className="mt-12 bg-gradient-to-br from-cherry-50 to-teal-50 rounded-4xl p-8 text-center border border-cherry-100">
         <h2 className="text-xl font-black text-gray-900 mb-2">🏫 Khoá học luyện thi các trường chất lượng cao</h2>
         <p className="text-gray-500 text-sm mb-5">Chương trình xây dựng theo cấu trúc đề thi của các trường chất lượng cao:</p>
         <div className="flex flex-wrap justify-center gap-2">
           {SCHOOLS.map((s) => (
-            <span key={s} className="bg-white border border-purple-200 text-purple-700 font-semibold px-4 py-1.5 rounded-full text-sm">
+            <span key={s} className="bg-white border border-cherry-200 text-cherry-700 font-semibold px-4 py-1.5 rounded-full text-sm">
               {s}
             </span>
           ))}

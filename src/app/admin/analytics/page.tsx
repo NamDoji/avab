@@ -140,7 +140,7 @@ export default async function AnalyticsPage() {
                 label: 'Tổng học sinh',
                 value: totalStudents,
                 sub: 'Học viên STUDENT',
-                gradient: 'from-blue-500 to-indigo-600',
+                gradient: 'from-blue-500 to-cherry-600',
               },
               {
                 icon: '✅',
@@ -154,7 +154,7 @@ export default async function AnalyticsPage() {
                 label: 'Khóa học active',
                 value: totalCourses,
                 sub: 'Courses isActive',
-                gradient: 'from-purple-500 to-violet-600',
+                gradient: 'from-cherry-500 to-cherry-600',
               },
               {
                 icon: '🤖',
@@ -186,13 +186,13 @@ export default async function AnalyticsPage() {
             {/* Total AI materials */}
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 bg-gradient-to-br from-violet-100 to-purple-100 rounded-2xl flex items-center justify-center text-2xl">📄</div>
+                <div className="w-12 h-12 bg-gradient-to-br from-cherry-100 to-cherry-100 rounded-2xl flex items-center justify-center text-2xl">📄</div>
                 <div>
                   <h2 className="font-black text-gray-900">Tài liệu AI đã tạo</h2>
                   <p className="text-gray-400 text-xs">Tổng SubjectMaterial trong hệ thống</p>
                 </div>
               </div>
-              <div className="text-5xl font-black text-purple-600 mb-4">{totalSubjectMaterials.toLocaleString('vi-VN')}</div>
+              <div className="text-5xl font-black text-cherry-600 mb-4">{totalSubjectMaterials.toLocaleString('vi-VN')}</div>
 
               {/* Type breakdown */}
               <div className="space-y-2">
@@ -206,10 +206,10 @@ export default async function AnalyticsPage() {
                       .map((m) => (
                         <div
                           key={m.type}
-                          className="flex items-center gap-1.5 bg-purple-50 text-purple-700 border border-purple-100 rounded-xl px-3 py-1.5 text-sm font-semibold"
+                          className="flex items-center gap-1.5 bg-cherry-50 text-cherry-700 border border-cherry-100 rounded-xl px-3 py-1.5 text-sm font-semibold"
                         >
                           <span>{MATERIAL_TYPE_LABELS[m.type] ?? m.type}</span>
-                          <span className="bg-purple-200 text-purple-800 rounded-full px-2 py-0.5 text-xs font-black">
+                          <span className="bg-cherry-200 text-cherry-800 rounded-full px-2 py-0.5 text-xs font-black">
                             {m._count.id}
                           </span>
                         </div>
@@ -249,7 +249,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <span className="text-2xl font-black text-blue-600">{totalAIProjects.toLocaleString('vi-VN')}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-2xl">
+                <div className="flex items-center justify-between p-3 bg-cherry-50 rounded-2xl">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">📄</span>
                     <div>
@@ -257,7 +257,7 @@ export default async function AnalyticsPage() {
                       <p className="text-gray-400 text-xs">Tài liệu AI tổng cộng</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-black text-purple-600">{totalSubjectMaterials.toLocaleString('vi-VN')}</span>
+                  <span className="text-2xl font-black text-cherry-600">{totalSubjectMaterials.toLocaleString('vi-VN')}</span>
                 </div>
               </div>
             </div>
@@ -288,7 +288,7 @@ export default async function AnalyticsPage() {
 
                     {/* Course info */}
                     <div className="flex-1 min-w-0">
-                      <Link href={`/admin/courses/${course.id}`} className="font-bold text-gray-900 hover:text-purple-600 transition-colors truncate block">
+                      <Link href={`/admin/courses/${course.id}`} className="font-bold text-gray-900 hover:text-cherry-600 transition-colors truncate block">
                         {course.name}
                       </Link>
                       <p className="text-gray-400 text-xs mt-0.5">
@@ -304,7 +304,7 @@ export default async function AnalyticsPage() {
                         <div className="text-xs text-gray-400">Học sinh</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-xl font-black text-purple-600">{course._count.subjects}</div>
+                        <div className="text-xl font-black text-cherry-600">{course._count.subjects}</div>
                         <div className="text-xs text-gray-400">Chuyên đề</div>
                       </div>
                     </div>
@@ -384,7 +384,7 @@ export default async function AnalyticsPage() {
                       {campus.address && <p className="text-gray-400 text-xs truncate">{campus.address}</p>}
                     </div>
                     <div className="text-center">
-                      <p className="text-xl font-black text-indigo-600">{campus._count.campusUsers}</p>
+                      <p className="text-xl font-black text-cherry-600">{campus._count.campusUsers}</p>
                       <p className="text-xs text-gray-400">nhân viên</p>
                     </div>
                     <div className="text-center">
@@ -419,7 +419,7 @@ export default async function AnalyticsPage() {
                 label: 'Câu hỏi',
                 value: totalQuestions,
                 sub: 'Question Bank toàn hệ thống',
-                gradient: 'from-blue-500 to-indigo-600',
+                gradient: 'from-blue-500 to-cherry-600',
               },
               {
                 icon: '✍️',
@@ -441,7 +441,7 @@ export default async function AnalyticsPage() {
                 label: 'AI Projects',
                 value: totalAIProjects,
                 sub: 'AI Studio workspace',
-                gradient: 'from-purple-500 to-violet-600',
+                gradient: 'from-cherry-500 to-cherry-600',
               },
             ].map((stat) => (
               <div
@@ -468,10 +468,10 @@ export default async function AnalyticsPage() {
           <div className="flex flex-wrap gap-3">
             {[
               { href: '/admin/users',              icon: '👥', label: 'Xem chi tiết học sinh', color: 'hover:border-blue-300 hover:bg-blue-50' },
-              { href: '/admin/courses',            icon: '📚', label: 'Quản lý khóa học',       color: 'hover:border-purple-300 hover:bg-purple-50' },
+              { href: '/admin/courses',            icon: '📚', label: 'Quản lý khóa học',       color: 'hover:border-cherry-300 hover:bg-cherry-50' },
               { href: '/admin/ai-studio',          icon: '🤖', label: 'AI Studio',              color: 'hover:border-pink-300 hover:bg-pink-50' },
               { href: '/admin/analytics/owner',    icon: '👑', label: 'Owner Dashboard',        color: 'hover:border-slate-300 hover:bg-slate-50' },
-              { href: '/admin/question-bank',      icon: '🗃️', label: 'Question Bank',          color: 'hover:border-indigo-300 hover:bg-indigo-50' },
+              { href: '/admin/question-bank',      icon: '🗃️', label: 'Question Bank',          color: 'hover:border-cherry-300 hover:bg-cherry-50' },
             ].map((link) => (
               <Link
                 key={link.href}

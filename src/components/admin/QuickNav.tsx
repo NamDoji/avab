@@ -83,10 +83,10 @@ export default function QuickNav({ groups }: QuickNavProps) {
                   <Link
                     key={mod.href}
                     href={mod.href}
-                    className="flex flex-col gap-1 p-3 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all group/card"
+                    className="flex flex-col gap-1 p-3 rounded-xl border border-gray-100 hover:border-cherry-200 hover:bg-cherry-50 transition-all group/card"
                   >
                     <span className="text-xl leading-none">{mod.icon}</span>
-                    <span className="text-xs font-bold text-gray-800 group-hover/card:text-indigo-700 leading-tight mt-0.5">
+                    <span className="text-xs font-bold text-gray-800 group-hover/card:text-cherry-700 leading-tight mt-0.5">
                       {mod.label}
                     </span>
                     <span className="text-xs text-gray-400 leading-tight">{mod.desc}</span>

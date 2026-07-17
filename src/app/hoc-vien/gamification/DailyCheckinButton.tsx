@@ -56,7 +56,7 @@ export default function DailyCheckinButton({ checkedInToday, currentStreak }: Pr
     <>
       {/* Toast */}
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-black text-sm px-6 py-3 rounded-full shadow-2xl pointer-events-none animate-bounce">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-cherry-500 to-cherry-600 text-white font-black text-sm px-6 py-3 rounded-full shadow-2xl pointer-events-none animate-bounce">
           {toast}
         </div>
       )}
@@ -83,7 +83,7 @@ export default function DailyCheckinButton({ checkedInToday, currentStreak }: Pr
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all ${
             done
               ? 'bg-green-100 text-green-700 cursor-default'
-              : 'bg-gradient-to-r from-violet-500 to-indigo-600 text-white hover:opacity-90 active:scale-95 shadow-lg shadow-violet-200'
+              : 'bg-gradient-to-r from-cherry-500 to-cherry-600 text-white hover:opacity-90 active:scale-95 shadow-lg shadow-cherry-200'
           }`}
         >
           {loading ? (

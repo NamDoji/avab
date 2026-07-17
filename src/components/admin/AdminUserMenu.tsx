@@ -31,10 +31,10 @@ export function AdminUserMenu() {
         title={user?.name ?? 'Tài khoản'}
         style={{
           width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-          background: open ? '#ede9fe' : 'rgba(124,58,237,0.1)',
-          border: `1.5px solid ${open ? '#7c3aed' : 'rgba(124,58,237,0.25)'}`,
+          background: open ? '#FDECF0' : 'rgba(124,58,237,0.1)',
+          border: `1.5px solid ${open ? '#951F3D' : 'rgba(124,58,237,0.25)'}`,
           cursor: 'pointer', fontSize: 12, fontWeight: 800,
-          color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: '#951F3D', display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all 0.15s',
         }}
       >
@@ -55,7 +55,7 @@ export function AdminUserMenu() {
           <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid #f3f4f6' }}>
             <div style={{
               width: 36, height: 36, borderRadius: 10,
-              background: 'linear-gradient(135deg, #7c3aed, #2563eb)',
+              background: 'linear-gradient(135deg, #951F3D, #2563eb)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 13, fontWeight: 900, color: '#fff', marginBottom: 8,
             }}>
@@ -73,8 +73,8 @@ export function AdminUserMenu() {
               <span style={{
                 display: 'inline-block', marginTop: 4,
                 fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
-                background: role === 'SUPER_ADMIN' ? '#fef3c7' : '#ede9fe',
-                color: role === 'SUPER_ADMIN' ? '#b45309' : '#7c3aed',
+                background: role === 'SUPER_ADMIN' ? '#fef3c7' : '#FDECF0',
+                color: role === 'SUPER_ADMIN' ? '#b45309' : '#951F3D',
                 padding: '2px 7px', borderRadius: 99,
               }}>
                 {role}

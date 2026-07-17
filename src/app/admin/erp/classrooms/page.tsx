@@ -44,7 +44,7 @@ export default async function ClassroomsPage() {
           style={{ background: 'rgba(255,255,255,0.08)', transform: 'translate(25%, -50%)' }}
         />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-indigo-200 text-sm mb-1">
+          <div className="flex items-center gap-2 text-cherry-200 text-sm mb-1">
             <Link href="/admin/erp" className="hover:text-white transition-colors">School ERP</Link>
             <span>/</span>
             <span>Phòng học</span>
@@ -53,15 +53,15 @@ export default async function ClassroomsPage() {
           <div className="flex gap-6 mt-4">
             <div>
               <div className="text-2xl font-black text-white">{classrooms.length}</div>
-              <div className="text-xs text-indigo-200">Tổng phòng</div>
+              <div className="text-xs text-cherry-200">Tổng phòng</div>
             </div>
             <div>
               <div className="text-2xl font-black text-white">{totalCapacity}</div>
-              <div className="text-xs text-indigo-200">Tổng chỗ ngồi</div>
+              <div className="text-xs text-cherry-200">Tổng chỗ ngồi</div>
             </div>
             <div>
               <div className="text-2xl font-black text-white">{classrooms.filter(c => c.isActive).length}</div>
-              <div className="text-xs text-indigo-200">Đang hoạt động</div>
+              <div className="text-xs text-cherry-200">Đang hoạt động</div>
             </div>
           </div>
         </div>

@@ -54,7 +54,7 @@ export default function MeetingSummaryBtn() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 bg-purple-600 text-white rounded-2xl px-5 py-3 text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm"
+        className="flex items-center gap-2 bg-cherry-600 text-white rounded-2xl px-5 py-3 text-sm font-bold hover:bg-cherry-700 transition-colors shadow-sm"
       >
         🤖 AI Biên bản họp
       </button>
@@ -62,19 +62,19 @@ export default function MeetingSummaryBtn() {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-purple-100 overflow-hidden">
+    <div className="bg-white rounded-3xl shadow-sm border border-cherry-100 overflow-hidden">
       {/* Header */}
       <div
         className="flex items-center justify-between px-6 py-4 text-white"
-        style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
       >
         <div>
           <h3 className="font-black">🤖 AI Meeting Summary</h3>
-          <p className="text-purple-200 text-xs mt-0.5">Dán nội dung họp → AI tóm tắt + action items</p>
+          <p className="text-cherry-200 text-xs mt-0.5">Dán nội dung họp → AI tóm tắt + action items</p>
         </div>
         <button
           onClick={() => { setOpen(false); handleReset() }}
-          className="text-purple-200 hover:text-white text-xl font-bold transition"
+          className="text-cherry-200 hover:text-white text-xl font-bold transition"
         >
           ✕
         </button>
@@ -93,7 +93,7 @@ export default function MeetingSummaryBtn() {
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Dán nội dung cuộc họp, ghi chú, transcript... AI sẽ tóm tắt và trích xuất action items."
                 rows={8}
-                className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:border-purple-400 focus:outline-none text-sm resize-none font-mono text-gray-700"
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:border-cherry-400 focus:outline-none text-sm resize-none font-mono text-gray-700"
               />
               <p className="text-xs text-gray-400 mt-1">{content.length} ký tự</p>
             </div>
@@ -106,7 +106,7 @@ export default function MeetingSummaryBtn() {
               onClick={handleAnalyze}
               disabled={loading || !content.trim()}
               className="w-full py-3 rounded-2xl text-sm font-bold text-white transition disabled:opacity-50 flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}
             >
               {loading ? (
                 <>
@@ -123,8 +123,8 @@ export default function MeetingSummaryBtn() {
         {result && (
           <div className="space-y-5">
             {/* Summary */}
-            <div className="bg-purple-50 rounded-2xl p-4">
-              <h4 className="font-black text-purple-800 text-sm mb-2 flex items-center gap-1.5">
+            <div className="bg-cherry-50 rounded-2xl p-4">
+              <h4 className="font-black text-cherry-800 text-sm mb-2 flex items-center gap-1.5">
                 📋 Tóm tắt cuộc họp
               </h4>
               <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{result.summary}</p>
@@ -145,7 +145,7 @@ export default function MeetingSummaryBtn() {
                     >
                       <span
                         className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white shrink-0 mt-0.5"
-                        style={{ background: '#7c3aed' }}
+                        style={{ background: '#951F3D' }}
                       >
                         {i + 1}
                       </span>

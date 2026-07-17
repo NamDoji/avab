@@ -83,17 +83,17 @@ export default async function WorkflowInstancesPage({ searchParams }: PageProps)
       {/* Header */}
       <div
         className="relative overflow-hidden text-white py-8 px-6"
-        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #6366f1 0%, #BE3659 100%)' }}
       >
         <div className="container mx-auto max-w-6xl">
-          <p className="text-indigo-200 text-sm font-semibold mb-1">
+          <p className="text-cherry-200 text-sm font-semibold mb-1">
             <Link href="/admin" className="hover:underline">← Admin</Link>
             {' / '}
             <Link href="/admin/workflow" className="hover:underline">Workflow Engine</Link>
             {' / Instances'}
           </p>
           <h1 className="text-2xl font-black">🔄 Tất cả Instances</h1>
-          <p className="text-indigo-200 text-sm mt-0.5">Theo dõi và quản lý tất cả quy trình đang chạy</p>
+          <p className="text-cherry-200 text-sm mt-0.5">Theo dõi và quản lý tất cả quy trình đang chạy</p>
         </div>
       </div>
 
@@ -107,7 +107,7 @@ export default async function WorkflowInstancesPage({ searchParams }: PageProps)
               href={`/admin/workflow/instances?tab=${t.key}${workflowId ? `&workflowId=${workflowId}` : ''}`}
               className={`flex-shrink-0 text-xs font-bold px-4 py-2 rounded-lg transition-colors ${
                 tab === t.key
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-cherry-600 text-white'
                   : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
               }`}
             >
@@ -147,7 +147,7 @@ export default async function WorkflowInstancesPage({ searchParams }: PageProps)
                     return (
                       <tr key={inst.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-4 py-3">
-                          <Link href={`/admin/workflow/instances/${inst.id}`} className="font-semibold text-indigo-600 hover:underline text-xs">
+                          <Link href={`/admin/workflow/instances/${inst.id}`} className="font-semibold text-cherry-600 hover:underline text-xs">
                             {inst.workflow.name}
                           </Link>
                         </td>
@@ -179,7 +179,7 @@ export default async function WorkflowInstancesPage({ searchParams }: PageProps)
                         <td className="px-4 py-3">
                           <Link
                             href={`/admin/workflow/instances/${inst.id}`}
-                            className="text-xs font-bold text-indigo-600 hover:underline"
+                            className="text-xs font-bold text-cherry-600 hover:underline"
                           >
                             Chi tiết →
                           </Link>

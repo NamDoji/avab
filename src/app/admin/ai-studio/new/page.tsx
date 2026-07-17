@@ -110,10 +110,10 @@ export default function NewAIProjectPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/10 to-blue-50/10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-cherry-50/10 to-blue-50/10">
 
       {/* Hero */}
-      <div className="bg-gradient-to-r from-gray-900 via-indigo-900 to-gray-900 text-white py-8">
+      <div className="bg-gradient-to-r from-gray-900 via-cherry-900 to-gray-900 text-white py-8">
         <div className="container-custom">
           <div className="flex items-center gap-2 text-sm mb-4 text-gray-400">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
@@ -129,7 +129,7 @@ export default function NewAIProjectPage() {
             </Link>
             <div>
               <h1 className="text-2xl font-black">Tạo Dự án mới</h1>
-              <p className="text-indigo-300 text-sm">Điền thông tin để AI Studio tự động sinh học liệu</p>
+              <p className="text-cherry-300 text-sm">Điền thông tin để AI Studio tự động sinh học liệu</p>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function NewAIProjectPage() {
                 value={form.title}
                 onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                 placeholder="VD: Toán Lớp 2 — Quy luật dãy số"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-purple-400 focus:outline-none"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-cherry-400 focus:outline-none"
               />
               <p className="text-xs text-gray-400 mt-1">Để trống → tự điền sau khi nhập Chủ đề</p>
             </div>
@@ -164,7 +164,7 @@ export default function NewAIProjectPage() {
                 <select
                   value={form.curriculum}
                   onChange={e => setForm(f => ({ ...f, curriculum: e.target.value }))}
-                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-3 text-sm focus:border-purple-400 focus:outline-none bg-white"
+                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-3 text-sm focus:border-cherry-400 focus:outline-none bg-white"
                 >
                   {CURRICULA.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
@@ -176,7 +176,7 @@ export default function NewAIProjectPage() {
                 <select
                   value={form.grade}
                   onChange={e => setForm(f => ({ ...f, grade: e.target.value }))}
-                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-3 text-sm focus:border-purple-400 focus:outline-none bg-white"
+                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-3 text-sm focus:border-cherry-400 focus:outline-none bg-white"
                 >
                   {GRADES.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
                 </select>
@@ -196,7 +196,7 @@ export default function NewAIProjectPage() {
                     onClick={() => handleSubjectChange(s.value)}
                     className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 text-sm font-semibold text-left transition-all min-h-[44px] ${
                       form.subject === s.value
-                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                        ? 'border-cherry-500 bg-cherry-50 text-cherry-700'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300 bg-white'
                     }`}
                   >
@@ -218,7 +218,7 @@ export default function NewAIProjectPage() {
                   value={form.chapter}
                   onChange={e => setForm(f => ({ ...f, chapter: e.target.value }))}
                   placeholder="VD: Chương 3: Số và phép tính"
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-purple-400 focus:outline-none"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-cherry-400 focus:outline-none"
                 />
               </div>
               <div>
@@ -231,7 +231,7 @@ export default function NewAIProjectPage() {
                   onChange={e => setForm(f => ({ ...f, topic: e.target.value }))}
                   onBlur={handleTopicBlur}
                   placeholder="VD: Quy luật dãy số, Present Continuous Tense..."
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-purple-400 focus:outline-none"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-cherry-400 focus:outline-none"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function NewAIProjectPage() {
                 onChange={e => setForm(f => ({ ...f, objective: e.target.value }))}
                 placeholder="VD: HS nhận biết và hoàn thành dãy số có quy luật đơn giản; phát triển tư duy logic..."
                 rows={3}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-purple-400 focus:outline-none resize-none"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-cherry-400 focus:outline-none resize-none"
               />
             </div>
 
@@ -263,12 +263,12 @@ export default function NewAIProjectPage() {
                     onClick={() => setForm(f => ({ ...f, difficulty: d.value }))}
                     className={`p-3 rounded-xl border-2 text-center transition-all ${
                       form.difficulty === d.value
-                        ? 'border-purple-500 bg-purple-50'
+                        ? 'border-cherry-500 bg-cherry-50'
                         : 'border-gray-200 hover:border-gray-300 bg-white'
                     }`}
                   >
                     <div className="text-xl mb-1">{d.emoji}</div>
-                    <div className={`text-sm font-bold ${form.difficulty === d.value ? 'text-purple-700' : 'text-gray-700'}`}>
+                    <div className={`text-sm font-bold ${form.difficulty === d.value ? 'text-cherry-700' : 'text-gray-700'}`}>
                       {d.label}
                     </div>
                     <div className="text-xs text-gray-400 mt-0.5">{d.desc}</div>
@@ -287,14 +287,14 @@ export default function NewAIProjectPage() {
 
             {/* Preview */}
             {form.topic && (
-              <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 text-sm">
-                <p className="font-bold text-indigo-800 mb-1">✨ Xem trước:</p>
-                <p className="text-indigo-700">
+              <div className="bg-cherry-50 border border-cherry-100 rounded-xl p-4 text-sm">
+                <p className="font-bold text-cherry-800 mb-1">✨ Xem trước:</p>
+                <p className="text-cherry-700">
                   <strong>{selectedSubject?.emoji} {selectedSubject?.label ?? form.subject}</strong>
                   {' '}{GRADES.find(g => g.value === form.grade)?.label} —{' '}
                   {form.topic}
                 </p>
-                <p className="text-indigo-500 text-xs mt-1">
+                <p className="text-cherry-500 text-xs mt-1">
                   AI Studio sẽ tự động sinh: Đề cương → Bài học → 30 câu BTVN → QA → Xuất bản
                 </p>
               </div>
@@ -309,7 +309,7 @@ export default function NewAIProjectPage() {
               <button
                 type="submit"
                 disabled={creating}
-                className="flex-[2] flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl font-black text-sm hover:from-purple-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-[2] flex items-center justify-center gap-2 bg-gradient-to-r from-cherry-600 to-cherry-600 text-white py-3 rounded-xl font-black text-sm hover:from-cherry-700 hover:to-cherry-700 transition-all shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {creating ? (
                   <>

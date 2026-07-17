@@ -8,7 +8,7 @@ export const metadata = { title: 'Collaboration — AvaB Admin' }
 const COLLAB_MODULES = [
   { href: '/admin/collab/tasks',    icon: '✅', label: 'Tasks',    desc: 'Công việc, deadline',       color: '#059669' },
   { href: '/admin/collab/calendar', icon: '📅', label: 'Calendar', desc: 'Lịch học, sự kiện',         color: '#0369a1' },
-  { href: '/admin/collab/meetings', icon: '🎥', label: 'Meeting',  desc: 'Cuộc họp, biên bản AI',     color: '#7c3aed' },
+  { href: '/admin/collab/meetings', icon: '🎥', label: 'Meeting',  desc: 'Cuộc họp, biên bản AI',     color: '#951F3D' },
   { href: '/admin/collab/workflow', icon: '🔄', label: 'Workflow', desc: 'Phê duyệt quy trình',       color: '#d97706' },
 ]
 
@@ -49,7 +49,7 @@ export default async function CollabPage() {
     { label: 'Task đang làm',    value: totalTaskCount,      icon: '🔄', color: '#2563eb', bg: '#eff6ff' },
     { label: 'Task chờ xử lý',   value: pendingTaskCount,    icon: '📋', color: '#d97706', bg: '#fef9ee' },
     { label: 'Sự kiện 7 ngày',   value: upcomingEventCount,  icon: '📅', color: '#0369a1', bg: '#f0f9ff' },
-    { label: 'Buổi họp/học',     value: recentMeetingCount,  icon: '🎥', color: '#7c3aed', bg: '#faf5ff' },
+    { label: 'Buổi họp/học',     value: recentMeetingCount,  icon: '🎥', color: '#951F3D', bg: '#FFF7F9' },
   ]
 
   return (
@@ -183,7 +183,7 @@ export default async function CollabPage() {
           </Link>
           <Link
             href="/admin/collab/meetings"
-            className="flex items-center gap-2 bg-white text-gray-700 rounded-2xl px-5 py-3 text-sm font-bold border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all shadow-sm"
+            className="flex items-center gap-2 bg-white text-gray-700 rounded-2xl px-5 py-3 text-sm font-bold border border-gray-200 hover:border-cherry-300 hover:bg-cherry-50 transition-all shadow-sm"
           >
             🤖 AI Biên bản họp
           </Link>

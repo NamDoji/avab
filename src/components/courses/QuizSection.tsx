@@ -106,7 +106,7 @@ export function QuizSection({ subjectId, subjectName }: Props) {
         {submitted && (
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 text-sm text-purple-600 hover:text-purple-800 font-semibold"
+            className="flex items-center gap-1.5 text-sm text-cherry-600 hover:text-cherry-800 font-semibold"
           >
             <RotateCcw size={16} />
             Làm lại
@@ -152,7 +152,7 @@ export function QuizSection({ subjectId, subjectName }: Props) {
                   ? 'border-teal-300 bg-teal-50'
                   : state === 'wrong'
                   ? 'border-red-300 bg-red-50'
-                  : 'border-purple-100 bg-white'
+                  : 'border-cherry-100 bg-white'
               }`}
             >
               {/* Question number + content */}
@@ -161,7 +161,7 @@ export function QuizSection({ subjectId, subjectName }: Props) {
                   w-9 h-9 rounded-2xl flex items-center justify-center text-sm font-black shrink-0
                   ${state === 'correct' ? 'bg-teal-500 text-white' :
                     state === 'wrong' ? 'bg-red-500 text-white' :
-                    'bg-purple-100 text-purple-700'}
+                    'bg-cherry-100 text-cherry-700'}
                 `}>
                   {state === 'correct' ? '✓' : state === 'wrong' ? '✗' : index + 1}
                 </div>
@@ -178,13 +178,13 @@ export function QuizSection({ subjectId, subjectName }: Props) {
                   placeholder="Nhập đáp án..."
                   className={`
                     flex-1 px-4 py-3 rounded-2xl border-2 font-bold text-lg text-center
-                    focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all
+                    focus:outline-none focus:ring-2 focus:ring-cherry-300 transition-all
                     ${submitted ? 'cursor-not-allowed opacity-75' : ''}
                     ${state === 'correct'
                       ? 'border-teal-400 bg-teal-50 text-teal-700'
                       : state === 'wrong'
                       ? 'border-red-400 bg-red-50 text-red-700'
-                      : 'border-purple-200 bg-white text-gray-800 hover:border-purple-400'
+                      : 'border-cherry-200 bg-white text-gray-800 hover:border-cherry-400'
                     }
                   `}
                 />
@@ -196,7 +196,7 @@ export function QuizSection({ subjectId, subjectName }: Props) {
               {!submitted && (
                 <button
                   onClick={() => setShowHints((p) => ({ ...p, [q.id]: !showHint }))}
-                  className="mt-2 text-xs text-purple-500 hover:text-purple-700 font-medium"
+                  className="mt-2 text-xs text-cherry-500 hover:text-cherry-700 font-medium"
                 >
                   {showHint ? '🙈 Ẩn gợi ý' : '💡 Xem gợi ý'}
                 </button>

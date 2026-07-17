@@ -92,7 +92,7 @@ export default function TimesheetForm({ staff, onSuccess }: Props) {
       </button>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 bg-white text-purple-700 border border-purple-300 rounded-2xl px-4 py-2.5 text-sm font-bold hover:bg-purple-50 transition-colors"
+        className="flex items-center gap-2 bg-white text-cherry-700 border border-cherry-300 rounded-2xl px-4 py-2.5 text-sm font-bold hover:bg-cherry-50 transition-colors"
       >
         📝 Chấm công
       </button>
@@ -111,7 +111,7 @@ export default function TimesheetForm({ staff, onSuccess }: Props) {
                 <select
                   value={form.userId}
                   onChange={(e) => setForm({ ...form, userId: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 >
                   <option value="">— Chọn nhân viên —</option>
                   {staff.map((s) => (
@@ -128,7 +128,7 @@ export default function TimesheetForm({ staff, onSuccess }: Props) {
                   type="date"
                   value={form.date}
                   onChange={(e) => setForm({ ...form, date: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -139,7 +139,7 @@ export default function TimesheetForm({ staff, onSuccess }: Props) {
                     type="time"
                     value={form.checkIn}
                     onChange={(e) => setForm({ ...form, checkIn: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
                 <div>
@@ -148,7 +148,7 @@ export default function TimesheetForm({ staff, onSuccess }: Props) {
                     type="time"
                     value={form.checkOut}
                     onChange={(e) => setForm({ ...form, checkOut: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                   />
                 </div>
               </div>
@@ -160,7 +160,7 @@ export default function TimesheetForm({ staff, onSuccess }: Props) {
                   value={form.note}
                   onChange={(e) => setForm({ ...form, note: e.target.value })}
                   placeholder="VD: Đi làm muộn..."
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cherry-400"
                 />
               </div>
 
@@ -181,7 +181,7 @@ export default function TimesheetForm({ staff, onSuccess }: Props) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-purple-600 text-white rounded-2xl py-2.5 text-sm font-bold hover:bg-purple-700 transition-colors disabled:opacity-50"
+                  className="flex-1 bg-cherry-600 text-white rounded-2xl py-2.5 text-sm font-bold hover:bg-cherry-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? '⏳ Đang lưu...' : '✅ Lưu'}
                 </button>

@@ -175,10 +175,10 @@ export default async function ForecastPage() {
             </p>
             <p className="text-xs text-sky-200 mt-1">So tháng đầu vs cuối</p>
           </div>
-          <div className="rounded-3xl p-5 text-white shadow-sm" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}>
-            <p className="text-xs font-semibold text-purple-200 uppercase tracking-wide mb-1">💸 Chưa thu</p>
+          <div className="rounded-3xl p-5 text-white shadow-sm" style={{ background: 'linear-gradient(135deg, #951F3D 0%, #7B1933 100%)' }}>
+            <p className="text-xs font-semibold text-cherry-200 uppercase tracking-wide mb-1">💸 Chưa thu</p>
             <p className="text-xl font-black leading-tight">{fmtVND(expectedAmt)}</p>
-            <p className="text-xs text-purple-200 mt-1">{expectedRevenue._count} hóa đơn</p>
+            <p className="text-xs text-cherry-200 mt-1">{expectedRevenue._count} hóa đơn</p>
           </div>
         </div>
 

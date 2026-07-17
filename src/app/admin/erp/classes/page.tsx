@@ -7,7 +7,7 @@ export const metadata = { title: 'Lớp học — AvaB ERP' }
 
 // ── Subject colour map ────────────────────────────────────────────
 const SUBJECT_COLORS: Record<string, { gradient: string; emoji: string; label: string }> = {
-  THINKING_MATH: { gradient: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', emoji: '🧠', label: 'Toán Tư Duy' },
+  THINKING_MATH: { gradient: 'linear-gradient(135deg, #951F3D 0%, #4f46e5 100%)', emoji: '🧠', label: 'Toán Tư Duy' },
   MATH:          { gradient: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', emoji: '📐', label: 'Toán' },
   ENGLISH:       { gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)', emoji: '🇬🇧', label: 'Tiếng Anh' },
   VIETNAMESE:    { gradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)', emoji: '📖', label: 'Tiếng Việt' },
@@ -19,7 +19,7 @@ const SUBJECT_COLORS: Record<string, { gradient: string; emoji: string; label: s
   CPP:           { gradient: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)', emoji: '⚡', label: 'C++' },
   IELTS:         { gradient: 'linear-gradient(135deg, #0369a1 0%, #075985 100%)', emoji: '📝', label: 'IELTS' },
   CAMBRIDGE:     { gradient: 'linear-gradient(135deg, #be123c 0%, #9f1239 100%)', emoji: '🎓', label: 'Cambridge' },
-  PHYSICS:       { gradient: 'linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%)', emoji: '⚛️', label: 'Vật lý' },
+  PHYSICS:       { gradient: 'linear-gradient(135deg, #7B1933 0%, #5F1227 100%)', emoji: '⚛️', label: 'Vật lý' },
   CHEMISTRY:     { gradient: 'linear-gradient(135deg, #65a30d 0%, #4d7c0f 100%)', emoji: '🧪', label: 'Hóa học' },
   BIOLOGY:       { gradient: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)', emoji: '🧬', label: 'Sinh học' },
   GENERAL:       { gradient: 'linear-gradient(135deg, #4b5563 0%, #374151 100%)', emoji: '📚', label: 'Tổng hợp' },
@@ -44,7 +44,7 @@ function AvatarStack({
   users: { name: string | null }[]
   extra: number
 }) {
-  const colors = ['#0f766e', '#0369a1', '#7c3aed']
+  const colors = ['#0f766e', '#0369a1', '#951F3D']
   return (
     <div className="flex items-center gap-1">
       {users.map((u, i) => {
@@ -114,14 +114,14 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
       {/* ── Header ── */}
       <div
         className="relative overflow-hidden text-white py-10"
-        style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #951F3D 0%, #4f46e5 100%)' }}
       >
         <div
           className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none"
           style={{ background: 'rgba(255,255,255,0.06)', transform: 'translate(30%, -50%)' }}
         />
         <div className="container-custom relative">
-          <div className="flex items-center gap-2 text-violet-200 text-sm mb-2">
+          <div className="flex items-center gap-2 text-cherry-200 text-sm mb-2">
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
             <span>/</span>
             <Link href="/admin/erp" className="hover:text-white transition-colors">ERP</Link>
@@ -132,7 +132,7 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black mb-1">📋 Lớp học</h1>
-              <p className="text-violet-200 text-sm">
+              <p className="text-cherry-200 text-sm">
                 {courses.length} lớp · {totalStudents} học viên
               </p>
             </div>
@@ -159,7 +159,7 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
                 className="px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap"
                 style={
                   isActive
-                    ? { background: '#7c3aed', color: '#fff' }
+                    ? { background: '#951F3D', color: '#fff' }
                     : { background: '#f3f4f6', color: '#6b7280' }
                 }
               >
@@ -180,7 +180,7 @@ export default async function ClassesPage({ searchParams }: { searchParams: Sear
             <Link
               href="/admin/courses"
               className="inline-block px-5 py-2.5 rounded-xl text-sm font-bold text-white"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
+              style={{ background: 'linear-gradient(135deg, #951F3D, #4f46e5)' }}
             >
               ➕ Tạo khóa học
             </Link>
